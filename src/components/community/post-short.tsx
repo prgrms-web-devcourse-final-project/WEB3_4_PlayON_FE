@@ -1,12 +1,30 @@
 import communityPost from '@/types/communityPosts';
-import AvatarName from './common/avatar-name';
+import AvatarName, { AvatarNameSkeleton } from './common/avatar-name';
 import { SubtitlesIcon, ThumbsUpIcon } from 'lucide-react';
 import { Badge } from '../ui/badge';
+import { Skeleton } from '../ui/skeleton';
 
 type CommunityPostImageShortProps = {
   data: communityPost;
   className: string;
 };
+
+export function CommunityPostShortSkeleton(props: { className: string }) {
+  return (
+    <div className={`flex flex-col border border-neutral-300 rounded-xl p-5 justify-between ` + props.className}>
+      <AvatarNameSkeleton />
+      <div className="flex flex-col gap-1">
+        <Skeleton className="h-6 w-[25%]" />
+        <Skeleton className="h-4" />
+        <Skeleton className="h-4" />
+      </div>
+      <div className="flex justify-between">
+        <Skeleton className="h-4 w-[10%]" />
+        <Skeleton className="h-4 w-[10%]" />
+      </div>
+    </div>
+  );
+}
 
 export default function CommunityPostShort(props: CommunityPostImageShortProps) {
   return (
