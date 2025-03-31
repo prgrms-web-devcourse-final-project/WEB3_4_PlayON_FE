@@ -1,11 +1,16 @@
 import guild from '@/types/guild';
 import { UsersIcon } from 'lucide-react';
 import { Badge } from '../ui/badge';
+import { Skeleton } from '../ui/skeleton';
 
 type GuildFullimageProps = {
   data: guild;
   className?: string;
 };
+
+export function GuildFullimageSkeleton(props: { className: string }) {
+  return <Skeleton className={`rounded-lg aspect-[16/9] ` + props.className} />;
+}
 
 export default function GuildFullimage(props: GuildFullimageProps) {
   return (
@@ -23,7 +28,7 @@ export default function GuildFullimage(props: GuildFullimageProps) {
       <div className="flex place-content-between">
         <div className="flex gap-1">
           {props.data.guildTags.map((e, ind) => (
-            <Badge className="px-2 py-1 bg-white text-black font-suit font-bold" key={ind}>
+            <Badge className="px-2 py-1 bg-white text-black font-suit font-bold" variant="outline" key={ind}>
               {e}
             </Badge>
           ))}

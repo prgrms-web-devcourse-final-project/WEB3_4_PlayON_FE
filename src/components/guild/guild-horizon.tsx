@@ -1,10 +1,24 @@
-import guild from "@/types/guild";
-import { UsersIcon } from "lucide-react";
+import guild from '@/types/guild';
+import { UsersIcon } from 'lucide-react';
+import { Skeleton } from '../ui/skeleton';
 
 type GuildHorizonProps = {
   data: guild;
   className?: string;
 };
+
+export function GuildHorizonSkeleton(props: { className: string }) {
+  return (
+    <div className={`rounded-2xl border border-neutral-200 ` + props.className}>
+      <Skeleton className="w-full aspect-[16/9]" />
+      <div className="flex flex-col p-5 gap-1">
+        <Skeleton className="h-6 mb-4 w-[50%]" />
+        <Skeleton className="h-4" />
+        <Skeleton className="h-4 w-[25%]" />
+      </div>
+    </div>
+  );
+}
 
 export default function GuildHorizon(props: GuildHorizonProps) {
   return (
@@ -12,7 +26,9 @@ export default function GuildHorizon(props: GuildHorizonProps) {
       <img src={props.data.image} alt="loading" className="w-full object-cover aspect-[16/9]" />
       <div className="p-5 gap-1">
         <p className="font-suit text-2xl font-bold pb-2">{props.data.name}</p>
-        <p className="font-suit text-base font-medium text-nowrap text-ellipsis overflow-hidden">{props.data.description}</p>
+        <p className="font-suit text-base font-medium text-nowrap text-ellipsis overflow-hidden">
+          {props.data.description}
+        </p>
         <div className="font-suit text-sm font-medium flex gap-4">
           <div className="flex gap-1">
             {props.data.guildTags.map((e, ind) => (
