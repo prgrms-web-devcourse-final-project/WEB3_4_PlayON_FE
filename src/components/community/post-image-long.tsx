@@ -1,4 +1,7 @@
 import communityPost from '@/types/communityPosts';
+import { Badge } from '@/components/ui/badge';
+import { ThumbsUpIcon, SubtitlesIcon } from 'lucide-react';
+import AvatarName from './common/avatar-name';
 
 type CommunityPostImageLongProps = {
   data: communityPost;
@@ -7,13 +10,31 @@ type CommunityPostImageLongProps = {
 
 export default function CommunityPostImageLong(props: CommunityPostImageLongProps) {
   return (
-    <div className={`flex ` + props.className}>
-      <img src={props.data.imageUrl} alt="Loading" className="h-full aspect-[1/1]" />
-      <div className="flex flex-col">
-        <div>Avatar</div>
-        <div className="flex"></div>
-        <p>{props.data.title}</p>
-        <p>{props.data.description}</p>
+    <div className={`flex gap-5 py-7 ` + props.className}>
+      <img src={props.data.imageUrl} alt="Loading" className="object-cover h-full aspect-[1/1] rounded-xl" />
+      <div className="flex flex-col justify-between">
+        <AvatarName userName={props.data.userName} avatar={props.data.userAvatar} />
+        <p className="text-xl font-suit font-bold">{props.data.title}</p>
+        <p className="text-base font-suit line-clamp-2 text-justify ">{props.data.description}</p>
+        <div className="flex justify-between">
+          <div className="flex gap-1">
+            {props.data.tags.map((e, ind) => (
+              <Badge className="px-2 py-1 bg-white text-black font-suit font-bold" variant={'outline'} key={ind}>
+                {e}
+              </Badge>
+            ))}
+          </div>
+          <div className="flex place-items-center gap-3">
+            <div className="flex items-center gap-1">
+              <ThumbsUpIcon size={16} strokeWidth={1} />
+              <p className="font-suit text-sm font-medium text-neutral-400">{props.data.numLikes}</p>
+            </div>
+            <div className="flex items-center gap-1">
+              <SubtitlesIcon size={16} strokeWidth={1} />
+              <p className="font-suit text-sm font-medium text-neutral-400">{props.data.numComments}</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
