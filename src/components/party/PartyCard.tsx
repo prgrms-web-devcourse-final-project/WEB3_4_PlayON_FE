@@ -10,21 +10,26 @@ export default function PartyCard() {
   const image = 'test.png';
 
   return (
-    <div className="flex flex-col gap-2 p-5 w-[410px] rounded-xl border-2 border-neutral-100">
+    <div className="flex flex-col gap-2 p-5 w-[410px] rounded-xl border-2 border-neutral-100 cursor-pointer">
       <div
         style={{
           backgroundImage: `url(${image})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
         }}
-        className="h-[160px] rounded-xl"
+        className="flex flex-col h-[160px] rounded-xl overflow-hidden justify-between group"
       >
-        <div className="ml-[14px] mt-[14px] flex gap-2">
+        <div className="flex gap-2 ml-4 mt-4">
           <div className="font-suit text-xs py-1 px-2 bg-neutral-100 rounded-sm">
             #tag name
           </div>
           <div className="font-suit text-xs py-1 px-2 bg-neutral-100 rounded-sm">
             마감임박
+          </div>
+        </div>
+        <div className="invisible relative bg-gradient-to-t from-neutral-900/70 to-neutral-900/0 p-4 h-28 group-hover:visible">
+          <div className=" absolute bottom-2 right-4 font-suit text-4xl font-bold text-end text-white align-bottom">
+            PICO PARK
           </div>
         </div>
       </div>
