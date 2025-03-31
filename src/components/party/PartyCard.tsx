@@ -7,8 +7,11 @@ interface PartyCardProps {
 }
 
 export default function PartyCard({ data }: PartyCardProps) {
+  const open_position = data.maximum - data.members.length;
+  const remainingHours = getRemainingHours(data.party_at);
+
   return (
-    <div className="flex flex-col gap-2 p-5 w-[410px] rounded-xl border-2 border-neutral-100 cursor-pointer">
+    <div className="flex flex-col gap-2 p-5 w-[410px] rounded-xl bg-white border-2 border-neutral-300 cursor-pointer">
       <div
         style={{
           backgroundImage: `url(${data.game_image})`,
@@ -18,8 +21,15 @@ export default function PartyCard({ data }: PartyCardProps) {
         className="flex flex-col h-[160px] rounded-xl overflow-hidden justify-between group"
       >
         <div className="flex gap-2 ml-4 mt-4">
-          <Tag style="time">{data.party_at.toLocaleString()}</Tag>
-          <Tag background="red">마감임박</Tag>
+          {remainingHours >= 3 ? (
+            <Tag style="time">{formatDate(data.party_at)}</Tag>
+          ) : (
+            <Tag style="time" background="red">
+              {formatDate(data.party_at)}
+            </Tag>
+          )}
+          {open_position === 1 && <Tag background="red">마감임박</Tag>}
+          {open_position < 1 && <Tag background="red">마감</Tag>}
         </div>
         <div className="invisible relative bg-gradient-to-t from-neutral-900/70 to-neutral-900/0 p-4 h-28 group-hover:visible">
           <div className=" absolute bottom-2 right-4 font-suit text-4xl font-bold text-end text-white align-bottom">
@@ -51,11 +61,36 @@ export default function PartyCard({ data }: PartyCardProps) {
               />
             ) : null
           )}
-          {/* 인원이 4명보다 많아지면 +로 표시하기 */}
-          <div className="font-suit text-xs text-neutral-500">+{data.members.length - 4}</div>
+          {data.members.length - 4 >= 1 && (
+            <div className="font-suit text-xs text-neutral-500">+{data.members.length - 4}</div>
+          )}
         </div>
-        <div className="font-suit text-sm text-neutral-500">전체 {data.members.length}명</div>
+        <div className="font-suit text-sm text-neutral-500">전체 {data.maximum}명</div>
+        {/* <div className="font-suit text-sm text-neutral-500">
+          {data.members.length}/{data.maximum}
+        </div> */}
       </div>
     </div>
   );
+}
+
+// 현재시간으로부터 몇 시간 남았는지 구하는 함수
+function getRemainingHours(targetDate: Date) {
+  const currentTime = new Date().getTime();
+  const targetTime = targetDate.getTime();
+
+  const timeDifference = targetTime - currentTime;
+
+  return timeDifference / (1000 * 60 * 60);
+}
+
+// 날짜 포맷팅 함수
+function formatDate(targetDate: Date) {
+  return targetDate.toLocaleString('ko-KR', {
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  });
 }
