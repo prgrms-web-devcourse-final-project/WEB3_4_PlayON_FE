@@ -1,9 +1,33 @@
 import { Party } from '@/types/party';
 import { Avatar } from '../ui/avatar';
 import Tag from '../common/Tag';
+import { Skeleton } from '../ui/skeleton';
 
 interface PartyCardProps {
   data: Party;
+}
+
+export function PartyCardSkeleton() {
+  return (
+    <div className="flex flex-col gap-2 p-5 w-[410px] border-2 border-neutral-300 rounded-xl">
+      <Skeleton className="h-[160px] rounded-xl" />
+      <div className="flex gap-2">
+        <Skeleton className="h-6 rounded-sm w-1/6" />
+        <Skeleton className="h-6 rounded-sm w-1/6" />
+      </div>
+      <Skeleton className="h-8 rounded-sm w-1/2" />
+      <Skeleton className="h-6 rounded-sm" />
+      <div className="flex justify-between py-2">
+        <div className="flex gap-1">
+          <Skeleton className="h-5 w-5 rounded-full" />
+          <Skeleton className="h-5 w-5 rounded-full" />
+          <Skeleton className="h-5 w-5 rounded-full" />
+          <Skeleton className="h-5 w-5 rounded-full" />
+        </div>
+        <Skeleton className="h-5 w-10 rounded-sm" />
+      </div>
+    </div>
+  );
 }
 
 export default function PartyCard({ data }: PartyCardProps) {
