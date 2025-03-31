@@ -19,10 +19,25 @@ const config: Config = {
   		},
   		colors: {
   			purple: {
-  				main: '#4E54BF',
-  				light: '#C4C6F3',
-  				dark: '#1D1340'
+  				100 : "#D3D1ED",
+  				200 : "#BDB9F6",
+  				300 : "#9884F0",
+  				400 : "#8C6AF0",
+  				500 : "#8258FF",
+  				600 : "#6738F6",
+  				700 : "#3F1AC4",
+  				800 : "#1C2068",
   			},
+			lime : {
+				light : "#9EFBA1",
+				main : "#0EDD15",
+				dark : "#0F8012",
+			},
+			cherry : {
+				light : "#FF82AA",
+				main : "#F21F54",
+				dark : "#990D34",
+			},
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
   			card: {
