@@ -39,10 +39,8 @@ export default function PartyCard({ data }: PartyCardProps) {
       <div
         style={{
           backgroundImage: `url(${data.game_image})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
         }}
-        className="flex flex-col h-[160px] rounded-xl overflow-hidden justify-between group"
+        className="flex flex-col h-[160px] rounded-xl overflow-hidden justify-between group bg-cover bg-center"
       >
         <div className="flex gap-2 ml-4 mt-4">
           {remainingHours >= 3 ? (
@@ -55,7 +53,7 @@ export default function PartyCard({ data }: PartyCardProps) {
           {open_position === 1 && <Tag background="red">마감임박</Tag>}
           {open_position < 1 && <Tag background="red">마감</Tag>}
         </div>
-        <div className="invisible relative bg-gradient-to-t from-neutral-900/70 to-neutral-900/0 p-4 h-28 group-hover:visible">
+        <div className="opacity-0 relative bg-gradient-to-t from-neutral-900/70 to-neutral-900/0 p-4 h-28 translate-y-4 transition-all duration-200 ease-in-out group-hover:opacity-100 group-hover:translate-y-0">
           <div className=" absolute bottom-2 right-4 font-suit text-4xl font-bold text-end text-white align-bottom">
             PICO PARK
           </div>
@@ -89,10 +87,9 @@ export default function PartyCard({ data }: PartyCardProps) {
             <div className="font-suit text-xs text-neutral-500">+{data.members.length - 4}</div>
           )}
         </div>
-        <div className="font-suit text-sm text-neutral-500">전체 {data.maximum}명</div>
-        {/* <div className="font-suit text-sm text-neutral-500">
-          {data.members.length}/{data.maximum}
-        </div> */}
+        <div className="font-suit text-sm text-neutral-500">
+          {data.members.length}명 / {data.maximum}명
+        </div>
       </div>
     </div>
   );
