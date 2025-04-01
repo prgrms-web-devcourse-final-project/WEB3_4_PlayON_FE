@@ -1,8 +1,8 @@
 import communityPost from '@/types/communityPosts';
-import { Badge } from '@/components/ui/badge';
 import { ThumbsUpIcon, SubtitlesIcon } from 'lucide-react';
 import AvatarName, { AvatarNameSkeleton } from './common/avatar-name';
 import { Skeleton } from '../ui/skeleton';
+import Tag from '@/components/common/Tag';
 
 type CommunityPostImageLongProps = {
   data: communityPost;
@@ -40,9 +40,9 @@ export default function CommunityPostImageLong(props: CommunityPostImageLongProp
         <div className="flex justify-between">
           <div className="flex gap-1">
             {props.data.tags.map((e, ind) => (
-              <Badge className="px-2 py-1 bg-white text-black font-suit font-bold" variant={'outline'} key={ind}>
+              <Tag background="medium" style="default" key={ind} className="font-bold">
                 {e}
-              </Badge>
+              </Tag>
             ))}
           </div>
           <div className="flex place-items-center gap-3">
