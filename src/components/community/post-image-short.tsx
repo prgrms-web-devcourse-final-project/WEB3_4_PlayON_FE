@@ -47,11 +47,11 @@ export default function CommunityPostImageShort(props: CommunityPostImageShortPr
           </div>
           <div className="flex place-items-center gap-3">
             <div className="flex items-center gap-1">
-              <ThumbsUpIcon size={16} strokeWidth={1} />
+              <ThumbsUpIcon className="text-neutral-400 w-4 h-4 stroke" />
               <p className="font-suit text-sm font-medium text-neutral-400">{props.data.numLikes}</p>
             </div>
             <div className="flex items-center gap-1">
-              <SubtitlesIcon size={16} strokeWidth={1} />
+              <SubtitlesIcon className="text-neutral-400 w-4 h-4 stroke" />
               <p className="font-suit text-sm font-medium text-neutral-400">{props.data.numComments}</p>
             </div>
           </div>
