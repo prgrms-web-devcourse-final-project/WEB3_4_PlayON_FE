@@ -1,0 +1,82 @@
+.retro-btn.purple {
+  background-color: #6738f6;
+}
+.retro-btn-box-shadow.purple {
+  background-color: #3f1ac4;
+}
+.retro-btn-shadow.purple {
+  background-color: #a3a3a3;
+}
+
+.retro-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 25px;
+  cursor: pointer;
+  color: white;
+  transition: all 0.1s ease-in-out;
+  user-select: none;
+  position: relative;
+}
+.retro-btn-box-shadow {
+  content: '';
+  position: absolute;
+  top: calc(0px + 7px);
+  left: 0;
+  width: calc(100%);
+  height: calc(100%);
+  border-radius: 25px;
+  z-index: -1;
+  transition: all 0.1s ease-in-out;
+}
+.retro-btn-shadow {
+  content: '';
+  position: absolute;
+  top: calc(0px + 9px);
+  left: 0;
+  background-color: gray;
+  width: calc(100%);
+  height: calc(100%);
+  border-radius: 25px;
+  z-index: -2;
+  transition: all 0.1s ease-in-out;
+}
+
+.retro-btn.hover {
+  transform: translateY(1px);
+}
+.retro-btn.hover-left {
+  transform: skewY(-1deg) translateY(1px);
+}
+.retro-btn.hover-right {
+  transform: skewY(1deg) translateY(1px);
+}
+
+.retro-btn-box-shadow {
+  transform: translateY(-2px);
+}
+.retro-btn-box-shadow.hover-left {
+  transform: skewY(0.5deg) translateY(-2px);
+}
+.retro-btn-box-shadow.hover-right {
+  transform: skewY(-0.5deg) translateY(-2px);
+}
+
+.retro-btn-shadow.hover {
+  transform: translateY(-2px);
+}
+.retro-btn-shadow.hover-left {
+  transform: skewY(1deg) translateY(-2px);
+}
+.retro-btn-shadow.hover-right {
+  transform: skewY(-1deg) translateY(-2px);
+}
+
+.retro-btn.active {
+  transform: translateY(3px);
+}
+.retro-btn-shadow.active {
+  transform: translateY(-3px);
+}
