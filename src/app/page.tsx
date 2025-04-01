@@ -1,3 +1,5 @@
+import PixelCharacter from '@/components/PixelCharacter/PixelCharacter';
+
 export default function Home() {
   return (
     <div>

@@ -1,0 +1,73 @@
+@keyframes frame6 {
+  from {
+    background-position-x: calc(-144px * 0);
+  }
+  to {
+    background-position-x: calc(-144px * 6);
+  }
+}
+@keyframes frame5 {
+  from {
+    background-position-x: calc(-144px * 0);
+  }
+  to {
+    background-position-x: calc(-144px * 5);
+  }
+}
+@keyframes frame4 {
+  from {
+    background-position-x: calc(-144px * 0);
+  }
+  to {
+    background-position-x: calc(-144px * 4);
+  }
+}
+@keyframes frame3 {
+  from {
+    background-position-x: calc(-144px * 0);
+  }
+  to {
+    background-position-x: calc(-144px * 3);
+  }
+}
+.archer {
+  background: url(/img/sprite_sheet/char_sheet_a.svg);
+}
+.warrior {
+  background: url(/img/sprite_sheet/char_sheet_w.svg);
+}
+.mage {
+  background: url(/img/sprite_sheet/char_sheet_m.svg);
+}
+.run {
+  animation: frame6 1s steps(6) infinite;
+  background-position-y: calc(-96.2px * 8) !important;
+}
+.walk {
+  animation: frame4 1s steps(4) infinite;
+  background-position-y: calc(-96.2px * 1) !important;
+}
+.jump {
+  animation: frame3 1s steps(3) infinite;
+  background-position-y: calc(-96.2px * 2) !important;
+}
+.attack {
+  animation: frame4 1s steps(4) infinite;
+  background-position-y: calc(-96.2px * 3) !important;
+}
+.defence {
+  animation: frame4 1s steps(4) infinite;
+  background-position-y: calc(-96.2px * 4) !important;
+}
+.attacked {
+  animation: frame3 1s steps(3) infinite;
+  background-position-y: calc(-96.2px * 5) !important;
+}
+.dying {
+  animation: frame5 1s steps(5) infinite;
+  background-position-y: calc(-96.2px * 6) !important;
+}
+.ulti {
+  animation: frame6 1s steps(6) infinite;
+  background-position-y: calc(-96.2px * 7) !important;
+}
