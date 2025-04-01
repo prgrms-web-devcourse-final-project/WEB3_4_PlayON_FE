@@ -1,27 +1,40 @@
 import { Trophy } from 'lucide-react';
 
 interface UserInfoProps {
-  isRadioBtn?: boolean;
   data: User;
+  isRadioBtn?: boolean;
+  name?: string;
 }
 
-export default function UserInfoVertical({ isRadioBtn = false, data }: UserInfoProps) {
+export default function UserInfoVertical({ isRadioBtn = false, data, name }: UserInfoProps) {
   return (
-    <label htmlFor={data.username} className="inline-flex items-center flex-col gap-2">
-      {isRadioBtn && <input type="radio" id={data.username} name="vipUser" className=" peer" />}
+    <div className="inline-flex items-center flex-col gap-2">
+      <label htmlFor={data.username} className="relative">
+        {isRadioBtn && (
+          <input type="radio" id={data.username} name={name} value={data.username} className="hidden peer" />
+        )}
+        <div
+          style={{
+            background: 'linear-gradient(-27deg, #FCD34D 0%, #FFECAF 29%, #EFAE45 100%)',
+          }}
+          className="opacity-0 peer-checked:opacity-100 rounded-full bg-amber-300 size-[100px] transition-all ease-linear duration-100"
+        ></div>
+        <div
+          style={{
+            backgroundImage: `url(${data.profile_img})`,
+          }}
+          className="absolute top-0 rounded-full bg-center w-[100px] h-[100px] peer-checked:size-[92px] peer-checked:top-1 peer-checked:left-1 peer-checked:shadow-[inset_0px_0px_12px_3px_rgba(0,0,0,0.32)]"
+        />
+        <div className="opacity-0 peer-checked:opacity-20 absolute top-1 left-1 size-[92px] rounded-full bg-[#D18800]" />
 
-      <div
-        style={{
-          backgroundImage: `url(${data.profile_img})`,
-        }}
-        className="relative rounded-full bg-center bg-cover w-[100px] h-[100px] peer-checked:outline-4 peer-checked:outline-yellow-400"
-      >
-        <div className="bg-amber-300 rounded-full p-1 absolute bottom-0 right-0">
+        <div className="opacity-0 peer-checked:opacity-100 bg-amber-300 rounded-full p-1 absolute bottom-0 right-0 transition-all ease-linear duration-100">
           <Trophy className="size-5 stroke-[1.6px] text-amber-100" />
         </div>
-      </div>
+      </label>
 
-      <p className="font-suit text-neutral-900 font-bold text-base w-[100px] line-clamp-1">{data.username}</p>
-    </label>
+      <label htmlFor={data.username}>
+        <p className="font-suit text-neutral-900 font-bold text-base w-[100px] text-center">{data.username}</p>
+      </label>
+    </div>
   );
 }
