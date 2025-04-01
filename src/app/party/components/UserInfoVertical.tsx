@@ -1,17 +1,38 @@
 import { Trophy } from 'lucide-react';
+import { useRef, useState } from 'react';
 
 interface UserInfoProps {
   data: User;
   isRadioBtn?: boolean;
   name?: string;
+  onSelected?: (value: string) => void;
 }
 
-export default function UserInfoVertical({ isRadioBtn = false, data, name }: UserInfoProps) {
+export default function UserInfoVertical({ isRadioBtn = false, data, name, onSelected }: UserInfoProps) {
+  const radioRef = useRef<HTMLInputElement | null>(null);
+
+  const handleChange = () => {
+    if (!radioRef.current) return;
+    else {
+      // console.log(radioRef.current.value);
+      if (onSelected) {
+        onSelected(radioRef.current.value);
+      }
+    }
+  };
   return (
     <div className="inline-flex items-center flex-col gap-2">
       <label htmlFor={data.username} className="relative">
         {isRadioBtn && (
-          <input type="radio" id={data.username} name={name} value={data.username} className="hidden peer" />
+          <input
+            ref={radioRef}
+            type="radio"
+            id={data.username}
+            name={name}
+            value={data.username}
+            onChange={handleChange}
+            className="hidden peer"
+          />
         )}
         <div
           style={{
