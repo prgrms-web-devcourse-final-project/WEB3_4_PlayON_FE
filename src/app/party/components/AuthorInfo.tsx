@@ -1,12 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Avatar } from '@radix-ui/react-avatar';
 
-type User = {
-  profile_img: string;
-  title: string;
-  username: string;
-};
-
 interface AuthorInfoProps {
   data: User;
 }
