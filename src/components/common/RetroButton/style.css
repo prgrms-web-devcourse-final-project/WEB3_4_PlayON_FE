@@ -1,0 +1,27 @@
+.retro-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 25px;
+  cursor: pointer;
+  background-color: #6738f6;
+  color: white;
+  box-shadow: 0 5px #3f1ac4;
+  transition: transform 0.1s ease-in-out;
+  user-select: none;
+  position: relative;
+}
+.retro-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  translate: -50% calc(-50% + 8px);
+  background-color: gray;
+  width: calc(100%);
+  height: calc(100%);
+  border-radius: 25px;
+  z-index: -1;
+  transition: transform 0.1s ease-in-out;
+}
