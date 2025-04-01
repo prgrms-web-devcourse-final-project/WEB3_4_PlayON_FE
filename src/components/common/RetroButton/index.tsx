@@ -33,9 +33,9 @@ export default function RetroButton(props: RetroButtonProps) {
     setActive('');
   };
   return (
-    <div className="relative">
+    <div className={`relative ` + props.className}>
       <div
-        className={`retro-btn ${tiltDirection} ${active} ${props.type} ` + props.className}
+        className={`w-full h-full retro-btn ${tiltDirection} ${active} ${props.type} `}
         onMouseMove={mouseMoveHandler}
         onMouseLeave={() => setTiltDirection('')}
         onMouseDown={mouseDownHandler}
@@ -43,8 +43,8 @@ export default function RetroButton(props: RetroButtonProps) {
       >
         {props.children}
       </div>
-      <div className={`retro-btn-box-shadow ${tiltDirection} ${active} ${props.type} ` + props.className}></div>
-      <div className={`retro-btn-shadow ${tiltDirection} ${active} ${props.type} ` + props.className}></div>
+      <div className={`w-full h-full retro-btn-box-shadow ${tiltDirection} ${active} ${props.type} `}></div>
+      <div className={`w-full h-full retro-btn-shadow ${tiltDirection} ${active} ${props.type} `}></div>
     </div>
   );
 }
