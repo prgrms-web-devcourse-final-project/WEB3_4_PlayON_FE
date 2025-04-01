@@ -1,3 +1,5 @@
+import PartyCard from '@/components/party/PartyCard';
+
 export default function Party() {
   return (
     <div>

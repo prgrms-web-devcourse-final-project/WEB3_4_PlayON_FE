@@ -17,7 +17,6 @@ export default function Tag({
   children,
   className,
 }: TagProps) {
-  console.log(size, style, background);
   return (
     <div
       className={cn(
