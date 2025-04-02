@@ -12,23 +12,20 @@ interface PartyCardProps {
 
 export function PartyLogCardSkeleton() {
   return (
-    <div className="flex flex-col gap-2 p-5 w-[410px] border-2 border-neutral-300 rounded-xl">
+    <div className="flex flex-col gap-4 p-5 w-[410px] border-2 border-neutral-300 rounded-xl">
       <Skeleton className="h-[160px] rounded-xl" />
-      <div className="flex gap-2">
-        <Skeleton className="h-6 rounded-sm w-1/6" />
-        <Skeleton className="h-6 rounded-sm w-1/6" />
-      </div>
-      <Skeleton className="h-8 rounded-sm w-1/2" />
-      <Skeleton className="h-6 rounded-sm" />
-      <div className="flex justify-between py-2">
-        <div className="flex gap-1">
-          <Skeleton className="h-5 w-5 rounded-full" />
-          <Skeleton className="h-5 w-5 rounded-full" />
-          <Skeleton className="h-5 w-5 rounded-full" />
-          <Skeleton className="h-5 w-5 rounded-full" />
+      <div className="flex flex-col gap-1">
+        <Skeleton className="h-8 rounded-sm w-1/2" />
+        <div className="flex justify-between py-2">
+          <Skeleton className="h-5 w-1/4 rounded-sm" />
+          <Skeleton className="h-5 w-10 rounded-sm" />
         </div>
-        <Skeleton className="h-5 w-10 rounded-sm" />
+        <div className="flex gap-2">
+          <Skeleton className="h-6 rounded-sm w-1/6" />
+          <Skeleton className="h-6 rounded-sm w-1/6" />
+        </div>
       </div>
+      <Skeleton className="w-full h-10" />
     </div>
   );
 }
