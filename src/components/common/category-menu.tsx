@@ -37,7 +37,7 @@ export default function CategoryMenu(props: CategoryMenuProps) {
 
   return (
     <div className={`w-full flex items-center gap-5 ` + props.className}>
-      <div className="flex gap-1 flex-wrap">
+      <div className="flex gap-2 flex-wrap">
         <div onClick={() => onClick(0)}>
           <TiltToggle label={'전체'} toggle={selected[0]} />
         </div>
