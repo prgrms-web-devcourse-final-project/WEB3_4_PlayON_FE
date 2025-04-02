@@ -1,18 +1,19 @@
 'use client';
+
 import { Party } from '@/types/party';
 import Tag from '../common/Tag';
 import { Skeleton } from '../ui/skeleton';
 import { Button } from '../ui/button';
 import formatDate from '@/utils/formatDate';
+import { useRouter } from 'next/navigation';
 
 interface PartyCardProps {
   data: Party;
-  onBtnClick: () => void;
 }
 
 export function PartyLogCardSkeleton() {
   return (
-    <div className="flex flex-col gap-4 p-5 w-[410px] border-2 border-neutral-300 rounded-xl">
+    <div className="flex flex-col gap-4 p-5 w-[410px] border-[1px] border-neutral-300 rounded-xl">
       <Skeleton className="h-[160px] rounded-xl" />
       <div className="flex flex-col gap-1">
         <Skeleton className="h-8 rounded-sm w-1/2" />
@@ -30,7 +31,11 @@ export function PartyLogCardSkeleton() {
   );
 }
 
-export default function PartyLogCard({ data, onBtnClick: onCardClick }: PartyCardProps) {
+export default function PartyLogCard({ data }: PartyCardProps) {
+  const router = useRouter();
+  const handleClick = () => {
+    router.push('/');
+  };
   return (
     <div className="flex flex-col gap-4 p-5 w-[410px] rounded-xl bg-white border-[1px] border-neutral-300 cursor-pointer">
       <div
@@ -55,7 +60,7 @@ export default function PartyLogCard({ data, onBtnClick: onCardClick }: PartyCar
           ))}
         </div>
       </div>
-      <Button className="text-lg h-10" onClick={onCardClick}>
+      <Button className="text-lg h-10" onClick={handleClick}>
         파티 로그 확인
       </Button>
     </div>
