@@ -48,7 +48,7 @@ export default function WeNeedYou(props: WeNeedYouProps) {
       <div className="flex rounded-lg gap-2 text-neutral-400 border border-neutral-300 items-center p-2">
         <Input
           placeholder="게시글 제목으로 검색하세요"
-          className="border-none text-sm h-5 focus-visible:ring-transparent"
+          className="border-none text-sm h-5 focus-visible:ring-transparent shadow-none"
         />
         <SearchIcon className="text-neutral-400 cursor-pointer" onClick={HandleSearchClick} />
       </div>
