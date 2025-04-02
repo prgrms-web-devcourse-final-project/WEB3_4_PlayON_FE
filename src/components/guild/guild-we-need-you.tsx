@@ -6,6 +6,8 @@ import { Input } from '@/components/ui/input';
 import { SearchIcon } from 'lucide-react';
 import CapsuleCategoryMenu from '@/components/common/capsule-category-menu';
 import { useState } from 'react';
+import UserInfo from '@/app/party/components/UserInfoHorizontal';
+import User from '@/types/user';
 
 type WeNeedYouProps = {
   guildData: guild;
@@ -20,10 +22,16 @@ export default function WeNeedYou(props: WeNeedYouProps) {
     setQuery('');
   }
 
+  const user: User = {
+    profile_img: 'https://avatars.githubusercontent.com/u/124599?v=4',
+    title: '배신자',
+    username: 'Morty',
+  };
+
   return (
     <div className={`flex flex-col p-8 gap-9 rounded-xl border border-neutral-200 bg-white ${props.className} `}>
       <div className="flex flex-col gap-5 ">
-        <div className="h-9 bg-slate-400 rounded-xl"></div>
+        <UserInfo size="small" data={user} />
         <p className="font-dgm line-clamp-1 text-ellipsis overflow-hidden text-neutral-900 text-4xl">
           {props.guildData.name}
         </p>

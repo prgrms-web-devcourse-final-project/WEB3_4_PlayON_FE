@@ -1,5 +1,6 @@
 import { Trophy } from 'lucide-react';
 import { useRef } from 'react';
+import User from '@/types/user';
 
 interface UserInfoProps {
   data: User;

@@ -1,4 +1,5 @@
 import UserInfoVertical from './UserInfoVertical';
+import User from '@/types/user';
 
 interface VipRadioGroupProps {
   users: User[];

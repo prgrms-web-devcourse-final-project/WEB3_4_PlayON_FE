@@ -1,4 +1,5 @@
 import { cn } from '@/lib/utils';
+import User from '@/types/user';
 
 interface UserInfoProps {
   size?: 'small' | 'big';

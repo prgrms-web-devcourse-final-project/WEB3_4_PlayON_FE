@@ -1,5 +1,5 @@
-import { Button } from '@/components/ui/button';
 import { Avatar } from '@radix-ui/react-avatar';
+import User from '@/types/user';
 
 interface AuthorInfoProps {
   data: User;
