@@ -1,16 +1,21 @@
 import { Avatar } from '@/components/ui/avatar';
 import { guildUser } from '@/types/guildUser';
+import { useMemo } from 'react';
 
 type guildUserProps = {
   data: guildUser;
   lastDate: string;
   postNum: number;
-  showBorder?: boolean;
+  index: number;
+  total: number;
   // avatarClassName?: string;
 };
 
-export default function GuildUser({ data, lastDate, postNum, showBorder = true }: guildUserProps) {
-// export default function GuildUser({ data, lastDate, postNum, showBorder = true, avatarClassName="w-full" }: guildUserProps) {
+export default function GuildUser(props: guildUserProps) {
+
+  const { data, lastDate, postNum, index, total } = props;
+  const isList = useMemo(() => index === total - 1, [index, total]);
+
   return (
     <>
       <div className="flex gap-6 py-8">
@@ -40,7 +45,7 @@ export default function GuildUser({ data, lastDate, postNum, showBorder = true }
         </div>
       </div>
 
-      {showBorder && <div className="border-b border-neutral-200"></div>}
+      {!isList && <div className="border-b border-neutral-200"></div>}
     </>
   );
 }
