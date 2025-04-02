@@ -7,7 +7,7 @@ import formatDate from '@/utils/formatDate';
 
 interface PartyCardProps {
   data: Party;
-  onCardClick: () => void;
+  onBtnClick: () => void;
 }
 
 export function PartyLogCardSkeleton() {
@@ -30,7 +30,7 @@ export function PartyLogCardSkeleton() {
   );
 }
 
-export default function PartyLogCard({ data, onCardClick }: PartyCardProps) {
+export default function PartyLogCard({ data, onBtnClick: onCardClick }: PartyCardProps) {
   return (
     <div className="flex flex-col gap-4 p-5 w-[410px] rounded-xl bg-white border-[1px] border-neutral-300 cursor-pointer">
       <div
