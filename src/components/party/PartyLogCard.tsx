@@ -2,6 +2,7 @@ import { Party } from '@/types/party';
 import Tag from '../common/Tag';
 import { Skeleton } from '../ui/skeleton';
 import { Button } from '../ui/button';
+import formatDate from '@/utils/formatDate';
 
 interface PartyCardProps {
   data: Party;
@@ -58,15 +59,4 @@ export default function PartyLogCard({ data }: PartyCardProps) {
       <Button className="text-lg h-10">파티 로그 확인</Button>
     </div>
   );
-}
-
-// 날짜 포맷팅 함수
-function formatDate(targetDate: Date) {
-  return targetDate.toLocaleString('ko-KR', {
-    month: 'long',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false,
-  });
 }
