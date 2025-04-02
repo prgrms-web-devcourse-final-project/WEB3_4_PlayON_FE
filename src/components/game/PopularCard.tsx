@@ -1,15 +1,21 @@
 import { game } from "@/types/game";
 
-export default function PopularCard(props: game) {
+type PopularCardProps = {
+  data: game;
+}
 
+export default function PopularCard(props: PopularCardProps) {
+  
+  const { data } = props;
+  
   return (
     <>
       <div>
-        {/* <img src="test.png" className="w-[411px] h-[192.1px] rounded-xl" /> */}
-        <div className="bg-neutral-400 w-full aspect-[16/7] rounded-xl"></div>
-        <p className="mt-4 font-suit text-xl font-semibold"> {props.title}</p>
-        <p className="mt-2 text-sm text-neutral-400 font-medium"> {props.genre}</p>
+        <img src={data.image} className="w-full aspect-[16/7] rounded-xl bg-neutral-400" />
+        {/* <div className="bg-neutral-400 w-full aspect-[16/7] rounded-xl"></div> */}
+        <p className="mt-4 font-suit text-xl font-semibold"> {data.title}</p>
+        <p className="mt-2 text-sm text-neutral-400 font-medium"> {data.genre}</p>
       </div>
     </>
-  ); 
+  );
 }
