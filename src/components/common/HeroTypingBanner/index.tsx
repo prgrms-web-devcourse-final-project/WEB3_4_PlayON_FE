@@ -1,12 +1,10 @@
 'use client';
-// import { Input } from '@/components/ui/input';
-import { ReactNode, useState } from 'react';
+import { ReactNode, useCallback, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
-
-// Import Swiper styles
-import 'swiper/css';
+import type { Swiper as SwiperType } from 'swiper';
 import { Autoplay } from 'swiper/modules';
 import './style.css';
+import 'swiper/css';
 
 type Banner = {
   title: string;
@@ -22,6 +20,15 @@ interface HeroTypingBannerProps {
 export default function HeroTypingBanner({ data, isStatic, children }: HeroTypingBannerProps) {
   const [index, setIndex] = useState(0);
   const [isRemoving, setIsRemoving] = useState(false);
+
+  const handleSliderChangeStart = useCallback(() => {
+    setIsRemoving(true);
+  }, []);
+
+  const handleSliderChangeEnd = useCallback((swiper: SwiperType) => {
+    setIndex(swiper.realIndex);
+    setIsRemoving(false);
+  }, []);
 
   if (isStatic) {
     return (
@@ -39,17 +46,8 @@ export default function HeroTypingBanner({ data, isStatic, children }: HeroTypin
     <div className="size-full relative">
       <Swiper
         slidesPerView={1}
-        onSlideChangeTransitionStart={(swiper) => {
-          setIsRemoving(true);
-          setTimeout(() => {
-            setIsRemoving(false);
-          }, 2500);
-          console.log('start', swiper.realIndex);
-        }}
-        onSlideChangeTransitionEnd={(swiper) => {
-          console.log('end', swiper.realIndex);
-          setIndex(swiper.realIndex);
-        }}
+        onSlideChangeTransitionStart={handleSliderChangeStart}
+        onSlideChangeTransitionEnd={handleSliderChangeEnd}
         modules={[Autoplay]}
         autoplay={{
           delay: 2500,
@@ -74,7 +72,7 @@ export default function HeroTypingBanner({ data, isStatic, children }: HeroTypin
         <div>
           <p className="text-white font-suit text-xl w-[700px]">지금 핫한</p>
           <p
-            key={data[index].title}
+            key={index}
             className={`w-fit text-white font-suit font-extrabold text-8xl blur-none whitespace-nowrap typing-animation place-self-start ${isRemoving ? 'removing' : ''}`}
           >
             {data[index].title}
