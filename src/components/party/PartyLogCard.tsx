@@ -1,3 +1,4 @@
+'use client';
 import { Party } from '@/types/party';
 import Tag from '../common/Tag';
 import { Skeleton } from '../ui/skeleton';
@@ -6,6 +7,7 @@ import formatDate from '@/utils/formatDate';
 
 interface PartyCardProps {
   data: Party;
+  onCardClick: () => void;
 }
 
 export function PartyLogCardSkeleton() {
@@ -31,7 +33,7 @@ export function PartyLogCardSkeleton() {
   );
 }
 
-export default function PartyLogCard({ data }: PartyCardProps) {
+export default function PartyLogCard({ data, onCardClick }: PartyCardProps) {
   return (
     <div className="flex flex-col gap-4 p-5 w-[410px] rounded-xl bg-white border-[1px] border-neutral-300 cursor-pointer">
       <div
@@ -56,7 +58,9 @@ export default function PartyLogCard({ data }: PartyCardProps) {
           ))}
         </div>
       </div>
-      <Button className="text-lg h-10">파티 로그 확인</Button>
+      <Button className="text-lg h-10" onClick={onCardClick}>
+        파티 로그 확인
+      </Button>
     </div>
   );
 }
