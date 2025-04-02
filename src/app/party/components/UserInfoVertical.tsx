@@ -1,5 +1,5 @@
 import { Trophy } from 'lucide-react';
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 
 interface UserInfoProps {
   data: User;
@@ -14,7 +14,6 @@ export default function UserInfoVertical({ isRadioBtn = false, data, name, onSel
   const handleChange = () => {
     if (!radioRef.current) return;
     else {
-      // console.log(radioRef.current.value);
       if (onSelected) {
         onSelected(radioRef.current.value);
       }
