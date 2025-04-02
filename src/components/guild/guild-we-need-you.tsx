@@ -5,6 +5,7 @@ import RetroButton from '../common/RetroButton';
 import { Input } from '@/components/ui/input';
 import { SearchIcon } from 'lucide-react';
 import CapsuleCategoryMenu from '@/components/common/capsule-category-menu';
+import { useState } from 'react';
 
 type WeNeedYouProps = {
   guildData: guild;
@@ -12,6 +13,13 @@ type WeNeedYouProps = {
 };
 
 export default function WeNeedYou(props: WeNeedYouProps) {
+  const [query, setQuery] = useState('');
+
+  function HandleSearchClick() {
+    console.log(query);
+    setQuery('');
+  }
+
   return (
     <div className={`flex flex-col p-8 gap-9 rounded-xl border border-neutral-200 bg-white ${props.className} `}>
       <div className="flex flex-col gap-5 ">
@@ -42,7 +50,7 @@ export default function WeNeedYou(props: WeNeedYouProps) {
           placeholder="게시글 제목으로 검색하세요"
           className="border-none text-sm h-5 focus-visible:ring-transparent"
         />
-        <SearchIcon className="text-neutral-400" />
+        <SearchIcon className="text-neutral-400 cursor-pointer" onClick={HandleSearchClick} />
       </div>
       <CapsuleCategoryMenu items={['공지', '자유', '게임 관련']} multiple={true} />
     </div>
