@@ -1,5 +1,5 @@
 import { guildUser } from '@/types/guildUser';
-import { Avatar } from '../ui/avatar';
+import { Avatar, AvatarImage } from '../ui/avatar';
 
 type chatProps = {
   data: guildUser;
@@ -13,8 +13,9 @@ export default function Chat(props: chatProps) {
   return (
     <>
       <div className={`flex ${isSender ? 'justify-start flex-row' : 'flex-row-reverse'} gap-5 items-center`}>
-        {<Avatar className="bg-neutral-400 w-16 h-16" />}
-
+        <Avatar className="bg-neutral-400 w-16 h-16">
+          <AvatarImage src={data.image} />
+        </Avatar>
         <div className={`box-content bg-neutral-200 rounded-lg px-5 py-2 ${isSender ? 'mr-3' : 'ml-3'}`}>
           <div className="flex gap-1">
             {isSender && (

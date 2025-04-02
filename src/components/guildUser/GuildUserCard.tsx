@@ -1,4 +1,4 @@
-import { Avatar } from "@/components/ui/avatar";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { guildUser } from "@/types/guildUser";
 
 type guildUserCardProps = {
@@ -39,7 +39,9 @@ export default function GuildUserCard(props: guildUserCardProps) {
       <div className="box-content rounded-lg border border-neutral-300 px-6 py-8">
         <div className="flex gap-5">
           <div className="w-16 h-16 aspect-square relative ">
-            <Avatar className="bg-neutral-400 w-16 h-16" />
+            <Avatar className="bg-neutral-400 w-16 h-16">
+              <AvatarImage src={data.image} />
+            </Avatar>
             {badge}
 
             {/* <div className="bg-amber-300 rounded-full w-5 h-5 absolute bottom-0 right-0">

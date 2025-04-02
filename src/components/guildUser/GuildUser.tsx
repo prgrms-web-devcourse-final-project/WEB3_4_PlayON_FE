@@ -1,4 +1,4 @@
-import { Avatar } from '@/components/ui/avatar';
+import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import { guildUser } from '@/types/guildUser';
 import { useMemo } from 'react';
 
@@ -19,7 +19,9 @@ export default function GuildUser(props: guildUserProps) {
   return (
     <>
       <div className="flex gap-6 py-8">
-        <Avatar className="bg-neutral-400 w-16 h-16" />
+        <Avatar className="bg-neutral-400 w-16 h-16">
+          <AvatarImage src={data.image} />
+        </Avatar>
 
         <div className="w-full">
           <p className="font-suit text-2xl font-bold">{data.name}</p>
