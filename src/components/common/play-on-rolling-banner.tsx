@@ -6,7 +6,7 @@ import GhostSVG from '@/components/svg/ghost_fill';
 export default function PlayOnRollingBanner(props: { speed: number; direction: 'left' | 'right' }) {
   return (
     <RollingBanner
-      className="bg-gradient-to-r from-purple-700 to-purple-500 h-16"
+      className="bg-gradient-to-r from-purple-700 to-purple-500 h-16 select-none"
       speed={props.speed}
       direction={props.direction}
     >
