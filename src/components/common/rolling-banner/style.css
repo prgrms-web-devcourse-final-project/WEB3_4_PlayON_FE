@@ -6,6 +6,14 @@
     transform: translateX(-100%);
   }
 }
+@keyframes scrollRight {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
 
 .rolling-list {
   box-sizing: border-box;
