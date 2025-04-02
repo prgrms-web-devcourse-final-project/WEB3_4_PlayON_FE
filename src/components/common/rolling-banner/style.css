@@ -1,15 +1,17 @@
 @keyframes scrollLeft {
+  from {
+    transform: translateX(-50%);
+  }
   to {
-    left: -208px;
+    transform: translateX(-100%);
   }
 }
 
-.item {
+.rolling-list {
   box-sizing: border-box;
   position: absolute;
   left: 100%;
   animation-name: scrollLeft;
-  animation-duration: 80s;
   animation-timing-function: linear;
   animation-iteration-count: infinite;
 }

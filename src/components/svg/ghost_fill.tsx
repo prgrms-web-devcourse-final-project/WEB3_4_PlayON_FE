@@ -1,13 +1,15 @@
 type GhostSVGProps = {
   stroke: string;
   fill: string;
+  width?: number;
+  height?: number;
 };
 
 export default function GhostSVG(props: GhostSVGProps) {
   return (
     <svg
-      width="100%"
-      height="100%"
+      width={props.width ?? '100%'}
+      height={props.height ?? '100%'}
       viewBox="0 0 28 32"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
