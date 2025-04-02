@@ -48,3 +48,26 @@ export default function WeNeedYou(props: WeNeedYouProps) {
     </div>
   );
 }
+
+// USAGE
+// import PixelCharacter from '@/components/PixelCharacter/PixelCharacter';
+// import WeNeedYou from '@/components/guild/guild-we-need-you';
+// import guild from '@/types/guild';
+
+// export default function Home() {
+//   const guildData: guild = {
+//     name: '길드명 길드명 길드명',
+//     description:
+//       '길드소개 두 줄 까지 Lorem ipsum dolor sit amet consectetur. Interdum bibendum etiam rutrum lacus ut volutpat.',
+//     guildTags: ['Guild', 'Tags'],
+//     image: '',
+//     numMembers: 24,
+//   };
+
+//   return (
+//     <div>
+//       <p className=" text-center text-5xl p-5">Play ON!</p>
+//       <WeNeedYou guildData={guildData} className="w-[411px] ml-5" />
+//     </div>
+//   );
+// }
