@@ -43,7 +43,7 @@ export default function UserInfo({ size = 'big', data }: UserInfoProps) {
             'font-semibold': size === 'small',
           })}
         >
-          {data.username}
+          {data.nickname}
         </p>
       </div>
     </div>
