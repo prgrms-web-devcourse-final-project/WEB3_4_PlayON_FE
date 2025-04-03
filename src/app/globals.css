@@ -67,8 +67,29 @@
 @layer base {
   * {
     @apply border-border;
+    word-break: keep-all;
+    box-sizing: border-box;
+    font-family:
+      SUIT,
+      'Pretendard',
+      -apple-system,
+      BlinkMacSystemFont,
+      system-ui,
+      'Roboto',
+      'Helvetica Neue',
+      'Segoe UI',
+      'Apple SD Gothic Neo',
+      'Noto Sans KR',
+      'Malgun Gothic',
+      'Apple Color Emoji',
+      'Segoe UI Emoji',
+      'Segoe UI Symbol',
+      sans-serif;
   }
   body {
     @apply bg-background text-foreground;
+  }
+  .wrapper {
+    @apply max-w-screen-xl mx-auto px-4 md:px-7 lg:px-10 xl:px-0;
   }
 }
