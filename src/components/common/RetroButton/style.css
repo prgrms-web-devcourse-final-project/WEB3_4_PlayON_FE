@@ -5,7 +5,7 @@
   background-color: #3f1ac4;
 }
 .retro-btn-shadow.purple {
-  background-color: #a3a3a3;
+  background-color: rgba(0, 0, 0, 0.4);
 }
 
 .retro-btn {
@@ -13,7 +13,8 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  border-radius: 25px;
+  border-radius: 9999px;
+  padding: 8px 20px;
   cursor: pointer;
   color: white;
   transition: all 0.1s ease-in-out;
@@ -37,7 +38,7 @@
   position: absolute;
   top: calc(0px + 9px);
   left: 0;
-  background-color: gray;
+  background-color: rgba(0, 0, 0, 0.4);
   width: calc(100%);
   height: calc(100%);
   border-radius: 25px;
