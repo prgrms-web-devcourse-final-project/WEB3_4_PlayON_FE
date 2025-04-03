@@ -8,7 +8,7 @@ type GuildFullimageProps = {
   className?: string;
 };
 
-export function GuildFullimageSkeleton(props: { className: string }) {
+export function GuildFullImageSkeleton(props: { className: string }) {
   return <Skeleton className={`rounded-lg aspect-[16/9] ` + props.className} />;
 }
 
@@ -16,7 +16,7 @@ export default function GuildFullimage(props: GuildFullimageProps) {
   return (
     <div
       className={
-        `rounded-lg overflow-hidden aspect-[16/9] px-6 py-7 flex flex-col justify-between bg-[#00000060] ` +
+        `select-none rounded-lg overflow-hidden aspect-[16/9] px-6 py-7 flex flex-col justify-between bg-[#00000060] ` +
         props.className
       }
       style={{
