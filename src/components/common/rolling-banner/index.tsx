@@ -10,8 +10,12 @@ type RollingBannerProps = {
 };
 
 export default function RollingBanner(props: RollingBannerProps) {
-  function RollingBannerItem(child: ReactNode) {
-    return <div className="rolling-item flex items-center justify-center">{child}</div>;
+  function RollingBannerItem(child: ReactNode, key: string) {
+    return (
+      <div className="rolling-item flex items-center justify-center" key={key}>
+        {child}
+      </div>
+    );
   }
 
   const scrollDirection = props.direction === 'left' ? 'scrollLeft' : 'scrollRight';
@@ -22,11 +26,11 @@ export default function RollingBanner(props: RollingBannerProps) {
         style={{ animationDuration: `${props.duration}s`, animationName: `${scrollDirection}` }}
         className={`absolute rolling-list flex items-center gap-5`}
       >
-        {props.children.map((e) => {
-          return RollingBannerItem(e);
+        {props.children.map((e, ind) => {
+          return RollingBannerItem(e, `RB_1_${ind}`);
         })}
-        {props.children.map((e) => {
-          return RollingBannerItem(e);
+        {props.children.map((e, ind) => {
+          return RollingBannerItem(e, `RB_2_${ind}`);
         })}
       </div>
     </div>
