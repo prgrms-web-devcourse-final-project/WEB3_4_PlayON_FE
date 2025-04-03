@@ -5,7 +5,7 @@ export interface gameSimple {
 }
 
 export interface gameDetail {
-  name: string;
+  title: string;
   img_src: string;
   screenshot_src: string[];
   movie_src: string[];
@@ -13,7 +13,7 @@ export interface gameDetail {
   release_date: Date;
   developer: string;
   publisher: string;
-  homePage_url: string;
+  homepage_url: string;
   os: string[];
   detail_desc: string;
   about: string;

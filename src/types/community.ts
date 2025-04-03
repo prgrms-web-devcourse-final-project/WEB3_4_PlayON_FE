@@ -5,9 +5,9 @@ export interface post {
   title: string;
   content: string;
   img_src: string;
-  createdAt: Date;
+  created_at: Date;
   tag: string;
-  numLikes: number;
+  num_likes: number;
   comments: comment[];
   hits: number;
   channel: 'free' | 'guild';

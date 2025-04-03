@@ -1,16 +1,17 @@
+import { gameSimple } from './games';
 import { userSimple } from './user';
 
 export interface party {
   party_name: string;
   start_time: Date;
   tag: string[];
-  participation: userSimple;
-  selected_game: string[];
+  participation: userSimple[];
+  selected_game: gameSimple;
 }
 
-export interface partyLog extends party {
-  end_time: Date;
-  player_recommend: userSimple;
+export interface partyLog {
+  party_info: party;
+  player_recommend: playerRecommend[];
   screenshot: userScreenShot[];
   review: partyReview[];
 }
@@ -18,6 +19,11 @@ export interface partyLog extends party {
 export interface partyReview {
   author: userSimple;
   text: string;
+}
+
+export interface playerRecommend {
+  to: userSimple;
+  from: userSimple;
 }
 
 export interface userScreenShot {
