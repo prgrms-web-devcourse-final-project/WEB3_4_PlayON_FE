@@ -3,10 +3,12 @@ import { userSimple } from './user';
 
 export interface party {
   party_name: string;
+  description: string;
   start_time: Date;
-  tag: string[];
+  tags: string[];
   participation: userSimple[];
   selected_game: gameSimple;
+  num_maximum: number;
 }
 
 export interface partyLog {
