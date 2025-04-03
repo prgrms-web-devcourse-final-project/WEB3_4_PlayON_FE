@@ -18,6 +18,16 @@
   background-color: #a3a3a3;
 }
 
+.retro-btn.black {
+  background-color: #1c1917;
+}
+.retro-btn-box-shadow.black {
+  background-color: #0c0a09;
+}
+.retro-btn-shadow.black {
+  background-color: #a3a3a3;
+}
+
 .retro-btn {
   display: flex;
   flex-direction: column;
