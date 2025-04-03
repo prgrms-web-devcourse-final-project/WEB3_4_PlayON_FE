@@ -1,6 +1,6 @@
 'use client';
 
-const dummyData = [
+const partyDummyData = [
   {
     party_name: '빡종하지 않을 분을 구합니다',
     description:
@@ -46,10 +46,13 @@ const dummyData = [
     num_maximum: 8,
   },
 ];
+const guildDummyData = [];
 
 import RetroButton from '@/components/common/RetroButton';
 import SearchBar from '@/components/common/SearchBar';
+import GuildHorizon, { GuildHorizonSkeleton } from '@/components/guild/guild-horizon';
 import PartyCard from '@/components/party/PartyCard';
+import PixelCharacter from '@/components/PixelCharacter/PixelCharacter';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -113,7 +116,7 @@ export default function Home() {
             />
           </div>
           <div className="flex justify-end gap-6 my-12">
-            {dummyData.map((data, idx) => (
+            {partyDummyData.map((data, idx) => (
               <PartyCard data={data} key={idx} />
             ))}
           </div>
@@ -123,7 +126,26 @@ export default function Home() {
         </div>
       </section>
       <section className="bg-gradient-to-b from-purple-700 to-purple-50 py-16">
-        <div className="wrap max-w-screen-xl"></div>
+        <div className="wrapper">
+          <div className=" text-white">
+            <p className="font-dgm text-4xl">OR Join in</p>
+            <h2 className="font-dgm text-9xl">GAME GUILD</h2>
+            <p className="font-dgm text-xl">함께 게임을 즐길 길드를 찾아보세요</p>
+            <div className="w-80 my-12">
+              <RetroButton type="purple">더 찾아보기</RetroButton>
+            </div>
+          </div>
+          <div className="flex gap-6 h-[520px]">
+            <GuildHorizonSkeleton className="w-[410px] self-start" />
+            <GuildHorizonSkeleton className="w-[410px] self-center" />
+            <GuildHorizonSkeleton className="w-[410px] self-end" />
+          </div>
+          <div className="flex -mt-20">
+            <PixelCharacter className="-mx-8" char="archer" motion="attack" />
+            <PixelCharacter className="-mx-6" char="mage" motion="ulti" />
+            <PixelCharacter className="-mx-10" char="warrior" motion="attack" />
+          </div>
+        </div>
       </section>
       <section className="bg-purple-50 py-16">
         <div className="wrap max-w-screen-xl"></div>
