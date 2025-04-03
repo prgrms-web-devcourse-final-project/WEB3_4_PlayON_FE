@@ -45,9 +45,7 @@ export default function PartyLogCard({ data }: PartyCardProps) {
         className="flex flex-col h-[160px] rounded-xl overflow-hidden justify-between group bg-cover bg-center"
       ></div>
       <div className="flex flex-col gap-1">
-        <div className="font-suit text-2xl font-semibold line-clamp-1 text-neutral-900">
-          {data.party_info.party_name}
-        </div>
+        <div className="font-suit text-2xl font-semibold truncate text-neutral-900">{data.party_info.party_name}</div>
         <div className="flex justify-between items-center">
           <Tag style="time" className="px-0">
             {formatDate(data.party_info.start_time)}

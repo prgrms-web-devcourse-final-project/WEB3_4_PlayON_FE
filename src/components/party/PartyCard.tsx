@@ -55,9 +55,9 @@ export default function PartyCard({ data }: PartyCardProps) {
           {open_position < 1 && <Tag background="red">마감</Tag>}
         </div>
         <div className="opacity-0 relative bg-gradient-to-t from-neutral-900/70 to-neutral-900/0 p-4 h-28 translate-y-4 transition-all duration-200 ease-in-out group-hover:opacity-100 group-hover:translate-y-0">
-          <div className=" absolute bottom-2 right-4 font-suit text-4xl font-bold text-end text-white align-bottom">
-            PICO PARK
-          </div>
+          <p className=" absolute bottom-2 right-4 font-suit text-4xl font-bold text-end text-white align-bottom text-ellipsis">
+            {data.selected_game.title}
+          </p>
         </div>
       </div>
       <div className="flex gap-2 py-2">
@@ -68,8 +68,8 @@ export default function PartyCard({ data }: PartyCardProps) {
         ))}
       </div>
       <div className="flex flex-col gap-1 content-start">
-        <div className="font-suit text-2xl font-semibold line-clamp-1 text-neutral-900">{data.party_name}</div>
-        <p className="font-suit text-base line-clamp-1 text-neutral-900">{data.description}</p>
+        <div className="font-suit text-2xl font-semibold text-neutral-900 truncate">{data.party_name}</div>
+        <p className="font-suit text-base text-neutral-900 truncate">{data.description}</p>
       </div>
       <div className="flex py-2 justify-between">
         <div className="flex gap-1 items-center">
@@ -100,8 +100,6 @@ export default function PartyCard({ data }: PartyCardProps) {
 function getRemainingHours(targetDate: Date) {
   const currentTime = new Date().getTime();
   const targetTime = targetDate.getTime();
-
   const timeDifference = targetTime - currentTime;
-
   return timeDifference / (1000 * 60 * 60);
 }
