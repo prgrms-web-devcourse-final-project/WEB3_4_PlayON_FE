@@ -5,7 +5,7 @@ import './style.css';
 type RollingBannerProps = {
   className?: string;
   children: ReactNode[];
-  speed: number;
+  duration: number;
   direction: 'left' | 'right';
 };
 
@@ -19,7 +19,7 @@ export default function RollingBanner(props: RollingBannerProps) {
   return (
     <div className={`relative flex items-center overflow-hidden ${props.className}`}>
       <div
-        style={{ animationDuration: `${props.speed}s`, animationName: `${scrollDirection}` }}
+        style={{ animationDuration: `${props.duration}s`, animationName: `${scrollDirection}` }}
         className={`absolute rolling-list flex items-center gap-5`}
       >
         {props.children.map((e) => {
