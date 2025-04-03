@@ -1,9 +1,9 @@
 import { cn } from '@/lib/utils';
-import User from '@/types/user';
+import { userSimple } from '@/types/user';
 
 interface UserInfoProps {
   size?: 'small' | 'big';
-  data: User;
+  data: userSimple;
 }
 
 export default function UserInfo({ size = 'big', data }: UserInfoProps) {
@@ -16,7 +16,7 @@ export default function UserInfo({ size = 'big', data }: UserInfoProps) {
     >
       <div
         style={{
-          backgroundImage: `url(${data.profile_img})`,
+          backgroundImage: `url(${data.img_src})`,
         }}
         className={cn('rounded-full bg-center bg-cover', {
           'w-[100px] h-[100px]': size === 'big',
@@ -35,7 +35,7 @@ export default function UserInfo({ size = 'big', data }: UserInfoProps) {
             'text-sm': size === 'big',
           })}
         >
-          {data.title}
+          {data.user_title}
         </p>
         <p
           className={cn('font-suit text-neutral-900 font-bold text-base', {

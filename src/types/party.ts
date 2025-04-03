@@ -1,17 +1,35 @@
-export interface Party {
-  game_id: string; // 게임 이름
-  game_image: string; // 게임 이미지
-  name: string; // 파티 이름
-  description: string; // 설명
-  party_at: Date; // 일시
-  public: boolean; // 공개여부
-  minimum: number; // 최소인원
-  maximum: number; // 최대인원
-  party_tags: string[]; // 태그
-  members: User[]; // 참가 인원
+import { gameSimple } from './games';
+import { userSimple } from './user';
+
+export interface party {
+  party_name: string;
+  description: string;
+  start_time: Date;
+  tags: string[];
+  participation: userSimple[];
+  selected_game: gameSimple;
+  num_maximum: number;
 }
 
-interface User {
-  name: string;
-  image: string;
+export interface partyLog {
+  party_info: party;
+  player_recommend: playerRecommend[];
+  screenshot: userScreenShot[];
+  review: partyReview[];
+}
+
+export interface partyReview {
+  author: userSimple;
+  text: string;
+}
+
+export interface playerRecommend {
+  to: userSimple;
+  from: userSimple;
+}
+
+export interface userScreenShot {
+  img_src: string;
+  author: userSimple;
+  comment: string;
 }

@@ -1,11 +1,11 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
+import { userSimple } from '@/types/user';
 import { Avatar } from '@radix-ui/react-avatar';
-import User from '@/types/user';
 
 interface UserApproveProps {
-  data: User;
+  data: userSimple;
   onApprove: () => void;
   onReject: () => void;
 }
@@ -16,12 +16,12 @@ export default function UserApprove({ data, onApprove, onReject }: UserApprovePr
       <div className="flex gap-3">
         <Avatar
           style={{
-            backgroundImage: `url(${data.profile_img})`,
+            backgroundImage: `url(${data.img_src})`,
           }}
           className="bg-cover bg-center size-12 rounded-full shrink-0"
         />
         <div className="flex flex-col">
-          <div className="text-sm text-neutral-500 leading-5">{data.title}</div>
+          <div className="text-sm text-neutral-500 leading-5">{data.user_title}</div>
           <div className="text-lg text-neutral-900 font-semibold">{data.username}</div>
         </div>
       </div>
