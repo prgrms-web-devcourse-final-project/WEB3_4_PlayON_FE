@@ -13,9 +13,6 @@ export default function CapsuleCategoryMenu(props: CapsuleCategoryMenuProps) {
   const labels = ['전체', ...props.items];
   const [selected, setSelected] = useState<boolean[]>(initialSelected);
 
-  console.log(labels);
-  console.log(selected);
-
   function ItemClickHandler(index: number) {
     const newSelected = [...selected];
     newSelected[index] = !newSelected[index];

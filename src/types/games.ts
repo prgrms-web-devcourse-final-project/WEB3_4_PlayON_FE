@@ -13,10 +13,10 @@ export interface gameDetail {
   movie_src: string[];
   short_desc: string;
   release_date: Date;
-  developer: string;
-  publisher: string;
+  developer: string[];
+  publisher: string[];
   homepage_url: string;
-  os: string[];
+  os: { windows: boolean; mac: boolean; linux: boolean };
   detail_desc: string;
   about: string;
 }

@@ -1,14 +1,14 @@
 'use client';
 
-import guild from '@/types/guild';
+import { guild } from '@/types/guild';
 import RetroButton from '../common/RetroButton';
 import { Input } from '@/components/ui/input';
 import { SearchIcon } from 'lucide-react';
 import CapsuleCategoryMenu from '@/components/common/capsule-category-menu';
 import { useState } from 'react';
 import UserInfo from '@/app/party/components/UserInfoHorizontal';
-import User from '@/types/user';
 import Tag from '../common/Tag';
+import { guildCommunityTags } from '@/types/Tags/communityTags';
 
 type WeNeedYouProps = {
   guildData: guild;
@@ -23,28 +23,22 @@ export default function WeNeedYou(props: WeNeedYouProps) {
     setQuery('');
   }
 
-  const user: User = {
-    profile_img: 'https://avatars.githubusercontent.com/u/124599?v=4',
-    title: '배신자',
-    username: 'Morty',
-  };
-
   return (
     <div className={`flex flex-col p-8 gap-9 rounded-xl border border-neutral-200 bg-white ${props.className} `}>
       <div className="flex flex-col gap-5 ">
         <Tag size="small" style="default" background="medium" className="w-12 font-suit font-bold">
           길드장
         </Tag>
-        <UserInfo size="small" data={user} />
+        <UserInfo size="small" data={props.guildData.owner} />
         <p className="font-dgm line-clamp-1 text-ellipsis overflow-hidden text-neutral-900 text-4xl">
-          {props.guildData.name}
+          {props.guildData.guild_name}
         </p>
         <p className="font-suit line-clamp-2 text-ellipsis overflow-hidden text-neutral-900">
           {props.guildData.description}
         </p>
         <div className="flex gap-3">
           <p className="font-suit text-neutral-900">전체 인원</p>
-          <p className="font-suit font-bold text-neutral-900">{props.guildData.numMembers}명</p>
+          <p className="font-suit font-bold text-neutral-900">{props.guildData.num_members}명</p>
         </div>
       </div>
       <RetroButton
@@ -64,30 +58,7 @@ export default function WeNeedYou(props: WeNeedYouProps) {
         />
         <SearchIcon className="text-neutral-400 cursor-pointer" onClick={HandleSearchClick} />
       </div>
-      <CapsuleCategoryMenu items={['공지', '자유', '게임 관련']} multiple={true} />
+      <CapsuleCategoryMenu items={[...guildCommunityTags]} multiple={true} />
     </div>
   );
 }
-
-// USAGE
-// import PixelCharacter from '@/components/PixelCharacter/PixelCharacter';
-// import WeNeedYou from '@/components/guild/guild-we-need-you';
-// import guild from '@/types/guild';
-
-// export default function Home() {
-//   const guildData: guild = {
-//     name: '길드명 길드명 길드명',
-//     description:
-//       '길드소개 두 줄 까지 Lorem ipsum dolor sit amet consectetur. Interdum bibendum etiam rutrum lacus ut volutpat.',
-//     guildTags: ['Guild', 'Tags'],
-//     image: '',
-//     numMembers: 24,
-//   };
-
-//   return (
-//     <div>
-//       <p className=" text-center text-5xl p-5">Play ON!</p>
-//       <WeNeedYou guildData={guildData} className="w-[411px] ml-5" />
-//     </div>
-//   );
-// }

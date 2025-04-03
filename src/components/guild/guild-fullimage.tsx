@@ -1,4 +1,4 @@
-import guild from '@/types/guild';
+import { guild } from '@/types/guild';
 import { UsersIcon } from 'lucide-react';
 import { Badge } from '../ui/badge';
 import { Skeleton } from '../ui/skeleton';
@@ -8,11 +8,18 @@ type GuildFullimageProps = {
   className?: string;
 };
 
-export function GuildFullimageSkeleton(props: { className: string }) {
+export function GuildFullImageSkeleton(props: { className: string }) {
   return <Skeleton className={`rounded-lg aspect-[16/9] ` + props.className} />;
 }
 
-export default function GuildFullimage(props: GuildFullimageProps) {
+export default function GuildFullImage(props: GuildFullimageProps) {
+  const tagsArr = [
+    ...props.data.play_style,
+    ...props.data.skill_level,
+    ...props.data.gender,
+    ...props.data.friendly,
+  ].slice(0, 3);
+
   return (
     <div
       className={
@@ -20,14 +27,14 @@ export default function GuildFullimage(props: GuildFullimageProps) {
         props.className
       }
       style={{
-        backgroundImage: `url(${props.data.image})`,
+        backgroundImage: `url(${props.data.img_src})`,
         backgroundSize: 'cover',
         backgroundBlendMode: 'multiply',
       }}
     >
       <div className="flex place-content-between">
         <div className="flex gap-1">
-          {props.data.guildTags.map((e, ind) => (
+          {tagsArr.map((e, ind) => (
             <Badge className="px-2 py-1 bg-white text-black font-suit font-bold" variant="outline" key={ind}>
               {e}
             </Badge>
@@ -35,12 +42,12 @@ export default function GuildFullimage(props: GuildFullimageProps) {
         </div>
         <div className="flex items-center gap-2">
           <UsersIcon size={14} color="#FFFFFF" strokeWidth={1} />
-          <p className="text-white">{props.data.numMembers}</p>
+          <p className="text-white">{props.data.num_members}</p>
         </div>
       </div>
       <div className="flex flex-col overflow-hidden gap-1">
         <div className="flex gap-3">
-          <p className="text-white font-suit text-3xl font-bold">{props.data.name}</p>
+          <p className="text-white font-suit text-3xl font-bold">{props.data.guild_name}</p>
         </div>
         <div className="text-white text-nowrap text-ellipsis">{props.data.description}</div>
       </div>
