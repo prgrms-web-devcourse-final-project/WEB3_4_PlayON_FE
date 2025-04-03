@@ -16,7 +16,7 @@
 
 .typing-animation.infinite {
   animation:
-    typing-removing 8s steps(24) infinite,
+    typing-removing 5s steps(20, end) infinite,
     blink 0.8s infinite;
 }
 
@@ -42,10 +42,7 @@
   0% {
     max-width: 0;
   }
-  40% {
-    max-width: 100vw;
-  }
-  60% {
+  50% {
     max-width: 100vw;
   }
   100% {

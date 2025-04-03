@@ -1,10 +1,12 @@
 'use client';
 import { ReactNode, useCallback, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
+import { EffectFade } from 'swiper/modules';
 import type { Swiper as SwiperType } from 'swiper';
 import { Autoplay } from 'swiper/modules';
 import './style.css';
 import 'swiper/css';
+import 'swiper/css/effect-fade';
 
 type Banner = {
   title: string;
@@ -32,11 +34,14 @@ export default function HeroTypingBanner({ data, isStatic, children }: HeroTypin
 
   if (isStatic) {
     return (
-      <div style={{ backgroundImage: `url(${data[0].image})` }} className="size-full bg-center bg-cover px-auto">
+      <div style={{ backgroundImage: `url(${data[0].image})` }} className="size-full bg-center bg-cover">
         <div className="size-full bg-purple-800/50 flex flex-col gap-5 items-center justify-center">
-          <p className="text-white font-suit font-extrabold text-6xl leading-[80px] typing-animation infinite">
-            {data[0].title}
-          </p>
+          <div className="flex align-middle gap-4 w-[560px]">
+            <span className="text-white font-suit font-extrabold text-6xl leading-[80px]">PLAY ON</span>
+            <span className="text-white font-suit font-extrabold text-6xl leading-[80px] typing-animation infinite flex-grow">
+              {data[0].title}
+            </span>
+          </div>
           {children}
         </div>
       </div>
@@ -46,14 +51,15 @@ export default function HeroTypingBanner({ data, isStatic, children }: HeroTypin
     <div className="size-full relative">
       <Swiper
         slidesPerView={1}
+        modules={[EffectFade, Autoplay]}
+        effect="fade"
         onSlideChangeTransitionStart={handleSliderChangeStart}
         onSlideChangeTransitionEnd={handleSliderChangeEnd}
-        modules={[Autoplay]}
         autoplay={{
-          delay: 2500,
+          delay: 3000,
           disableOnInteraction: false,
         }}
-        speed={2500}
+        speed={2000}
         loop={true}
         className="size-full"
       >
@@ -70,7 +76,7 @@ export default function HeroTypingBanner({ data, isStatic, children }: HeroTypin
       </Swiper>
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 place-content-center flex flex-col gap-8 items-center z-10">
         <div>
-          <p className="text-white font-suit text-xl w-[700px]">지금 핫한</p>
+          <p className="text-white font-suit text-xl min-w-[700px]">지금 핫한</p>
           <p
             key={index}
             className={`w-fit text-white font-suit font-extrabold text-8xl blur-none whitespace-nowrap typing-animation place-self-start ${isRemoving ? 'removing' : ''}`}
