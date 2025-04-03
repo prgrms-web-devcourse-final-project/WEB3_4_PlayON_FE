@@ -1,6 +1,6 @@
 'use client';
 
-import guild from '@/types/guild';
+import { guild } from '@/types/guild';
 import GuildFullImage, { GuildFullImageSkeleton } from '../../guild/guild-fullimage';
 import './style.css';
 import { ReactNode, useState } from 'react';
@@ -8,149 +8,15 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Carousel, CarouselItem, CarouselContent, CarouselApi } from '../../ui/carousel';
 import Autoplay from 'embla-carousel-autoplay';
 import RetroButton from '../RetroButton';
+import { dummyGuild } from '@/utils/dummyData';
 
 type SearchGuildWithGameProps = {
   leftCarouselTitle: ReactNode;
   className?: string;
+  textColor: 'white' | 'black';
 };
 
-const guildDummyData: { game: string; guilds: guild[] }[] = [
-  {
-    game: 'Counter Strike 2',
-    guilds: [
-      {
-        name: '카스 1',
-        description: '카스2 길드 Lorem ipsum Lorem ipsum Lorem ipsum',
-        guildTags: ['재미있는', '길드', '태그'],
-        image:
-          'https://i.namu.wiki/i/NxTjB2x5nsxL24FEJZ0AZl62MMEHxE6bOT1BXLHLYUl2uCnadrnvL9hcf-1DnMpnKYxqUCyzrNUyHlYIKxz1PAqqPbisdQo08Ynzj0iVCXJzS8ifYg9gPGzg78085bfaJRp9vPCpgwTBieILMPtEmQ.webp',
-        numMembers: 24,
-      },
-      {
-        name: '카스 2',
-        description: '카스2 길드 Lorem ipsum Lorem ipsum Lorem ipsum',
-        guildTags: ['재미있는', '길드', '태그'],
-        image:
-          'https://i.namu.wiki/i/NxTjB2x5nsxL24FEJZ0AZl62MMEHxE6bOT1BXLHLYUl2uCnadrnvL9hcf-1DnMpnKYxqUCyzrNUyHlYIKxz1PAqqPbisdQo08Ynzj0iVCXJzS8ifYg9gPGzg78085bfaJRp9vPCpgwTBieILMPtEmQ.webp',
-        numMembers: 24,
-      },
-      {
-        name: '카스 3',
-        description: '카스2 길드 Lorem ipsum Lorem ipsum Lorem ipsum',
-        guildTags: ['재미있는', '길드', '태그'],
-        image:
-          'https://i.namu.wiki/i/NxTjB2x5nsxL24FEJZ0AZl62MMEHxE6bOT1BXLHLYUl2uCnadrnvL9hcf-1DnMpnKYxqUCyzrNUyHlYIKxz1PAqqPbisdQo08Ynzj0iVCXJzS8ifYg9gPGzg78085bfaJRp9vPCpgwTBieILMPtEmQ.webp',
-        numMembers: 24,
-      },
-      {
-        name: '카스 4',
-        description: '카스2 길드 Lorem ipsum Lorem ipsum Lorem ipsum',
-        guildTags: ['재미있는', '길드', '태그'],
-        image:
-          'https://i.namu.wiki/i/NxTjB2x5nsxL24FEJZ0AZl62MMEHxE6bOT1BXLHLYUl2uCnadrnvL9hcf-1DnMpnKYxqUCyzrNUyHlYIKxz1PAqqPbisdQo08Ynzj0iVCXJzS8ifYg9gPGzg78085bfaJRp9vPCpgwTBieILMPtEmQ.webp',
-        numMembers: 24,
-      },
-      {
-        name: '카스 5',
-        description: '카스2 길드 Lorem ipsum Lorem ipsum Lorem ipsum',
-        guildTags: ['재미있는', '길드', '태그'],
-        image:
-          'https://i.namu.wiki/i/NxTjB2x5nsxL24FEJZ0AZl62MMEHxE6bOT1BXLHLYUl2uCnadrnvL9hcf-1DnMpnKYxqUCyzrNUyHlYIKxz1PAqqPbisdQo08Ynzj0iVCXJzS8ifYg9gPGzg78085bfaJRp9vPCpgwTBieILMPtEmQ.webp',
-        numMembers: 24,
-      },
-    ],
-  },
-  {
-    game: 'Monster Hunter: Wilds',
-    guilds: [
-      {
-        name: '몬헌 와일즈 길드 1',
-        description: '몬헌 와일즈 길드 설명 Lorem ipsum Lorem ipsum Lorem ipsum',
-        guildTags: ['재미있는', '수렵', '생활'],
-        image:
-          'https://i.namu.wiki/i/Ghgfb7ykYcuLAvMw1JK2b5j_gO53FJTsDhcoNbhWR0ahVxTMsftKTDudqXHA46K7gACaUuMx-smqq_K3j_DBdFerPsctFlBQtm1FeC2Tbxq4vLTwjxprEjueGkIh1d7lPBODnfV2oA4-pYaNSB0XVQ.webp',
-        numMembers: 24,
-      },
-      {
-        name: '몬헌 와일즈 길드 2',
-        description: '몬헌 와일즈 길드 설명 Lorem ipsum Lorem ipsum Lorem ipsum',
-        guildTags: ['재미있는', '수렵', '생활'],
-        image:
-          'https://i.namu.wiki/i/Ghgfb7ykYcuLAvMw1JK2b5j_gO53FJTsDhcoNbhWR0ahVxTMsftKTDudqXHA46K7gACaUuMx-smqq_K3j_DBdFerPsctFlBQtm1FeC2Tbxq4vLTwjxprEjueGkIh1d7lPBODnfV2oA4-pYaNSB0XVQ.webp',
-        numMembers: 24,
-      },
-      {
-        name: '몬헌 와일즈 길드 3',
-        description: '몬헌 와일즈 길드 설명 Lorem ipsum Lorem ipsum Lorem ipsum',
-        guildTags: ['재미있는', '수렵', '생활'],
-        image:
-          'https://i.namu.wiki/i/Ghgfb7ykYcuLAvMw1JK2b5j_gO53FJTsDhcoNbhWR0ahVxTMsftKTDudqXHA46K7gACaUuMx-smqq_K3j_DBdFerPsctFlBQtm1FeC2Tbxq4vLTwjxprEjueGkIh1d7lPBODnfV2oA4-pYaNSB0XVQ.webp',
-        numMembers: 24,
-      },
-      {
-        name: '몬헌 와일즈 길드 4',
-        description: '몬헌 와일즈 길드 설명 Lorem ipsum Lorem ipsum Lorem ipsum',
-        guildTags: ['재미있는', '수렵', '생활'],
-        image:
-          'https://i.namu.wiki/i/Ghgfb7ykYcuLAvMw1JK2b5j_gO53FJTsDhcoNbhWR0ahVxTMsftKTDudqXHA46K7gACaUuMx-smqq_K3j_DBdFerPsctFlBQtm1FeC2Tbxq4vLTwjxprEjueGkIh1d7lPBODnfV2oA4-pYaNSB0XVQ.webp',
-        numMembers: 24,
-      },
-      {
-        name: '몬헌 와일즈 길드 5',
-        description: '몬헌 와일즈 길드 설명 Lorem ipsum Lorem ipsum Lorem ipsum',
-        guildTags: ['재미있는', '수렵', '생활'],
-        image:
-          'https://i.namu.wiki/i/Ghgfb7ykYcuLAvMw1JK2b5j_gO53FJTsDhcoNbhWR0ahVxTMsftKTDudqXHA46K7gACaUuMx-smqq_K3j_DBdFerPsctFlBQtm1FeC2Tbxq4vLTwjxprEjueGkIh1d7lPBODnfV2oA4-pYaNSB0XVQ.webp',
-        numMembers: 24,
-      },
-    ],
-  },
-  {
-    game: 'Persona 3: Reload',
-    guilds: [
-      {
-        name: '페르소나에 길드가 왜 있어',
-        description: 'Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum',
-        guildTags: ['rnlcksgdk'],
-        image:
-          'https://i.namu.wiki/i/8pcN6e-FGWMrUuDE3eW0IYSFP1W2ZGZPPCczAsBfvJxDN_p2bJ8LDeQb8vR9ioyFtJAtUwNpANI0Ad55nSJkInq-utRfwh7dUXDpSbhJ4acb5Z8hRoq4FWkkYeFFNcXprBKnb4qA5io6tAT17r6Zug.webp',
-        numMembers: 24,
-      },
-      {
-        name: '페르소나에 길드가 왜 있어',
-        description: 'Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum',
-        guildTags: ['rnlcksgdk'],
-        image:
-          'https://i.namu.wiki/i/8pcN6e-FGWMrUuDE3eW0IYSFP1W2ZGZPPCczAsBfvJxDN_p2bJ8LDeQb8vR9ioyFtJAtUwNpANI0Ad55nSJkInq-utRfwh7dUXDpSbhJ4acb5Z8hRoq4FWkkYeFFNcXprBKnb4qA5io6tAT17r6Zug.webp',
-        numMembers: 24,
-      },
-      {
-        name: '페르소나에 길드가 왜 있어',
-        description: 'Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum',
-        guildTags: ['rnlcksgdk'],
-        image:
-          'https://i.namu.wiki/i/8pcN6e-FGWMrUuDE3eW0IYSFP1W2ZGZPPCczAsBfvJxDN_p2bJ8LDeQb8vR9ioyFtJAtUwNpANI0Ad55nSJkInq-utRfwh7dUXDpSbhJ4acb5Z8hRoq4FWkkYeFFNcXprBKnb4qA5io6tAT17r6Zug.webp',
-        numMembers: 24,
-      },
-      {
-        name: '페르소나에 길드가 왜 있어',
-        description: 'Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum',
-        guildTags: ['rnlcksgdk'],
-        image:
-          'https://i.namu.wiki/i/8pcN6e-FGWMrUuDE3eW0IYSFP1W2ZGZPPCczAsBfvJxDN_p2bJ8LDeQb8vR9ioyFtJAtUwNpANI0Ad55nSJkInq-utRfwh7dUXDpSbhJ4acb5Z8hRoq4FWkkYeFFNcXprBKnb4qA5io6tAT17r6Zug.webp',
-        numMembers: 24,
-      },
-      {
-        name: '페르소나에 길드가 왜 있어',
-        description: 'Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum',
-        guildTags: ['rnlcksgdk'],
-        image:
-          'https://i.namu.wiki/i/8pcN6e-FGWMrUuDE3eW0IYSFP1W2ZGZPPCczAsBfvJxDN_p2bJ8LDeQb8vR9ioyFtJAtUwNpANI0Ad55nSJkInq-utRfwh7dUXDpSbhJ4acb5Z8hRoq4FWkkYeFFNcXprBKnb4qA5io6tAT17r6Zug.webp',
-        numMembers: 24,
-      },
-    ],
-  },
-];
+const guildDummyData: guild[] = [dummyGuild, dummyGuild, dummyGuild];
 
 export default function SearchGuildWithGame(props: SearchGuildWithGameProps) {
   const [api, setApi] = useState<CarouselApi>();
@@ -175,8 +41,12 @@ export default function SearchGuildWithGame(props: SearchGuildWithGameProps) {
                 <CarouselItem className=" flex flex-col gap-4 basis-1/3" key={ind}>
                   <div className="h-[193px] w-[193px] bg-neutral-400 rounded-xl"></div>
                   <div>
-                    <p className="text-white font-suit text-xl font-semibold">GAME TITLE</p>
-                    <p className="text-white font-suit text-sm font-medium">Genre, Genre</p>
+                    <p className={`${props.textColor === 'white' ? 'text-white' : ''} font-suit text-xl font-semibold`}>
+                      GAME TITLE
+                    </p>
+                    <p className={`${props.textColor === 'white' ? 'text-white' : ''} font-suit text-sm font-medium`}>
+                      Genre, Genre
+                    </p>
                   </div>
                 </CarouselItem>
               ))}
@@ -208,8 +78,8 @@ export default function SearchGuildWithGame(props: SearchGuildWithGameProps) {
           setApi={setApi}
         >
           <CarouselContent className="h-[572px]">
-            {guildDummyData[game].guilds.map((e, ind) => (
-              <CarouselItem key={`${e.name}_${ind}`} className="basis-1/2">
+            {guildDummyData.map((e, ind) => (
+              <CarouselItem key={`${e.guild_name}_${ind}`} className="basis-1/2">
                 <GuildFullImage data={e} className="" />
               </CarouselItem>
             ))}
