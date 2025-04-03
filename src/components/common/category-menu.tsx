@@ -12,7 +12,7 @@ type CategoryMenuProps = {
 
 export default function CategoryMenu(props: CategoryMenuProps) {
   const { onSelect } = props;
-  const [selected, setSelected] = useState<boolean[]>([true, ...props.categoryItems.map((e) => false)]);
+  const [selected, setSelected] = useState<boolean[]>([true, ...props.categoryItems.map(() => false)]);
 
   useEffect(() => {
     onSelect(selected);
@@ -50,39 +50,3 @@ export default function CategoryMenu(props: CategoryMenuProps) {
     </div>
   );
 }
-
-// USAGE
-// 'use client';
-
-// import PixelCharacter from '@/components/PixelCharacter/PixelCharacter';
-// import CategoryMenu from '@/components/common/category-menu';
-// import { categories } from '@/types/categories';
-// import { useCallback } from 'react';
-
-// export default function Home() {
-//   const onSelect = useCallback((newSelected: boolean[], index: number) => {
-//     console.log(index + ': ' + newSelected);
-//   }, []);
-
-//   return (
-//     <div className="flex justify-center">
-//       <div className="flex flex-col items-center w-[60%] gap-5">
-//         <p className=" text-center text-5xl p-5">Play ON!</p>
-//         <div className="flex flex-col items-start gap-3">
-//           {Object.values(categories).map((value, ind) => (
-//             <div className="w-[765px] flex gap-5" key={value.name}>
-//               <p className="w-32 text-base font-suit font-bold pr-3 border-r border-neutral-300">{value.name}</p>
-//               <CategoryMenu
-//                 categoryName={value.name}
-//                 categoryItems={value.items}
-//                 onSelect={(newSelected) => {
-//                   onSelect(newSelected, ind);
-//                 }}
-//               />
-//             </div>
-//           ))}
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }

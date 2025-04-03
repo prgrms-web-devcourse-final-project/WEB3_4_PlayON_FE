@@ -4,7 +4,7 @@ import { useState } from 'react';
 import RetroButton from '../common/RetroButton';
 import { ChevronRight, SearchIcon } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { communityTags } from '@/types/communityTags';
+import { communityTags } from '@/types/Tags/communityTags';
 
 type CommunityMenuBarProps = {
   className: string;
@@ -41,8 +41,8 @@ export default function CommunityMenuBar(props: CommunityMenuBarProps) {
     return (
       <div className="grid grid-cols-2">
         {communityTags.map((e, ind) => (
-          <div onClick={() => HandleSelected(ind)} key={e.id}>
-            <TagSelectGridItem label={e.name} selected={selected[ind]} />
+          <div onClick={() => HandleSelected(ind)} key={e}>
+            <TagSelectGridItem label={e} selected={selected[ind]} />
           </div>
         ))}
       </div>

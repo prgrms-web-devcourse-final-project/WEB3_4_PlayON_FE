@@ -1,11 +1,12 @@
-import communityPost from '@/types/communityPosts';
+import { post } from '@/types/community';
+
 import AvatarName, { AvatarNameSkeleton } from './common/avatar-name';
 import { SubtitlesIcon, ThumbsUpIcon } from 'lucide-react';
 import { Skeleton } from '../ui/skeleton';
 import Tag from '@/components/common/Tag';
 
 type CommunityPostImageLongProps = {
-  data: communityPost;
+  data: post;
   className: string;
 };
 
@@ -29,27 +30,25 @@ export function CommunityPostLongSkeleton(props: { className: string }) {
 export default function CommunityPostLong(props: CommunityPostImageLongProps) {
   return (
     <div className={`flex flex-col py-7 justify-between ` + props.className}>
-      <AvatarName userName={props.data.userName} avatar={props.data.userAvatar} />
+      <AvatarName userName={props.data.user.nickname} avatar={props.data.user.img_src} />
       <div>
         <p className="text-xl font-suit font-bold">{props.data.title}</p>
-        <p className="text-base font-suit line-clamp-2 text-justify ">{props.data.description}</p>
+        <p className="text-base font-suit line-clamp-2 text-justify ">{props.data.content}</p>
       </div>
       <div className="flex justify-between">
         <div className="flex gap-1">
-          {props.data.tags.map((e, ind) => (
-            <Tag background="medium" style="default" key={ind} className="font-bold">
-              {e}
-            </Tag>
-          ))}
+          <Tag background="medium" style="default" className="font-bold">
+            {props.data.tag}
+          </Tag>
         </div>
         <div className="flex place-items-center gap-3">
           <div className="flex items-center gap-1">
             <ThumbsUpIcon className="text-neutral-400 w-4 h-4 stroke" />
-            <p className="font-suit text-sm font-medium text-neutral-400">{props.data.numLikes}</p>
+            <p className="font-suit text-sm font-medium text-neutral-400">{props.data.num_likes}</p>
           </div>
           <div className="flex items-center gap-1">
             <SubtitlesIcon className="text-neutral-400 w-4 h-4 stroke" />
-            <p className="font-suit text-sm font-medium text-neutral-400">{props.data.numComments}</p>
+            <p className="font-suit text-sm font-medium text-neutral-400">{props.data.comments.length}</p>
           </div>
         </div>
       </div>
