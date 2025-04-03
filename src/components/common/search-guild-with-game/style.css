@@ -1,0 +1,9 @@
+.fade-overlay {
+  background: linear-gradient(
+    0deg,
+    rgba(28, 32, 104, 1) 0%,
+    rgba(28, 32, 104, 0) 25%,
+    rgba(6, 72, 163, 0) 75%,
+    rgba(28, 32, 104, 1) 100%
+  );
+}
