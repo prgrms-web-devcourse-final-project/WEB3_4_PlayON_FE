@@ -1,9 +1,9 @@
+import { userSimple } from '@/types/user';
 import { Trophy } from 'lucide-react';
 import { useRef } from 'react';
-import User from '@/types/user';
 
 interface UserInfoProps {
-  data: User;
+  data: userSimple;
   isRadioBtn?: boolean;
   name?: string;
   onSelected?: (value: string) => void;
@@ -42,7 +42,7 @@ export default function UserInfoVertical({ isRadioBtn = false, data, name, onSel
         ></div>
         <div
           style={{
-            backgroundImage: `url(${data.profile_img})`,
+            backgroundImage: `url(${data.img_src})`,
           }}
           className="absolute top-0 rounded-full bg-center w-[100px] h-[100px] peer-checked:size-[92px] peer-checked:top-1 peer-checked:left-1 peer-checked:shadow-[inset_0px_0px_12px_3px_rgba(0,0,0,0.32)]"
         />

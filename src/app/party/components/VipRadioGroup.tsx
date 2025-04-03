@@ -1,8 +1,8 @@
+import { userSimple } from '@/types/user';
 import UserInfoVertical from './UserInfoVertical';
-import User from '@/types/user';
 
 interface VipRadioGroupProps {
-  users: User[];
+  users: userSimple[];
   onClick: (value: string) => void;
 }
 

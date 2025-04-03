@@ -1,11 +1,11 @@
-import { Party } from '@/types/party';
 import { Avatar } from '../ui/avatar';
 import Tag from '../common/Tag';
 import { Skeleton } from '../ui/skeleton';
 import formatDate from '@/utils/formatDate';
+import { party } from '@/types/party';
 
 interface PartyCardProps {
-  data: Party;
+  data: party;
 }
 
 export function PartyCardSkeleton() {
@@ -32,23 +32,23 @@ export function PartyCardSkeleton() {
 }
 
 export default function PartyCard({ data }: PartyCardProps) {
-  const open_position = data.maximum - data.members.length;
-  const remainingHours = getRemainingHours(data.party_at);
+  const open_position = data.num_maximum - data.participation.length;
+  const remainingHours = getRemainingHours(data.start_time);
 
   return (
     <div className="flex flex-col gap-2 p-5 w-[410px] rounded-xl bg-white border-2 border-neutral-300 cursor-pointer">
       <div
         style={{
-          backgroundImage: `url(${data.game_image})`,
+          backgroundImage: `url(${data.selected_game.img_src})`,
         }}
         className="flex flex-col h-[160px] rounded-xl overflow-hidden justify-between group bg-cover bg-center"
       >
         <div className="flex gap-2 ml-4 mt-4">
           {remainingHours >= 3 ? (
-            <Tag style="time">{formatDate(data.party_at)}</Tag>
+            <Tag style="time">{formatDate(data.start_time)}</Tag>
           ) : (
             <Tag style="time" background="red">
-              {formatDate(data.party_at)}
+              {formatDate(data.start_time)}
             </Tag>
           )}
           {open_position === 1 && <Tag background="red">마감임박</Tag>}
@@ -61,35 +61,35 @@ export default function PartyCard({ data }: PartyCardProps) {
         </div>
       </div>
       <div className="flex gap-2 py-2">
-        {data.party_tags.map((tag) => (
+        {data.tags.map((tag) => (
           <Tag background="medium" key={tag}>
             {tag}
           </Tag>
         ))}
       </div>
       <div className="flex flex-col gap-1 content-start">
-        <div className="font-suit text-2xl font-semibold line-clamp-1 text-neutral-900">{data.name}</div>
+        <div className="font-suit text-2xl font-semibold line-clamp-1 text-neutral-900">{data.party_name}</div>
         <p className="font-suit text-base line-clamp-1 text-neutral-900">{data.description}</p>
       </div>
       <div className="flex py-2 justify-between">
         <div className="flex gap-1 items-center">
-          {data.members.map((member, idx) =>
+          {data.participation.map((member, idx) =>
             idx < 4 ? (
               <Avatar
                 key={idx}
                 style={{
-                  backgroundImage: `url(${member.image})`,
+                  backgroundImage: `url(${member.img_src})`,
                 }}
                 className="bg-cover bg-center w-5 h-5"
               />
             ) : null
           )}
-          {data.members.length - 4 >= 1 && (
-            <div className="font-suit text-xs text-neutral-500">+{data.members.length - 4}</div>
+          {data.participation.length - 4 >= 1 && (
+            <div className="font-suit text-xs text-neutral-500">+{data.participation.length - 4}</div>
           )}
         </div>
         <div className="font-suit text-sm text-neutral-500">
-          {data.members.length}명 / {data.maximum}명
+          {data.participation.length}명 / {data.num_maximum}명
         </div>
       </div>
     </div>
