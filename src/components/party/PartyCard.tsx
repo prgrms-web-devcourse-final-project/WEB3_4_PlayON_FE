@@ -54,8 +54,8 @@ export default function PartyCard({ data }: PartyCardProps) {
           {open_position === 1 && <Tag background="red">마감임박</Tag>}
           {open_position < 1 && <Tag background="red">마감</Tag>}
         </div>
-        <div className="opacity-0 relative bg-gradient-to-t from-neutral-900/70 to-neutral-900/0 p-4 h-28 translate-y-4 transition-all duration-200 ease-in-out group-hover:opacity-100 group-hover:translate-y-0">
-          <p className=" absolute bottom-2 right-4 font-suit text-4xl font-bold text-end text-white align-bottom text-ellipsis">
+        <div className="flex opacity-0 bg-gradient-to-t from-neutral-900/70 to-neutral-900/0 p-4 h-28 translate-y-4 transition-all duration-200 ease-in-out group-hover:opacity-100 group-hover:translate-y-0 justify-end items-end">
+          <p className="font-suit text-4xl font-bold text-end text-white max-w-full truncate">
             {data.selected_game.title}
           </p>
         </div>
