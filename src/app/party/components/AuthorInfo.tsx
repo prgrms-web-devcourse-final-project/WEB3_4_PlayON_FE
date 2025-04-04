@@ -16,7 +16,7 @@ export default function AuthorInfo({ data }: AuthorInfoProps) {
       />
       <div className="flex flex-col w-full">
         <div className="text-base text-neutral-900">{data.user_title}</div>
-        <div className="text-xl text-neutral-900 font-bold break-words w-full" style={{ overflowWrap: 'anywhere' }}>
+        <div className="text-xl text-neutral-900 font-bold w-full" style={{ wordBreak: 'break-all' }}>
           {data.nickname}님의 파티
         </div>
       </div>
