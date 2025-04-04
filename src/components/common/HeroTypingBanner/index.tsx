@@ -1,6 +1,5 @@
 'use client';
 import { ReactNode, useCallback, useState } from 'react';
-import { gameSimple } from '@/types/games';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import type { Swiper as SwiperType } from 'swiper';
 import { EffectFade } from 'swiper/modules';
@@ -9,8 +8,13 @@ import './style.css';
 import 'swiper/css';
 import 'swiper/css/effect-fade';
 
+interface Banner {
+  title: string;
+  img_src: string;
+}
+
 interface HeroTypingBannerProps {
-  data: gameSimple[];
+  data: Banner[];
   isStatic?: boolean;
   children?: ReactNode;
 }
