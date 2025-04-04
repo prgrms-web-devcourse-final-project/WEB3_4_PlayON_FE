@@ -10,8 +10,8 @@ interface PartyCardProps {
 
 export function PartyCardSkeleton() {
   return (
-    <div className="flex flex-col gap-2 p-5 w-[410px] border-2 border-neutral-300 rounded-xl">
-      <Skeleton className="h-[160px] rounded-xl" />
+    <div className="flex flex-col gap-2 p-5 border-2 border-neutral-300 rounded-xl aspect-[113/100]">
+      <Skeleton className="aspect-[366/160] rounded-xl" />
       <div className="flex gap-2">
         <Skeleton className="h-6 rounded-sm w-1/6" />
         <Skeleton className="h-6 rounded-sm w-1/6" />
@@ -36,12 +36,12 @@ export default function PartyCard({ data }: PartyCardProps) {
   const remainingHours = getRemainingHours(data.start_time);
 
   return (
-    <div className="flex flex-col gap-2 p-5 w-[410px] rounded-xl bg-white border-2 border-neutral-300 cursor-pointer">
+    <div className="flex flex-col gap-2 p-5 rounded-xl bg-white border-2 border-neutral-300 cursor-pointer w-full aspect-[113/100]">
       <div
         style={{
           backgroundImage: `url(${data.selected_game.img_src})`,
         }}
-        className="flex flex-col h-[160px] rounded-xl overflow-hidden justify-between group bg-cover bg-center"
+        className="flex flex-col aspect-[366/160] rounded-xl overflow-hidden justify-between group bg-cover bg-center"
       >
         <div className="flex gap-2 ml-4 mt-4">
           {remainingHours >= 3 ? (
