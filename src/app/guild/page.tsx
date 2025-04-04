@@ -3,7 +3,7 @@ import HeroTypingBanner from '@/components/common/HeroTypingBanner';
 import PlayOnRollingBanner from '@/components/common/play-on-rolling-banner';
 import SearchBar from '@/components/common/SearchBar';
 import GuildHorizon from '@/components/guild/guild-horizon';
-import { gameSimple } from '@/types/games';
+// import { gameSimple } from '@/types/games';
 import { guild } from '@/types/guild';
 import { dummyGameSimple, dummyGuild } from '@/utils/dummyData';
 import { useState } from 'react';
@@ -26,7 +26,7 @@ export default function Guild() {
   };
 
   const dummyGuildList: guild[] = Array(3).fill(dummyGuild);
-  const dummyGameList: gameSimple[] = Array(4).fill(dummyGameSimple);
+  // const dummyGameList: gameSimple[] = Array(4).fill(dummyGameSimple);
   return (
     <div className="space-y-20 pb-20">
       <section className="w-full h-[400px]">
@@ -63,7 +63,34 @@ export default function Guild() {
         <PlayOnRollingBanner duration={20} direction="right" />
       </section>
 
-      <section></section>
+      <section className="wrapper">
+        {/* <SectionTitle
+            title="인기 게임별 길드"
+            subtitle="인기 게임을 즐기는 길드를 찾고 있다면, 여기에 다 있어요!"
+          >
+          </SectionTitle> */}
+        <div
+          className="w-full lg:aspect-[213/100] grid lg:grid-cols-4 lg:grid-rows-[repeat(2,_minmax(0,_1fr))] md:grid-cols-2 md:grid-rows-[repeat(7,_minmax(0,_100px))] gap-6 bg-slate-100
+        sm:grid-cols-2 sm:grid-rows-[repeat(7,_minmax(0,_100px))]"
+        >
+          <div className="bg-purple-300 lg:row-span-2 lg:col-span-2 md:row-span-3 md:col-span-2 sm:row-span-3 sm:col-span-2">
+            <div
+              style={{
+                backgroundImage: `url(${dummyGameSimple.img_src})`,
+              }}
+              className="w-full h-full bg-center bg-cover"
+            >
+              <div className="w-full h-full bg-gradient-to-t from-black/40 to-black/0 px-9 py-5 flex items-end">
+                <p className="text-white text-5xl font-extrabold">{dummyGameSimple.title}</p>
+              </div>
+            </div>
+          </div>
+          <div className="bg-purple-200 lg:row-span-1 lg:col-span-2 md:row-span-2 md:col-span-2 md:row-start-4 sm:row-span-2 sm:col-span-2 sm:row-start-4" />
+          <div className="bg-purple-200 lg:row-span-1 lg:col-span-1 md:row-span-2 md:col-span-1 md:row-start-6 md:col-start-1 sm:row-span-2 sm:col-span-1 sm:row-start-6 sm:col-start-1" />
+          <div className="bg-purple-200 lg:row-span-1 lg:col-span-1 md:row-span-2 md:col-span-1 md:row-start-6 md:col-start-2 sm:row-span-2 sm:col-span-1 sm:row-start-6 sm:col-start-2" />
+        </div>
+        {/* <div className="w-[300px] h-[300px]"></div> */}
+      </section>
 
       <section className="wrapper">
         <div className="w-full h-48 bg-purple-200"></div>
