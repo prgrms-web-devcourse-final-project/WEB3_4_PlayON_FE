@@ -3,6 +3,7 @@ import { post } from '@/types/community';
 import { guild } from '@/types/guild';
 import { userDetail, userSimple } from '@/types/user';
 import { gameDetail, gameSimple } from '@/types/games';
+import { party, partyLog } from '@/types/party';
 
 export const dummyUserSimple: userSimple = {
   img_src: 'https://avatars.githubusercontent.com/u/124599?v=4',
@@ -79,4 +80,36 @@ export const dummyGuild: guild = {
   play_style: ['노멀', '도전과제'],
   skill_level: ['뉴비', '마스터'],
   main_game: dummyGameSimple,
+};
+
+export const dummyParty: party = {
+  party_name: '파티이름입니다.',
+  description: '설명입니다.설명입니다.설명입니다. 설명입니다. 설명입니다. 설명입니다. 설명입니다.',
+  start_time: new Date(),
+  tags: ['맛보기', '뉴비'],
+  participation: [dummyUserSimple],
+  selected_game: dummyGameSimple,
+  num_maximum: 10,
+};
+export const dummyPartyLog: partyLog = {
+  party_info: dummyParty,
+  player_recommend: [
+    {
+      to: dummyUserSimple,
+      from: dummyUserSimple,
+    },
+  ],
+  screenshot: [
+    {
+      img_src: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/489830/header.jpg?t=1721923149',
+      author: dummyUserSimple,
+      comment: '멋져요',
+    },
+  ],
+  review: [
+    {
+      author: dummyUserSimple,
+      text: '멋져요',
+    },
+  ],
 };
