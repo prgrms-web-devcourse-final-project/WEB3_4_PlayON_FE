@@ -1,7 +1,7 @@
-import { gameDetail } from '@/types/games';
+import { gameSimple } from '@/types/games';
 
 interface PickCardProps {
-  data: Pick<gameDetail, 'img_src' | 'title' | 'genre'>;
+  data: Pick<gameSimple, 'img_src' | 'title' | 'genre'>;
 };
 
 export default function PickCard(props: PickCardProps) {
