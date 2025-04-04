@@ -3,9 +3,15 @@ import HeroTypingBanner from '@/components/common/HeroTypingBanner';
 import PlayOnRollingBanner from '@/components/common/play-on-rolling-banner';
 import RetroButton from '@/components/common/RetroButton';
 import SearchBar from '@/components/common/SearchBar';
+import SectionBanner from '@/components/common/SectionBanner';
+import SectionTitle from '@/components/common/SectionTitle';
+import PartyCard from '@/components/party/PartyCard';
+import PartyLogCard from '@/components/party/PartyLogCard';
 import PixelCharacter from '@/components/PixelCharacter/PixelCharacter';
 import { gameSimple } from '@/types/games';
-import Image from 'next/image';
+import { party, partyLog } from '@/types/party';
+import { dummyParty, dummyPartyLog } from '@/utils/dummyData';
+
 import { useState } from 'react';
 
 const popularGames: gameSimple[] = [
@@ -32,36 +38,77 @@ export default function Party() {
   const handleSearch = () => {
     alert('search click!');
   };
+
+  const dummyPartyList: party[] = Array(6).fill(dummyParty);
+  const dummyPartyLogList: partyLog[] = Array(3).fill(dummyPartyLog);
   return (
-    <div className="space-y-20">
-      <div className="w-full h-[400px]">
+    <div
+      style={{
+        backgroundImage: 'linear-gradient(to top, #f3e8ff 0%, rgba(255,255,255,0) 100%)',
+        backgroundSize: '100% 40%',
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'bottom',
+      }}
+      className="space-y-20 pb-20"
+    >
+      <section className="w-full h-[400px]">
         <HeroTypingBanner data={popularGames}>
           <SearchBar onChange={handleChange} onSearch={handleSearch} className="w-[640px]" />
         </HeroTypingBanner>
-      </div>
-      <section className="wrapper flex justify-between items-end">
-        <div>
-          <p className="text-neutral-900 text-2xl font-medium">구인중인 파티를 확인하고 빠르게 게임을 시작하세요.</p>
-          <div className="flex gap-6 items-center mt-2 mb-6">
-            <p className="text-purple-700 text-6xl font-extrabold">지금 모집중인 파티</p>
-            <Image
-              src="./img/icons/pixel_swords.svg"
-              alt="swords icon"
-              height={40}
-              style={{ objectFit: 'contain' }}
-            ></Image>
+      </section>
+
+      <section className="wrapper space-y-20">
+        <div className="flex justify-between items-end">
+          <SectionTitle
+            title="지금 모집중인 파티"
+            subtitle="구인중인 파티를 확인하고 빠르게 게임을 시작하세요"
+            icon_src="./img/icons/pixel_swords.svg"
+          >
+            <RetroButton type="purple" className="w-[344px] h-[48px]">
+              파티 상세 검색
+            </RetroButton>
+          </SectionTitle>
+          <div className="flex">
+            <PixelCharacter char="mage" motion="attack" />
+            <PixelCharacter char="archer" motion="attack" />
+            <PixelCharacter char="warrior" motion="attack" />
           </div>
-          <RetroButton type="purple" className="w-[344px] h-[48px]">
-            파티 상세 검색
-          </RetroButton>
         </div>
-        <div className="flex">
-          <PixelCharacter char="mage" motion="attack" />
-          <PixelCharacter char="archer" motion="attack" />
-          <PixelCharacter char="warrior" motion="attack" />
+        <div className="grid grid-cols-3 gap-6">
+          {dummyPartyList.map((party) => (
+            <PartyCard key={party.party_name} data={party} />
+          ))}
         </div>
       </section>
-      <PlayOnRollingBanner duration={20} direction="left" />
+
+      <section>
+        <PlayOnRollingBanner duration={20} direction="left" />
+      </section>
+
+      <section className="wrapper">
+        <SectionBanner
+          introText="딱 맞는 파티를 찾기 어려운가요?"
+          description="성향 및 목표가 같은 동료들과 함께하고 싶다면"
+          highlight="지금 바로 나만의 파티를 만들어보세요!"
+          onClick={() => alert('click')}
+        >
+          <img src="./img/3d_object/sword.webp" alt="icon" className="h-[180px] blur-[2px] -rotate-[30deg]" />
+          <img src="./img/3d_object/crystal_ball.webp" alt="icon" className="h-[180px]" />
+        </SectionBanner>
+      </section>
+
+      <section className="wrapper space-y-20">
+        <SectionTitle title="최신 파티 로그 살펴보기" subtitle="최근 플레이한 유저들의 플레이 기록을 보고 싶다면?">
+          <RetroButton type="purple" className="w-[344px] h-[48px]">
+            최신 파티 로그 살펴보기
+          </RetroButton>
+        </SectionTitle>
+        <div className="grid grid-cols-3 gap-6">
+          {dummyPartyLogList.map((partyLog) => (
+            <PartyLogCard key={partyLog.party_info.party_name} data={partyLog} />
+          ))}
+        </div>
+      </section>
     </div>
   );
 }
