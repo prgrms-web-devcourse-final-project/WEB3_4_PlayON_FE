@@ -6,9 +6,12 @@ import './style.css';
 import { ReactNode, useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Carousel, CarouselItem, CarouselContent, CarouselApi } from '../../ui/carousel';
-import Autoplay from 'embla-carousel-autoplay';
 import RetroButton from '../RetroButton';
-import { dummyGuild } from '@/utils/dummyData';
+import SteamCard from '@/components/game/SteamCard';
+import Link from 'next/link';
+
+import { dummyGameSimple, dummyGuild } from '@/utils/dummyData';
+import { gameSimple } from '@/types/games';
 
 type SearchGuildWithGameProps = {
   leftCarouselTitle: ReactNode;
@@ -20,44 +23,75 @@ const guildDummyData: guild[] = [dummyGuild, dummyGuild, dummyGuild];
 
 export default function SearchGuildWithGame(props: SearchGuildWithGameProps) {
   const [api, setApi] = useState<CarouselApi>();
-  const [game, setGame] = useState(0);
+
+  const dummyGameArr = new Array<gameSimple>(8).fill(dummyGameSimple);
+  function EmptyCard(): ReactNode {
+    return (
+      <div className="h-[251px]">
+        <div className="w-[193px] aspect-square"></div>
+      </div>
+    );
+  }
+  function SteamCardCarouselSlideBuilder(index: number, slidesPerView: number, data: gameSimple[]): ReactNode {
+    const slideData = data.slice(index, index + slidesPerView);
+    return (
+      <div className="flex gap-4">
+        {slideData.map((_, ind) => (
+          <div key={`${index}_${ind}`} onClick={() => console.log(_.title)}>
+            <SteamCard data={dummyGameSimple} titleColor={props.textColor === 'white' ? 'text-white' : 'text-black'} />
+          </div>
+        ))}
+        {Array.from({ length: slidesPerView - slideData.length }).map((_, ind) => {
+          return <EmptyCard key={`${index}_empty_${ind}`} />;
+        })}
+      </div>
+    );
+  }
+
+  const q = dummyGameArr.length / 3;
+  const r = dummyGameArr.length % 3;
+  const numSlides = r === 0 ? q : q + 1;
 
   return (
     <div className={`w-full min-w-[1280px] flex justify-center gap-[134px] ${props.className}`}>
       <div className="w-[627px] flex flex-col justify-center">
         {props.leftCarouselTitle}
-        <div className="h-[250px] rounded-xl mb-6">
+        <div className="h-[250px] rounded-xl mb-6" onPointerDownCapture={(e) => e.stopPropagation}>
           <Carousel
             opts={{
               align: 'start',
               loop: false,
             }}
             orientation="horizontal"
-            className="w-full"
+            className="w-full "
             setApi={setApi}
           >
             <CarouselContent className="select-none">
-              {Array.from({ length: 5 }).map((_, ind) => (
-                <CarouselItem className=" flex flex-col gap-4 basis-1/3" key={ind}>
-                  <div className="h-[193px] w-[193px] bg-neutral-400 rounded-xl"></div>
-                  <div>
-                    <p className={`${props.textColor === 'white' ? 'text-white' : ''} font-suit text-xl font-semibold`}>
-                      GAME TITLE
-                    </p>
-                    <p className={`${props.textColor === 'white' ? 'text-white' : ''} font-suit text-sm font-medium`}>
-                      Genre, Genre
-                    </p>
-                  </div>
-                </CarouselItem>
-              ))}
+              {Array.from({ length: numSlides }).map((_, ind) => {
+                return <CarouselItem key={ind}>{SteamCardCarouselSlideBuilder(ind * 3, 3, dummyGameArr)}</CarouselItem>;
+              })}
             </CarouselContent>
           </Carousel>
         </div>
-        <div className="flex h-10 gap-9 justify-end">
-          <RetroButton type="black" className="aspect-square" callback={() => console.log('<')}>
+        <div className="flex gap-9 justify-end">
+          <RetroButton
+            type="grey"
+            className="h-12 w-12"
+            callback={() => {
+              console.log(api?.canScrollPrev());
+              if (api?.canScrollPrev()) api.scrollPrev();
+            }}
+          >
             <ChevronLeft />
           </RetroButton>
-          <RetroButton type="black" className="aspect-square" callback={() => console.log('>')}>
+          <RetroButton
+            type="grey"
+            className="h-12 w-12"
+            callback={() => {
+              console.log(api?.canScrollNext());
+              if (api?.canScrollNext()) api.scrollNext();
+            }}
+          >
             <ChevronRight />
           </RetroButton>
         </div>
@@ -68,24 +102,22 @@ export default function SearchGuildWithGame(props: SearchGuildWithGameProps) {
             align: 'center',
             loop: true,
           }}
-          plugins={[
-            Autoplay({
-              delay: 2000,
-            }),
-          ]}
           orientation="vertical"
           className="w-full"
-          setApi={setApi}
         >
           <CarouselContent className="h-[572px]">
             {guildDummyData.map((e, ind) => (
               <CarouselItem key={`${e.guild_name}_${ind}`} className="basis-1/2">
-                <GuildFullImage data={e} className="" />
+                <Link href={'#'}>
+                  <GuildFullImage data={e} className="" />
+                </Link>
               </CarouselItem>
             ))}
           </CarouselContent>
         </Carousel>
-        <div className="fade-overlay absolute w-full h-full pointer-events-none"></div>
+        <div
+          className={`${props.textColor === 'white' ? 'fade-overlay' : 'fade-overlay-white'} absolute w-full h-full pointer-events-none`}
+        ></div>
       </div>
     </div>
   );

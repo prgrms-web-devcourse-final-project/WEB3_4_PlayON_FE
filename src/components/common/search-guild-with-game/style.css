@@ -7,3 +7,13 @@
     rgba(28, 32, 104, 1) 100%
   );
 }
+
+.fade-overlay-white {
+  background: linear-gradient(
+    0deg,
+    rgba(255, 255, 255, 1) 0%,
+    rgba(255, 255, 125504, 0) 25%,
+    rgba(255, 255, 255, 0) 75%,
+    rgba(255, 255, 255, 1) 100%
+  );
+}
