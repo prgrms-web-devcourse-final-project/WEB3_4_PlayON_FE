@@ -60,7 +60,8 @@ export default function PartySearchComponent(props: PartySearchComponentProps) {
     accInputs();
   }, []);
   const handleDateSelect = useCallback((date: Date | undefined) => {
-    console.log(date);
+    partyDate.current = date;
+    accInputs();
   }, []);
   function accInputs() {
     const newSearchQuery = [];
@@ -75,6 +76,10 @@ export default function PartySearchComponent(props: PartySearchComponentProps) {
     }
     if (selectedGenres.current.length > 0) {
       newSearchQuery.push('genres=' + selectedGenres.current.reduce((acc, cur) => acc + ',' + cur));
+    }
+    if (partyDate.current) {
+      const dateString = partyDate.current.toLocaleString();
+      newSearchQuery.push(`partyDate=${dateString}`);
     }
     router.push(`/?${newSearchQuery.join('&')}`, { scroll: false });
   }
