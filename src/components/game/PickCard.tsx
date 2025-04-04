@@ -1,7 +1,7 @@
 import { gameDetail } from '@/types/games';
 
-type PickCardProps = {
-  data: gameDetail;
+interface PickCardProps {
+  data: Pick<gameDetail, 'img_src' | 'title' | 'genre'>;
 };
 
 export default function PickCard(props: PickCardProps) {

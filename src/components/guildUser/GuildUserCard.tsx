@@ -1,24 +1,33 @@
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
-import { guildUser } from "@/types/guildUser";
+import { guildUser } from "@/types/guild";
+import { Crown, Star } from "lucide-react";
 
-type guildUserCardProps = {
-  data: guildUser;
-  memberLevel: string; // leader, manager, user
-  // avatarClassName: string;
+// interface guildUserCardProps {
+//   data: Pick<guildUser, 'joined_at' | 'guild_role' | 'user'> & {
+//     user: Pick<guildUser['user'], 'img_src' | 'user_title' | 'username'>
+//   }};
+// type guildUserCardProps = Pick<guildUser, 'joined_at' | 'guild_role' | 'user'> & {
+//     user: Pick<guildUser['user'], 'img_src' | 'user_title' | 'username'>
+//   };
+
+type PickedUser = Pick<guildUser["user"], "img_src" | "user_title" | "username">;
+
+type guildUserCardProps = Pick<guildUser, "joined_at" | "guild_role"> & {
+  user: PickedUser;
 };
-
-
 
 export default function GuildUserCard(props: guildUserCardProps) {
   
-  const { data, memberLevel } = props;
+  // const { data } = props;
   let badge;
+  const joindDate = new Date(props.joined_at).toLocaleDateString("ko-KR")
   
-  switch (memberLevel) {
+  switch (props.guild_role) {
     case 'leader':
       badge = (
         <div className="bg-amber-300 rounded-full w-5 h-5 absolute bottom-0 right-0">
-          <img src="crown.svg" className="p-1" />
+          <Crown className="w-5 h-5 p-1" color="#ffffff" />
+          {/* <img src="crown.svg" className="p-1" /> */}
         </div>
       );
       break;
@@ -26,7 +35,8 @@ export default function GuildUserCard(props: guildUserCardProps) {
     case 'manager':
       badge = (
         <div className="bg-red-300 rounded-full w-5 h-5 absolute bottom-0 right-0">
-          <img src="star.svg" className="p-1" />
+          <Star className="w-5 h-5 p-1" color="#ffffff" />
+          {/* <img src="star.svg" className="p-1" /> */}
         </div>
       );
       break;
@@ -40,7 +50,7 @@ export default function GuildUserCard(props: guildUserCardProps) {
         <div className="flex gap-5">
           <div className="w-16 h-16 aspect-square relative ">
             <Avatar className="bg-neutral-400 w-16 h-16">
-              <AvatarImage src={data.image} />
+              <AvatarImage src={props.user.img_src} />
             </Avatar>
             {badge}
 
@@ -48,11 +58,11 @@ export default function GuildUserCard(props: guildUserCardProps) {
             </div> */}
           </div>
           <div className="">
-            {data.userTitle && <p className="font-suit text-sm font-normal text-neutral-500">{data.userTitle}</p>}
-            <p className="font-suit text-xl font-medium">{data.name}</p>
-            {data.guildJoinDate && (
-              <p className="font-suit text-sm font-normal text-neutral-500">가입일 : {data.guildJoinDate}</p>
+            {props.user.user_title && (
+              <p className="font-suit text-sm font-normal text-neutral-500">{props.user.user_title}</p>
             )}
+            <p className="font-suit text-xl font-medium">{props.user.username}</p>
+            {props.joined_at && <p className="font-suit text-sm font-normal text-neutral-500">가입일 : {joindDate}</p>}
           </div>
         </div>
       </div>
