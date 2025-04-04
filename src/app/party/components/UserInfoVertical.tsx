@@ -22,14 +22,14 @@ export default function UserInfoVertical({ isRadioBtn = false, data, name, onSel
   };
   return (
     <div className="inline-flex items-center flex-col gap-2">
-      <label htmlFor={data.username} className="relative">
+      <label htmlFor={data.nickname} className="relative">
         {isRadioBtn && (
           <input
             ref={radioRef}
             type="radio"
-            id={data.username}
+            id={data.nickname}
             name={name}
-            value={data.username}
+            value={data.nickname}
             onChange={handleChange}
             className="hidden peer"
           />
@@ -53,8 +53,10 @@ export default function UserInfoVertical({ isRadioBtn = false, data, name, onSel
         </div>
       </label>
 
-      <label htmlFor={data.username}>
-        <p className="font-suit text-neutral-900 font-bold text-base w-[100px] text-center">{data.username}</p>
+      <label htmlFor={data.nickname}>
+        <p className="font-suit text-neutral-900 font-bold text-base w-[100px] text-center break-words">
+          {data.nickname}
+        </p>
       </label>
     </div>
   );

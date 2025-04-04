@@ -22,7 +22,7 @@ export default function UserApprove({ data, onApprove, onReject }: UserApprovePr
         />
         <div className="flex flex-col">
           <div className="text-sm text-neutral-500 leading-5">{data.user_title}</div>
-          <div className="text-lg text-neutral-900 font-semibold">{data.username}</div>
+          <div className="text-lg text-neutral-900 font-semibold">{data.nickname}</div>
         </div>
       </div>
 
