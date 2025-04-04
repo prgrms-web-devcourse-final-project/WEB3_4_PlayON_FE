@@ -5,7 +5,7 @@ import './style.css';
 
 type RetroButtonProps = {
   children: ReactNode;
-  type: 'purple';
+  type: 'purple' | 'black' | 'grey';
   callback?: () => void;
   className?: string;
 };
