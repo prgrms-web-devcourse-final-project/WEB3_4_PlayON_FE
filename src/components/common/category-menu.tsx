@@ -28,6 +28,10 @@ export default function CategoryMenu(props: CategoryMenuProps) {
     if (newSelected.slice(1, newSelected.length).filter((e) => e).length > 0) {
       newSelected[0] = false;
     }
+    if (newSelected.slice(1, newSelected.length).filter((e) => e).length >= newSelected.length - 1) {
+      newSelected[0] = true;
+      for (let i = 1; i < newSelected.length; i++) newSelected[i] = false;
+    }
     if (index === 0) {
       newSelected[0] = true;
       for (let i = 1; i < newSelected.length; i++) newSelected[i] = false;
