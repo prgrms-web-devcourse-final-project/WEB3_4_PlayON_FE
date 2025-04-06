@@ -1,0 +1,18 @@
+.h1 {
+  color: var(--neutral-900, #171717);
+  font-size: var(--text-text-4xl, 36px);
+  font-weight: 800;
+}
+
+.h2 {
+  color: var(--neutral-900, #171717);
+  font-size: var(--text-text-2xl, 24px);
+  font-weight: 800;
+}
+
+.h3 {
+  color: var(--neutral-900, #171717);
+  font-family: SUIT;
+  font-size: var(--text-text-base, 16px);
+  font-weight: 700;
+}

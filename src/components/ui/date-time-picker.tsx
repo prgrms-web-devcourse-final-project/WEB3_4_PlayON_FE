@@ -37,7 +37,7 @@ export function DateTimePicker(props: { onSelect: (date: Date | undefined) => vo
 
   React.useEffect(() => {
     props.onSelect(date);
-  }, [date]);
+  }, [date, props]);
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
@@ -46,7 +46,7 @@ export function DateTimePicker(props: { onSelect: (date: Date | undefined) => vo
           variant="outline"
           className={cn('w-full justify-start text-left font-normal', !date && 'text-muted-foreground')}
         >
-          <CalendarIcon className="mr-2 h-4 w-4" />
+          <CalendarIcon className="text-neutral-400 mr-2 h-4 w-4" />
           {date ? format(date, 'MM/dd/yyyy hh:mm aa') : <span>날짜와 시간을 선택해주세요</span>}
         </Button>
       </PopoverTrigger>
