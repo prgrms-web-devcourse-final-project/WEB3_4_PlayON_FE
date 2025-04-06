@@ -5,6 +5,7 @@ export interface party {
   party_name: string;
   description: string;
   start_time: Date;
+  end_time?: Date;
   tags: string[];
   participation: userSimple[];
   selected_game: gameSimple;

@@ -11,6 +11,26 @@ export const dummyUserSimple: userSimple = {
   user_title: 'AdventureTime!',
   username: 'morty1234@gmail.com',
 };
+export const dummyUsers: userSimple[] = [
+  {
+    img_src: 'https://avatars.githubusercontent.com/u/124599?v=4',
+    nickname: 'Morty',
+    user_title: 'AdventureTime!',
+    username: 'morty1234@gmail.com',
+  },
+  {
+    img_src: 'https://avatars.githubusercontent.com/u/124599?v=4',
+    nickname: 'Morty',
+    user_title: 'AdventureTime!',
+    username: 'morty1234@gmail.com',
+  },
+  {
+    img_src: 'https://avatars.githubusercontent.com/u/124599?v=4',
+    nickname: 'Abigale',
+    user_title: 'Stardew valley',
+    username: 'morty1234@gmail.com',
+  },
+];
 export const dummyUserDetail: userDetail = {
   img_src: 'https://avatars.githubusercontent.com/u/124599?v=4',
   last_login_at: new Date(),
@@ -87,14 +107,15 @@ export const dummyGuildUser: guildUser = {
   guild_role: 'manager', // 'leader', 'manager', 'user'
   joined_at: new Date(),
   num_guild_posts: 17,
-}
+};
 
 export const dummyParty: party = {
   party_name: '파티이름입니다.',
   description: '설명입니다.설명입니다.설명입니다. 설명입니다. 설명입니다. 설명입니다. 설명입니다.',
   start_time: new Date(),
+  end_time: new Date(Date.now() + 8000000),
   tags: ['맛보기', '뉴비'],
-  participation: [dummyUserSimple],
+  participation: dummyUsers,
   selected_game: dummyGameSimple,
   num_maximum: 10,
 };
