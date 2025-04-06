@@ -1,3 +1,5 @@
+'use client';
+
 import { userSimple } from '@/types/user';
 import { Trophy } from 'lucide-react';
 import { useRef } from 'react';
