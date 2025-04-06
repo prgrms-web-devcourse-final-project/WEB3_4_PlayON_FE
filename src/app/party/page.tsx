@@ -49,7 +49,7 @@ export default function Party() {
         backgroundRepeat: 'no-repeat',
         backgroundPosition: 'bottom',
       }}
-      className="space-y-20 pb-20"
+      className="space-y-20 pb-20 pt-[68px]"
     >
       <section className="w-full h-[400px]">
         <HeroTypingBanner data={popularGames}>
