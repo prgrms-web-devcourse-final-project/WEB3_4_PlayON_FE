@@ -32,7 +32,7 @@ export default function GuildList() {
   const dummyGuildList: guild[] = Array(9).fill(dummyGuild);
 
   return (
-    <div className="relative space-y-16 mb-24">
+    <div className="relative space-y-16 mb-24 pt-[68px]">
       <section className="w-full h-[520px]">
         <HeroSwiperBanner data={imageList}>
           <div className="wrapper">
