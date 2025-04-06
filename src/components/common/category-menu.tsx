@@ -6,7 +6,7 @@ import TiltToggle from '@/components/common/tilt-toggle';
 type CategoryMenuProps = {
   categoryName: string;
   categoryItems: string[];
-  onSelect: (newSelected: boolean[]) => void;
+  onSelect: (newSelected: boolean[], categoryName: string) => void;
   className?: string;
 };
 
@@ -15,8 +15,8 @@ export default function CategoryMenu(props: CategoryMenuProps) {
   const [selected, setSelected] = useState<boolean[]>([true, ...props.categoryItems.map(() => false)]);
 
   useEffect(() => {
-    onSelect(selected);
-  }, [selected, onSelect]);
+    onSelect(selected, props.categoryName);
+  }, [selected, onSelect, props.categoryName]);
 
   function onClick(index: number) {
     const newSelected = [...selected];
@@ -27,6 +27,10 @@ export default function CategoryMenu(props: CategoryMenuProps) {
     }
     if (newSelected.slice(1, newSelected.length).filter((e) => e).length > 0) {
       newSelected[0] = false;
+    }
+    if (newSelected.slice(1, newSelected.length).filter((e) => e).length >= newSelected.length - 1) {
+      newSelected[0] = true;
+      for (let i = 1; i < newSelected.length; i++) newSelected[i] = false;
     }
     if (index === 0) {
       newSelected[0] = true;

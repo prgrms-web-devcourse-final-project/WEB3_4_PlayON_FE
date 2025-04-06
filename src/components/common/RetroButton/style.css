@@ -8,6 +8,26 @@
   background-color: rgba(0, 0, 0, 0.4);
 }
 
+.retro-btn.black {
+  background-color: #1c1917;
+}
+.retro-btn-box-shadow.black {
+  background-color: #0c0a09;
+}
+.retro-btn-shadow.black {
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.retro-btn.grey {
+  background-color: #a3a3a3;
+}
+.retro-btn-box-shadow.grey {
+  background-color: #525252;
+}
+.retro-btn-shadow.grey {
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
 .retro-btn {
   display: flex;
   flex-direction: column;

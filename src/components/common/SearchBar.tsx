@@ -7,7 +7,7 @@ interface SearchBarProps {
   className?: string;
   placeholder?: string;
   onChange: (value: string) => void;
-  onSearch: () => void;
+  onSearch: (value: string) => void;
 }
 
 export default function SearchBar({ className, placeholder, onChange, onSearch }: SearchBarProps) {
@@ -15,7 +15,10 @@ export default function SearchBar({ className, placeholder, onChange, onSearch }
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && onSearch) {
-      onSearch();
+      if (valueRef.current) {
+        onSearch(valueRef.current.value);
+        valueRef.current.value = '';
+      }
     }
   };
   return (
@@ -33,7 +36,15 @@ export default function SearchBar({ className, placeholder, onChange, onSearch }
         className="font-suit placeholder:font-suit placeholder:text-neutral-400 placeholder:font-normal w-full focus:outline-none"
         placeholder={placeholder || '검색어를 입력하세요'}
       />
-      <button className="cursor-pointer" onClick={onSearch}>
+      <button
+        className="cursor-pointer"
+        onClick={() => {
+          if (valueRef.current) {
+            onSearch(valueRef.current.value);
+            valueRef.current.value = '';
+          }
+        }}
+      >
         <SearchIcon className="text-neutral-400" />
       </button>
     </div>

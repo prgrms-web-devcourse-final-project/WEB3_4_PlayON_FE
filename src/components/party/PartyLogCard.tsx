@@ -13,8 +13,8 @@ interface PartyCardProps {
 
 export function PartyLogCardSkeleton() {
   return (
-    <div className="flex flex-col gap-4 p-5 w-[410px] border-[1px] border-neutral-300 rounded-xl">
-      <Skeleton className="h-[160px] rounded-xl" />
+    <div className="flex flex-col gap-4 p-5  w-full aspect-[113/100] border-[1px] border-neutral-300 rounded-xl">
+      <Skeleton className="aspect-[366/160] rounded-xl" />
       <div className="flex flex-col gap-1">
         <Skeleton className="h-8 rounded-sm w-1/2" />
         <div className="flex justify-between py-2">
@@ -37,12 +37,12 @@ export default function PartyLogCard({ data }: PartyCardProps) {
     router.push('/');
   };
   return (
-    <div className="flex flex-col gap-4 p-5 w-[410px] rounded-xl bg-white border-[1px] border-neutral-300 cursor-pointer">
+    <div className="flex flex-col gap-4 p-5 rounded-xl bg-white border-[1px] border-neutral-300 cursor-pointer w-full aspect-[113/100]">
       <div
         style={{
           backgroundImage: `url(${data.party_info.selected_game.img_src})`,
         }}
-        className="flex flex-col h-[160px] rounded-xl overflow-hidden justify-between group bg-cover bg-center"
+        className="flex flex-col aspect-[366/160] rounded-xl overflow-hidden justify-between group bg-cover bg-center"
       ></div>
       <div className="flex flex-col gap-1">
         <div className="font-suit text-2xl font-semibold truncate text-neutral-900">{data.party_info.party_name}</div>
