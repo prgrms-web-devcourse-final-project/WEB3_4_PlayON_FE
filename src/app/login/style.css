@@ -1,0 +1,68 @@
+.glow {
+  text-shadow: 0 0 10px #9884f0;
+}
+
+.title {
+  translate: 0 -50%;
+  text-shadow: 0 0 3px #9884f0;
+}
+
+.dashed-border {
+  border: 2px dashed var(--Color-purple-500, #8258ff);
+}
+
+.overlay {
+  height: 1px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+}
+
+.overlay:before {
+  background: #00000030;
+  content: '';
+  display: block;
+  pointer-events: none;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 2;
+}
+
+.overlay:after {
+  animation: flicker 0.5s infinite;
+  background: rgba(16, 16, 16, 0.2);
+  content: '';
+  display: block;
+  pointer-events: none;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 2;
+}
+
+@keyframes flicker {
+  0% {
+    opacity: 0.35795;
+  }
+  20% {
+    opacity: 0.61511;
+  }
+  40% {
+    opacity: 0.34554;
+  }
+  60% {
+    opacity: 0.6469;
+  }
+  80% {
+    opacity: 0.32031;
+  }
+  100% {
+    opacity: 0.62031;
+  }
+}
