@@ -22,7 +22,11 @@ const sortOptions: SortOption[] = [
   { id: 'members', label: '인원순' },
 ];
 
-const imageList = ['/img/hero/bg_guild_1.webp', '/img/hero/bg_guild_2.webp', '/img/hero/bg_guild_3.webp'];
+const imageList = [
+  { title: 'Ultimate Chicken Horse', img_src: '/img/hero/bg_guild_1.webp' },
+  { title: 'Content Warning', img_src: '/img/hero/bg_guild_3.webp' },
+  { title: 'BATTLEGROUNDS', img_src: '/img/hero/bg_guild_2.webp' },
+];
 
 export default function GuildList() {
   const dummyGuildList: guild[] = Array(9).fill(dummyGuild);
@@ -30,9 +34,11 @@ export default function GuildList() {
   return (
     <div className="space-y-16 mb-24">
       <section className="w-full h-[520px]">
-        <HeroSwiperBanner imageList={imageList}>
+        <HeroSwiperBanner data={imageList}>
           <div className="wrapper">
-            <p className="font-helvetica text-9xl text-white font-extrabold absolute -bottom-6 ">GUILD LIST</p>
+            <p className="font-helvetica text-[160px] text-white font-normal absolute -bottom-[46px] tracking-wider">
+              GUILD LIST
+            </p>
           </div>
         </HeroSwiperBanner>
       </section>
