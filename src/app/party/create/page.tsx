@@ -13,6 +13,8 @@ import { SearchIcon } from 'lucide-react';
 import { DateTimePicker } from '@/components/ui/date-time-picker';
 import { partyTags } from '@/types/Tags/partyTags';
 import CategoryMenu from '@/components/common/category-menu';
+import SelectedGameCard from '@/components/game/SelectedGameCard';
+import { dummyGameSimple } from '@/utils/dummyData';
 
 const createPartyFormSchema = z.object({
   public: z.boolean(),
@@ -32,17 +34,22 @@ export default function PartyCreate() {
   const form = useForm<z.infer<typeof createPartyFormSchema>>({
     defaultValues: {
       public: true,
-      name: '',
-      game: '',
+      name: 'ㅁㄴㅇㄹ',
+      game: 'ㅁㄴㅇㄹ',
       date: formatISO(new Date()),
       min_part: 2,
       max_part: 10,
+      desc: '',
+      partyStyle: ['전체'],
+      skillLevel: ['전체'],
+      gender: ['전체'],
+      friendly: ['전체'],
     },
     resolver: zodResolver(createPartyFormSchema),
   });
 
-  async function onSubmit(data: z.infer<typeof createPartyFormSchema>) {
-    console.log(data);
+  function onSubmit(data: z.infer<typeof createPartyFormSchema>) {
+    console.log('data : ', data);
   }
 
   return (
@@ -51,7 +58,9 @@ export default function PartyCreate() {
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="flex justify-center gap-6">
             <div className="min-w-[411px] flex flex-col items-end">
-              <div className="w-full h-[180px] bg-neutral-400 rounded-2xl"></div>
+              <div className="w-full h-[180px] rounded-2xl border border-neutral-300">
+                <SelectedGameCard data={dummyGameSimple} />
+              </div>
               <div className="flex items-center gap-2 mt-[25px]">
                 <FormField
                   control={form.control}
@@ -169,9 +178,7 @@ export default function PartyCreate() {
                       <CategoryMenu
                         categoryItems={[...e.items]}
                         categoryName={e.name}
-                        onSelect={(newSelected: boolean[]) => {
-                          console.log(newSelected);
-                        }}
+                        onSelect={(newSelected: boolean[]) => {}}
                       />
                     </div>
                   ))}
@@ -183,24 +190,23 @@ export default function PartyCreate() {
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <div className="flex flex-col gap-2 border border-neutral-300 rounded-lg h-20">
-                          <Input
-                            className={`border-none focus-visible:ring-transparent shadow-none`}
-                            value={field.value}
-                            onChange={field.onChange}
-                            placeholder="파티 룸 소개"
-                          />
-                        </div>
+                        <div
+                          className="flex flex-col gap-2 border border-neutral-300 rounded-lg min-h-20 p-2"
+                          contentEditable="plaintext-only"
+                          onBlur={(e) => {
+                            form.setValue('desc', e.currentTarget.textContent ?? '');
+                          }}
+                        ></div>
                       </FormControl>
                     </FormItem>
                   )}
                 />
               </div>
               <div className="flex justify-end mt-11 gap-3">
-                <RetroButton type="purple" className="w-24 h-12">
+                <button className="bg-neutral-400 text-white rounded-full w-32 mt-2 h-12 hover:bg-neutral-600 transition-colors">
                   취소
-                </RetroButton>
-                <button type="submit">
+                </button>
+                <button type="submit" onClick={() => console.log(form.formState.errors)}>
                   <RetroButton type="purple" className="w-60 h-12">
                     파티 생성
                   </RetroButton>
