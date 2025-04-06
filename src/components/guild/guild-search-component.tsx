@@ -6,7 +6,7 @@ import PixelCharacter from '../PixelCharacter/PixelCharacter';
 import Chip from '@/components/common/chip';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import CategoryMenu from '../common/category-menu';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 type GuildSearchComponentProps = {
   className: string;
@@ -15,6 +15,7 @@ type GuildSearchComponentProps = {
 export default function GuildSearchComponent(props: GuildSearchComponentProps) {
   const router = useRouter();
   const searchQuery = useSearchParams();
+  const pathname = usePathname();
 
   const selectedGames = useRef<string[]>([]);
   const searchByName = useRef<string>('');
@@ -71,7 +72,7 @@ export default function GuildSearchComponent(props: GuildSearchComponentProps) {
     if (selectedGames.current.length > 0) {
       newSearchQuery.push('games=' + selectedGames.current.reduce((acc, cur) => acc + ',' + cur));
     }
-    router.push(`/?${newSearchQuery.join('&')}`, { scroll: false });
+    router.push(`${pathname}?${newSearchQuery.join('&')}`, { scroll: false });
   }
 
   useEffect(() => {
