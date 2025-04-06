@@ -15,6 +15,7 @@ import { partyTags } from '@/types/Tags/partyTags';
 import CategoryMenu from '@/components/common/category-menu';
 import SelectedGameCard from '@/components/game/SelectedGameCard';
 import { dummyGameSimple } from '@/utils/dummyData';
+import { Textarea } from '@/components/ui/textarea';
 
 const createPartyFormSchema = z.object({
   public: z.boolean(),
@@ -190,13 +191,12 @@ export default function PartyCreate() {
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <div
-                          className="flex flex-col gap-2 border border-neutral-300 rounded-lg min-h-20 p-2"
+                        <Textarea
+                          className="flex flex-col gap-2 border border-neutral-300 rounded-lg min-h-20 p-2 resize-none"
                           contentEditable="plaintext-only"
-                          onBlur={(e) => {
-                            form.setValue('desc', e.currentTarget.textContent ?? '');
-                          }}
-                        ></div>
+                          onChange={field.onChange}
+                          value={field.value}
+                        />
                       </FormControl>
                     </FormItem>
                   )}
