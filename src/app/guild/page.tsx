@@ -12,6 +12,7 @@ import { guild } from '@/types/guild';
 import { dummyGameSimple, dummyGuild } from '@/utils/dummyData';
 import { useState } from 'react';
 import PopularGameList from './components/PopularGameList';
+import SearchGuildWithGame from '@/components/common/search-guild-with-game';
 
 const banner = [
   {
@@ -60,7 +61,10 @@ export default function Guild() {
       </section>
       <section>
         <PlayOnRollingBanner duration={20} direction="left" />
-        <div className="w-full h-6 bg-purple-300"></div>
+        <SearchGuildWithGame
+          leftCarouselTitle={<p className="text-5xl font-bold text-purple-50 mb-9">보유 게임으로 길드 탐색</p>}
+          theme="dark"
+        />
         <PlayOnRollingBanner duration={20} direction="right" />
       </section>
 
