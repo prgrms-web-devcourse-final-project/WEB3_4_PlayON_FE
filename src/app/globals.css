@@ -1,3 +1,7 @@
+@import url(/fonts/dunggeunmo/dunggeunmo.css);
+@import url(/fonts/suit/suit.css);
+@import url(/fonts/helvetica/helvetica.css);
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
