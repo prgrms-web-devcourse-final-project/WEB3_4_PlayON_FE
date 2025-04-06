@@ -1,3 +1,8 @@
+'use client';
+
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+
 export interface SortOption {
   id: string;
   label: string;
@@ -5,11 +10,21 @@ export interface SortOption {
 
 interface SortRadioGroupProps {
   options: SortOption[];
-  value: string;
-  onChange: (value: string) => void;
 }
 
-export default function SortRadioGroup({ options, value, onChange }: SortRadioGroupProps) {
+export default function SortRadioGroup({ options }: SortRadioGroupProps) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const initialSort = searchParams.get('sort') || options[0].id;
+  const [selectedSort, setSelectedSort] = useState(initialSort);
+
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('sort', selectedSort);
+    router.push(`?${params.toString()}`, { scroll: false });
+  }, [router, searchParams, selectedSort]);
+
   return (
     <div className="flex gap-7">
       {options.map((option) => (
@@ -18,9 +33,9 @@ export default function SortRadioGroup({ options, value, onChange }: SortRadioGr
             type="radio"
             id={option.id}
             name="sort"
-            checked={value === option.id}
+            checked={selectedSort === option.id}
             className="hidden peer"
-            onChange={() => onChange(option.id)}
+            onChange={() => setSelectedSort(option.id)}
           />
           <p className="text-neutral-500 text-2xl peer-checked:text-neutral-900 peer-checked:font-semibold">
             {option.label}
