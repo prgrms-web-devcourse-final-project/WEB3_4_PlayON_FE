@@ -34,7 +34,7 @@ export default function Guild() {
   const dummyGuildList: guild[] = Array(3).fill(dummyGuild);
   const dummyGameList: gameSimple[] = Array(4).fill(dummyGameSimple);
   return (
-    <div className="space-y-20 pb-20">
+    <div className="space-y-20 pb-20 pt-[68px]">
       <section className="w-full h-[400px]">
         <HeroTypingBanner data={banner} isStatic>
           <SearchBar onChange={handleChange} onSearch={handleSearch} className="w-[640px]" />
