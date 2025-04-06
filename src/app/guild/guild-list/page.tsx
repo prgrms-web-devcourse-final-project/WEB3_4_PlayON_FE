@@ -46,9 +46,8 @@ export default function GuildList() {
           <p className="text-4xl font-extrabold text-neutral-900">필터</p>
           <ChevronDown size={32} className="peer-checked:rotate-180 transition-transform" />
         </label>
-        <div>
-          {/* <div className="bg-neutral-200 rounded-lg w-full h-[400px] group-has-[input:checked]:h-0 group-has-[input:checked]:opacity-0 transition-all duration-500 ease-in-out"></div> */}
-          <GuildSearchComponent className="w-full" />
+        <div className="w-full duration-500 ease-in-out group-has-[input:checked]:h-0">
+          <GuildSearchComponent className="w-full group-has-[input:checked]:opacity-0 transition-all duration-300 ease-in-out" />
         </div>
       </section>
       <section className="wrapper space-y-10">
@@ -61,7 +60,7 @@ export default function GuildList() {
         <Pagination>
           <PaginationContent>
             <PaginationItem>
-              <PaginationPrevious href="#" className="text0" />
+              <PaginationPrevious href="#" className="text-base" />
             </PaginationItem>
             <PaginationItem>
               <PaginationLink href="#" isActive>
@@ -69,10 +68,13 @@ export default function GuildList() {
               </PaginationLink>
             </PaginationItem>
             <PaginationItem>
+              <PaginationLink href="#">2</PaginationLink>
+            </PaginationItem>
+            <PaginationItem>
               <PaginationEllipsis />
             </PaginationItem>
             <PaginationItem>
-              <PaginationNext href="#" />
+              <PaginationNext href="#" className="text-base" />
             </PaginationItem>
           </PaginationContent>
         </Pagination>
