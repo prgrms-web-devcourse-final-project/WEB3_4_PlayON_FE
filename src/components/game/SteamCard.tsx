@@ -1,7 +1,7 @@
 import { gameSimple } from "@/types/games";
 
 interface SteamCardProps {
-  data: Pick<gameSimple, 'img_src' | 'title' | 'genre'>;
+  data: gameSimple;
 };
 
 
@@ -12,9 +12,8 @@ export default function SteamCard(props: SteamCardProps) {
     <>
       <div>
         <img src={data.img_src} className="w-full aspect-square rounded-xl object-cover"/>
-        {/* <div className="bg-neutral-400 w-full aspect-square rounded-xl"></div> */}
         <p className="mt-4 font-suit text-xl font-semibold"> {data.title}</p>
-        <p className="mt-2 text-sm text-neutral-400 font-medium"> {data.genre}</p>
+        <p className="mt-2 text-sm text-neutral-400 font-medium"> {data.genre.join(', ')}</p>
       </div>
     </>
   );

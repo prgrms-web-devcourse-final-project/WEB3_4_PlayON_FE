@@ -1,12 +1,9 @@
 import { gameSimple } from "@/types/games";
 
 interface PopularCardProps {
-  data: Pick<gameSimple, "img_src" | "title" | "genre" >;
+  data: gameSimple;
 };
 
-// type PopularCardProps = {
-//   data: gameDetail;
-// };
 
 export default function PopularCard(props: PopularCardProps) {
   
@@ -16,9 +13,8 @@ export default function PopularCard(props: PopularCardProps) {
     <>
       <div>
         <img src={data.img_src} className="w-full aspect-[16/7] rounded-xl bg-neutral-400 object-cover" />
-        {/* <div className="bg-neutral-400 w-full aspect-[16/7] rounded-xl"></div> */}
         <p className="mt-4 font-suit text-xl font-semibold"> {data.title}</p>
-        <p className="mt-2 text-sm text-neutral-400 font-medium"> {data.genre}</p>
+        <p className="mt-2 text-sm text-neutral-400 font-medium"> {data.genre.join(', ')}</p>
       </div>
     </>
   );
