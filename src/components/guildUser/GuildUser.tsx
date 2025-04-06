@@ -2,25 +2,22 @@ import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import { guildUser } from '@/types/guild';
 import { useMemo } from 'react';
 
-type PickedUser = Pick<guildUser['user'], 'img_src' | 'username' | 'last_login_at'>;
-
-type guildUserProps = Pick<guildUser, 'joined_at' | 'num_guild_posts'> & {
-  user: PickedUser;
+interface guildUserProps {
+  data: guildUser;
   index: number;
-  total: number;
-};
-
+  total: number
+}
 
 export default function GuildUser(props: guildUserProps) {
 
-  const { index, total } = props;
-  const joindDate = new Date(props.joined_at).toLocaleDateString("ko-kr", {
+  const { data, index, total } = props;
+  const joindDate = new Date(data.joined_at).toLocaleDateString("ko-kr", {
     year: "numeric",
     month: "long",
     day : "numeric"
   });
   
-  const lastDate = new Date(props.user.last_login_at).toLocaleDateString("ko-kr", {
+  const lastDate = new Date(data.user.last_login_at).toLocaleDateString("ko-kr", {
     year:"numeric",
     month: "long",
     day: "numeric"
@@ -31,11 +28,11 @@ export default function GuildUser(props: guildUserProps) {
     <>
       <div className="flex gap-6 py-8">
         <Avatar className="bg-neutral-400 w-16 h-16">
-          <AvatarImage src={props.user.img_src} />
+          <AvatarImage src={data.user.img_src} />
         </Avatar>
 
         <div className="w-full">
-          <p className="font-suit text-2xl font-bold">{props.user.username}</p>
+          <p className="font-suit text-2xl font-bold">{data.user.nickname}</p>
 
           <div className="flex gap-5">
             <div className="flex">
@@ -49,7 +46,7 @@ export default function GuildUser(props: guildUserProps) {
             </div>
           </div>
 
-          <p className="font-suit text-base font-medium">전체 글 갯수 : {props.num_guild_posts}개</p>
+          <p className="font-suit text-base font-medium">전체 글 갯수 : {data.num_guild_posts}개</p>
         </div>
 
         <div className="flex gap-3">
