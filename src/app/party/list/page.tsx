@@ -30,6 +30,8 @@ import { ChevronDown } from 'lucide-react';
 
 export default function PartyList() {
   const dummyPartyList: party[] = Array(9).fill(dummyParty);
+  const totalPartyNum = 82;
+  const userName = '홍길동';
   return (
     <div className="relative space-y-16 mb-24">
       <section className="w-full h-[520px]">
@@ -48,6 +50,20 @@ export default function PartyList() {
       </div>
 
       <section className="wrapper group space-y-6 min-h-16">
+        <div
+          style={{ boxShadow: '0 4px 2px 0 rgba(0, 0, 0, 0.08)' }}
+          className="w-[410px] px-10 py-6 bg-white rounded-2xl flex flex-col gap-2 place-self-end text-neutral-900"
+        >
+          <p className="font-dgm text-5xl">WE NEED YOU!</p>
+          <div>
+            <p className="text-lg leading-5">
+              전체 <span className="font-bold">{totalPartyNum}</span>개의 파티가
+            </p>
+            <p className="text-lg">
+              <span className="font-bold">{userName}</span>님을 기다리고 있습니다.
+            </p>
+          </div>
+        </div>
         <label className="inline-flex gap-8 items-center">
           <input type="checkbox" className="peer hidden" />
           <p className="text-4xl font-extrabold text-neutral-900">필터</p>
