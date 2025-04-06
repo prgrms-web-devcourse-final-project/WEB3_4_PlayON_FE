@@ -1,7 +1,6 @@
 'use client';
 
 import PlayOnRollingBanner from '@/components/common/play-on-rolling-banner';
-import RetroButton from '@/components/common/RetroButton';
 import Tag from '@/components/common/Tag';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
