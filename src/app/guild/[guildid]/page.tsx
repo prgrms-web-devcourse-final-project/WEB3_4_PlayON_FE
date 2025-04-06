@@ -20,15 +20,15 @@ export default function GuildDetails() {
   return (
     <div className="flex flex-col mt-36 mb-36 gap-14">
       <div className="flex gap-6 w-[67%] self-center">
-        <div className="flex flex-col gap-4">
-          <img src={dummyGuild.img_src} alt="" className="w-[50%] min-w-[628px] rounded-3xl" />
+        <div className="flex flex-col gap-4 min-w-[628px] aspect-[16/7]">
+          <img src={dummyGuild.img_src} alt="" className="rounded-3xl" />
           <Button variant="outline" className="w-fit px-4 py-2 text-neutral-500">
             <ClipboardPenIcon />
             <span>길드 관리</span>
           </Button>
         </div>
         <div className="flex flex-col gap-5">
-          <p className="font-bold text-5xl text-neutral-900">길드 이름</p>
+          <p className="font-bold text-5xl text-neutral-900">{dummyGuild.guild_name}</p>
           <div className="flex gap-2">
             {allTags.map((e, ind) => (
               <Tag style="retro" size="small" background="dark" className="" key={ind}>
@@ -36,7 +36,7 @@ export default function GuildDetails() {
               </Tag>
             ))}
           </div>
-          <p className="text-lg text-neutral-900 font-medium line-clamp-4 text-ellipsis">{dummyGuild.description}</p>
+          <p className="text-sm text-neutral-900 font-medium line-clamp-4 text-ellipsis">{dummyGuild.description}</p>
           <div className="flex gap-6">
             <div className="w-36 bg-neutral-100 rounded-lg aspect-square flex flex-col items-center justify-center gap-2">
               <p>CAPTAIN</p>
