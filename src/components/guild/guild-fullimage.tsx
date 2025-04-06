@@ -23,7 +23,7 @@ export default function GuildFullImage(props: GuildFullimageProps) {
   return (
     <div
       className={
-        `rounded-lg overflow-hidden aspect-[16/9] px-6 py-7 flex flex-col justify-between bg-[#00000060] ` +
+        `select-none rounded-lg overflow-hidden aspect-[16/9] px-6 py-7 flex flex-col justify-between bg-[#00000060] ` +
         props.className
       }
       style={{
