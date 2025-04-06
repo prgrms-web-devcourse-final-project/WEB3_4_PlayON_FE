@@ -12,7 +12,7 @@ const config: Config = {
       fontFamily: {
         suit: ['SUIT'],
         dgm: ['DungGeunMo'],
-        helvetica: ['Helvetica', 'helvetica'],
+        helvetica: ['HelveticaCompressed'],
       },
       colors: {
         purple: {
