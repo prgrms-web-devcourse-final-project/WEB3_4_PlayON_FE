@@ -34,7 +34,7 @@ export default function Login() {
               <p className="font-dgm text-2xl">ENTER YOUR EMAIL</p>
               <Input className="border border-purple-500 rounded-none font-dgm !text-xl" />
               <p className="font-dgm text-2xl">ENTER YOUR PASSWORD</p>
-              <Input className="border border-purple-500 rounded-none font-dgm !text-xl" />
+              <Input type="password" className="border border-purple-500 rounded-none font-dgm !text-xl" />
               <button className="mt-5 flex items-center justify-center gap-2 border border-purple-500 hover:bg-purple-500 hover:text-white p-2">
                 <MailIcon />
                 <span className="font-dgm">LOGIN</span>
