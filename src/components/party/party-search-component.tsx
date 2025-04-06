@@ -6,7 +6,7 @@ import PixelCharacter from '../PixelCharacter/PixelCharacter';
 import Chip from '@/components/common/chip';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import CategoryMenu from '../common/category-menu';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { DateTimePicker } from '../ui/date-time-picker';
 
 type PartySearchComponentProps = {
@@ -16,6 +16,7 @@ type PartySearchComponentProps = {
 export default function PartySearchComponent(props: PartySearchComponentProps) {
   const router = useRouter();
   const searchQuery = useSearchParams();
+  const pathname = usePathname();
 
   const selectedGenres = useRef<string[]>([]);
   const searchByName = useRef<string>('');
@@ -81,7 +82,7 @@ export default function PartySearchComponent(props: PartySearchComponentProps) {
       const dateString = partyDate.current.toLocaleString();
       newSearchQuery.push(`partyDate=${dateString}`);
     }
-    router.push(`/?${newSearchQuery.join('&')}`, { scroll: false });
+    router.push(`${pathname}?${newSearchQuery.join('&')}`, { scroll: false });
   }
 
   useEffect(() => {
