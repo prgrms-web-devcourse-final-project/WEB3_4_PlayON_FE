@@ -1,4 +1,4 @@
-import { loremIpsum } from '@/utils/loremIpsum';
+import { loremIpsum } from './loremIpsum';
 import { post } from '@/types/community';
 import { guild, guildUser } from '@/types/guild';
 import { userDetail, userSimple } from '@/types/user';
@@ -134,11 +134,24 @@ export const dummyPartyLog: partyLog = {
       author: dummyUserSimple,
       comment: '멋져요',
     },
+    {
+      author: dummyUserSimple,
+      img_src: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/489830/header.jpg?t=1721923149',
+      comment: loremIpsum,
+    },
   ],
   review: [
     {
       author: dummyUserSimple,
       text: '멋져요',
+    },
+    {
+      author: dummyUserSimple,
+      text: loremIpsum,
+    },
+    {
+      author: dummyUserSimple,
+      text: loremIpsum,
     },
   ],
 };
