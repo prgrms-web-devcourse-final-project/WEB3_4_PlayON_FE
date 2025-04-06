@@ -23,7 +23,7 @@ export default function PartyLog() {
         <div className="bg-gradient-to-b from-purple-50/0 to-purple-100 w-full h-1/2 absolute bottom-0"></div>
       </div>
       <div className="wrapper">
-        <div className="bg-white/30 backdrop-blur-md py-10 px-16 rounded-3xl relative">
+        <div className="bg-white/40 backdrop-blur-md py-10 px-16 rounded-3xl relative border border-white">
           <DefaultInfo partyLog={partyLog} />
           <PostInfo partyLog={partyLog} />
           <div className="absolute top-[220px] right-20 bg-white px-6 py-3 border-2 border-amber-400 rounded-xl ">
@@ -46,6 +46,9 @@ export default function PartyLog() {
               )}
             </div>
           </div>
+        </div>
+        <div className="bg-white/30 backdrop-blur-md py-10 px-16 rounded-3xl relative mt-8 border border-white">
+          <h4 className="text-3xl text-center font-bold">파티 로그 작성</h4>
         </div>
       </div>
     </div>
