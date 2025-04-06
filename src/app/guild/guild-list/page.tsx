@@ -32,7 +32,7 @@ export default function GuildList() {
   const dummyGuildList: guild[] = Array(9).fill(dummyGuild);
 
   return (
-    <div className="space-y-16 mb-24">
+    <div className="relative space-y-16 mb-24">
       <section className="w-full h-[520px]">
         <HeroSwiperBanner data={imageList}>
           <div className="wrapper">
@@ -42,9 +42,14 @@ export default function GuildList() {
           </div>
         </HeroSwiperBanner>
       </section>
+      <div className="fixed right-14 top-[500px] z-50">
+        <button className="rounded-full size-16 bg-neutral-300 text-neutral-700" onClick={() => alert('click!')}>
+          생성
+        </button>
+      </div>
 
       <section className="wrapper group space-y-6 min-h-16">
-        <label className="flex gap-8 items-center">
+        <label className="inline-flex gap-8 items-center">
           <input type="checkbox" className="peer hidden" />
           <p className="text-4xl font-extrabold text-neutral-900">필터</p>
           <ChevronDown size={32} className="peer-checked:rotate-180 transition-transform" />
