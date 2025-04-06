@@ -12,7 +12,7 @@ import { ChevronDown, ChevronUp, Eye, SquarePen, ThumbsUp, Trash2 } from 'lucide
 export default function Community() {
   const post: post = dummyPost;
   return (
-    <div className="wrapper relative mb-12">
+    <div className="wrapper relative mb-12 mt-28">
       <div>
         <div className=" bg-[url('/img/hero/bg_community_main.webp')] w-full h-[160px] rounded-2xl mt-12 bg-cover bg-center" />
       </div>
