@@ -1,6 +1,6 @@
 import { loremIpsum } from '@/utils/loremIpsum';
 import { post } from '@/types/community';
-import { guild } from '@/types/guild';
+import { guild, guildUser } from '@/types/guild';
 import { userDetail, userSimple } from '@/types/user';
 import { gameDetail, gameSimple } from '@/types/games';
 
@@ -79,4 +79,11 @@ export const dummyGuild: guild = {
   play_style: ['노멀', '도전과제'],
   skill_level: ['뉴비', '마스터'],
   main_game: dummyGameSimple,
+};
+
+export const dummyGuildUser: guildUser = {
+  user: dummyUserDetail,
+  guild_role: 'manager', // 'leader', 'manager', 'user'
+  joined_at: new Date(),
+  num_guild_posts: 17,
 };
