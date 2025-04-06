@@ -54,7 +54,7 @@ export default function GuildList() {
           <p className="text-4xl font-extrabold text-neutral-900">필터</p>
           <ChevronDown size={32} className="peer-checked:rotate-180 transition-transform" />
         </label>
-        <div className="w-full duration-500 ease-in-out group-has-[input:checked]:h-0 group-has-[input:checked]:overflow-hidden">
+        <div className="w-full max-h-[500px] duration-500 ease-in-out group-has-[input:checked]:max-h-0 group-has-[input:checked]:overflow-hidden">
           <GuildSearchComponent className="w-full group-has-[input:checked]:opacity-0 transition-all duration-300 ease-in-out" />
         </div>
       </section>
