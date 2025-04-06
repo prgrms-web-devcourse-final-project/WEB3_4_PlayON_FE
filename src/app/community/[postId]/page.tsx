@@ -1,7 +1,9 @@
 import UserInfoHorizontal from '@/app/party/components/UserInfoHorizontal';
 import Tag from '@/components/common/Tag';
+import CommentCard from '@/components/community/comment-card';
 import CommunityMenuBar from '@/components/community/community-menu-bar';
 import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
 import { Toggle } from '@/components/ui/toggle';
 import { post } from '@/types/community';
 import { dummyPost } from '@/utils/dummyData';
@@ -12,7 +14,7 @@ export default function Community() {
   return (
     <div className="wrapper relative mb-12">
       <div>
-        <div className="bg-neutral-300 w-full h-[160px] rounded-2xl mt-12" />
+        <div className=" bg-[url('/img/hero/bg_community_main.webp')] w-full h-[160px] rounded-2xl mt-12 bg-cover bg-center" />
       </div>
       <div className="flex gap-12">
         <section className="w-1/3 relative -top-16">
@@ -56,18 +58,34 @@ export default function Community() {
           </div>
           <div className="text-xl">{post.content}</div>
           <div className="flex justify-end gap-2">
-            {/* <Button
+            <Toggle
+              disabled
               variant="outline"
-              className="rounded-full text-xl text-neutral-400 hover:bg-white hover:text-neutral-400 hover:cursor-default"
+              size="lg"
+              className="rounded-full disabled:text-neutral-400 disabled:border-neutral-300 disabled:opacity-100 text-xl"
             >
-              <Eye /> {post.hits}
-            </Button>
-            <Button variant="outline" className="rounded-full text-xl text-neutral-400">
-              <ThumbsUp /> {post.num_likes}
-            </Button> */}
-            <Toggle variant="outline" size="lg" className="rounded-full text-neutral-400">
-              <Eye /> {post.hits}
+              <Eye className="size-10" /> {post.hits}
             </Toggle>
+            <Toggle variant="outline" size="lg" className="rounded-full text-neutral-400 border-neutral-300 text-xl">
+              <ThumbsUp /> {post.num_likes}
+            </Toggle>
+          </div>
+          <div className="divide-y divide-neutral-300">
+            {post.comments.map((comment, idx) => (
+              <CommentCard key={idx} data={comment} />
+            ))}
+          </div>
+          <div className="flex flex-col gap-5">
+            <p className="text-neutral-900 text-2xl font-semibold">
+              댓글 <span className="text-purple-600">{post.comments.length}</span>개
+            </p>
+            <Textarea
+              placeholder="댓글을 남겨주세요."
+              className="h-24 resize-none focus-visible:ring-purple-400 placeholder:text-neutral-400"
+            />
+            <Button size="lg" className="px-4 py-2 text-sm bg-purple-600 hover:bg-purple-700 self-end">
+              댓글 작성
+            </Button>
           </div>
         </section>
       </div>
