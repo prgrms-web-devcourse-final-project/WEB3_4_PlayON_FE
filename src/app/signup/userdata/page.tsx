@@ -14,7 +14,7 @@ export default function SignupUserdata() {
       <div className="overlay"></div>
       <div className="scanline"></div>
       <div className="wrapper">
-        <div className="mt-16 flex flex-col pb-10">
+        <div className="mt-16 flex flex-col pb-10 items-center">
           <div className="flex gap-5 mb-20">
             <div className="">
               <pre className="text-xs glow">{playOnASCII}</pre>
