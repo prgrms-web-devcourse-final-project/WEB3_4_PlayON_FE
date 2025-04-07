@@ -32,7 +32,7 @@ export default function PostInfo({ partyLog }: Props) {
           loop
         >
           {partyLog.screenshot.map((screenshot, idx) => (
-            <SwiperSlide>
+            <SwiperSlide key={idx}>
               <div className="flex gap-6 items-start">
                 <Image
                   src={screenshot.img_src}
