@@ -1,0 +1,113 @@
+.glow {
+  text-shadow: 0 0 10px rgb(152, 132, 240, 0.4);
+}
+
+.title {
+  translate: 0 -50%;
+  text-shadow: 0 0 3px #9884f0;
+}
+
+.dashed-border {
+  border: 2px dashed var(--Color-purple-500, #8258ff);
+}
+
+.overlay {
+  height: 1px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+}
+
+.overlay:before {
+  background:
+    linear-gradient(rgb(16, 16, 16, 0.4) 50%, rgba(16, 16, 16, 0.12) 50%),
+    linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.03));
+  background-size:
+    100% 3px,
+    10px 100%;
+  content: '';
+  display: block;
+  pointer-events: none;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 2;
+  opacity: 0.5;
+}
+
+.overlay:after {
+  animation: flicker 5s infinite ease-in-out;
+  background: rgba(16, 16, 16, 0.3);
+  content: '';
+  display: block;
+  pointer-events: none;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 2;
+}
+@keyframes flicker {
+  0% {
+    opacity: 0.62;
+  }
+  20% {
+    opacity: 0.31;
+  }
+  40% {
+    opacity: 0.56;
+  }
+  60% {
+    opacity: 0.34;
+  }
+  80% {
+    opacity: 0.58;
+  }
+  100% {
+    opacity: 0.32;
+  }
+}
+@keyframes scan {
+  from {
+    top: 0;
+  }
+  to {
+    top: 100%;
+  }
+}
+@keyframes scroll {
+  0% {
+    height: 0;
+  }
+  100% {
+    height: 100%;
+  }
+}
+
+.scanline {
+  animation: scroll 10s 5s infinite;
+  background: -moz-linear-gradient(top, rgba(0, 221, 0, 0) 0%, rgb(165, 93, 224) 50%, rgba(0, 221, 0, 0) 100%);
+  background: -webkit-linear-gradient(top, rgba(0, 221, 0, 0) 0%, #af21e7 50%, rgba(0, 221, 0, 0) 100%);
+  background: linear-gradient(to bottom, rgba(0, 221, 0, 0) 0%, rgb(202, 88, 255) 50%, rgba(0, 221, 0, 0) 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#0000dd00', endColorstr='#0000dd00',GradientType=0 );
+  display: block;
+  height: 20px;
+  opacity: 0.05;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -5%;
+  z-index: 0;
+}
+.wrapper {
+  animation: scroll 5s 1;
+  z-index: 3;
+}
+
+::-ms-reveal {
+  display: none;
+}
