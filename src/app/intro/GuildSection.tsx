@@ -37,7 +37,7 @@ function GuildSection() {
     Tl.fromTo(guildBox1.current, { y: 60, opacity: 0 }, { y: 0, opacity: 1, ease: 'sine.in' }, 0)
       .fromTo(guildBox2.current, { y: 60, opacity: 0 }, { y: 0, opacity: 1, ease: 'sine.in' }, 0.2)
       .fromTo(guildBox3.current, { y: 60, opacity: 0 }, { y: 0, opacity: 1, ease: 'sine.in' }, 0.4)
-      .fromTo(charBox.current, { x: -800 }, { x: 0, ease: 'power1.in', duration: 4 }, 0);
+      .fromTo(charBox.current, { x: -800 }, { x: 0, ease: 'power1.in', duration: 2 }, 0);
   });
 
   return (
