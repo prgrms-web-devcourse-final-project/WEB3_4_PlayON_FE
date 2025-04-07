@@ -28,9 +28,9 @@ import {
   dummyUserDetail,
   dummyUserSimple,
 } from '@/utils/dummyData';
-import { ChevronLeft, ChevronRight, SquarePen } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
-import { Button } from 'react-day-picker';
+import { EditInfo } from './components/MyModal';
 
 export default function MyPage() {
   const dummyGuildList: guild[] = Array(3).fill(dummyGuild);
@@ -42,6 +42,7 @@ export default function MyPage() {
   const dummyGameArr = new Array<gameSimple>(8).fill(dummyGameSimple);
   const [selectedGame, setSelectedGame] = useState<number>(0);
   const isSteamToken = 'abc';
+
 
   return (
     <main>
@@ -62,10 +63,11 @@ export default function MyPage() {
                 <div className="flex gap-8">
                   <div className="font-suit text-base font-semibold text-neutral-400 flex">
                     스팀 아이디 :&nbsp;
-                    {isSteamToken ? <div>{dummyUserSimple.username.split('@')[0]}</div> :
+                    {isSteamToken ? (
+                      <div>{dummyUserSimple.username.split('@')[0]}</div>
+                    ) : (
                       <button>Steam ID 연동</button>
-                    }
-                      
+                    )}
                   </div>
                   <p className="font-suit text-base font-semibold text-neutral-400"> 성별 : {dummyUserDetail.gender}</p>
                 </div>
@@ -90,7 +92,11 @@ export default function MyPage() {
                 </div>
               </div>
               <div className="absolute -top-1 right-0">
-                <SquarePen color="#A3A3A3" />
+
+
+                <div className="w-full">
+                  <EditInfo />
+                </div>
               </div>
             </div>
           </div>
@@ -207,8 +213,6 @@ export default function MyPage() {
           </Pagination>
         </div>
       </section>
-
-      
     </main>
   );
 }
