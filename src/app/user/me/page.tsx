@@ -31,6 +31,7 @@ import {
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
 import { EditInfo } from './components/MyModal';
+import SteamSVG from '@/components/svg/steam';
 
 export default function MyPage() {
   const dummyGuildList: guild[] = Array(3).fill(dummyGuild);
@@ -42,7 +43,6 @@ export default function MyPage() {
   const dummyGameArr = new Array<gameSimple>(8).fill(dummyGameSimple);
   const [selectedGame, setSelectedGame] = useState<number>(0);
   const isSteamToken = 'abc';
-
 
   return (
     <main>
@@ -66,7 +66,10 @@ export default function MyPage() {
                     {isSteamToken ? (
                       <div>{dummyUserSimple.username.split('@')[0]}</div>
                     ) : (
-                      <button>Steam ID 연동</button>
+                        <button className='flex flex-row gap-1'>
+                          <SteamSVG fill={'#8258ff'} stroke="" width={24} height={24} />
+                          <p className="text-base font-black text-purple-400">STEAM</p>
+                        </button>
                     )}
                   </div>
                   <p className="font-suit text-base font-semibold text-neutral-400"> 성별 : {dummyUserDetail.gender}</p>
@@ -92,8 +95,6 @@ export default function MyPage() {
                 </div>
               </div>
               <div className="absolute -top-1 right-0">
-
-
                 <div className="w-full">
                   <EditInfo />
                 </div>

@@ -1,5 +1,6 @@
 'use client';
 
+import SteamSVG from '@/components/svg/steam';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -20,7 +21,7 @@ import {  useRef } from 'react';
 
 export function EditInfo() {
   // if (!isOpen) return null;
-  const isSteamToken = 'abc';
+  const isSteamToken = '';
 
   const imageRef = useRef(null);
 
@@ -85,7 +86,13 @@ export function EditInfo() {
             <div className="flex gap-8">
               <div className="font-suit text-base font-semibold text-neutral-400 flex">
                 스팀 아이디 :&nbsp;
-                {isSteamToken ? <div>{dummyUserSimple.username.split('@')[0]}</div> : <button>Steam ID 연동</button>}
+                {isSteamToken ? <div>{dummyUserSimple.username.split('@')[0]}</div> :
+                  // <button>Steam ID 연동</button>
+                                          <button className='flex flex-row gap-1'>
+                                            <SteamSVG fill={'#8258ff'} stroke="" width={24} height={24} />
+                                            <p className="text-base font-black text-purple-400">STEAM</p>
+                                          </button>
+                }
               </div>
 
               <div className="flex relative">
