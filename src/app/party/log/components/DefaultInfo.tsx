@@ -21,11 +21,11 @@ export default function DefaultInfo({ partyLog }: Props) {
       <div className="text-center w-full flex flex-col justify-center">
         <img src="/img/icons/pixel_swords.svg" alt="swords pixel icon" className="w-11 mx-auto" />
         <p className="font-dgm text-purple-800 text-lg mb-4">Play complete!</p>
-        <h3 className="text-purple-700 text-5xl font-black">{partyLog.party_info.selected_game.title}</h3>
+        <h3 className="text-purple-700 text-7xl font-black">{partyLog.party_info.selected_game.title}</h3>
       </div>
       <div>
         <h4 className="text-xl font-bold mb-1">파티 룸</h4>
-        <p className="text-3xl font-bold">{partyLog.party_info.party_name}</p>
+        <p className="text-4xl font-bold">{partyLog.party_info.party_name}</p>
       </div>
       <div>
         <h4 className="text-xl font-bold mb-1">파티 스타일</h4>
@@ -72,17 +72,7 @@ export default function DefaultInfo({ partyLog }: Props) {
           }}
         >
           {partyLog.party_info.participation.map((user, idx) => (
-            <SwiperSlide>
-              <UserInfoVertical key={idx} data={user}></UserInfoVertical>
-            </SwiperSlide>
-          ))}
-          {partyLog.party_info.participation.map((user, idx) => (
-            <SwiperSlide>
-              <UserInfoVertical key={idx} data={user}></UserInfoVertical>
-            </SwiperSlide>
-          ))}
-          {partyLog.party_info.participation.map((user, idx) => (
-            <SwiperSlide>
+            <SwiperSlide key={idx}>
               <UserInfoVertical key={idx} data={user}></UserInfoVertical>
             </SwiperSlide>
           ))}

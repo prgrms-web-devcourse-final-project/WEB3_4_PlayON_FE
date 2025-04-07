@@ -7,14 +7,17 @@ import PostInfo from './components/PostInfo';
 import UserInfoVertical from '../components/UserInfoVertical';
 import { Trophy } from 'lucide-react';
 import Image from 'next/image';
-import LogForm from './components/LogForm';
+import ReviewForm from './components/ReviewForm';
+import ScreenshotForm from './components/screenShotForm';
+import PlayerRecommendForm from './components/PlayerRecommendForm';
 
 export default function PartyLog() {
   const partyLog: partyLog = dummyPartyLog;
   const gameBackgroundUrl =
     'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2246340/page_bg_raw.jpg?t=1743743917';
   const mvp = dummyUserSimple;
-  const mpvRecommend = 5;
+  const mpvRecommend = 10;
+  const isParticipated = true; //이쪽에 토큰 받아서 참가자인지 확인
   return (
     <div className="bg-purple-100 pt-28 pb-32 ">
       <div
@@ -27,7 +30,7 @@ export default function PartyLog() {
         <div className="bg-white/40 backdrop-blur-md py-10 px-16 rounded-3xl relative border border-white">
           <DefaultInfo partyLog={partyLog} />
           <PostInfo partyLog={partyLog} />
-          <div className="absolute top-[220px] right-20 bg-white px-6 py-3 border-2 border-amber-400 rounded-xl ">
+          <div className="absolute top-[260px] right-20 bg-white px-6 py-3 border-2 border-amber-400 rounded-xl ">
             <UserInfoVertical data={mvp}></UserInfoVertical>
             <div className="flex text-amber-400 mt-2 justify-center flex-wrap">
               <Image
@@ -48,7 +51,16 @@ export default function PartyLog() {
             </div>
           </div>
         </div>
-        {false && <LogForm />}
+        {isParticipated && (
+          <div className="bg-white/40 backdrop-blur-md py-10 px-16 rounded-3xl relative border border-white mt-6">
+            <div className="flex flex-col gap-8">
+              <h4 className="text-center text-4xl font-extrabold text-purple-600">파티로그 작성</h4>
+              <ScreenshotForm />
+              <ReviewForm />
+              <PlayerRecommendForm partyLog={partyLog} />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
