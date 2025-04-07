@@ -1,5 +1,6 @@
 'use client';
 import RetroButton from '@/components/common/RetroButton';
+import InputImage from '@/components/community/input-image';
 import TextEditor from '@/components/community/TextEditor';
 import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
@@ -11,20 +12,61 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 const createCommunityFormSchema = z.object({
-  tag: z.string().default(''),
-  title: z.string().default(''),
-  content: z.string().default(''),
+  tag: z.string(),
+  title: z.string().min(1),
+  image: z.string(),
+  content: z.string().min(1),
 });
 type createCommunityFormType = z.infer<typeof createCommunityFormSchema>;
 
 export default function CommunityCreate() {
   const form = useForm<createCommunityFormType>({
+    defaultValues: {
+      tag: '',
+      title: '',
+      image: '',
+      content: '',
+    },
     resolver: zodResolver(createCommunityFormSchema),
   });
+
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   function onSubmit(data: createCommunityFormType) {
     console.log('data : ', data);
   }
+
+  async function handleImageChange(e: React.ChangeEvent<HTMLInputElement>, onChange: (value: string) => void) {
+    const file = e.target.files?.[0];
+    if (!file) {
+      onChange('');
+      return;
+    }
+
+    const url = URL.createObjectURL(file);
+    setPreviewUrl(url);
+
+    try {
+      const uploadedUrl = await uploadImageToS3(file);
+      onChange(uploadedUrl);
+    } catch (error) {
+      console.error('이미지 업로드 실패:', error);
+    }
+  }
+
+  // 모킹된 이미지 업로드 함수 (나주에 유틸 함수로 빼기)
+  const uploadImageToS3 = async (file: File): Promise<string> => {
+    return new Promise((resolve) => {
+      console.log('업로드할 파일:', file);
+
+      // 실제 S3 업로드 대신 딜레이 후 URL 반환
+      setTimeout(() => {
+        const mockUrl = `https://example-s3-bucket.amazonaws.com/${file.name}`;
+        console.log('업로드 성공! URL:', mockUrl);
+        resolve(mockUrl);
+      }, 1000); // 1초 딜레이 (업로드 시뮬레이션)
+    });
+  };
 
   return (
     <div className="wrapper mb-12 mt-28 space-y-10">
@@ -33,7 +75,7 @@ export default function CommunityCreate() {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-10">
           <div className="space-y-7">
-            <div className="bg-neutral-50 rounded-2xl px-8 py-6 space-y-3">
+            <div className="bg-neutral-50 border border-neutral-300 rounded-2xl px-8 py-6 space-y-3">
               <FormField
                 control={form.control}
                 name="tag"
@@ -61,6 +103,8 @@ export default function CommunityCreate() {
                   <FormItem>
                     <FormControl>
                       <Input
+                        value={field.value}
+                        onChange={field.onChange}
                         placeholder="제목을 입력해주세요"
                         className="!text-xl w-full h-12 bg-white px-4 placeholder:text-neutral-400"
                       />
@@ -70,6 +114,17 @@ export default function CommunityCreate() {
               />
             </div>
           </div>
+          <FormField
+            control={form.control}
+            name="image"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <InputImage onChange={(e) => handleImageChange(e, field.onChange)} previewUrl={previewUrl} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
           <FormField
             control={form.control}
             name="content"
