@@ -26,7 +26,6 @@ export default function CommunityCreate() {
     console.log('data : ', data);
   }
 
-  const [value, setValue] = useState<string>('');
   return (
     <div className="wrapper mb-12 mt-28 space-y-10">
       <div className=" bg-[url('/img/hero/bg_community_main.webp')] w-full h-[160px] rounded-2xl bg-cover bg-center" />

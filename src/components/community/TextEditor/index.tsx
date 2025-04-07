@@ -5,14 +5,23 @@ import dynamic from 'next/dynamic';
 import 'react-quill-new/dist/quill.snow.css';
 import { cn } from '@/lib/utils';
 import './style.css';
+import { Skeleton } from '@/components/ui/skeleton';
 
 // 서버에서는 실행되지 않도록 dynamic import
-const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false });
+const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false, loading: () => <TextEditorSkeleton /> });
 
 interface TextEditorProps {
   value: string;
   onChange: (value: string) => void;
   className?: string;
+}
+
+export function TextEditorSkeleton() {
+  return (
+    <div className="h-[434px] w-full rounded-xl border border-[hsl(0 0% 89.8%)] overflow-hidden">
+      <Skeleton className="w-full h-[52px] bg-neutral-50 rounded-none border-b border-[hsl(0 0% 89.8%)]" />
+    </div>
+  );
 }
 
 export default function TextEditor({ value, onChange, className }: TextEditorProps) {
