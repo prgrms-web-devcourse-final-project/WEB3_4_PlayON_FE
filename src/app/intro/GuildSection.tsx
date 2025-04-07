@@ -9,8 +9,6 @@ import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/all';
 import { useRef, useState } from 'react';
 
-const guildDummyData = [{}, {}, {}];
-
 function GuildSection() {
   gsap.registerPlugin(useGSAP);
   gsap.registerPlugin(ScrollTrigger);
@@ -27,7 +25,7 @@ function GuildSection() {
         trigger: container.current,
         start: 'top top',
         end: 'top -100%',
-        markers: true,
+        // markers: true,
         scrub: 1,
         pin: true,
         pinSpacing: true,

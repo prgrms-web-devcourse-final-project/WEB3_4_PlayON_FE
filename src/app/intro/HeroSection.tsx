@@ -30,7 +30,7 @@ function HeroSection() {
         trigger: container.current,
         start: 'top top',
         end: 'top -100%',
-        markers: true,
+        // markers: true,
         scrub: 2,
         pin: true,
         pinSpacing: true,
