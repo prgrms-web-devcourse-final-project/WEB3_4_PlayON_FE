@@ -20,13 +20,16 @@ const sortOptions: SortOption[] = [
 ];
 
 export default function Community() {
-  const postList: post[] = Array(10).fill(dummyPost);
+  const postList: post[] = Array(5).fill(dummyPost);
   const guild: guild = dummyGuild;
 
   return (
     <div className="wrapper relative mb-12 mt-28">
       <section>
-        <div className=" bg-[url('/img/hero/bg_community_main.webp')] w-full h-[160px] rounded-2xl mt-12 bg-cover bg-center" />
+        <div
+          style={{ backgroundImage: `url(${guild.img_src})` }}
+          className=" w-full h-[160px] rounded-2xl mt-12 bg-cover bg-center"
+        />
       </section>
       <section className="flex gap-12">
         <div className="w-1/3 relative -top-16">
