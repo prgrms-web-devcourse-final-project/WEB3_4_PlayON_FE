@@ -1,6 +1,6 @@
 'use client';
 import RetroButton from '@/components/common/RetroButton';
-import { GuildHorizonSkeleton } from '@/components/guild/guild-horizon';
+import GuildHorizon, { GuildHorizonSkeleton } from '@/components/guild/guild-horizon';
 import PixelCharacter from '@/components/PixelCharacter/PixelCharacter';
 import styles from './GuildSection.module.css';
 
@@ -8,6 +8,7 @@ import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/all';
 import { useRef, useState } from 'react';
+import { dummyGuild } from '@/utils/dummyData';
 
 function GuildSection() {
   gsap.registerPlugin(useGSAP);
@@ -54,13 +55,13 @@ function GuildSection() {
         </div>
         <div className="flex gap-6 h-[500px]">
           <div ref={guildBox1} className="self-start">
-            <GuildHorizonSkeleton className="w-[410px]" />
+            <GuildHorizon data={dummyGuild} className="max-w-[410px]" />
           </div>
           <div ref={guildBox2} className="self-center">
-            <GuildHorizonSkeleton className="w-[410px]" />
+            <GuildHorizon data={dummyGuild} className="max-w-[410px]" />
           </div>
           <div ref={guildBox3} className="self-end">
-            <GuildHorizonSkeleton className="w-[410px]" />
+            <GuildHorizon data={dummyGuild} className="max-w-[410px]" />
           </div>
         </div>
         <div className="flex -mt-24 ml-2" ref={charBox}>
