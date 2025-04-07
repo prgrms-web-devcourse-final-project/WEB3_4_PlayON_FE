@@ -46,7 +46,7 @@ export default function UserInfoVertical({ isRadioBtn = false, data, name, onSel
           style={{
             backgroundImage: `url(${data.img_src})`,
           }}
-          className="absolute top-0 rounded-full bg-center w-[100px] h-[100px] peer-checked:size-[92px] peer-checked:top-1 peer-checked:left-1 peer-checked:shadow-[inset_0px_0px_12px_3px_rgba(0,0,0,0.32)]"
+          className="absolute top-0 rounded-full bg-center bg-cover w-[100px] h-[100px] peer-checked:size-[92px] peer-checked:top-1 peer-checked:left-1 peer-checked:shadow-[inset_0px_0px_12px_3px_rgba(0,0,0,0.32)]"
         />
         <div className="opacity-0 peer-checked:opacity-20 absolute top-1 left-1 size-[92px] rounded-full bg-[#D18800]" />
 
