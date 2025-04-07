@@ -10,8 +10,12 @@ import { SwiperSlide, Swiper } from 'swiper/react';
 import PartyCard from '@/components/party/PartyCard';
 import 'swiper/css';
 import PartyLogCard from '@/components/party/PartyLogCard';
+import { PlayIcon } from 'lucide-react';
+import { useState } from 'react';
 
 export default function GameDetail() {
+  const [selectedSlide, setSelectedSlide] = useState(0);
+
   Chart.register(ArcElement);
 
   const dummyReviewData = {
@@ -90,6 +94,30 @@ export default function GameDetail() {
   const dummyParties = [dummyParty, dummyParty, dummyParty, dummyParty, dummyParty, dummyParty];
   const dummyPartyLogs = [dummyPartyLog, dummyPartyLog, dummyPartyLog, dummyPartyLog, dummyPartyLog, dummyPartyLog];
 
+  type slide = {
+    contentType: 'movie' | 'screenshot';
+    contentUrl: string;
+  };
+  const slideArray: slide[] = [
+    ...dummyGameDetail.movie_src.map<slide>((_) => ({ contentType: 'movie', contentUrl: _ })),
+    ...dummyGameDetail.screenshot_src.map<slide>((_) => ({ contentType: 'screenshot', contentUrl: _ })),
+  ];
+  const SelectedSlideBuilder = (props: { ind: number }) => {
+    const selectedSlideData = slideArray[props.ind];
+    return (
+      <div className="border border-neutral-400">
+        {selectedSlideData.contentType === 'screenshot' && <img src={selectedSlideData.contentUrl} alt="" />}
+        {selectedSlideData.contentType === 'movie' && (
+          <iframe src={selectedSlideData.contentUrl} className="w-full aspect-video"></iframe>
+        )}
+      </div>
+    );
+  };
+  function slideSelectHandler(ind: number) {
+    if (ind < 0 || ind >= slideArray.length) return;
+    setSelectedSlide(ind);
+  }
+
   return (
     <div className="flex flex-col mt-[150px]">
       <div className="flex w-[67%] min-w-[1280px] self-center gap-6">
@@ -137,15 +165,34 @@ export default function GameDetail() {
           <RetroButton type="purple">파티 생성</RetroButton>
         </div>
         <div className="flex flex-col w-[67%] gap-2">
-          <div className="w-full aspect-video bg-neutral-400"></div>
-          <div className="flex bg-neutral-400 gap-2">
-            <div className="aspect-video bg-neutral-400"></div>
-            <div className="aspect-video bg-neutral-400"></div>
-            <div className="aspect-video bg-neutral-400"></div>
-            <div className="aspect-video bg-neutral-400"></div>
-            <div className="aspect-video bg-neutral-400"></div>
+          <div className="w-full aspect-video">
+            <SelectedSlideBuilder ind={selectedSlide} />
           </div>
-          <Accordion type="multiple" className="self-center w-full h-fit">
+          <div className="flex content-between">
+            <Swiper slidesPerView={5} spaceBetween={10}>
+              {slideArray.map((_, ind) => (
+                <SwiperSlide key={ind} onClick={() => slideSelectHandler(ind)} className="border border-neutral-400">
+                  {_.contentType === 'screenshot' && <img src={_.contentUrl} alt="" className="" />}
+                  {_.contentType === 'movie' && (
+                    <div className="h-full overflow-hidden">
+                      <img src={dummyGameDetail.img_src} alt="" className="h-full object-cover" />
+                      <div
+                        className="absolute top-[50%] left-[50%] rounded-full bg-[#00000080] p-2 flex items-center justify-center"
+                        style={{ translate: '-50% -50%' }}
+                      >
+                        <PlayIcon className="text-white" />
+                      </div>
+                    </div>
+                  )}
+                </SwiperSlide>
+              ))}
+              {slideArray.length < 5 &&
+                Array.from({ length: 5 - slideArray.length }).map((_, ind) => (
+                  <SwiperSlide key={`empty_${ind}`}></SwiperSlide>
+                ))}
+            </Swiper>
+          </div>
+          <Accordion type="multiple" className="self-center w-full h-fit" defaultValue={['item-1']}>
             <AccordionItem value="item-1">
               <AccordionTrigger>
                 <p className="text-xl font-bold">이 게임에 대해서</p>
