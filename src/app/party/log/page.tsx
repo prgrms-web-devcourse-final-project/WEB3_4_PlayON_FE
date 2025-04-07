@@ -7,6 +7,7 @@ import PostInfo from './components/PostInfo';
 import UserInfoVertical from '../components/UserInfoVertical';
 import { Trophy } from 'lucide-react';
 import Image from 'next/image';
+import LogForm from './components/LogForm';
 
 export default function PartyLog() {
   const partyLog: partyLog = dummyPartyLog;
@@ -47,9 +48,7 @@ export default function PartyLog() {
             </div>
           </div>
         </div>
-        <div className="bg-white/30 backdrop-blur-md py-10 px-16 rounded-3xl relative mt-8 border border-white">
-          <h4 className="text-3xl text-center font-bold">파티 로그 작성</h4>
-        </div>
+        {false && <LogForm />}
       </div>
     </div>
   );
