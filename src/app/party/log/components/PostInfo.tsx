@@ -21,7 +21,7 @@ export default function PostInfo({ partyLog }: Props) {
   return (
     <section className="flex flex-col gap-12 mt-12">
       <div>
-        <h4 className="text-xl font-bold mb-4">파티 스타일</h4>
+        <h4 className="text-xl font-bold mb-4">스크린 샷</h4>
         <Swiper
           className="screenshotSwiper"
           scrollbar={{ hide: true }}
