@@ -1,0 +1,75 @@
+/* quill 관련 css */
+.quill > * {
+  border-color: inherit !important;
+  color: inherit !important;
+}
+.quill {
+  height: 384px;
+  margin-bottom: 50px;
+}
+.quill > .ql-toolbar {
+  /* border radius of the toolbar */
+  border-radius: 10px 10px 0 0;
+  background-color: #fafafa;
+  padding: 12px 16px;
+}
+.quill > .ql-container {
+  /* border radius of the container and for font size*/
+  font-size: 16px;
+  border-radius: 0 0 10px 10px;
+}
+.ql-toolbar.ql-snow .ql-picker-label {
+  color: inherit !important;
+  opacity: 0.76;
+}
+.ql-snow .ql-picker {
+  color: inherit !important;
+}
+
+.quill > .ql-container > .ql-editor.ql-blank::before {
+  /* for placeholder */
+  color: #a3a3a3 !important;
+}
+.ql-snow.ql-toolbar button svg {
+  opacity: 0.76;
+  color: currentColor;
+}
+.ql-snow .ql-stroke {
+  /* for the border of the editor */
+  stroke: currentColor !important;
+}
+.ql-snow .ql-fill {
+  /* for the bg color */
+  fill: currentColor !important;
+}
+.ql-picker-item {
+  /* for dropdown */
+  color: #444 !important;
+}
+button.ql-image {
+  padding: 0;
+}
+
+/* .h1 {
+  font-size: 2em;
+}
+
+.ql-editor h1 {
+  @apply text-4xl font-extrabold mt-4 mb-2;
+}
+
+.ql-editor h2 {
+  @apply text-3xl font-bold mt-4 mb-2;
+}
+
+.ql-editor h3 {
+  @apply text-2xl font-semibold mt-4 mb-2;
+}
+
+.ql-editor h4 {
+  @apply text-xl font-medium mt-3 mb-2;
+}
+
+.ql-editor blockquote {
+  @apply border-l-4 border-gray-400 italic text-gray-600 my-4;
+} */
