@@ -38,6 +38,15 @@
   opacity: 0.5;
 }
 
+.wrapper {
+  animation: scroll 5s 1;
+  margin: 0;
+  overflow: hidden;
+  padding: 0;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
 .overlay:after {
   animation: flicker 5s infinite ease-in-out;
   background: rgba(16, 16, 16, 0.3);

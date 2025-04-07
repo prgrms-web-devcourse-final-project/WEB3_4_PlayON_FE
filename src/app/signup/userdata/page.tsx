@@ -32,7 +32,7 @@ export default function SignupUserdata() {
             </div>
             <div className="flex items-center gap-5">
               <div className="border-2 border-purple-500 rounded-full h-14 aspect-square"></div>
-              <p className="text-purple-500 font-dgm text-2xl glow hover:text-purple-200 ">아바타 이미지</p>
+              <p className="text-purple-500 font-dgm text-2xl glow">아바타 이미지 설정</p>
             </div>
             <div className="flex flex-col">
               <div className="flex items-center">
@@ -87,8 +87,8 @@ export default function SignupUserdata() {
               </div>
             </div>
             <div className="flex gap-5">
-              <p className="text-purple-500 font-dgm text-2xl glow hover:text-purple-200">{`[ 제출하기 ]`}</p>
-              <p className="text-purple-500 font-dgm text-2xl glow hover:text-purple-200">{`[ 다음에 하기 ]`}</p>
+              <p className="text-purple-500 font-dgm text-2xl glow hover:text-purple-200 cursor-pointer">{`[ 제출하기 ]`}</p>
+              <p className="text-purple-500 font-dgm text-2xl glow hover:text-purple-200 cursor-pointer">{`[ 다음에 하기 ]`}</p>
             </div>
           </div>
         </div>
