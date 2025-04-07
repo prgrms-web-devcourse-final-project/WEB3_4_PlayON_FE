@@ -36,7 +36,7 @@ export default function InfoAccordion({ participated, setParticipated }: Props) 
       )}
       {open && (
         <div className="flex py-8 gap-8 align-tops">
-          <div className="w-80">
+          <div className="w-[460px]">
             <PartyHostInfo partyHost={partyHost} />
             <div className="flex flex-col gap-3 pt-8">
               {isAuthor && (
