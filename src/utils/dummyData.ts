@@ -14,21 +14,21 @@ export const dummyUserSimple: userSimple = {
 export const dummyUsers: userSimple[] = [
   {
     img_src: 'https://avatars.githubusercontent.com/u/124599?v=4',
-    nickname: 'Morty',
+    nickname: '김영희',
     user_title: 'AdventureTime!',
-    username: 'morty1234@gmail.com',
+    username: 'yonghee@gmail.com',
   },
   {
     img_src: 'https://avatars.githubusercontent.com/u/124599?v=4',
-    nickname: 'Morty',
+    nickname: '홍길동',
     user_title: 'AdventureTime!',
-    username: 'morty1234@gmail.com',
+    username: 'gildong@gmail.com',
   },
   {
     img_src: 'https://avatars.githubusercontent.com/u/124599?v=4',
-    nickname: 'Abigale',
+    nickname: '태정태세비욘세',
     user_title: 'Stardew valley',
-    username: 'morty1234@gmail.com',
+    username: 'tetebi@email.com',
   },
 ];
 export const dummyUserDetail: userDetail = {
