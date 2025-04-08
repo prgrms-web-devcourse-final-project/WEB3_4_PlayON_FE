@@ -11,6 +11,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { PATH } from '@/constants/routes';
 
 const loginSchema = z.object({
   email: z.string(),
@@ -138,7 +139,7 @@ export default function SignupInitial() {
           </div>
           <div className="flex flex-col items-center">
             <p className="font-dgm text-2xl glow">아이디가 없나요?</p>
-            <Link href="/signup">
+            <Link href={PATH.signup}>
               <p className="font-dgm text-2xl glow cursor-pointer hover:text-purple-200">{`[ 회원 가입하러 가기 ]`}</p>
             </Link>
           </div>
