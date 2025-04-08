@@ -34,7 +34,7 @@ export default function TextEditor({ value, onChange, className }: TextEditorPro
         ['bold', 'italic', 'underline', 'strike', 'blockquote'],
         [{ color: [] }, { background: [] }],
         [{ align: [] }],
-        ['link', 'image'],
+        ['link'],
       ],
     }),
     []

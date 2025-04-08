@@ -5,7 +5,9 @@ import TextEditor from '@/components/community/TextEditor';
 import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { guild } from '@/types/guild';
 import { communityTags } from '@/types/Tags/communityTags';
+import { dummyGuild } from '@/utils/dummyData';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -20,6 +22,8 @@ const createCommunityFormSchema = z.object({
 type createCommunityFormType = z.infer<typeof createCommunityFormSchema>;
 
 export default function CommunityCreate() {
+  const guild: guild = dummyGuild;
+
   const form = useForm<createCommunityFormType>({
     defaultValues: {
       tag: '',
@@ -70,7 +74,10 @@ export default function CommunityCreate() {
 
   return (
     <div className="wrapper mb-12 mt-28 space-y-10">
-      <div className=" bg-[url('/img/hero/bg_community_main.webp')] w-full h-[160px] rounded-2xl bg-cover bg-center" />
+      <div
+        style={{ backgroundImage: `url(${guild.img_src})` }}
+        className=" w-full h-[160px] rounded-2xl mt-12 bg-cover bg-center"
+      />
       <div className="text-4xl text-neutral-900 font-bold"> 게시글 작성</div>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-10">
@@ -125,6 +132,7 @@ export default function CommunityCreate() {
               </FormItem>
             )}
           />
+
           <FormField
             control={form.control}
             name="content"
