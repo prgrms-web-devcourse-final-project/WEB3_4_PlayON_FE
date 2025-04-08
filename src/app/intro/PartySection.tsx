@@ -67,7 +67,7 @@ function PartySection() {
         trigger: container.current,
         start: 'top top',
         end: '+=640',
-        markers: true,
+        // markers: true,
         scrub: 1,
         pin: true,
         pinSpacing: true,
@@ -101,13 +101,14 @@ function PartySection() {
             onChange={() => {}}
           />
         </div>
-        <div className="flex justify-end gap-6 my-12">
+        <div className="flex justify-end gap-6 my-12 max-w-screen-xl">
           {partyDummyData.map((data, idx) => (
             <div
               ref={(el) => {
                 partyCompoRefs.current[idx] = el;
               }}
               key={idx}
+              className="max-w-[410px]"
             >
               <PartyCard data={data} />
             </div>

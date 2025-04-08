@@ -54,7 +54,7 @@ export default function PartyCreate() {
   }
 
   return (
-    <div className="mt-12 mb-32">
+    <div className="pt-28 mb-32">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="flex justify-center gap-6">

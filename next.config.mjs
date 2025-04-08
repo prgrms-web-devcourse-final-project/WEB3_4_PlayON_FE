@@ -1,6 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  transpilePackages: ["three"],
+  transpilePackages: ['three'],
+  images: {
+    domains: ['shared.fastly.steamstatic.com'],
+  },
 };
 
 export default nextConfig;

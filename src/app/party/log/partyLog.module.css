@@ -1,0 +1,29 @@
+.background {
+  background-position: 0% 0%;
+  background-repeat: no-repeat;
+  background-size: contain;
+  padding-top: 140px;
+}
+
+.chatBubble {
+  position: relative;
+}
+.chatBubble::before {
+  content: '';
+  position: absolute;
+  top: -12px;
+  left: 16px;
+  border-style: solid;
+  border-width: 12px 0 0 20px;
+  border-color: transparent transparent transparent rgb(212 212 212);
+}
+
+.chatBubble::after {
+  content: '';
+  position: absolute;
+  top: -12px;
+  left: 17px;
+  border-style: solid;
+  border-width: 13px 0 0 18px;
+  border-color: transparent transparent transparent white;
+}

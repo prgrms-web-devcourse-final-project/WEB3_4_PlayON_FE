@@ -92,7 +92,7 @@ export default function GuildCreate(props: GuildCreateProps) {
   };
 
   return (
-    <div className="mt-12 mb-32 flex justify-center">
+    <div className="pt-28 mb-32 flex justify-center">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="flex justify-center gap-6">
