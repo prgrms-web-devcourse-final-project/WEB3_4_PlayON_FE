@@ -1,9 +1,22 @@
-import axios from 'axios';
+// apiInstance.interceptors.request.use(
+//   (config) => {
+//     return config;
+//   },
+//   (error) => {
+//     return Promise.reject(error);
+//   }
+// );
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-
-export const apiInstance = axios.create({
-  baseURL: API_BASE_URL,
-  timeout: 5000,
-  withCredentials: true,
-});
+// apiInstance.interceptors.response.use(
+//   (config) => {
+//     return config;
+//   },
+//   (error) => {
+//     const { toast } = useToast();
+//     toast({
+//       title: 'Scheduled: Catch up',
+//       description: 'Friday, February 10, 2023 at 5:57 PM',
+//     });
+//     return Promise.reject(error);
+//   }
+// );

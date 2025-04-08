@@ -13,6 +13,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { PATH } from '@/constants/routes';
 import { login } from '@/api/members/login';
+import { useMembers } from '@/api/members';
 
 const loginSchema = z.object({
   email: z.string(),
@@ -39,9 +40,9 @@ export default function SignupInitial() {
   });
   const router = useRouter();
 
+  const members = useMembers();
   async function onSubmit(data: LoginSchema) {
-    console.log(data);
-    login({ username: 'kylekim95@gmail.com', password: '1234' });
+    members.login('kylekim95@gmail.com', '1111');
   }
   const [submitHover, setSubmitHover] = useState(false);
 
