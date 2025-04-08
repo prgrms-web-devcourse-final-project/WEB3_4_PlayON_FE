@@ -12,6 +12,7 @@ import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { PATH } from '@/constants/routes';
+import { login } from '@/api/members/login';
 
 const loginSchema = z.object({
   email: z.string(),
@@ -38,15 +39,16 @@ export default function SignupInitial() {
   });
   const router = useRouter();
 
-  function onSubmit(data: LoginSchema) {
+  async function onSubmit(data: LoginSchema) {
     console.log(data);
+    login({ username: 'kylekim95@gmail.com', password: '1234' });
   }
   const [submitHover, setSubmitHover] = useState(false);
 
   return (
     <div className="bg-purple-900 text-purple-400 w-full h-screen flex flex-col items-center mt-[68px]">
-      <div className="overlay"></div>
-      <div className="scanline"></div>
+      <div className="overlay pointer-events-none"></div>
+      <div className="scanline pointer-events-none"></div>
       <div className="scrollanimation">
         <div className="mt-16 flex flex-col pb-10">
           <div className="flex gap-5 mb-20">
@@ -89,22 +91,6 @@ export default function SignupInitial() {
                         <FormControl>
                           <Input
                             type="password"
-                            className="border border-purple-500 rounded-none font-dgm !text-xl"
-                            value={field.value}
-                            onChange={field.onChange}
-                          />
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
-                  <p className="text-purple-500 font-dgm text-2xl glow">ENTER YOUR NICKNAME</p>
-                  <FormField
-                    control={form.control}
-                    name="nickname"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input
                             className="border border-purple-500 rounded-none font-dgm !text-xl"
                             value={field.value}
                             onChange={field.onChange}

@@ -12,6 +12,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { signup } from '@/api/members/signup';
 
 const userInitialSchema = userSchema.pick({
   email: true,
@@ -38,16 +39,15 @@ export default function SignupInitial() {
   });
   const router = useRouter();
 
-  function onSubmit(data: UserInitialSchema) {
+  async function onSubmit(data: UserInitialSchema) {
     console.log(data);
-    router.push('/signup/userdata');
   }
   const [submitHover, setSubmitHover] = useState(false);
 
   return (
     <div className="bg-purple-900 text-purple-400 w-full h-screen flex flex-col items-center mt-[68px]">
-      <div className="overlay"></div>
-      <div className="scanline"></div>
+      <div className="overlay pointer-events-none"></div>
+      <div className="scanline pointer-events-none"></div>
       <div className="scrollanimation">
         <div className="mt-16 flex flex-col pb-10">
           <div className="flex gap-5 mb-20">
@@ -117,6 +117,7 @@ export default function SignupInitial() {
                   <button
                     type="submit"
                     className="justify-self-center mt-5 flex items-center justify-center gap-2 border border-purple-500 hover:bg-purple-500 hover:text-white py-2 px-5"
+                    onClick={() => signup({ username: 'kylekim95@gmail.com', password: '1234' })}
                   >
                     <MailIcon />
                     <span className="font-dgm">REGISTER</span>

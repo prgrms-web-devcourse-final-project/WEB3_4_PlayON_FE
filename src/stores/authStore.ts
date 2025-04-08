@@ -8,9 +8,13 @@ export const useAuthStore = create((set, get) => {
   function logout() {
     console.log('logout');
   }
+  function Signup() {
+    console.log('signup');
+  }
   return {
     user: undefined,
     login: login,
     logout: logout,
+    signup: Signup,
   };
 });

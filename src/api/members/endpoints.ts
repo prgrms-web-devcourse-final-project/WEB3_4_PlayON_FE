@@ -1,6 +1,6 @@
 export const MEMBERS = Object.freeze({
   me: 'members/me', //GET, PUT, DELETE
-  signup: 'members/me',
-  login: 'members/me',
-  nickname: 'members/me',
+  signup: 'members/signup',
+  login: 'members/login',
+  nickname: 'members/nickname',
 });

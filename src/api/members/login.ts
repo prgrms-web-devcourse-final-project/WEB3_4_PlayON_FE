@@ -13,6 +13,6 @@ type loginResponse = {
 };
 
 export async function login(request: loginRequest) {
-  const response = await apiInstance.post(MEMBERS.login, { ...request });
+  const response: loginResponse = await apiInstance.post(MEMBERS.login, { ...request });
   console.log(response);
 }

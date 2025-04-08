@@ -9,6 +9,7 @@ import { Form } from '@/components/ui/form';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { CoolerCategoryMenu } from './component/cooler-category-menu';
 import { userCategories } from '@/types/Tags/userCategories';
+import { putMe } from '@/api/members/put-me';
 
 const userDataSchema = userSchema.pick({
   avatar: true,
@@ -117,8 +118,8 @@ export default function SignupUserdata() {
 
   return (
     <div className="bg-purple-900 text-purple-400 h-screen flex flex-col items-center mt-[68px]">
-      <div className="overlay"></div>
-      <div className="scanline"></div>
+      <div className="overlay pointer-events-none"></div>
+      <div className="scanline pointer-events-none"></div>
       <div className="scrollanimation">
         <div className="mt-16 flex flex-col pb-10 items-center">
           <div className="flex gap-5 mb-16">
@@ -153,7 +154,18 @@ export default function SignupUserdata() {
                   </div>
                   <CategorySelectMenus />
                   <div className="flex gap-5">
-                    <p className="text-purple-500 font-dgm text-2xl glow hover:text-purple-200 cursor-pointer">{`[ 제출하기 ]`}</p>
+                    <p
+                      className="text-purple-500 font-dgm text-2xl glow hover:text-purple-200 cursor-pointer"
+                      onClick={async () => {
+                        putMe({
+                          profileImg: 'jpg',
+                          nickname: 'asdf',
+                          gender: 'MALE',
+                          skillLevel: 'NEWBIE',
+                          playStyle: 'BEGINNER',
+                        });
+                      }}
+                    >{`[ 제출하기 ]`}</p>
                     <p className="text-purple-500 font-dgm text-2xl glow hover:text-purple-200 cursor-pointer">{`[ 다음에 하기 ]`}</p>
                   </div>
                 </div>
