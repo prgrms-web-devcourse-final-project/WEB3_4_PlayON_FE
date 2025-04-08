@@ -7,7 +7,7 @@ import SectionTitle from '@/components/common/SectionTitle';
 import PickCard from '@/components/game/PickCard';
 import PopularCard from '@/components/game/PopularCard';
 import SteamCard from '@/components/game/SteamCard';
-import { dummyGameSimple, dummyUserSimple } from '@/utils/dummyData';
+import { dummyGameDetail, dummyGameSimple, dummyUserSimple } from '@/utils/dummyData';
 import styles from './game.module.css';
 
 export default function Game() {
@@ -57,10 +57,10 @@ export default function Game() {
           icon_src="/img/icons/pixel_chat_heart.svg"
         />
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 pt-8">
-          <PickCard data={dummyGameSimple} />
-          <PickCard data={dummyGameSimple} />
-          <PickCard data={dummyGameSimple} />
-          <PickCard data={dummyGameSimple} />
+          <PickCard data={dummyGameDetail} />
+          <PickCard data={dummyGameDetail} />
+          <PickCard data={dummyGameDetail} />
+          <PickCard data={dummyGameDetail} />
         </div>
       </section>
 
@@ -104,10 +104,10 @@ export default function Game() {
             icon_src="/img/icons/pixel_present.svg"
           />
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <PickCard data={dummyGameSimple} />
-            <PickCard data={dummyGameSimple} />
-            <PickCard data={dummyGameSimple} />
-            <PickCard data={dummyGameSimple} />
+            <PickCard data={dummyGameDetail} />
+            <PickCard data={dummyGameDetail} />
+            <PickCard data={dummyGameDetail} />
+            <PickCard data={dummyGameDetail} />
           </div>
         </div>
 
