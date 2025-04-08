@@ -9,6 +9,7 @@ import { guild } from '@/types/guild';
 import { communityTags } from '@/types/Tags/communityTags';
 import { dummyGuild } from '@/utils/dummyData';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { ChevronDown } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -121,17 +122,24 @@ export default function CommunityCreate() {
               />
             </div>
           </div>
-          <FormField
-            control={form.control}
-            name="image"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <InputImage onChange={(e) => handleImageChange(e, field.onChange)} previewUrl={previewUrl} />
-                </FormControl>
-              </FormItem>
-            )}
-          />
+          <div className="bg-neutral-50 border border-neutral-300 rounded-2xl px-8 py-6 group overflow-hidden">
+            <label className="flex gap-7 items-center ">
+              <input type="checkbox" className="hidden peer" />
+              <p className="text-2xl text-neutral-900 font-semibold">이미지 첨부하기</p>
+              <ChevronDown className="text-neutral-700 peer-checked:rotate-180 transition-transform" />
+            </label>
+            <FormField
+              control={form.control}
+              name="image"
+              render={({ field }) => (
+                <FormItem className="pt-6 group-has-[input:checked]:opacity-0 group-has-[input:checked]:h-0 group-has-[input:checked]:pt-0 transition-all">
+                  <FormControl>
+                    <InputImage onChange={(e) => handleImageChange(e, field.onChange)} previewUrl={previewUrl} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+          </div>
 
           <FormField
             control={form.control}
