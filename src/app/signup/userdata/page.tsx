@@ -5,9 +5,8 @@ import { z } from 'zod';
 import './style.css';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
+import { Form } from '@/components/ui/form';
 import { ChangeEvent, useEffect, useState } from 'react';
-import { Input } from '@/components/ui/input';
 import { CoolerCategoryMenu } from './component/cooler-category-menu';
 import { userCategories } from '@/types/Tags/userCategories';
 
@@ -117,10 +116,10 @@ export default function SignupUserdata() {
   useEffect(() => {}, []);
 
   return (
-    <div className="bg-purple-900 text-purple-400 h-screen flex flex-col items-center">
+    <div className="bg-purple-900 text-purple-400 h-screen flex flex-col items-center mt-[68px]">
       <div className="overlay"></div>
       <div className="scanline"></div>
-      <div className="wrapper">
+      <div className="scrollanimation">
         <div className="mt-16 flex flex-col pb-10 items-center">
           <div className="flex gap-5 mb-16">
             <div className="">

@@ -51,6 +51,25 @@
   left: 0;
   z-index: 2;
 }
+
+.scrollanimation {
+  animation: scroll 5s 1;
+  margin: 0;
+  overflow: hidden;
+  padding: 0;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+input[type='file'] {
+  position: absolute;
+  width: 0;
+  height: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+}
+
 @keyframes flicker {
   0% {
     opacity: 0.62;
@@ -102,10 +121,6 @@
   right: 0;
   top: -5%;
   z-index: 0;
-}
-.wrapper {
-  animation: scroll 5s 1;
-  z-index: 3;
 }
 
 ::-ms-reveal {
