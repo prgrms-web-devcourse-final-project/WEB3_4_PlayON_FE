@@ -139,7 +139,7 @@ export default function SignupInitial() {
             </div>
           </div>
           <div className="flex flex-col items-center">
-            <Link href="/signup">
+            <Link href="/login">
               <p className="font-dgm text-2xl glow hover:text-purple-200 cursor-pointer">{`[ 로그인하러 가기 ]`}</p>
             </Link>
             <Link href="/signup">
