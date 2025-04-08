@@ -5,16 +5,16 @@ import SearchBar from '../common/SearchBar';
 import PixelCharacter from '../PixelCharacter/PixelCharacter';
 import Chip from '@/components/common/chip';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import CategoryMenu from '../common/category-menu';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { DateTimePicker } from '../ui/date-time-picker';
+import { CoolerCategoryMenu } from '@/app/signup/userdata/component/cooler-category-menu';
+import TiltToggle from '../common/tilt-toggle';
 
 type PartySearchComponentProps = {
   className: string;
 };
 
 export default function PartySearchComponent(props: PartySearchComponentProps) {
-  const router = useRouter();
   const searchQuery = useSearchParams();
   const pathname = usePathname();
 
@@ -22,13 +22,13 @@ export default function PartySearchComponent(props: PartySearchComponentProps) {
   const searchByName = useRef<string>('');
   const partyDate = useRef<Date | undefined>(undefined);
 
-  const guildTagCategory = Object.keys(partyTags);
-  const guildTagData = Object.values(partyTags);
-  const initialSelectedTags = guildTagData.map((e) => {
-    return { name: e.name, tags: ['전체'] };
-  });
-  const selectedTags = useRef(initialSelectedTags);
-
+  const selected = {
+    partyStyle: useState([true, ...new Array(partyTags.partyStyle.items.length).fill(false)]),
+    skillLevel: useState([true, ...new Array(partyTags.skillLevel.items.length).fill(false)]),
+    gender: useState([true, ...new Array(partyTags.gender.items.length).fill(false)]),
+    friendly: useState([true, ...new Array(partyTags.friendly.items.length).fill(false)]),
+  };
+  const selectedArr = Object.values(selected);
   const [charText, setCharText] = useState('');
 
   // handlers
@@ -47,19 +47,6 @@ export default function PartySearchComponent(props: PartySearchComponentProps) {
     selectedGenres.current.splice(index, 1);
     accInputs();
   }, []);
-  const handleSelectedChanged = useCallback((newSelected: boolean[], categoryName: string) => {
-    const index = selectedTags.current.findIndex((e) => e.name === categoryName);
-    if (newSelected[0]) {
-      selectedTags.current[index].tags = ['전체'];
-    } else {
-      const newTagArr = newSelected
-        .slice(1, newSelected.length)
-        .map((e, ind) => (e ? guildTagData[index].items[ind] : null))
-        .filter((e) => e !== null);
-      selectedTags.current[index].tags = newTagArr;
-    }
-    accInputs();
-  }, []);
   const handleDateSelect = useCallback((date: Date | undefined) => {
     partyDate.current = date;
     accInputs();
@@ -69,11 +56,20 @@ export default function PartySearchComponent(props: PartySearchComponentProps) {
     if (searchByName.current !== '') {
       newSearchQuery.push(`name=${searchByName.current}`);
     }
-    for (let i = 0; i < selectedTags.current.length; i++) {
-      if (selectedTags.current[i].tags[0] === '전체') continue;
-      newSearchQuery.push(
-        `${guildTagCategory[i]}=${selectedTags.current[i].tags.reduce((acc, cur) => acc + ',' + cur)}`
-      );
+    for (let i = 0; i < selectedArr.length; i++) {
+      const selectedState = selectedArr[i][0];
+      const guildTagNames = Object.keys(partyTags);
+      const guildTagItems = Object.values(partyTags).map((e) => e.items);
+
+      if (selectedState[0]) {
+        //do nothing
+      } else if (selectedState.slice(1, selectedState.length).filter((e) => e).length > 0) {
+        const temp = guildTagItems[i]
+          .map((e, ind) => (selectedState[ind + 1] ? e : null))
+          .filter((e) => e)
+          .join(',');
+        newSearchQuery.push(`${guildTagNames[i]}=${temp}`);
+      }
     }
     if (selectedGenres.current.length > 0) {
       newSearchQuery.push('genres=' + selectedGenres.current.reduce((acc, cur) => acc + ',' + cur));
@@ -82,7 +78,7 @@ export default function PartySearchComponent(props: PartySearchComponentProps) {
       const dateString = partyDate.current.toLocaleString();
       newSearchQuery.push(`partyDate=${dateString}`);
     }
-    router.push(`${pathname}?${newSearchQuery.join('&')}`, { scroll: false });
+    window.history.pushState(null, '', `${pathname}?${newSearchQuery.join('&')}`);
   }
 
   useEffect(() => {
@@ -96,6 +92,51 @@ export default function PartySearchComponent(props: PartySearchComponentProps) {
 
     setCharText(newCharText.join(' ') + ' ');
   }, [searchQuery]);
+  useEffect(() => {
+    accInputs();
+  }, [selected.partyStyle, selected.skillLevel, selected.gender, selected.friendly]);
+  useEffect(() => {
+    const partyStyle = searchQuery.get('partyStyle');
+    const skillLevel = searchQuery.get('skillLevel');
+    const friendly = searchQuery.get('friendly');
+    const gender = searchQuery.get('gender');
+    // console.log('partyStyle : ', partyStyle);
+    // console.log('skillLevel : ', skillLevel);
+    // console.log('friendly : ', friendly);
+    // console.log('gender : ', gender);
+    if (partyStyle) {
+      const arr = partyStyle.split(',');
+      const temp = [false];
+      for (let i = 0; i < partyTags.partyStyle.items.length; i++) {
+        temp.push(arr.findIndex((e) => e === partyTags.partyStyle.items[i]) !== -1);
+      }
+      selected.partyStyle[1](temp);
+    }
+    if (skillLevel) {
+      const arr = skillLevel.split(',');
+      const temp = [false];
+      for (let i = 0; i < partyTags.skillLevel.items.length; i++) {
+        temp.push(arr.findIndex((e) => e === partyTags.skillLevel.items[i]) !== -1);
+      }
+      selected.skillLevel[1](temp);
+    }
+    if (gender) {
+      const arr = gender.split(',');
+      const temp = [false];
+      for (let i = 0; i < partyTags.gender.items.length; i++) {
+        temp.push(arr.findIndex((e) => e === partyTags.gender.items[i]) !== -1);
+      }
+      selected.gender[1](temp);
+    }
+    if (friendly) {
+      const arr = friendly.split(',');
+      const temp = [false];
+      for (let i = 0; i < partyTags.friendly.items.length; i++) {
+        temp.push(arr.findIndex((e) => e === partyTags.friendly.items[i]) !== -1);
+      }
+      selected.friendly[1](temp);
+    }
+  }, []);
 
   return (
     <div className={`flex rounded-xl py-8 px-9 bg-neutral-50 gap-14 ${props.className}`}>
@@ -122,10 +163,24 @@ export default function PartySearchComponent(props: PartySearchComponentProps) {
           </div>
         </div>
         <div className="flex flex-col gap-2">
-          {Object.values(partyTags).map((e) => (
-            <div className="flex items-center gap-5" key={`${e.name}`}>
-              <p className="w-[118px] font-dgm text-neutral-900">{e.name}</p>
-              <CategoryMenu categoryItems={[...e.items]} categoryName={e.name} onSelect={handleSelectedChanged} />
+          {Object.values(partyTags).map((category, cat_ind) => (
+            <div className="flex items-center gap-5" key={`${category.name}`}>
+              <p className="w-[118px] font-dgm text-neutral-900">{category.name}</p>
+              <CoolerCategoryMenu
+                state={selectedArr[cat_ind][0]}
+                setState={selectedArr[cat_ind][1]}
+                className="flex gap-2"
+                type="multiple"
+                enableAll
+              >
+                {['전체', ...category.items].map((item, item_ind) => (
+                  <TiltToggle
+                    label={item}
+                    toggle={selectedArr[cat_ind][0][item_ind]}
+                    key={`${category.name}_${item}`}
+                  />
+                ))}
+              </CoolerCategoryMenu>
             </div>
           ))}
         </div>

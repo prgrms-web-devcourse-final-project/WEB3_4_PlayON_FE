@@ -78,7 +78,6 @@ export default function GuildSearchComponent(props: GuildSearchComponentProps) {
     const partyStyle = searchQuery.get('partyStyle');
     const skillLevel = searchQuery.get('skillLevel');
     const friendly = searchQuery.get('friendly');
-    const gender = searchQuery.get('gender');
 
     if (partyStyle && partyStyle !== '전체') newCharText.push(partyStyle + ' 스타일의');
     if (friendly && friendly !== '전체') newCharText.push(friendly + ' ');
