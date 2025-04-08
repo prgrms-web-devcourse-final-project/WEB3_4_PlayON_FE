@@ -30,7 +30,11 @@ export default function UserApprove({ data, onApprove, onReject }: UserApprovePr
         <Button onClick={() => onApprove()} className="bg-neutral-900 text-sm px-4">
           승인
         </Button>
-        <Button onClick={() => onReject()} variant={'outline'} className="border-neutral-900 text-neutral-900 text-sm">
+        <Button
+          onClick={() => onReject()}
+          variant={'outline'}
+          className="border-neutral-900 text-neutral-900 text-sm bg-transparent"
+        >
           거부
         </Button>
       </div>
