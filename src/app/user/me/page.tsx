@@ -1,6 +1,5 @@
 'use client';
 
-import CategoryMenu from '@/components/common/category-menu';
 import PopularCard from '@/components/game/PopularCard';
 import GuildHorizon from '@/components/guild/guild-horizon';
 import PartyCard from '@/components/party/PartyCard';
@@ -19,7 +18,6 @@ import {
 import { gameSimple } from '@/types/games';
 import { guild } from '@/types/guild';
 import { party, partyLog } from '@/types/party';
-import { guildTags } from '@/types/Tags/guildTags';
 import {
   dummyGameSimple,
   dummyGuild,
@@ -32,6 +30,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
 import { EditInfo } from './components/MyModal';
 import SteamSVG from '@/components/svg/steam';
+import Tag from '@/components/common/Tag';
 
 export default function MyPage() {
   const dummyGuildList: guild[] = Array(3).fill(dummyGuild);
@@ -43,6 +42,10 @@ export default function MyPage() {
   const dummyGameArr = new Array<gameSimple>(8).fill(dummyGameSimple);
   const [selectedGame, setSelectedGame] = useState<number>(0);
   const isSteamToken = 'abc';
+  const playStyle = [...dummyUserDetail.party_style];
+  const skillLevel = dummyUserDetail.skill_level;
+  const gender = dummyUserDetail.gender;
+  const friendly = dummyUserDetail.friendly;
 
   return (
     <main>
@@ -66,10 +69,10 @@ export default function MyPage() {
                     {isSteamToken ? (
                       <div>{dummyUserSimple.username.split('@')[0]}</div>
                     ) : (
-                        <button className='flex flex-row gap-1'>
-                          <SteamSVG fill={'#8258ff'} stroke="" width={24} height={24} />
-                          <p className="text-base font-black text-purple-400">STEAM</p>
-                        </button>
+                      <button className="flex flex-row gap-1">
+                        <SteamSVG fill={'#8258ff'} stroke="" width={24} height={24} />
+                        <p className="text-base font-black text-purple-400">STEAM</p>
+                      </button>
                     )}
                   </div>
                   <p className="font-suit text-base font-semibold text-neutral-400"> 성별 : {dummyUserDetail.gender}</p>
@@ -78,19 +81,29 @@ export default function MyPage() {
                 <div className="gap-5">
                   <p className="font-suit text-2xl font-bold pt-8">{dummyUserSimple.nickname} 님의 플레이 스타일</p>
 
-                  <div className="flex flex-col rounded-xl gap-2 py-6 px-6">
-                    {Object.values(guildTags).map((e) => (
-                      <div className="flex items-center gap-2" key={`${e.name}`}>
-                        <p className="w-[118px] font-dgm text-neutral-900">{e.name}</p>
-                        <CategoryMenu
-                          categoryItems={[...e.items]}
-                          categoryName={e.name}
-                          onSelect={(newSelected: boolean[]) => {
-                            // console.log(newSelected);
-                          }}
-                        />
+                  <div className="flex flex-col rounded-xl gap-2 py-6">
+                    <div className="flex items-center gap-2">
+                      <p className="w-[118px] font-dgm text-neutral-900">플레이 스타일</p>
+                      <div className="flex gap-2">
+                        {dummyUserDetail.party_style.map((e, ind) => (
+                          <Tag style="retro" size="small" background="dark" key={`playStyle_${ind}`}>
+                            {e}
+                          </Tag>
+                        ))}
                       </div>
-                    ))}
+                    </div>
+                    <div className='flex gap-2'>
+                      <p className="w-[118px] font-dgm text-neutral-900">게임 실력</p>
+                      <Tag style="retro" size="small" background="dark">{skillLevel}</Tag>
+                    </div>
+                    <div className='flex gap-2'>
+                      <p className="w-[118px] font-dgm text-neutral-900">성별</p>
+                      <Tag style="retro" size="small" background="dark">{gender}</Tag>
+                    </div>
+                    <div className='flex gap-2'>
+                      <p className="w-[118px] font-dgm text-neutral-900">친목 여부</p>
+                      <Tag style="retro" size="small" background="dark">{friendly}</Tag>
+                    </div>
                   </div>
                 </div>
               </div>
