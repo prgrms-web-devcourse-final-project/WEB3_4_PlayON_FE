@@ -4,12 +4,12 @@ import styles from './partyLog.module.css';
 
 import DefaultInfo from './components/DefaultInfo';
 import PostInfo from './components/PostInfo';
-import UserInfoVertical from '../components/UserInfoVertical';
 import { Trophy } from 'lucide-react';
 import Image from 'next/image';
 import ReviewForm from './components/ReviewForm';
-import ScreenshotForm from './components/screenShotForm';
 import PlayerRecommendForm from './components/PlayerRecommendForm';
+import UserInfoVertical from '../../components/UserInfoVertical';
+import ScreenshotForm from './components/ScreenshotForm';
 
 export default function PartyLog() {
   const partyLog: partyLog = dummyPartyLog;

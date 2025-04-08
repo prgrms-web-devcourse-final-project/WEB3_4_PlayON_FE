@@ -4,8 +4,8 @@ import Tag from '@/components/common/Tag';
 import { partyLog } from '@/types/party';
 import formatDate from '@/utils/formatDate';
 import { timeCalc } from '@/utils/timeCalc';
-import UserInfoVertical from '../../components/UserInfoVertical';
-import React, { useRef, useState } from 'react';
+import UserInfoVertical from '../../../components/UserInfoVertical';
+import React from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
 import 'swiper/css';

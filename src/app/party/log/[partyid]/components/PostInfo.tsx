@@ -1,7 +1,7 @@
 'use client';
 
 import { partyLog } from '@/types/party';
-import React, { useRef, useState } from 'react';
+import React from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
 import 'swiper/css';
@@ -9,8 +9,7 @@ import 'swiper/css/pagination';
 import '../partySwiper.css';
 import { Pagination } from 'swiper/modules';
 import Image from 'next/image';
-import UserInfo from '../../components/UserInfoHorizontal';
-
+import UserInfoHorizontal from '@/app/party/components/UserInfoHorizontal';
 import styles from '../partyLog.module.css';
 
 type Props = {
@@ -42,7 +41,7 @@ export default function PostInfo({ partyLog }: Props) {
                   className="screen object-contain"
                 ></Image>
                 <div>
-                  <UserInfo data={screenshot.author} />
+                  <UserInfoHorizontal data={screenshot.author} />
                   <p
                     className={`w-full bg-white p-4 max-w-screen-sm rounded-md border border-neutral-300 mt-4 ${styles.chatBubble}`}
                   >
@@ -58,7 +57,7 @@ export default function PostInfo({ partyLog }: Props) {
         <h4 className="text-xl font-bold mb-1">파티 후기</h4>
         {partyLog.review.map((review, idx) => (
           <div key={idx} className="py-4 border-b border-neutral-300 last:border-none">
-            <UserInfo data={review.author} size="small"></UserInfo>
+            <UserInfoHorizontal data={review.author} size="small"></UserInfoHorizontal>
             <p>{review.text}</p>
           </div>
         ))}

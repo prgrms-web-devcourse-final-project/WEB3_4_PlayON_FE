@@ -5,7 +5,7 @@ import Tag from '@/components/common/Tag';
 import CommentCard from '@/components/community/comment-card';
 import WeNeedYou from '@/components/guild/guild-we-need-you';
 import { Button } from '@/components/ui/button';
-import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
 import { Toggle } from '@/components/ui/toggle';
 import { post } from '@/types/community';

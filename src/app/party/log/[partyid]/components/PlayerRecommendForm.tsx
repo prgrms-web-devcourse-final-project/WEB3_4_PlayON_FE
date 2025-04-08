@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { Form, FormControl, FormField } from '@/components/ui/form';
 import { partyLog } from '@/types/party';
-import UserInfoVertical from '../../components/UserInfoVertical';
+import UserInfoVertical from '@/app/party/components/UserInfoVertical';
 
 const playerRecommendSchema = z.object({
   recommend: z.string(),
