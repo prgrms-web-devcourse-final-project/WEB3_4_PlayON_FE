@@ -38,7 +38,7 @@
   opacity: 0.5;
 }
 
-.wrapper {
+.scrollanimation {
   animation: scroll 5s 1;
   margin: 0;
   overflow: hidden;

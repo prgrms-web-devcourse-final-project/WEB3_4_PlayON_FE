@@ -52,13 +52,22 @@
   z-index: 2;
 }
 
-.wrapper {
+.scrollanimation {
   animation: scroll 5s 1;
   margin: 0;
   overflow: hidden;
   padding: 0;
   scrollbar-width: none;
   -ms-overflow-style: none;
+}
+
+input[type='file'] {
+  position: absolute;
+  width: 0;
+  height: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
 }
 
 @keyframes flicker {
