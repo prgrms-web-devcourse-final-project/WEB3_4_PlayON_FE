@@ -3,15 +3,17 @@ import { useAxios } from '@/hooks/useAxios';
 export const useMembers = () => {
   const axios = useAxios();
 
-  function login(username: string, password: string) {
-    axios.Post(
+  async function login(username: string, password: string) {
+    const response = await axios.Post(
       'members/login',
       { username: username, password: password },
       { headers: { 'Content-Type': 'application/json' } },
       true
     );
   }
-  function Signup() {}
+  async function Signup(username: string, password: string) {
+    // const response = await axios.Post('');
+  }
 
   return { login, Signup };
 };

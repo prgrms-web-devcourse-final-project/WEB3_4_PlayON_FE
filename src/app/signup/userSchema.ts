@@ -8,7 +8,6 @@ export const userSchema = z.object({
   avatar: z.string().url(),
   playStyle: z.enum([...userCategories.playStyle.items]),
   skillLevel: z.enum([...userCategories.skillLevel.items]),
-  friendly: z.enum([...userCategories.friendly.items]),
   gender: z.enum([...userCategories.gender.items]),
 });
 

@@ -9,12 +9,10 @@ import { Form } from '@/components/ui/form';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { CoolerCategoryMenu } from './component/cooler-category-menu';
 import { userCategories } from '@/types/Tags/userCategories';
-import { putMe } from '@/api/members/put-me';
 
 const userDataSchema = userSchema.pick({
   avatar: true,
   gender: true,
-  friendly: true,
   playStyle: true,
   skillLevel: true,
 });
@@ -32,7 +30,6 @@ export default function SignupUserdata() {
     resolver: zodResolver(userDataSchema),
     defaultValues: {
       avatar: '',
-      friendly: '게임 전용',
       gender: '남자',
       playStyle: '노멀',
       skillLevel: '뉴비',
@@ -82,7 +79,6 @@ export default function SignupUserdata() {
     playStyle: useState(new Array(userCategories.playStyle.items.length).fill(false)),
     skillLevel: useState(new Array(userCategories.skillLevel.items.length).fill(false)),
     gender: useState(new Array(userCategories.gender.items.length).fill(false)),
-    friendly: useState(new Array(userCategories.friendly.items.length).fill(false)),
   };
   const selectedArr = Object.values(selected);
   const categoryItemStyle =
@@ -154,18 +150,7 @@ export default function SignupUserdata() {
                   </div>
                   <CategorySelectMenus />
                   <div className="flex gap-5">
-                    <p
-                      className="text-purple-500 font-dgm text-2xl glow hover:text-purple-200 cursor-pointer"
-                      onClick={async () => {
-                        putMe({
-                          profileImg: 'jpg',
-                          nickname: 'asdf',
-                          gender: 'MALE',
-                          skillLevel: 'NEWBIE',
-                          playStyle: 'BEGINNER',
-                        });
-                      }}
-                    >{`[ 제출하기 ]`}</p>
+                    <p className="text-purple-500 font-dgm text-2xl glow hover:text-purple-200 cursor-pointer">{`[ 제출하기 ]`}</p>
                     <p className="text-purple-500 font-dgm text-2xl glow hover:text-purple-200 cursor-pointer">{`[ 다음에 하기 ]`}</p>
                   </div>
                 </div>

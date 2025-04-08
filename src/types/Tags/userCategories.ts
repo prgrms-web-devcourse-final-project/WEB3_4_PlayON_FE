@@ -11,8 +11,4 @@ export const userCategories = {
     name: '성별',
     items: ['남자', '여자'] as const,
   },
-  friendly: {
-    name: '친목',
-    items: ['친목 환영', '게임 전용', '대화 없음'] as const,
-  },
 };

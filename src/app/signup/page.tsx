@@ -12,7 +12,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { signup } from '@/api/members/signup';
 
 const userInitialSchema = userSchema.pick({
   email: true,
@@ -117,7 +116,6 @@ export default function SignupInitial() {
                   <button
                     type="submit"
                     className="justify-self-center mt-5 flex items-center justify-center gap-2 border border-purple-500 hover:bg-purple-500 hover:text-white py-2 px-5"
-                    onClick={() => signup({ username: 'kylekim95@gmail.com', password: '1234' })}
                   >
                     <MailIcon />
                     <span className="font-dgm">REGISTER</span>
