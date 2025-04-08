@@ -1,3 +1,3 @@
 export type RouteType = {
-  [key: string]: string;
+  [key: string]: string | ((input: string[]) => string);
 };
