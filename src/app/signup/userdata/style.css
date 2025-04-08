@@ -61,6 +61,15 @@
   -ms-overflow-style: none;
 }
 
+input[type='file'] {
+  position: absolute;
+  width: 0;
+  height: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+}
+
 @keyframes flicker {
   0% {
     opacity: 0.62;
