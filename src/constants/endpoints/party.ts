@@ -1,0 +1,15 @@
+export const PARTY_ENDPOINTS = Object.freeze({
+  detail: (partyId: string) => `/parties/${partyId}`,
+  modify: (partyId: string) => `/parties/${partyId}`,
+  cancel: (partyId: string) => `/parties/${partyId}`,
+  accept_member: (partyId: string, memberId: string) => `/parties/${partyId}/members/${memberId}`,
+  reject_member: (partyId: string, memberId: string) => `/parties/${partyId}/members/${memberId}`,
+  list: '/parties',
+  create: '/parties',
+  join: (partyId: string) => `/parties/${partyId}/members`,
+  invite: (partyId: string, memberId: string) => `/parties/${partyId}/members/${memberId}/invitation`,
+  result: (partyId: string) => `/parties/${partyId}/result`,
+  pending: (partyId: string) => `/parties/${partyId}/pending`,
+  main_pending: '/parties/main/pending',
+  main_completed: '/parties/main/completed',
+});
