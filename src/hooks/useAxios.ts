@@ -62,10 +62,20 @@ export const useAxios = () => {
     }
   }
 
+  async function TypedGet<T>(path: string, config: AxiosRequestConfig, toast: boolean) {
+    try {
+      const response = await apiInstance.get<T>(path, config);
+      return response.data;
+    } catch (err) {
+      errorHandler(err, toast);
+    }
+  }
+
   return {
     Get,
     Delete,
     Post,
     Put,
+    TypedGet,
   };
 };
