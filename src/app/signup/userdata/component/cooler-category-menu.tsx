@@ -7,6 +7,7 @@ type CoolerCategoryMenuProps = {
   type: 'single' | 'multiple';
   enableAll?: boolean;
   className?: string;
+  notNull?: boolean;
 };
 
 export function CoolerCategoryMenu(props: CoolerCategoryMenuProps) {
@@ -35,6 +36,15 @@ export function CoolerCategoryMenu(props: CoolerCategoryMenuProps) {
         temp[0] = true;
         return temp;
       }
+    }
+
+    if (props.notNull && numTrue === 0) {
+      if (state.filter((e) => e).length <= 0) {
+        const temp = new Array(newState.length).fill(false);
+        temp[0] = true;
+        return temp;
+      }
+      return state;
     }
 
     switch (true) {

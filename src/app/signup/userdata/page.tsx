@@ -14,6 +14,7 @@ import { useRouter } from 'next/navigation';
 import { useMembers } from '@/api/members';
 import { useAuthStore } from '@/stores/authStore';
 import { useToast } from '@/hooks/use-toast';
+import typeConverter from '@/utils/typeConverter';
 
 const userDataSchema = userSchema.pick({
   nickname: true,
@@ -51,7 +52,13 @@ export default function SignupUserdata() {
   const { toast } = useToast();
   async function onSubmit(data: UserDataSchema) {
     console.log(data);
-    const response = await member.PutMe(data.nickname, data.avatar, 'CASUAL', 'NEWBIE', 'MALE');
+    const response = await member.PutMe(
+      data.nickname,
+      data.avatar,
+      typeConverter('playStyle', 'KoToEn', data.playStyle) ?? 'BEGINNER',
+      typeConverter('skillLevel', 'KoToEn', data.skillLevel) ?? 'NEWBIE',
+      typeConverter('userGender', 'KoToEn', data.gender) ?? 'MALE'
+    );
     toast({ title: '도전 과제 달성', description: '회원 가입 성공!', variant: 'primary' });
     setTimeout(() => {
       router.push('/');
@@ -78,13 +85,13 @@ export default function SignupUserdata() {
   function FileInputBuilder() {
     return (
       <div>
-        {!imageFile && (
+        {!dataUrl && (
           <div className="flex items-center gap-5">
             <div className="border-2 border-purple-500 rounded-full h-14 aspect-square relative"></div>
             <p className="text-purple-500 font-dgm text-2xl glow">아바타 이미지 설정</p>
           </div>
         )}
-        {imageFile && (
+        {dataUrl && (
           <div className="flex items-center gap-5">
             <div className="border-2 border-purple-500 rounded-full h-14 aspect-square relative overflow-hidden flex items-center justify-center">
               <img src={dataUrl} alt="" className="min-w-[100%] min-h-[100%] object-cover" />
@@ -121,6 +128,27 @@ export default function SignupUserdata() {
   const categoryItemStyle =
     'border border-purple-500 text-2xl font-dgm p-2 cursor-pointer hover:text-purple-200 hover:border-purple-200';
 
+  useEffect(() => {
+    if (!user || !user.skill_level || !user.party_style || !user.gender) return;
+    const indices = [
+      userCategories.playStyle.items.findIndex((e) => e === user.party_style),
+      userCategories.skillLevel.items.findIndex((e) => e === user.skill_level),
+      userCategories.gender.items.findIndex((e) => e === user.gender),
+    ];
+    const playStyle = [...selected.playStyle[0]];
+    playStyle[indices[0]] = true;
+    const gender = [...selected.gender[0]];
+    gender[indices[2]] = true;
+    const skillLevel = [...selected.skillLevel[0]];
+    skillLevel[indices[1]] = true;
+
+    selected.playStyle[1](playStyle);
+    selected.skillLevel[1](skillLevel);
+    selected.gender[1](gender);
+
+    setDataUrl(user.img_src);
+  }, []);
+
   const CategorySelectMenus = () => {
     return (
       <div className="flex flex-col gap-2">
@@ -132,6 +160,7 @@ export default function SignupUserdata() {
               setState={selectedArr[cat_ind][1]}
               className="flex gap-2"
               type="single"
+              notNull
             >
               {category.items.map((item, item_ind) => (
                 <p

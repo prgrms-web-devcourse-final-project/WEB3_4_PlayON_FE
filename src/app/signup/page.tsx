@@ -51,6 +51,10 @@ export default function SignupInitial() {
       router.push(USER_ROUTE.signup_userdata, { scroll: true });
     }
   }
+  async function steamAuth() {
+    const response = await member.steamAuthSignup();
+    window.location.href = response;
+  }
   const [submitHover, setSubmitHover] = useState(false);
 
   return (
@@ -136,6 +140,7 @@ export default function SignupInitial() {
                 className="p-2 flex items-center justify-center gap-2"
                 onMouseEnter={() => setSubmitHover(true)}
                 onMouseLeave={() => setSubmitHover(false)}
+                onClick={() => steamAuth()}
               >
                 <SteamSVG fill={`${submitHover ? '#bdb9f6' : '#8258ff'}`} stroke="" width={48} height={48} />
                 <p className={`text-4xl font-black ${submitHover ? 'text-purple-200 glow' : ''}`}>STEAM</p>

@@ -1,6 +1,8 @@
 import { useAxios } from '@/hooks/useAxios';
 import { MEMBER_ENDPOINTS as MEMBER } from '@/constants/endpoints/member';
 import { userDetail } from '@/types/user';
+import typeConverter from '@/utils/typeConverter';
+import { STEAM_AUTH_ENDPOINTS } from '@/constants/endpoints/steam-auth';
 
 export const useMembers = () => {
   const axios = useAxios();
@@ -35,11 +37,11 @@ export const useMembers = () => {
     const data = response.data.data;
 
     const ret: userDetail = {
-      gender: data.memberDetail.gender,
+      gender: typeConverter('userGender', 'EnToKo', data.memberDetail.gender),
       nickname: data.memberDetail.nickname,
       img_src: data.memberDetail.profileImg,
-      party_style: data.memberDetail.playStyle,
-      skill_level: data.memberDetail.skillLevel,
+      party_style: typeConverter('playStyle', 'EnToKo', data.memberDetail.playStyle),
+      skill_level: typeConverter('skillLevel', 'EnToKo', data.memberDetail.skillLevel),
       steam_id: data.memberDetail.steamId,
       last_login_at: new Date(data.memberDetail.lastLoginAt),
       user_title: '',
@@ -68,11 +70,7 @@ export const useMembers = () => {
     return response;
   }
   async function SearchByNickname(nickname: string) {
-    const response = await axios.Delete(
-      MEMBER.nickname,
-      { params: { nickname }, headers: { 'Content-Type': 'application/json' } },
-      true
-    );
+    const response = await axios.Get(MEMBER.nickname, { params: { nickname } }, true);
     return response;
   }
   async function MyGames(count: number) {
@@ -83,6 +81,47 @@ export const useMembers = () => {
     );
     return response;
   }
+  async function steamAuthSignup() {
+    const response = await axios.Get(STEAM_AUTH_ENDPOINTS.signup, {}, true);
+    const redirectUrl = response?.data.data.redirectUrl;
+    return redirectUrl;
+  }
+  async function steamAuthSignupCallback(callbackParam: string) {
+    const response = await axios.Get(STEAM_AUTH_ENDPOINTS.callback_signup, { params: JSON.parse(callbackParam) }, true);
+    return response;
+  }
+  async function steamAuthLogin() {
+    const response = await axios.Get(STEAM_AUTH_ENDPOINTS.login, {}, true);
+    const redirectUrl = response?.data.data.redirectUrl;
+    return redirectUrl;
+  }
+  async function steamAuthLoginCallback(callbackParam: string) {
+    const response = await axios.Get(STEAM_AUTH_ENDPOINTS.callback_login, { params: JSON.parse(callbackParam) }, true);
+    return response;
+  }
+  async function steamAuthLink() {
+    const response = await axios.Get(STEAM_AUTH_ENDPOINTS.link, {}, true);
+    const redirectUrl = response?.data.data.redirectUrl;
+    return redirectUrl;
+  }
+  async function steamAuthLinkCallback(callbackParam: string) {
+    const response = await axios.Get(STEAM_AUTH_ENDPOINTS.callback_link, { params: JSON.parse(callbackParam) }, true);
+    return response;
+  }
 
-  return { login, Signup, GetMe, PutMe, DeleteMe, SearchByNickname, MyGames };
+  return {
+    login,
+    Signup,
+    GetMe,
+    PutMe,
+    DeleteMe,
+    SearchByNickname,
+    MyGames,
+    steamAuthSignup,
+    steamAuthSignupCallback,
+    steamAuthLogin,
+    steamAuthLoginCallback,
+    steamAuthLink,
+    steamAuthLinkCallback,
+  };
 };
