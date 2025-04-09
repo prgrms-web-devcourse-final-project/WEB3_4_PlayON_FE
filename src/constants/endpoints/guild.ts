@@ -4,8 +4,8 @@ export const GUILD_ENDPOINTS = Object.freeze({
   delete: (guildId: string) => `/guilds/${guildId}`,
   list: '/guilds',
   create: '/guilds',
+  upload_image: (guildId: string) => `/api/guilds/${guildId}/img`,
   admin: (guildId: string) => `/guilds/${guildId}/admin`,
   recommend: '/guilds/recommend',
   popular: '/guilds/popular',
-  upload_image: '/guilds/presigned-url',
 });
