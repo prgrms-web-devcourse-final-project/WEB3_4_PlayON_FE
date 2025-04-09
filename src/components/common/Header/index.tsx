@@ -7,6 +7,7 @@ import { userSimple } from '@/types/user';
 import { useEffect, useState } from 'react';
 import Lottie from 'react-lottie-player';
 import LogoAni from '@/../public/animation/main_logo.json';
+import { PATH } from '@/constants/routes';
 const linkStyle = `
     relative
     transition-all
@@ -70,16 +71,16 @@ export default function Header() {
           </Link>
         </h1>
         <div className="grow flex gap-5 text-lg">
-          <Link className={linkStyle} href={'/party'}>
+          <Link className={linkStyle} href={PATH.party}>
             파티
           </Link>
-          <Link className={linkStyle} href={'/guild'}>
+          <Link className={linkStyle} href={PATH.guild}>
             게임 길드
           </Link>
-          <Link className={linkStyle} href={'/game'}>
+          <Link className={linkStyle} href={PATH.game}>
             게임 추천
           </Link>
-          <Link className={linkStyle} href={'/community'}>
+          <Link className={linkStyle} href={PATH.guild}>
             커뮤니티
           </Link>
         </div>
