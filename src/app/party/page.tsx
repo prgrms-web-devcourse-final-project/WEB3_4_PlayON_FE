@@ -1,4 +1,5 @@
 'use client';
+import { useParty } from '@/api/party';
 import HeroTypingBanner from '@/components/common/HeroTypingBanner';
 import PlayOnRollingBanner from '@/components/common/play-on-rolling-banner';
 import RetroButton from '@/components/common/RetroButton';
@@ -30,6 +31,8 @@ const popularGames: gameSimple[] = [
 ];
 
 export default function Party() {
+  const party = useParty();
+  party.GetParty(1);
   const [query, setQuery] = useState<string>('');
   const handleChange = (value: string) => {
     setQuery(value);
@@ -75,8 +78,8 @@ export default function Party() {
           </div>
         </div>
         <div className="grid grid-cols-3 gap-6">
-          {dummyPartyList.map((party) => (
-            <PartyCard key={party.party_name} data={party} />
+          {dummyPartyList.map((party, idx) => (
+            <PartyCard key={idx} data={party} />
           ))}
         </div>
       </section>
@@ -104,8 +107,8 @@ export default function Party() {
           </RetroButton>
         </SectionTitle>
         <div className="grid grid-cols-3 gap-6">
-          {dummyPartyLogList.map((partyLog) => (
-            <PartyLogCard key={partyLog.party_info.party_name} data={partyLog} />
+          {dummyPartyLogList.map((partyLog, idx) => (
+            <PartyLogCard key={partyLog.party_info.party_name + idx} data={partyLog} />
           ))}
         </div>
       </section>
