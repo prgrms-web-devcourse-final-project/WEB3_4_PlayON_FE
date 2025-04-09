@@ -10,6 +10,7 @@ export interface guild {
   num_members: number; // 길드 인원 수
   owner: userSimple;
   created_at: Date;
+  myRole: string;
   play_style: (typeof guildTags.partyStyle.items)[number][];
   skill_level: (typeof guildTags.skillLevel.items)[number][];
   gender: (typeof guildTags.gender.items)[number][];
