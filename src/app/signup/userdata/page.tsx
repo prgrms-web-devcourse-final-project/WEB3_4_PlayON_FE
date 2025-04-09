@@ -5,16 +5,22 @@ import { z } from 'zod';
 import './style.css';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Form } from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { CoolerCategoryMenu } from './component/cooler-category-menu';
 import { userCategories } from '@/types/Tags/userCategories';
-import { putMe } from '@/api/members/put-me';
+import { Input } from '@/components/ui/input';
+import { useRouter } from 'next/navigation';
+import { useMembers } from '@/api/members';
+import { useAuthStore } from '@/stores/authStore';
+import { useToast } from '@/hooks/use-toast';
+import typeConverter from '@/utils/typeConverter';
+import { uploadToS3 } from '@/utils/uploadToS3';
 
 const userDataSchema = userSchema.pick({
+  nickname: true,
   avatar: true,
   gender: true,
-  friendly: true,
   playStyle: true,
   skillLevel: true,
 });
@@ -28,18 +34,36 @@ export default function SignupUserdata() {
 ##########  #####%###%############ ######        ####### ####################
 #####       ###################### ######         ################### #######
 #####      ################  ##### ######           #########  ######  ######`;
+
+  const { user } = useAuthStore();
+
   const form = useForm<UserDataSchema>({
     resolver: zodResolver(userDataSchema),
     defaultValues: {
-      avatar: '',
-      friendly: '게임 전용',
-      gender: '남자',
-      playStyle: '노멀',
-      skillLevel: '뉴비',
+      nickname: user?.nickname,
+      avatar: user?.img_src,
+      gender: user?.gender,
+      playStyle: user?.party_style,
+      skillLevel: user?.skill_level,
     },
   });
-  function onSubmit(data: UserDataSchema) {
+
+  const member = useMembers();
+  const router = useRouter();
+  const { toast } = useToast();
+  async function onSubmit(data: UserDataSchema) {
     console.log(data);
+    const response = await member.PutMe(
+      data.nickname,
+      data.avatar,
+      typeConverter('playStyle', 'KoToEn', data.playStyle) ?? 'BEGINNER',
+      typeConverter('skillLevel', 'KoToEn', data.skillLevel) ?? 'NEWBIE',
+      typeConverter('userGender', 'KoToEn', data.gender) ?? 'MALE'
+    );
+    toast({ title: '도전 과제 달성', description: '회원 가입 성공!', variant: 'primary' });
+    setTimeout(() => {
+      router.push('/');
+    }, 500);
   }
 
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -50,6 +74,8 @@ export default function SignupUserdata() {
       //validation here
       setImageFile(e.target.files[0]);
       const fileType = e.target.files[0].type;
+      const fileExt = fileType.slice(fileType.indexOf('/') + 1, fileType.length);
+      form.setValue('avatar', fileExt);
       const reader = new FileReader();
       reader.readAsDataURL(e.target.files[0]);
       reader.onloadend = () => {
@@ -60,13 +86,13 @@ export default function SignupUserdata() {
   function FileInputBuilder() {
     return (
       <div>
-        {!imageFile && (
+        {!dataUrl && (
           <div className="flex items-center gap-5">
             <div className="border-2 border-purple-500 rounded-full h-14 aspect-square relative"></div>
             <p className="text-purple-500 font-dgm text-2xl glow">아바타 이미지 설정</p>
           </div>
         )}
-        {imageFile && (
+        {dataUrl && (
           <div className="flex items-center gap-5">
             <div className="border-2 border-purple-500 rounded-full h-14 aspect-square relative overflow-hidden flex items-center justify-center">
               <img src={dataUrl} alt="" className="min-w-[100%] min-h-[100%] object-cover" />
@@ -82,11 +108,48 @@ export default function SignupUserdata() {
     playStyle: useState(new Array(userCategories.playStyle.items.length).fill(false)),
     skillLevel: useState(new Array(userCategories.skillLevel.items.length).fill(false)),
     gender: useState(new Array(userCategories.gender.items.length).fill(false)),
-    friendly: useState(new Array(userCategories.friendly.items.length).fill(false)),
   };
   const selectedArr = Object.values(selected);
+  useEffect(() => {
+    const selectedValueInd = selected.playStyle[0].findIndex((e) => e);
+    const tag = userCategories.playStyle.items[selectedValueInd];
+    form.setValue('playStyle', tag);
+  }, [selected.playStyle, form]);
+  useEffect(() => {
+    const selectedValueInd = selected.skillLevel[0].findIndex((e) => e);
+    const tag = userCategories.skillLevel.items[selectedValueInd];
+    form.setValue('skillLevel', tag);
+  }, [selected.skillLevel, form]);
+  useEffect(() => {
+    const selectedValueInd = selected.gender[0].findIndex((e) => e);
+    const tag = userCategories.gender.items[selectedValueInd];
+    form.setValue('gender', tag);
+  }, [selected.gender, form]);
+
   const categoryItemStyle =
     'border border-purple-500 text-2xl font-dgm p-2 cursor-pointer hover:text-purple-200 hover:border-purple-200';
+
+  useEffect(() => {
+    if (!user || !user.skill_level || !user.party_style || !user.gender) return;
+    const indices = [
+      userCategories.playStyle.items.findIndex((e) => e === user.party_style),
+      userCategories.skillLevel.items.findIndex((e) => e === user.skill_level),
+      userCategories.gender.items.findIndex((e) => e === user.gender),
+    ];
+    const playStyle = [...selected.playStyle[0]];
+    playStyle[indices[0]] = true;
+    const gender = [...selected.gender[0]];
+    gender[indices[2]] = true;
+    const skillLevel = [...selected.skillLevel[0]];
+    skillLevel[indices[1]] = true;
+
+    selected.playStyle[1](playStyle);
+    selected.skillLevel[1](skillLevel);
+    selected.gender[1](gender);
+
+    setDataUrl(user.img_src);
+  }, []);
+
   const CategorySelectMenus = () => {
     return (
       <div className="flex flex-col gap-2">
@@ -98,6 +161,7 @@ export default function SignupUserdata() {
               setState={selectedArr[cat_ind][1]}
               className="flex gap-2"
               type="single"
+              notNull
             >
               {category.items.map((item, item_ind) => (
                 <p
@@ -113,8 +177,6 @@ export default function SignupUserdata() {
       </div>
     );
   };
-
-  useEffect(() => {}, []);
 
   return (
     <div className="bg-purple-900 text-purple-400 h-screen flex flex-col items-center mt-[68px]">
@@ -152,21 +214,35 @@ export default function SignupUserdata() {
                       <FileInputBuilder />
                     </label>
                   </div>
+                  <FormField
+                    control={form.control}
+                    name="nickname"
+                    render={({ field }) => (
+                      <FormItem className="flex items-center gap-5">
+                        <p className="font-dgm text-2xl glow">NICKNAME</p>
+                        <FormControl>
+                          <Input
+                            className="border border-purple-500 rounded-none font-dgm !text-xl w-52"
+                            value={field.value}
+                            onChange={field.onChange}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
                   <CategorySelectMenus />
                   <div className="flex gap-5">
+                    <button
+                      type="submit"
+                      className="text-purple-500 font-dgm text-2xl glow hover:text-purple-200 cursor-pointer"
+                      onClick={() => console.log(form.formState.errors)}
+                    >{`[ 제출하기 ]`}</button>
                     <p
                       className="text-purple-500 font-dgm text-2xl glow hover:text-purple-200 cursor-pointer"
-                      onClick={async () => {
-                        putMe({
-                          profileImg: 'jpg',
-                          nickname: 'asdf',
-                          gender: 'MALE',
-                          skillLevel: 'NEWBIE',
-                          playStyle: 'BEGINNER',
-                        });
+                      onClick={() => {
+                        router.push('/', { scroll: true });
                       }}
-                    >{`[ 제출하기 ]`}</p>
-                    <p className="text-purple-500 font-dgm text-2xl glow hover:text-purple-200 cursor-pointer">{`[ 다음에 하기 ]`}</p>
+                    >{`[ 다음에 하기 ]`}</p>
                   </div>
                 </div>
               </form>

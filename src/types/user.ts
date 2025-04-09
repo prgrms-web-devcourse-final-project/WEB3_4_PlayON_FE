@@ -15,7 +15,6 @@ export interface userDetail {
   last_login_at: Date;
   steam_id: string;
   gender: (typeof userCategories.gender.items)[number];
-  party_style: (typeof userCategories.playStyle.items)[number][];
+  party_style: (typeof userCategories.playStyle.items)[number];
   skill_level: (typeof userCategories.skillLevel.items)[number];
-  friendly: (typeof userCategories.friendly.items)[number];
 }

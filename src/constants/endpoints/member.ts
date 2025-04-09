@@ -6,4 +6,5 @@ export const MEMBER_ENDPOINTS = Object.freeze({
   login: '/members/login',
   nickname: '/members/nickname',
   games: '/members/me/games',
+  steamLinks: '/members/steamLink',
 });

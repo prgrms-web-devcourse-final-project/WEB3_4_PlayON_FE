@@ -6,7 +6,7 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 export const useAxios = () => {
   const apiInstance = axios.create({
     baseURL: API_BASE_URL,
-    timeout: 1000,
+    timeout: 2000,
     withCredentials: true,
   });
 
@@ -14,8 +14,8 @@ export const useAxios = () => {
   const errorHandler = (error, toast: boolean) => {
     if (toast) {
       Toast.toast({
-        title: 'Hello World!',
-        description: error.response.data,
+        title: error.response.data,
+        variant: 'destructive',
       });
     }
   };
