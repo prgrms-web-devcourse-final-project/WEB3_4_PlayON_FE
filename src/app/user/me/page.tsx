@@ -92,17 +92,23 @@ export default function MyPage() {
                         ))}
                       </div>
                     </div>
-                    <div className='flex gap-2'>
+                    <div className="flex gap-2">
                       <p className="w-[118px] font-dgm text-neutral-900">게임 실력</p>
-                      <Tag style="retro" size="small" background="dark">{skillLevel}</Tag>
+                      <Tag style="retro" size="small" background="dark">
+                        {skillLevel}
+                      </Tag>
                     </div>
-                    <div className='flex gap-2'>
+                    <div className="flex gap-2">
                       <p className="w-[118px] font-dgm text-neutral-900">성별</p>
-                      <Tag style="retro" size="small" background="dark">{gender}</Tag>
+                      <Tag style="retro" size="small" background="dark">
+                        {gender}
+                      </Tag>
                     </div>
-                    <div className='flex gap-2'>
+                    <div className="flex gap-2">
                       <p className="w-[118px] font-dgm text-neutral-900">친목 여부</p>
-                      <Tag style="retro" size="small" background="dark">{friendly}</Tag>
+                      <Tag style="retro" size="small" background="dark">
+                        {friendly}
+                      </Tag>
                     </div>
                   </div>
                 </div>

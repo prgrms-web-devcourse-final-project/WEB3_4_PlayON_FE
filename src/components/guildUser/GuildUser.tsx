@@ -5,22 +5,21 @@ import { useMemo } from 'react';
 interface guildUserProps {
   data: guildUser;
   index: number;
-  total: number
+  total: number;
 }
 
 export default function GuildUser(props: guildUserProps) {
-
   const { data, index, total } = props;
-  const joindDate = new Date(data.joined_at).toLocaleDateString("ko-kr", {
-    year: "numeric",
-    month: "long",
-    day : "numeric"
+  const joindDate = new Date(data.joined_at).toLocaleDateString('ko-kr', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
   });
-  
-  const lastDate = new Date(data.user.last_login_at).toLocaleDateString("ko-kr", {
-    year:"numeric",
-    month: "long",
-    day: "numeric"
+
+  const lastDate = new Date(data.user.last_login_at).toLocaleDateString('ko-kr', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
   });
   const isList = useMemo(() => index === total - 1, [index, total]);
 

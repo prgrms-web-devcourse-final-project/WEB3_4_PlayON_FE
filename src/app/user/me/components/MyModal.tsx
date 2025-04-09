@@ -28,9 +28,7 @@ export function EditInfo() {
 
   const dummyTitle = ['나한테 바나나?', '달인', '넌 네거야!', '묵찌빠 달인', '매너온도 200', ''];
 
- 
-
-   const selected = {
+  const selected = {
     playStyle: useState(new Array(userCategories.playStyle.items.length).fill(false)),
     skillLevel: useState(new Array(userCategories.skillLevel.items.length).fill(false)),
     gender: useState(new Array(userCategories.gender.items.length).fill(false)),
@@ -66,7 +64,6 @@ export function EditInfo() {
     );
   };
 
-
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -74,7 +71,7 @@ export function EditInfo() {
         <SquarePen color="#A3A3A3" />
       </DialogTrigger>
 
-      <DialogContent className='w-[900px] p-10'>
+      <DialogContent className="w-[900px] p-10">
         <DialogHeader>
           <p>회원정보 수정</p>
         </DialogHeader>

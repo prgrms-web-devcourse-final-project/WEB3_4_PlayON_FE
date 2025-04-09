@@ -1,6 +1,6 @@
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
-import { guildUser } from "@/types/guild";
-import { Crown, Star } from "lucide-react";
+import { Avatar, AvatarImage } from '@/components/ui/avatar';
+import { guildUser } from '@/types/guild';
+import { Crown, Star } from 'lucide-react';
 
 interface guildUserCardProps2 {
   data: guildUser;
@@ -40,8 +40,6 @@ export default function GuildUserCard(props: guildUserCardProps2) {
               <AvatarImage src={data.user.img_src} />
             </Avatar>
             {badge}
-
-
           </div>
           <div>
             {data.user.user_title && (

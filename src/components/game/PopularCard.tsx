@@ -1,14 +1,12 @@
-import { gameSimple } from "@/types/games";
+import { gameSimple } from '@/types/games';
 
 interface PopularCardProps {
   data: gameSimple;
-};
-
+}
 
 export default function PopularCard(props: PopularCardProps) {
-  
   const { data } = props;
-  
+
   return (
     <>
       <div>
