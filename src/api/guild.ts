@@ -10,11 +10,13 @@ export interface GuildRequest {
   name: string;
   description: string;
   maxMembers: number;
-  gameId: number;
+  appid: number;
   isPublic: boolean;
   guildImg: string;
   tags: GuildTag[];
 }
+
+type FileType = 'png' | 'jpg' | 'jpeg' | 'gif';
 
 export const useGuild = () => {
   const axios = useAxios();
@@ -30,6 +32,7 @@ export const useGuild = () => {
       true
     );
     const data = response?.data;
+
     console.log(data);
   }
 
@@ -52,7 +55,7 @@ export const useGuild = () => {
     const response = await axios.Delete(
       GUILD.delete(guildId),
       {
-        params: {
+        data: {
           guildId: guildId,
         },
       },
@@ -115,5 +118,21 @@ export const useGuild = () => {
     console.log(data);
   }
 
-  return { GetGuild, UpdateGuild, DeleteGuild, GetGuildList, CreateGuild, GetGuildRecommend, GetGuildPopular };
+  async function UploadImageURL(fileType: FileType) {
+    const response = await axios.Get(GUILD.upload_image, { params: { fileType: fileType } }, true);
+    const url = response?.data.data;
+    console.log(url);
+    return url;
+  }
+
+  return {
+    GetGuild,
+    UpdateGuild,
+    DeleteGuild,
+    GetGuildList,
+    CreateGuild,
+    GetGuildRecommend,
+    GetGuildPopular,
+    UploadImageURL,
+  };
 };
