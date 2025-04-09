@@ -1,12 +1,12 @@
 import { cn } from '@/lib/utils';
 import { userSimple } from '@/types/user';
 
-interface UserInfoProps {
+interface UserInfoHorizontalProps {
   size?: 'small' | 'big';
   data: userSimple;
 }
 
-export default function UserInfo({ size = 'big', data }: UserInfoProps) {
+export default function UserInfoHorizontal({ size = 'big', data }: UserInfoHorizontalProps) {
   return (
     <div
       className={cn('inline-flex items-center gap-2', {

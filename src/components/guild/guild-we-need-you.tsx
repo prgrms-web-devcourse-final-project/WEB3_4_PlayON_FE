@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { SearchIcon } from 'lucide-react';
 import CapsuleCategoryMenu from '@/components/common/capsule-category-menu';
 import { useState } from 'react';
-import UserInfo from '@/app/party/components/UserInfoHorizontal';
+import UserInfoHorizontal from '@/app/party/components/UserInfoHorizontal';
 import Tag from '../common/Tag';
 import { guildCommunityTags } from '@/types/Tags/communityTags';
 
@@ -29,7 +29,7 @@ export default function WeNeedYou(props: WeNeedYouProps) {
         <Tag size="small" style="default" background="medium" className="w-12 font-suit font-bold">
           길드장
         </Tag>
-        <UserInfo size="small" data={props.guildData.owner} />
+        <UserInfoHorizontal size="small" data={props.guildData.owner} />
         <p className="font-dgm line-clamp-1 text-ellipsis overflow-hidden text-neutral-900 text-4xl">
           {props.guildData.guild_name}
         </p>

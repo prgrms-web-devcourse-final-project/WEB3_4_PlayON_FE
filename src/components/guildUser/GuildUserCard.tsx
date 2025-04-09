@@ -1,24 +1,21 @@
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
-import { guildUser } from "@/types/guildUser";
+import { Avatar, AvatarImage } from '@/components/ui/avatar';
+import { guildUser } from '@/types/guild';
+import { Crown, Star } from 'lucide-react';
 
-type guildUserCardProps = {
+interface guildUserCardProps2 {
   data: guildUser;
-  memberLevel: string; // leader, manager, user
-  // avatarClassName: string;
-};
+}
 
-
-
-export default function GuildUserCard(props: guildUserCardProps) {
-  
-  const { data, memberLevel } = props;
+export default function GuildUserCard(props: guildUserCardProps2) {
+  const { data } = props;
   let badge;
-  
-  switch (memberLevel) {
+  const joindDate = new Date(data.joined_at).toLocaleDateString('ko-KR');
+
+  switch (data.guild_role) {
     case 'leader':
       badge = (
         <div className="bg-amber-300 rounded-full w-5 h-5 absolute bottom-0 right-0">
-          <img src="crown.svg" className="p-1" />
+          <Crown className="w-5 h-5 p-1" color="#ffffff" />
         </div>
       );
       break;
@@ -26,7 +23,7 @@ export default function GuildUserCard(props: guildUserCardProps) {
     case 'manager':
       badge = (
         <div className="bg-red-300 rounded-full w-5 h-5 absolute bottom-0 right-0">
-          <img src="star.svg" className="p-1" />
+          <Star className="w-5 h-5 p-1" color="#ffffff" />
         </div>
       );
       break;
@@ -40,19 +37,16 @@ export default function GuildUserCard(props: guildUserCardProps) {
         <div className="flex gap-5">
           <div className="w-16 h-16 aspect-square relative ">
             <Avatar className="bg-neutral-400 w-16 h-16">
-              <AvatarImage src={data.image} />
+              <AvatarImage src={data.user.img_src} />
             </Avatar>
             {badge}
-
-            {/* <div className="bg-amber-300 rounded-full w-5 h-5 absolute bottom-0 right-0">
-            </div> */}
           </div>
-          <div className="">
-            {data.userTitle && <p className="font-suit text-sm font-normal text-neutral-500">{data.userTitle}</p>}
-            <p className="font-suit text-xl font-medium">{data.name}</p>
-            {data.guildJoinDate && (
-              <p className="font-suit text-sm font-normal text-neutral-500">가입일 : {data.guildJoinDate}</p>
+          <div>
+            {data.user.user_title && (
+              <p className="font-suit text-sm font-normal text-neutral-500">{data.user.user_title}</p>
             )}
+            <p className="font-suit text-xl font-medium">{data.user.nickname}</p>
+            {data.joined_at && <p className="font-suit text-sm font-normal text-neutral-500">가입일 : {joindDate}</p>}
           </div>
         </div>
       </div>

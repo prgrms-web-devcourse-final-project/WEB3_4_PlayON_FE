@@ -1,6 +1,6 @@
-import { loremIpsum } from '@/utils/loremIpsum';
+import { loremIpsum } from './loremIpsum';
 import { post } from '@/types/community';
-import { guild } from '@/types/guild';
+import { guild, guildUser } from '@/types/guild';
 import { userDetail, userSimple } from '@/types/user';
 import { gameDetail, gameSimple } from '@/types/games';
 import { party, partyLog } from '@/types/party';
@@ -11,6 +11,26 @@ export const dummyUserSimple: userSimple = {
   user_title: 'AdventureTime!',
   username: 'morty1234@gmail.com',
 };
+export const dummyUsers: userSimple[] = [
+  {
+    img_src: 'https://avatars.githubusercontent.com/u/124599?v=4',
+    nickname: '김영희',
+    user_title: 'AdventureTime!',
+    username: 'yonghee@gmail.com',
+  },
+  {
+    img_src: 'https://avatars.githubusercontent.com/u/124599?v=4',
+    nickname: '홍길동',
+    user_title: 'AdventureTime!',
+    username: 'gildong@gmail.com',
+  },
+  {
+    img_src: 'https://avatars.githubusercontent.com/u/124599?v=4',
+    nickname: '태정태세비욘세',
+    user_title: 'Stardew valley',
+    username: 'tetebi@email.com',
+  },
+];
 export const dummyUserDetail: userDetail = {
   img_src: 'https://avatars.githubusercontent.com/u/124599?v=4',
   last_login_at: new Date(),
@@ -68,6 +88,31 @@ export const dummyGameDetail: gameDetail = {
   ],
   short_desc: 'PICO PARK is a cooperative local/online multiplay action puzzle game for 2-8 players.',
 };
+export const dummyGameDetail2: gameDetail = {
+  genre: ['액션', '무료 플레이'],
+  img_src: 'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/730/header.jpg?t=1729703045',
+  title: 'Counter-Strike 2',
+  about: loremIpsum,
+  detail_desc: loremIpsum,
+  developer: ['Valve'],
+  homepage_url: 'http://picoparkgame.com/en/',
+  publisher: ['Valve'],
+  movie_src: ['http://video.akamai.steamstatic.com/store_trailers/256829932/movie_max_vp9.webm?t=1618749324'],
+  os: {
+    windows: true,
+    mac: false,
+    linux: false,
+  },
+  release_date: new Date(),
+  screenshot_src: [
+    'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/730/ss_796601d9d67faf53486eeb26d0724347cea67ddc.1920x1080.jpg?t=1729703045',
+    'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1509960/ss_f356434b667dd6f5ff948a87d4d8486d29e31b36.1920x1080.jpg?t=1740033204',
+  ],
+  short_desc:
+    'Counter-Strike는 20년이 넘는 시간 동안 전 세계 수백만 명의 플레이어가 모여 수준 높은 경쟁을 펼칠 수 있는 플랫폼을 제공해 왔습니다. 그리고 이제 곧 Counter-Strike 2와 함께 새로운 CS 시대의 막이 열립니다.',
+};
+export const dummyGameDetails = [dummyGameDetail, dummyGameDetail2];
+
 export const dummyGuild: guild = {
   created_at: new Date(),
   description: loremIpsum,
@@ -82,15 +127,24 @@ export const dummyGuild: guild = {
   main_game: dummyGameSimple,
 };
 
+export const dummyGuildUser: guildUser = {
+  user: dummyUserDetail,
+  guild_role: 'manager', // 'leader', 'manager', 'user'
+  joined_at: new Date(),
+  num_guild_posts: 17,
+};
+
 export const dummyParty: party = {
   party_name: '파티이름입니다.',
   description: '설명입니다.설명입니다.설명입니다. 설명입니다. 설명입니다. 설명입니다. 설명입니다.',
   start_time: new Date(),
+  end_time: new Date(Date.now() + 8000000),
   tags: ['맛보기', '뉴비'],
-  participation: [dummyUserSimple],
+  participation: dummyUsers,
   selected_game: dummyGameSimple,
   num_maximum: 10,
 };
+
 export const dummyPartyLog: partyLog = {
   party_info: dummyParty,
   player_recommend: [
@@ -105,11 +159,24 @@ export const dummyPartyLog: partyLog = {
       author: dummyUserSimple,
       comment: '멋져요',
     },
+    {
+      author: dummyUserSimple,
+      img_src: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/489830/header.jpg?t=1721923149',
+      comment: loremIpsum,
+    },
   ],
   review: [
     {
       author: dummyUserSimple,
       text: '멋져요',
+    },
+    {
+      author: dummyUserSimple,
+      text: loremIpsum,
+    },
+    {
+      author: dummyUserSimple,
+      text: loremIpsum,
     },
   ],
 };

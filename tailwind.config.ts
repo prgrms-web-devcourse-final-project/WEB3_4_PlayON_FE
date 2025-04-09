@@ -13,6 +13,7 @@ const config: Config = {
         suit: ['SUIT'],
         dgm: ['DungGeunMo'],
         helvetica: ['HelveticaCompressed'],
+        luckiestguy: ['LuckiestGuy'],
       },
       colors: {
         purple: {
@@ -24,6 +25,7 @@ const config: Config = {
           600: '#6738F6',
           700: '#3F1AC4',
           800: '#1C2068',
+          900: '#23243D',
         },
         lime: {
           light: '#9EFBA1',

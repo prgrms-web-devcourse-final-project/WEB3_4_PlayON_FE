@@ -1,8 +1,8 @@
 import { gameDetail } from '@/types/games';
 
-type PickCardProps = {
+interface PickCardProps {
   data: gameDetail;
-};
+}
 
 export default function PickCard(props: PickCardProps) {
   const { data } = props;
@@ -11,9 +11,9 @@ export default function PickCard(props: PickCardProps) {
     <>
       <div>
         {/* <div className="bg-neutral-400 w-full aspect-square  rounded-full"></div> */}
-        <img src={data.img_src} className="bg-neutral-400 w-full aspect-square rounded-full object-cover" />
+        <img src={data.screenshot_src[0]} className="bg-neutral-400 w-full aspect-square rounded-full object-cover" />
         <p className="mt-4 font-suit text-xl font-semibold"> {data.title}</p>
-        <p className="mt-2 text-sm text-neutral-400 font-medium"> {data.genre}</p>
+        <p className="mt-2 text-sm text-neutral-400 font-medium flex"> {data.genre.join(', ')} </p>
       </div>
     </>
   );
