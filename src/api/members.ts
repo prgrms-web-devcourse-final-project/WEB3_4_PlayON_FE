@@ -73,7 +73,7 @@ export const useMembers = () => {
     const response = await axios.Get(MEMBER.nickname, { params: { nickname } }, true);
     return response;
   }
-  async function MyGames(count: number) {
+  async function MyGames(count?: number) {
     const response = await axios.Delete(
       MEMBER.games,
       { params: { count }, headers: { 'Content-Type': 'application/json' } },
@@ -108,6 +108,11 @@ export const useMembers = () => {
     const response = await axios.Get(STEAM_AUTH_ENDPOINTS.callback_link, { params: JSON.parse(callbackParam) }, true);
     return response;
   }
+  //보유게임 목록 갱신
+  async function steamLink() {
+    const response = await axios.Post(MEMBER_ENDPOINTS.steamLinks, {}, true);
+    return response;
+  }
 
   return {
     login,
@@ -123,5 +128,6 @@ export const useMembers = () => {
     steamAuthLoginCallback,
     steamAuthLink,
     steamAuthLinkCallback,
+    steamLink,
   };
 };

@@ -16,6 +16,7 @@ import { useMembers } from '@/api/members';
 import { useToast } from '@/hooks/use-toast';
 import { useAuthStore } from '@/stores/authStore';
 import typeConverter from '@/utils/typeConverter';
+import { uploadToS3 } from '@/utils/uploadToS3';
 
 const loginSchema = z.object({
   email: z.string().min(1, { message: '아이디를 입력해주세요' }),
@@ -68,14 +69,6 @@ export default function SignupInitial() {
   }
 
   const [submitHover, setSubmitHover] = useState(false);
-
-  useEffect(() => {
-    async function test() {
-      const response = await members.DeleteMe();
-      console.log(response);
-    }
-    test();
-  }, []);
 
   return (
     <div className="bg-purple-900 text-purple-400 w-full h-screen flex flex-col items-center mt-[68px]">

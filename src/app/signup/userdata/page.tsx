@@ -15,6 +15,7 @@ import { useMembers } from '@/api/members';
 import { useAuthStore } from '@/stores/authStore';
 import { useToast } from '@/hooks/use-toast';
 import typeConverter from '@/utils/typeConverter';
+import { uploadToS3 } from '@/utils/uploadToS3';
 
 const userDataSchema = userSchema.pick({
   nickname: true,
