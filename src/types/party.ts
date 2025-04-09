@@ -10,6 +10,7 @@ export interface party {
   participation: userSimple[];
   selected_game: gameSimple;
   num_maximum: number;
+  num_minimum?: number;
 }
 
 export interface partyLog {
