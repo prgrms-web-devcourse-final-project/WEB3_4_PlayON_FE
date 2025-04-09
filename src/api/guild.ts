@@ -16,51 +16,26 @@ export interface GuildRequest {
   tags: GuildTag[];
 }
 
-type FileType = 'png' | 'jpg' | 'jpeg' | 'gif';
+type FileType = 'png' | 'jpg' | 'jpeg' | 'webp';
 
 export const useGuild = () => {
   const axios = useAxios();
 
   async function GetGuild(guildId: string) {
-    const response = await axios.Get(
-      GUILD.detail(guildId),
-      {
-        params: {
-          guildId: guildId,
-        },
-      },
-      true
-    );
+    const response = await axios.Get(GUILD.detail(guildId), {}, true);
     const data = response?.data;
 
     console.log(data);
   }
 
   async function UpdateGuild(guildId: string, newData: GuildRequest) {
-    const response = await axios.Put(
-      GUILD.modify(guildId),
-      newData,
-      {
-        params: {
-          guildId: guildId,
-        },
-      },
-      true
-    );
+    const response = await axios.Put(GUILD.modify(guildId), newData, {}, true);
     const data = response?.data;
     console.log(data);
   }
 
   async function DeleteGuild(guildId: string) {
-    const response = await axios.Delete(
-      GUILD.delete(guildId),
-      {
-        data: {
-          guildId: guildId,
-        },
-      },
-      true
-    );
+    const response = await axios.Delete(GUILD.delete(guildId), {}, true);
     const data = response?.data;
     console.log(data);
   }
@@ -89,6 +64,12 @@ export const useGuild = () => {
     console.log(data);
   }
 
+  async function GetAdmin(guildId: string) {
+    const response = await axios.Get(GUILD.admin(guildId), {}, true);
+    const data = response?.data;
+    console.log(data);
+  }
+
   async function GetGuildRecommend(appid: string, count?: number) {
     const response = await axios.Get(
       GUILD.recommend,
@@ -105,15 +86,7 @@ export const useGuild = () => {
   }
 
   async function GetGuildPopular(count?: number) {
-    const response = await axios.Get(
-      GUILD.popular,
-      {
-        params: {
-          count: count,
-        },
-      },
-      true
-    );
+    const response = await axios.Get(GUILD.popular, { params: { count: count } }, true);
     const data = response?.data;
     console.log(data);
   }
@@ -131,6 +104,7 @@ export const useGuild = () => {
     DeleteGuild,
     GetGuildList,
     CreateGuild,
+    GetAdmin,
     GetGuildRecommend,
     GetGuildPopular,
     UploadImageURL,
