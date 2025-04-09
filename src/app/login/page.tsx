@@ -3,22 +3,22 @@
 import SteamSVG from '@/components/svg/steam';
 import './style.css';
 import { Input } from '@/components/ui/input';
-import { MailIcon } from 'lucide-react';
+import { Loader, MailIcon } from 'lucide-react';
 import Link from 'next/link';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { PATH } from '@/constants/routes';
-import { login } from '@/api/members/login';
 import { useMembers } from '@/api/members';
+import { useToast } from '@/hooks/use-toast';
+import { useAuthStore } from '@/stores/authStore';
 
 const loginSchema = z.object({
-  email: z.string(),
-  password: z.string(),
-  nickname: z.string(),
+  email: z.string().min(1, { message: '아이디를 입력해주세요' }),
+  password: z.string().min(1, { message: '비밀번호를 입력해주세요' }),
 });
 type LoginSchema = z.infer<typeof loginSchema>;
 
@@ -35,14 +35,30 @@ export default function SignupInitial() {
     defaultValues: {
       email: '',
       password: '',
-      nickname: '',
     },
   });
-  const router = useRouter();
+  const [pending, setPending] = useState(false);
 
   const members = useMembers();
+  const router = useRouter();
+  const { toast } = useToast();
+  const { setUser } = useAuthStore();
+
   async function onSubmit(data: LoginSchema) {
-    members.login('kylekim95@gmail.com', '1111');
+    setPending(true);
+    const success = await members.login(data.email, data.password);
+    setPending(false);
+
+    if (success) {
+      const user = await members.GetMe();
+      if (user) {
+        setUser(user);
+      }
+      toast({ title: '로그인 성공!', description: '', variant: 'primary' });
+      setTimeout(() => {
+        router.push('/', { scroll: true });
+      }, 500);
+    }
   }
   const [submitHover, setSubmitHover] = useState(false);
 
@@ -65,16 +81,21 @@ export default function SignupInitial() {
             <p className="text-4xl text-purple-400 font-dgm bg-purple-900 title">로그인</p>
             <div className="flex flex-col gap-3 pb-8">
               <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)}>
-                  <p className="font-dgm text-2xl glow">ENTER YOUR EMAIL</p>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-3">
                   <FormField
                     control={form.control}
                     name="email"
                     render={({ field }) => (
                       <FormItem>
+                        <div>
+                          {form.formState.errors.email ? (
+                            <FormMessage className="font-dgm text-xl glow" />
+                          ) : (
+                            <p className="font-dgm text-2xl glow">ENTER YOUR USERNAME</p>
+                          )}
+                        </div>
                         <FormControl>
                           <Input
-                            type="email"
                             className="border border-purple-500 rounded-none font-dgm !text-xl"
                             value={field.value}
                             onChange={field.onChange}
@@ -83,12 +104,18 @@ export default function SignupInitial() {
                       </FormItem>
                     )}
                   />
-                  <p className="font-dgm text-2xl glow">ENTER YOUR PASSWORD</p>
                   <FormField
                     control={form.control}
                     name="password"
                     render={({ field }) => (
                       <FormItem>
+                        <div>
+                          {form.formState.errors.password ? (
+                            <FormMessage className="font-dgm text-xl glow" />
+                          ) : (
+                            <p className="font-dgm text-2xl glow">ENTER YOUR EMAIL</p>
+                          )}
+                        </div>
                         <FormControl>
                           <Input
                             type="password"
@@ -104,7 +131,7 @@ export default function SignupInitial() {
                     type="submit"
                     className="justify-self-center mt-5 flex items-center justify-center gap-2 border border-purple-500 hover:bg-purple-500 hover:text-white py-2 px-5"
                   >
-                    <MailIcon />
+                    {pending ? <Loader /> : <MailIcon />}
                     <span className="font-dgm">LOGIN</span>
                   </button>
                 </form>
@@ -126,7 +153,7 @@ export default function SignupInitial() {
           </div>
           <div className="flex flex-col items-center">
             <p className="font-dgm text-2xl glow">아이디가 없나요?</p>
-            <Link href={PATH.signup}>
+            <Link href={PATH.signup} scroll={true}>
               <p className="font-dgm text-2xl glow cursor-pointer hover:text-purple-200">{`[ 회원 가입하러 가기 ]`}</p>
             </Link>
           </div>

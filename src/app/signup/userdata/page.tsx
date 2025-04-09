@@ -5,12 +5,18 @@ import { z } from 'zod';
 import './style.css';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Form } from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { CoolerCategoryMenu } from './component/cooler-category-menu';
 import { userCategories } from '@/types/Tags/userCategories';
+import { Input } from '@/components/ui/input';
+import { useRouter } from 'next/navigation';
+import { useMembers } from '@/api/members';
+import { useAuthStore } from '@/stores/authStore';
+import { useToast } from '@/hooks/use-toast';
 
 const userDataSchema = userSchema.pick({
+  nickname: true,
   avatar: true,
   gender: true,
   playStyle: true,
@@ -26,17 +32,30 @@ export default function SignupUserdata() {
 ##########  #####%###%############ ######        ####### ####################
 #####       ###################### ######         ################### #######
 #####      ################  ##### ######           #########  ######  ######`;
+
+  const { user } = useAuthStore();
+
   const form = useForm<UserDataSchema>({
     resolver: zodResolver(userDataSchema),
     defaultValues: {
-      avatar: '',
-      gender: '남자',
-      playStyle: '노멀',
-      skillLevel: '뉴비',
+      nickname: user?.nickname,
+      avatar: user?.img_src,
+      gender: user?.gender,
+      playStyle: user?.party_style,
+      skillLevel: user?.skill_level,
     },
   });
-  function onSubmit(data: UserDataSchema) {
+
+  const member = useMembers();
+  const router = useRouter();
+  const { toast } = useToast();
+  async function onSubmit(data: UserDataSchema) {
     console.log(data);
+    const response = await member.PutMe(data.nickname, data.avatar, 'CASUAL', 'NEWBIE', 'MALE');
+    toast({ title: '도전 과제 달성', description: '회원 가입 성공!', variant: 'primary' });
+    setTimeout(() => {
+      router.push('/');
+    }, 500);
   }
 
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -47,6 +66,8 @@ export default function SignupUserdata() {
       //validation here
       setImageFile(e.target.files[0]);
       const fileType = e.target.files[0].type;
+      const fileExt = fileType.slice(fileType.indexOf('/') + 1, fileType.length);
+      form.setValue('avatar', fileExt);
       const reader = new FileReader();
       reader.readAsDataURL(e.target.files[0]);
       reader.onloadend = () => {
@@ -81,8 +102,25 @@ export default function SignupUserdata() {
     gender: useState(new Array(userCategories.gender.items.length).fill(false)),
   };
   const selectedArr = Object.values(selected);
+  useEffect(() => {
+    const selectedValueInd = selected.playStyle[0].findIndex((e) => e);
+    const tag = userCategories.playStyle.items[selectedValueInd];
+    form.setValue('playStyle', tag);
+  }, [selected.playStyle, form]);
+  useEffect(() => {
+    const selectedValueInd = selected.skillLevel[0].findIndex((e) => e);
+    const tag = userCategories.skillLevel.items[selectedValueInd];
+    form.setValue('skillLevel', tag);
+  }, [selected.skillLevel, form]);
+  useEffect(() => {
+    const selectedValueInd = selected.gender[0].findIndex((e) => e);
+    const tag = userCategories.gender.items[selectedValueInd];
+    form.setValue('gender', tag);
+  }, [selected.gender, form]);
+
   const categoryItemStyle =
     'border border-purple-500 text-2xl font-dgm p-2 cursor-pointer hover:text-purple-200 hover:border-purple-200';
+
   const CategorySelectMenus = () => {
     return (
       <div className="flex flex-col gap-2">
@@ -109,8 +147,6 @@ export default function SignupUserdata() {
       </div>
     );
   };
-
-  useEffect(() => {}, []);
 
   return (
     <div className="bg-purple-900 text-purple-400 h-screen flex flex-col items-center mt-[68px]">
@@ -148,10 +184,35 @@ export default function SignupUserdata() {
                       <FileInputBuilder />
                     </label>
                   </div>
+                  <FormField
+                    control={form.control}
+                    name="nickname"
+                    render={({ field }) => (
+                      <FormItem className="flex items-center gap-5">
+                        <p className="font-dgm text-2xl glow">NICKNAME</p>
+                        <FormControl>
+                          <Input
+                            className="border border-purple-500 rounded-none font-dgm !text-xl w-52"
+                            value={field.value}
+                            onChange={field.onChange}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
                   <CategorySelectMenus />
                   <div className="flex gap-5">
-                    <p className="text-purple-500 font-dgm text-2xl glow hover:text-purple-200 cursor-pointer">{`[ 제출하기 ]`}</p>
-                    <p className="text-purple-500 font-dgm text-2xl glow hover:text-purple-200 cursor-pointer">{`[ 다음에 하기 ]`}</p>
+                    <button
+                      type="submit"
+                      className="text-purple-500 font-dgm text-2xl glow hover:text-purple-200 cursor-pointer"
+                      onClick={() => console.log(form.formState.errors)}
+                    >{`[ 제출하기 ]`}</button>
+                    <p
+                      className="text-purple-500 font-dgm text-2xl glow hover:text-purple-200 cursor-pointer"
+                      onClick={() => {
+                        router.push('/', { scroll: true });
+                      }}
+                    >{`[ 다음에 하기 ]`}</p>
                   </div>
                 </div>
               </form>

@@ -14,8 +14,8 @@ export const useAxios = () => {
   const errorHandler = (error, toast: boolean) => {
     if (toast) {
       Toast.toast({
-        title: 'Hello World!',
-        description: error.response.data,
+        title: error.response.data,
+        variant: 'destructive',
       });
     }
   };

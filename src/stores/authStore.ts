@@ -1,20 +1,13 @@
 import { create } from 'zustand';
-import { apiInstance } from '@/utils/axiosInstance';
+import { useMembers } from '@/api/members';
+import { userDetail } from '@/types/user';
 
-export const useAuthStore = create((set, get) => {
-  function login() {
-    console.log('login');
-  }
-  function logout() {
-    console.log('logout');
-  }
-  function Signup() {
-    console.log('signup');
-  }
-  return {
-    user: undefined,
-    login: login,
-    logout: logout,
-    signup: Signup,
-  };
-});
+export const useAuthStore = create<{
+  user: userDetail | undefined;
+  setUser: (input: userDetail) => void;
+}>((set, get) => ({
+  user: undefined,
+  setUser: (input: userDetail) => {
+    set({ user: input });
+  },
+}));

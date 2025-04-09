@@ -9,14 +9,16 @@ import { z } from 'zod';
 import { userSchema } from './userSchema';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { useMembers } from '@/api/members';
+import { USER_ROUTE } from '@/constants/routes/user';
+import { useAuthStore } from '@/stores/authStore';
 
 const userInitialSchema = userSchema.pick({
   email: true,
   password: true,
-  nickname: true,
 });
 type UserInitialSchema = z.infer<typeof userInitialSchema>;
 
@@ -33,13 +35,21 @@ export default function SignupInitial() {
     defaultValues: {
       email: '',
       password: '',
-      nickname: '',
     },
   });
-  const router = useRouter();
 
+  const router = useRouter();
+  const member = useMembers();
+  const { setUser } = useAuthStore();
   async function onSubmit(data: UserInitialSchema) {
-    console.log(data);
+    const response = await member.Signup(data.email, data.password);
+    if (response) {
+      const user = await member.GetMe();
+      if (user) {
+        setUser(user);
+      }
+      router.push(USER_ROUTE.signup_userdata, { scroll: true });
+    }
   }
   const [submitHover, setSubmitHover] = useState(false);
 
@@ -59,19 +69,24 @@ export default function SignupInitial() {
             </div>
           </div>
           <div className="font-dgm text-purple-400 mt-5 flex flex-col items-center dashed-border mb-10">
-            <p className="text-4xl text-purple-400 font-dgm bg-purple-900 title">이메일로 회원가입</p>
+            <p className="text-4xl text-purple-400 font-dgm bg-purple-900 title">회원가입</p>
             <div className="flex flex-col gap-3 pb-8">
               <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)}>
-                  <p className="font-dgm text-2xl glow">ENTER YOUR EMAIL</p>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-5">
                   <FormField
                     control={form.control}
                     name="email"
                     render={({ field }) => (
                       <FormItem>
+                        <div>
+                          {form.formState.errors.email ? (
+                            <FormMessage className="font-dgm text-xl glow" />
+                          ) : (
+                            <p className="font-dgm text-2xl glow">ENTER YOUR USERNAME</p>
+                          )}
+                        </div>
                         <FormControl>
                           <Input
-                            type="email"
                             className="border border-purple-500 rounded-none font-dgm !text-xl"
                             value={field.value}
                             onChange={field.onChange}
@@ -80,31 +95,21 @@ export default function SignupInitial() {
                       </FormItem>
                     )}
                   />
-                  <p className="font-dgm text-2xl glow">ENTER YOUR PASSWORD</p>
                   <FormField
                     control={form.control}
                     name="password"
                     render={({ field }) => (
                       <FormItem>
+                        <div>
+                          {form.formState.errors.password ? (
+                            <FormMessage className="font-dgm text-xl glow" />
+                          ) : (
+                            <p className="font-dgm text-2xl glow">ENTER YOUR PASSWORD</p>
+                          )}
+                        </div>
                         <FormControl>
                           <Input
                             type="password"
-                            className="border border-purple-500 rounded-none font-dgm !text-xl"
-                            value={field.value}
-                            onChange={field.onChange}
-                          />
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
-                  <p className="text-purple-500 font-dgm text-2xl glow">ENTER YOUR NICKNAME</p>
-                  <FormField
-                    control={form.control}
-                    name="nickname"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input
                             className="border border-purple-500 rounded-none font-dgm !text-xl"
                             value={field.value}
                             onChange={field.onChange}
