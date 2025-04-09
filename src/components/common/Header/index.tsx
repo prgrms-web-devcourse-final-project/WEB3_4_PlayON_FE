@@ -5,6 +5,8 @@ import UserInfoLogin from './UserInfoLogin';
 import UserInfoLogout from './UserInfoLogout';
 import { userSimple } from '@/types/user';
 import { useEffect, useState } from 'react';
+import Lottie from 'react-lottie-player';
+import LogoAni from '@/../public/animation/main_logo.json';
 const linkStyle = `
     relative
     transition-all
@@ -64,7 +66,7 @@ export default function Header() {
       <div className="wrapper py-5 flex gap-12">
         <h1>
           <Link href="/">
-            <img src="/img/logo.svg" alt="playon" className="h-5 mt-1" />
+            <Lottie loop animationData={LogoAni} play className="h-9 -mt-1" />
           </Link>
         </h1>
         <div className="grow flex gap-5 text-lg">
