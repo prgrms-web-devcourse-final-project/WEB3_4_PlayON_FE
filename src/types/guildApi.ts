@@ -2,14 +2,25 @@ type FileType = 'png' | 'jpg' | 'jpeg' | 'webp';
 
 export type Sort = 'latest' | 'activity' | 'members';
 
-// 길드 생성&수정 시 필요
-export interface GuildRequest {
+// 길드 생성 시 필요
+export interface GuildCreateRequest {
   name: string;
   description: string;
   maxMembers: number;
   appid: number;
   isPublic: boolean;
   fileType: FileType;
+  tags: GuildTag[];
+}
+
+// 길드 생성 시 필요
+export interface GuildUpdateRequest {
+  name: string;
+  description: string;
+  maxMembers: number;
+  appid: number;
+  isPublic: boolean;
+  newFileType: FileType;
   tags: GuildTag[];
 }
 
