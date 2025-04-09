@@ -11,59 +11,99 @@ import { Input } from '@/components/ui/input';
 import { FormControl, FormField, FormItem, Form } from '@/components/ui/form';
 import { SearchIcon } from 'lucide-react';
 import { DateTimePicker } from '@/components/ui/date-time-picker';
-import { partyTags } from '@/types/Tags/partyTags';
-import CategoryMenu from '@/components/common/category-menu';
 import SelectedGameCard from '@/components/game/SelectedGameCard';
 import { dummyGameSimple } from '@/utils/dummyData';
 import { Textarea } from '@/components/ui/textarea';
-
-const createPartyFormSchema = z.object({
-  public: z.boolean(),
-  name: z.string().min(1).max(50),
-  game: z.string().min(1),
-  date: z.string().datetime({ offset: true }),
-  min_part: z.number().min(2).max(10),
-  max_part: z.number().min(2).max(10),
-  desc: z.string().min(0).max(100),
-  partyStyle: z.array(z.string()),
-  skillLevel: z.array(z.string()),
-  gender: z.array(z.string()),
-  friendly: z.array(z.string()),
-});
+import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
+import { useRef } from 'react';
+type ToastError = {
+  message: string;
+  ref: { name: string };
+  type: string;
+};
+const createPartyFormSchema = z
+  .object({
+    public: z.boolean(),
+    name: z
+      .string()
+      .min(1, { message: '파티 이름은 1글자 이상이어야 합니다.' })
+      .max(50, { message: '파티 이름은 50글자 이하여야 합니다.' }),
+    game: z.string().min(1),
+    date: z
+      .string()
+      .datetime({ offset: true })
+      .refine((data) => new Date(data) > new Date(Date.now() + 60 * 60 * 1000), {
+        message: '시작 시간은 현재 시각 기준 1시간 이후부터 가능합니다.',
+      }),
+    min_part: z
+      .number()
+      .min(2, { message: '파티 인원이 2명 이하입니다.' })
+      .max(15, { message: '파티 인원은 15명까지 가능합니다.' }),
+    max_part: z
+      .number()
+      .min(2, { message: '파티 인원이 2명 이하입니다.' })
+      .max(15, { message: '파티 인원은 15명까지 가능합니다.' }),
+    desc: z.string().max(100).optional(),
+    partyStyle: z.array(z.string()),
+    skillLevel: z.array(z.string()),
+    gender: z.array(z.string()),
+    friendly: z.array(z.string()),
+  })
+  .refine((data) => data.max_part >= data.min_part, {
+    message: '최대 인원은 최소 인원보다 같거나 커야 합니다.',
+    path: ['max_part'],
+  });
 
 export default function PartyCreate() {
+  const dateInputRef = useRef(null);
+  const Toast = useToast();
   const form = useForm<z.infer<typeof createPartyFormSchema>>({
     defaultValues: {
       public: true,
-      name: 'ㅁㄴㅇㄹ',
-      game: 'ㅁㄴㅇㄹ',
-      date: formatISO(new Date()),
       min_part: 2,
-      max_part: 10,
-      desc: '',
       partyStyle: ['전체'],
       skillLevel: ['전체'],
       gender: ['전체'],
       friendly: ['전체'],
     },
     resolver: zodResolver(createPartyFormSchema),
+    shouldFocusError: true,
   });
 
   function onSubmit(data: z.infer<typeof createPartyFormSchema>) {
+    alert('성공적으로 생성했습니다.');
     console.log('data : ', data);
+  }
+
+  function errorHandler(err: object) {
+    const firstError: ToastError = Object.values(err)[0];
+    console.log(firstError);
+    if (firstError.ref.name == 'date') dateInputRef.current.focus();
+    if (firstError.message == 'Required') return;
+    Toast.toast({
+      className: cn('border-cherry-main text-cherry-main'),
+      title: '파티 생성에 실패했습니다.',
+      description: firstError.message,
+    });
   }
 
   return (
     <div className="pt-28 mb-32">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
+        <form
+          onSubmit={form.handleSubmit(
+            (data) => onSubmit(data),
+            (error) => errorHandler(error)
+          )}
+        >
           <div className="flex justify-center gap-6">
             <div className="min-w-[411px] flex flex-col items-end">
               <div className="w-full h-[180px] rounded-2xl border border-neutral-300">
                 <SelectedGameCard data={dummyGameSimple} />
               </div>
               <div className="flex items-center gap-2 mt-[25px]">
-                <FormField
+                <FormField //공개설정
                   control={form.control}
                   name="public"
                   render={({ field }) => (
@@ -81,7 +121,7 @@ export default function PartyCreate() {
             <div className="flex flex-col">
               <div className="w-[845px] border border-neutral-300 rounded-xl py-14 px-10">
                 <p className="h1 mb-4">파티 룸 이름</p>
-                <FormField
+                <FormField //파티룸이름
                   control={form.control}
                   name="name"
                   render={({ field }) => (
@@ -89,10 +129,9 @@ export default function PartyCreate() {
                       <FormControl>
                         <div className="flex items-center gap-2 border border-neutral-300 rounded-lg h-10">
                           <Input
-                            className={`border-none focus-visible:ring-transparent shadow-none`}
-                            value={field.value}
-                            onChange={field.onChange}
-                            placeholder="새싹들의 게임방"
+                            className={`border-none focus-visible:ring-purple-600 shadow-none`}
+                            {...field}
+                            placeholder="파티 이름을 지어주세요."
                           />
                         </div>
                       </FormControl>
@@ -101,18 +140,21 @@ export default function PartyCreate() {
                 />
                 <p className="h2 mt-8">기본 설정</p>
                 <p className="h3 mt-5 mb-2">파티할 게임</p>
-                <FormField
+                <FormField //게임 제목
                   control={form.control}
                   name="game"
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <div className="flex items-center gap-2 px-4 py-2 border border-neutral-300 rounded-lg h-10">
+                        <div className="flex items-center gap-2 px-4 py-2 border border-neutral-300 rounded-lg h-10   group focus-within:ring-1 focus-within:ring-purple-600">
                           <SearchIcon className={`text-neutral-400 w-4 h-4`} />
                           <Input
-                            className={`border-none focus-visible:ring-transparent shadow-none`}
-                            value={field.value}
-                            onChange={field.onChange}
+                            className={`border-none shadow-none focus-visible:ring-0`}
+                            {...field}
+                            onChange={() => {
+                              field.onChange('1');
+                              //검색 컴포넌트 호출 후 gameId 값 받아오기
+                            }}
                             placeholder="제목으로 게임을 검색하세요"
                           />
                         </div>
@@ -121,10 +163,27 @@ export default function PartyCreate() {
                   )}
                 />
                 <div className="flex gap-6 mt-5">
-                  <div className="flex flex-col w-[50%] h-9 gap-2">
-                    <p className="h3">파티 일정</p>
-                    <DateTimePicker onSelect={(date) => date && form.setValue('date', formatISO(date))} />
-                  </div>
+                  <FormField
+                    control={form.control}
+                    name="date"
+                    render={() => (
+                      <FormItem>
+                        <FormControl>
+                          <div className="flex flex-col w-full gap-2 relative">
+                            <p className="h3">파티 일정</p>
+                            <Input
+                              type="text"
+                              className="absolute w-0 h-0 opacity-0 pointer-events-none peer"
+                              ref={dateInputRef}
+                            />
+                            <div className="rounded-md ring-1 ring-transparent peer-focus:ring-1 peer-focus:ring-purple-600 transition">
+                              <DateTimePicker onSelect={(date) => date && form.setValue('date', formatISO(date))} />
+                            </div>
+                          </div>
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
                   <div className="flex flex-col w-[50%] gap-2">
                     <p className="h3">파티 인원수</p>
                     <div className="flex gap-6">
@@ -137,9 +196,13 @@ export default function PartyCreate() {
                               <div className="flex flex-col h-9 gap-2">
                                 <div className="flex flex-col gap-2 border border-neutral-300 rounded-lg h-10">
                                   <Input
-                                    className={`border-none focus-visible:ring-transparent shadow-none`}
-                                    value={field.value}
-                                    onChange={field.onChange}
+                                    type="number"
+                                    className={`border-none focus-visible:ring-purple-600 shadow-none`}
+                                    {...field}
+                                    value={Number(field.value)}
+                                    onChange={(e) => {
+                                      field.onChange(Number(e.target.value));
+                                    }}
                                   />
                                 </div>
                                 <p className="text-sm text-neutral-400">최소 인원</p>
@@ -157,9 +220,13 @@ export default function PartyCreate() {
                               <div className="flex flex-col h-9 gap-2">
                                 <div className="flex flex-col gap-2 border border-neutral-300 rounded-lg h-10">
                                   <Input
-                                    className={`border-none focus-visible:ring-transparent shadow-none h-9`}
-                                    value={field.value}
-                                    onChange={field.onChange}
+                                    type="number"
+                                    className={`border-none focus-visible:ring-purple-600 shadow-none h-9`}
+                                    {...field}
+                                    value={Number(field.value)}
+                                    onChange={(e) => {
+                                      field.onChange(Number(e.target.value));
+                                    }}
                                   />
                                 </div>
                                 <p className="text-sm text-neutral-400">최대 인원</p>
@@ -173,16 +240,7 @@ export default function PartyCreate() {
                 </div>
                 <p className="h2 mt-8">참가 제한 조건</p>
                 <div className="flex flex-col bg-neutral-50 rounded-xl mt-5 gap-5 py-10 px-10">
-                  {Object.values(partyTags).map((e) => (
-                    <div className="flex items-center gap-2" key={`${e.name}`}>
-                      <p className="w-[118px] font-dgm text-neutral-900">{e.name}</p>
-                      <CategoryMenu
-                        categoryItems={[...e.items]}
-                        categoryName={e.name}
-                        onSelect={(newSelected: boolean[]) => {}}
-                      />
-                    </div>
-                  ))}
+                  {/* @kylekim95 이곳입니다... */}
                 </div>
                 <p className="h2 mt-8 mb-3">파티 룸 소개</p>
                 <FormField
