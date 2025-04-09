@@ -1,51 +1,14 @@
 import { GUILD_ENDPOINTS as GUILD } from '@/constants/endpoints/guild';
 import { useAxios } from '@/hooks/useAxios';
 import { guild } from '@/types/guild';
-
-interface GuildTag {
-  type: string;
-  value: string;
-}
-
-export interface GuildRequest {
-  name: string;
-  description: string;
-  maxMembers: number;
-  appid: number;
-  isPublic: boolean;
-  fileType: FileType;
-  tags: GuildTag[];
-}
-
-interface GuildResponse {
-  msg: string;
-  resultCode: string;
-  data: {
-    createdAt: string;
-    description: string;
-    guildImg: string;
-    id: number;
-    isPublic: boolean;
-    leaderImg: string;
-    leaderName: string;
-    maxMembers: number;
-    memberCount: number;
-    myRole: string;
-    name: string;
-    tags: string[];
-  };
-}
-
-// interface GuildPoplular
-
-type FileType = 'png' | 'jpg' | 'jpeg' | 'webp';
+import { GuildRequest, GuildDetailResponse, Sort, GuildMainResponse } from '@/types/guildApi';
 
 export const useGuild = () => {
   const axios = useAxios();
 
   async function GetGuild(guildId: string) {
-    const response = await axios.Get<GuildResponse>(GUILD.detail(guildId), {}, true);
-    const data = response?.data.data;
+    const response = await axios.TypedGet<GuildDetailResponse>(GUILD.detail(guildId), {}, true);
+    const data = response?.data;
     if (data) {
       const guildDetail: guild = {
         guild_name: data?.name,
@@ -55,6 +18,7 @@ export const useGuild = () => {
         owner: { username: 'test', nickname: data.leaderName, user_title: 'title', img_src: data.leaderImg },
         created_at: new Date(data.createdAt),
         myRole: data.myRole,
+        // 🔥 tags 타입 추가되면 수정하기
         play_style: ['노멀', '도전과제'],
         skill_level: ['뉴비', '마스터'],
         gender: ['남자만'],
@@ -78,8 +42,7 @@ export const useGuild = () => {
     console.log(data);
   }
 
-  type sort = 'latest' | 'activity' | 'members';
-  async function GetGuildList(request: object, page?: number, pageSize?: number, sort?: sort) {
+  async function GetGuildList(request: object, page?: number, pageSize?: number, sort?: Sort) {
     const response = await axios.Get(
       GUILD.list,
       {
@@ -102,6 +65,11 @@ export const useGuild = () => {
     console.log(data);
   }
 
+  async function UploadImageURL(guildId: string, url: string) {
+    const response = await axios.Post(GUILD.upload_image(guildId), { url }, {}, true);
+    console.log(response);
+  }
+
   async function GetAdmin(guildId: string) {
     const response = await axios.Get(GUILD.admin(guildId), {}, true);
     const data = response?.data;
@@ -109,7 +77,7 @@ export const useGuild = () => {
   }
 
   async function GetGuildRecommend(appid: string, count?: number) {
-    const response = await axios.Get(
+    const response = await axios.TypedGet<GuildMainResponse>(
       GUILD.recommend,
       {
         params: {
@@ -120,20 +88,54 @@ export const useGuild = () => {
       true
     );
     const data = response?.data;
-    console.log(data);
+
+    if (data && data.length > 0) {
+      const guildList: guild[] = data.map((item) => {
+        return {
+          guild_name: item.name,
+          description: item.description,
+          img_src: item.guildImg,
+          num_members: item.memberCount,
+          owner: { username: 'test', nickname: 'test', user_title: 'title', img_src: 'test' },
+          created_at: new Date(1),
+          myRole: 'test',
+          // 🔥 tags 타입 추가되면 수정하기
+          play_style: ['노멀', '도전과제'],
+          skill_level: ['뉴비', '마스터'],
+          gender: ['남자만'],
+          friendly: ['게임 전용'],
+        };
+      });
+      console.log(guildList);
+      return guildList;
+    }
+    return null;
   }
 
-  async function GetGuildPopular(count?: number) {
-    const response = await axios.Get(GUILD.popular, { params: { count: count } }, true);
+  async function GetGuildPopular() {
+    const response = await axios.TypedGet<GuildMainResponse>(GUILD.popular, {}, true);
     const data = response?.data;
     console.log(data);
-  }
-
-  async function UploadImageURL(fileType: FileType) {
-    const response = await axios.Get(GUILD.upload_image, { params: { fileType: fileType } }, true);
-    const url = response?.data;
-    console.log(url);
-    return url;
+    if (data && data.length > 0) {
+      const guildList: guild[] = data.map((item) => {
+        return {
+          guild_name: item.name,
+          description: item.description,
+          img_src: item.guildImg,
+          num_members: item.memberCount,
+          owner: { username: 'test', nickname: 'test', user_title: 'title', img_src: 'test' },
+          created_at: new Date(1),
+          myRole: 'test',
+          // 🔥 tags 타입 추가되면 수정하기
+          play_style: ['노멀', '도전과제'],
+          skill_level: ['뉴비', '마스터'],
+          gender: ['남자만'],
+          friendly: ['게임 전용'],
+        };
+      });
+      return guildList;
+    }
+    return null;
   }
 
   return {
@@ -142,9 +144,9 @@ export const useGuild = () => {
     DeleteGuild,
     GetGuildList,
     CreateGuild,
+    UploadImageURL,
     GetAdmin,
     GetGuildRecommend,
     GetGuildPopular,
-    UploadImageURL,
   };
 };
