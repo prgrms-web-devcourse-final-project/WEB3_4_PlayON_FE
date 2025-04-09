@@ -65,7 +65,7 @@ export default function HeroTypingBanner({ data, isStatic, children }: HeroTypin
       >
         {data.map((item, idx) => (
           <SwiperSlide key={idx} className="size-full">
-            <div className="size-full bg-purple-800 relative">
+            <div className="size-full bg-purple-700 relative">
               <div
                 style={{ backgroundImage: `url(${item.img_src})` }}
                 className="size-full bg-top bg-cover blur-sm opacity-30 place-content-center place-items-center space-y-5"
