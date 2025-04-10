@@ -5,8 +5,13 @@ import UserInfoLogin from './UserInfoLogin';
 import UserInfoLogout from './UserInfoLogout';
 import { userSimple } from '@/types/user';
 import { useEffect, useState } from 'react';
-import Lottie from 'react-lottie-player';
-import LogoAni from '@/../public/animation/main_logo.json';
+import LogoAni from '@/assets/main_logo.json';
+import dynamic from 'next/dynamic';
+const Lottie = dynamic(() => import('react-lottie-player'), {
+  ssr: false,
+  loading: () => <div className="-mt-1 w-[124px] h-[36px]"></div>,
+});
+
 import { PATH } from '@/constants/routes';
 const linkStyle = `
     relative
