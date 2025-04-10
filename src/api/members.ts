@@ -36,7 +36,7 @@ export const useMembers = () => {
     return true;
   }
   async function GetMe() {
-    const response = await axios.Get(MEMBER.me, {}, true);
+    const response = await axios.Get(MEMBER.me, {}, false);
     if (!response) return undefined;
     const data = response.data.data;
 
@@ -51,7 +51,7 @@ export const useMembers = () => {
       user_title: '',
       username: data.memberDetail.username,
     };
-    console.log(data);
+    // console.log(data);
     return ret;
   }
   async function PutMe(

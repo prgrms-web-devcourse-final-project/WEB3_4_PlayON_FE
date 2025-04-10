@@ -10,5 +10,7 @@ export const useAuthStore = create<{
   setUser: (input: userDetail | undefined) => {
     set({ user: input });
   },
-  logout: () => set({ user: undefined }),
+  logout: () => {
+    set({ user: undefined });
+  },
 }));

@@ -18,15 +18,18 @@ import GhostSVG from '@/components/svg/ghost_fill';
 import { PATH } from '@/constants/routes';
 import { useAuthStore } from '@/stores/authStore';
 import { useRouter } from 'next/navigation';
+import { useMembers } from '@/api/members';
 type Props = {
   userInfo: userDetail;
 };
 
 export default function UserInfoLogin({ userInfo }: Props) {
   const { logout } = useAuthStore();
+  const member = useMembers();
   const router = useRouter();
-  const handleLogout = () => {
+  const handleLogout = async () => {
     logout();
+    await member.logout();
     router.push(PATH.main);
   };
 

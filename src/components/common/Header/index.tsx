@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { useAuthStore } from '@/stores/authStore';
 import UserInfoLogin from './UserInfoLogin';
 import UserInfoLogout from './UserInfoLogout';
-import { userSimple } from '@/types/user';
 import { useEffect, useState } from 'react';
 import LogoAni from '@/assets/main_logo.json';
 import dynamic from 'next/dynamic';
@@ -14,6 +13,7 @@ const Lottie = dynamic(() => import('react-lottie-player'), {
 });
 
 import { PATH } from '@/constants/routes';
+import { useMembers } from '@/api/members';
 const linkStyle = `
     relative
     transition-all
@@ -36,10 +36,12 @@ const linkStyle = `
     `;
 
 export default function Header() {
-  const { user } = useAuthStore();
-  const [loginToken, setLoginToken] = useState(false);
+  const user = useAuthStore((state) => state.user);
+  const { setUser } = useAuthStore();
+  const [isLogin, setisLogin] = useState(false);
   const [showHeader, setShowHeader] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const member = useMembers();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -56,17 +58,29 @@ export default function Header() {
   }, [lastScrollY]);
 
   useEffect(() => {
-    if (!user) {
-      setLoginToken(false);
-    } else {
-      setLoginToken(true);
+    if (user) {
+      setUser(user);
+      return;
     }
-  }, [user]);
+    // const token = Cookies().get('accessToken');
+    // if (!token) {
+    //   return;
+    // }
+    const fetchUserInfo = async () => {
+      try {
+        const userInfo = await member.GetMe();
+        if (userInfo) {
+          setUser(userInfo);
+        } else {
+          setUser(undefined);
+        }
+      } catch (error) {
+        setUser(undefined);
+      }
+    };
+    fetchUserInfo();
+  }, []);
 
-  //로그인 보여주기 위한 임시 코드
-  const handleLoginToken = (): void => {
-    setLoginToken(true);
-  };
   return (
     <header
       className={`fixed top-0 z-50 w-full bg-white ${showHeader ? 'translate-y-0' : '-translate-y-full'} transition-all`}
@@ -92,8 +106,8 @@ export default function Header() {
             커뮤니티
           </Link>
         </div>
-        {loginToken && user && <UserInfoLogin userInfo={user} />}
-        {!loginToken && <UserInfoLogout onLogin={handleLoginToken} />}
+        {user && <UserInfoLogin userInfo={user} />}
+        {!user && <UserInfoLogout />}
       </div>
     </header>
   );
