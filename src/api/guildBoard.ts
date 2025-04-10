@@ -2,6 +2,7 @@ import { GUILD_BOARD_ENDPOINTS } from '@/constants/endpoints/guild-board';
 import { useAxios } from '@/hooks/useAxios';
 import { post } from '@/types/community';
 import { guildCommunityTags } from '@/types/Tags/communityTags';
+import typeConverter from '@/utils/typeConverter';
 
 export const useGuildBoard = () => {
   const axios = useAxios();
@@ -66,20 +67,19 @@ export const useGuildBoard = () => {
   }
   async function GuildPostList(
     guildId: string,
-    tag?: (typeof guildCommunityTags)[number],
-    keyword?: string,
-    sort?: 'LATEST' | 'POPULAR',
-    page?: number,
-    pageSize?: number
+    data: {
+      tag?: string;
+      keyword?: string;
+      sort?: 'LATEST' | 'POPULAR';
+      page?: number;
+      pageSize?: number;
+    }
   ) {
-    const response = await axios.Get(
-      GUILD_BOARD_ENDPOINTS.guildPostDelete(guildId),
-      { params: { tag, keyword, sort, page, pageSize } },
-      true
-    );
+    console.log(data);
+    const response = await axios.Get(GUILD_BOARD_ENDPOINTS.guildPostList(guildId), { params: { ...data } }, true);
     if (response) {
-      const posts: guildPostResponseType[] = response.data.content;
-      console.log(posts);
+      const posts: guildPostResponseType[] = response.data.data.content;
+      return posts;
     }
   }
   async function GuildPostCreate(
