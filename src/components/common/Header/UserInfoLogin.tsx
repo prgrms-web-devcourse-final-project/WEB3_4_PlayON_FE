@@ -12,15 +12,25 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 import { LogOut, User } from 'lucide-react';
-import { userSimple } from '@/types/user';
+import { userDetail } from '@/types/user';
 import Link from 'next/link';
-
+import GhostSVG from '@/components/svg/ghost_fill';
+import { PATH } from '@/constants/routes';
+import { useAuthStore } from '@/stores/authStore';
+import { useRouter } from 'next/navigation';
+import { useMembers } from '@/api/members';
 type Props = {
-  userInfo: userSimple;
+  userInfo: userDetail;
 };
-export default function userInfoLogin({ userInfo }: Props) {
-  const handleLogout = () => {
-    alert('로그아웃 구현');
+
+export default function UserInfoLogin({ userInfo }: Props) {
+  const { logout } = useAuthStore();
+  const member = useMembers();
+  const router = useRouter();
+  const handleLogout = async () => {
+    logout();
+    await member.logout();
+    router.push(PATH.main);
   };
 
   return (
@@ -33,15 +43,19 @@ export default function userInfoLogin({ userInfo }: Props) {
               <span>{userInfo.nickname}</span>님
             </p>
           </div>
-          <Avatar className="w-8 aspect-square rounded-full overflow-hidden">
+          <Avatar className="w-8 aspect-square rounded-full overflow-hidden bg-purple-400">
             <AvatarImage src={userInfo.img_src} alt="프로필 이미지" />
-            <AvatarFallback className="text-center">{userInfo.nickname}</AvatarFallback>
+            <AvatarFallback className="flex items-end justify-center">
+              <div className="animate-bounce duration-1000 mt-2 ">
+                <GhostSVG fill="#FFFFFF" stroke="" width={20} />
+              </div>
+            </AvatarFallback>
           </Avatar>
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" sideOffset={12}>
         <DropdownMenuGroup>
-          <Link href="/user/me">
+          <Link href={PATH.my_page}>
             <DropdownMenuItem>
               <User /> 마이페이지
             </DropdownMenuItem>

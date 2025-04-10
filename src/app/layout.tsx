@@ -1,6 +1,7 @@
 import Header from '@/components/common/Header';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
+import { Suspense } from 'react';
 
 export default function RootLayout({
   children,
@@ -11,7 +12,7 @@ export default function RootLayout({
     <html lang="ko">
       <body>
         <Header />
-        {children}
+        <Suspense>{children}</Suspense>
         <Toaster />
       </body>
     </html>

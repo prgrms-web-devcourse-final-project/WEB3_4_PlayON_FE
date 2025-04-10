@@ -1,10 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 type CapsuleCategoryMenuProps = {
   items: string[];
   multiple: boolean;
+  onSelectChange: (newSelected: boolean[]) => void;
 };
 
 export default function CapsuleCategoryMenu(props: CapsuleCategoryMenuProps) {
@@ -12,19 +13,20 @@ export default function CapsuleCategoryMenu(props: CapsuleCategoryMenuProps) {
   initialSelected[0] = true;
   const labels = ['전체', ...props.items];
   const [selected, setSelected] = useState<boolean[]>(initialSelected);
+  const { onSelectChange } = props;
 
+  useEffect(() => {
+    onSelectChange(selected);
+  }, [selected, onSelectChange]);
   function ItemClickHandler(index: number) {
     const newSelected = [...selected];
     newSelected[index] = !newSelected[index];
     if (newSelected.filter((e) => e).length === 0) {
       newSelected[0] = true;
     }
-    if (newSelected.slice(1, newSelected.length).filter((e) => e).length > 0) {
-      newSelected[0] = false;
-    }
-    if (index === 0) {
-      newSelected[0] = true;
-      for (let i = 1; i < newSelected.length; i++) newSelected[i] = false;
+    if (newSelected.filter((e) => e).length > 1) {
+      for (let i = 0; i < newSelected.length; i++) newSelected[i] = false;
+      newSelected[index] = true;
     }
     setSelected(newSelected);
   }

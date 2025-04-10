@@ -1,33 +1,36 @@
+'use client';
+
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import { guildUser } from '@/types/guild';
 import { useMemo } from 'react';
 
 interface guildUserProps {
   data: guildUser;
+  membetId: string;
   index: number;
   total: number;
+  onToggleManager: (userId: string, guild_role: string) => void;
+  onKickMember: (userId: string) => void;
 }
 
 export default function GuildUser(props: guildUserProps) {
-  const { data, index, total } = props;
-  const joindDate = new Date(data.joined_at).toLocaleDateString('ko-kr', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
+  const { data, index, total, onToggleManager, onKickMember } = props;
+  const joindDate = data.joined_at
+    ? new Date(data.joined_at).toLocaleDateString('ko-kr', { year: 'numeric', month: 'long', day: 'numeric' })
+    : '정보 없음';
 
-  const lastDate = new Date(data.user.last_login_at).toLocaleDateString('ko-kr', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
+  const lastDate = data.user.last_login_at
+    ? new Date(data.user.last_login_at).toLocaleDateString('ko-kr', { year: 'numeric', month: 'long', day: 'numeric' })
+    : '정보 없음';
   const isList = useMemo(() => index === total - 1, [index, total]);
+
+  console.log('GuildUser 렌더링 확인:', data);
 
   return (
     <>
       <div className="flex gap-6 py-8">
         <Avatar className="bg-neutral-400 w-16 h-16">
-          <AvatarImage src={data.user.img_src} />
+          <AvatarImage src={data.user.img_src || 'https://avatars.githubusercontent.com/u/124599?v=4'} />
         </Avatar>
 
         <div className="w-full">
@@ -49,8 +52,18 @@ export default function GuildUser(props: guildUserProps) {
         </div>
 
         <div className="flex gap-3">
-          <div className="font-suit text-base font-medium whitespace-nowrap flex-shrink-0 min-w-fit">권한변경</div>
-          <div className="font-suit text-base font-medium whitespace-nowrap flex-shrink-0 min-w-fit">퇴출</div>
+          <button
+            onClick={() => onToggleManager(data.user.id, data.guild_role)}
+            className="font-suit text-base font-medium whitespace-nowrap flex-shrink-0 min-w-fit"
+          >
+            권한변경
+          </button>
+          <button
+            onClick={() => onKickMember(data.user.id)}
+            className="font-suit text-base font-medium whitespace-nowrap flex-shrink-0 min-w-fit"
+          >
+            퇴출
+          </button>
         </div>
       </div>
 

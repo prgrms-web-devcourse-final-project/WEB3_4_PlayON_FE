@@ -1,3 +1,5 @@
+import { communityTags } from '@/types/Tags/communityTags';
+
 const typeMap = {
   playStyle: {
     KoToEn: {
@@ -60,6 +62,31 @@ const typeMap = {
       '대화 없음': 'NO_CHAT',
     },
     EnToKo: {},
+  },
+  // communityTags: {
+  //   KoToEn : {
+  //     '일상':
+  //     '유머':
+  //     '게임추천':
+  //     '게임소식':
+  //     '질문':
+  //     '파티모집':
+  //   },
+  //   EnToKo : {
+
+  //   }
+  // },
+  guildCommunityTags: {
+    KoToEn: {
+      공지: 'FREE',
+      자유: 'GAME',
+      게임관련: 'NOTICE',
+    },
+    EnToKo: {
+      FREE: '공지',
+      GAME: '자유',
+      NOTICE: '게임관련',
+    },
   },
 };
 

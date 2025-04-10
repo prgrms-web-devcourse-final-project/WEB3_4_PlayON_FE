@@ -2,13 +2,15 @@
 
 import { guild } from '@/types/guild';
 import RetroButton from '../common/RetroButton';
-import { Input } from '@/components/ui/input';
-import { SearchIcon } from 'lucide-react';
 import CapsuleCategoryMenu from '@/components/common/capsule-category-menu';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import UserInfoHorizontal from '@/app/party/components/UserInfoHorizontal';
 import Tag from '../common/Tag';
-import { guildCommunityTags } from '@/types/Tags/communityTags';
+import { communityTags, guildCommunityTags } from '@/types/Tags/communityTags';
+import SearchBar from '../common/SearchBar';
+import Link from 'next/link';
+import { GUILD_ROUTE } from '@/constants/routes/guild';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 
 type WeNeedYouProps = {
   guildData: guild;
@@ -17,11 +19,35 @@ type WeNeedYouProps = {
 
 export default function WeNeedYou(props: WeNeedYouProps) {
   const [query, setQuery] = useState('');
+  const params = useParams();
+  const guildId = params.guildid[0] ?? null;
+  const router = useRouter();
 
-  function HandleSearchClick() {
-    console.log(query);
-    setQuery('');
-  }
+  const HandleSearchClick = useCallback(
+    (value: string) => {
+      const newUrl = new URL(window.location.href);
+      newUrl.searchParams.set('search', value);
+      router.replace(newUrl.toString());
+    },
+    [router]
+  );
+  const HandleSelectChange = useCallback(
+    (newSelected: boolean[]) => {
+      const newUrl = new URL(window.location.href);
+      //guildCommunityTags
+      if (newSelected[0]) {
+        newUrl.searchParams.set('tag', '전체');
+      } else {
+        const tags = newSelected
+          .slice(1, newSelected.length)
+          .map((e, ind) => (e ? guildCommunityTags[ind] : null))
+          .filter((e) => e);
+        newUrl.searchParams.set('tag', tags.join(','));
+      }
+      router.replace(newUrl.toString());
+    },
+    [router]
+  );
 
   return (
     <div className={`flex flex-col p-8 gap-9 rounded-xl border border-neutral-200 bg-white ${props.className} `}>
@@ -41,24 +67,20 @@ export default function WeNeedYou(props: WeNeedYouProps) {
           <p className="font-suit font-bold text-neutral-900">{props.guildData.num_members}명</p>
         </div>
       </div>
-      <RetroButton
-        type="purple"
-        callback={() => console.log('!')}
-        className="font-suit text-lg text-white font-semibold w-full h-11"
-      >
-        글쓰기
-      </RetroButton>
+      <Link href={guildId ? GUILD_ROUTE.guild_community_create(guildId) : GUILD_ROUTE.guild}>
+        <RetroButton
+          type="purple"
+          callback={() => {}}
+          className="font-suit text-lg text-white font-semibold w-full h-11"
+        >
+          글쓰기
+        </RetroButton>
+      </Link>
       <svg xmlns="http://www.w3.org/2000/svg" width="347" height="2" viewBox="0 0 347 2" fill="none">
         <path d="M0 1H347" stroke="#E5E5E5" />
       </svg>
-      <div className="flex rounded-lg gap-2 text-neutral-400 border border-neutral-300 items-center p-2">
-        <Input
-          placeholder="게시글 제목으로 검색하세요"
-          className="border-none text-sm h-5 focus-visible:ring-transparent shadow-none"
-        />
-        <SearchIcon className="text-neutral-400 cursor-pointer" onClick={HandleSearchClick} />
-      </div>
-      <CapsuleCategoryMenu items={[...guildCommunityTags]} multiple={true} />
+      <SearchBar onChange={() => {}} onSearch={(value) => HandleSearchClick(value)} />
+      <CapsuleCategoryMenu items={[...guildCommunityTags]} multiple={true} onSelectChange={HandleSelectChange} />
     </div>
   );
 }

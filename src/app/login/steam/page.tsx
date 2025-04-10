@@ -6,8 +6,9 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useMembers } from '@/api/members';
 import { useAuthStore } from '@/stores/authStore';
 import { useEffect } from 'react';
+import { useToast } from '@/hooks/use-toast';
 
-export default function SignupInitial() {
+export default function LoginSteam() {
   const playOnASCII = `##########  ######      ####### ######  ######       #######    ####### #####
 ##################      #######%#############      ###########% ####### #####
 #####%###########      #########  #########      ############################
@@ -17,6 +18,7 @@ export default function SignupInitial() {
 #####      ################  ##### ######           #########  ######  ######`;
   const router = useRouter();
   const member = useMembers();
+  const { toast } = useToast();
   const { setUser } = useAuthStore();
 
   const searchParams = useSearchParams();
@@ -31,7 +33,8 @@ export default function SignupInitial() {
         const me = await member.GetMe();
         if (me) {
           setUser(me);
-          router.push('/');
+          toast({ title: `어서오세요 ${me.nickname}님!`, variant: 'primary' });
+          setTimeout(() => router.push('/'), 500);
         }
       }
     }

@@ -8,11 +8,160 @@ import { Input } from '@/components/ui/input';
 import { dummyGuild, dummyGuildUser, dummyUserSimple } from '@/utils/dummyData';
 import UserApprove from '@/app/party/components/UserApprove';
 import GuildUser from '@/components/guildUser/GuildUser';
+import { useGuildsMembers } from '@/api/guild-member';
+import { useEffect, useState } from 'react';
+import { guildUser } from '@/types/guild';
+import { useParams } from 'next/navigation';
+import { userDetail } from '@/types/user';
 
+interface guildUserProps {
+  memberId: string;
+  data: guildUser;
+  index: number;
+  total: number;
+}
+
+export function parseGuildUser(raw: any): guildUser {
+  const user: userDetail = {
+    username: raw.username,
+    nickname: raw.username,
+    user_title: '',
+    img_src: raw?.profileImg ?? '',
+    last_login_at: raw?.lastLoginAt ? new Date(raw.lastLoginAt) : new Date(),
+    steam_id: '',
+    gender: '남자',
+    party_style: '맛보기',
+    skill_level: '뉴비',
+  };
+
+  return {
+    user,
+    guild_role: raw.guildRole,
+    joined_at: new Date(raw.joinedAt),
+    num_guild_posts: raw.postCount,
+  };
+}
 export default function GuildAdmin() {
   const allTags = [...dummyGuild.friendly, ...dummyGuild.gender, ...dummyGuild.play_style, ...dummyGuild.skill_level];
   const numDays = Math.trunc((new Date().getTime() - dummyGuild.created_at.getTime()) / 1000 / 60 / 60);
   const managers = [dummyGuildUser, dummyGuildUser, dummyGuildUser];
+  const [members, setMembers] = useState<guildUserProps[]>([]);
+
+  const { PutManager, DeleteManager, GetMembers, InviteMembers, DeleteMembers, GetAdmin, LeaveMembers, LeaveMembers2 } =
+    useGuildsMembers();
+
+  const params = useParams();
+  const guildid = params?.guildid as string;
+  // const guildLeader = members.
+
+  useEffect(() => {
+    //   const testPut = async () => {
+    //     const membersRes = await PutManager('2', '8');
+    //     console.log('멤버 리스트', membersRes);
+    //   };
+    //   testPut();
+    // const testDelete = async () => {
+    //   const membersRes = await DeleteManager('2', '8');
+    //   console.log('멤버 리스트', membersRes);
+    // };
+    // testDelete();
+    // const testGet = async () => {
+    //   const membersRes = await GetMembers('2');
+    //   console.log('멤버 리스트', membersRes);
+    //   // console.log('guildid',guildId);
+    // };
+    // testGet();
+    // const testGetAdmin = async () => {
+    //   const membersRes = await GetAdmin('2');
+    //   console.log('getAdmin 멤버 리스트', membersRes);
+    // };
+    // testGetAdmin();
+    // const testPost = async () => {
+    //   const membersRes = await InviteMembers('2', 'partyOwner');
+    //   if (membersRes.status === 200) {
+    //     console.log('멤버 리스트', membersRes);
+    //   } else {
+    //     console.log('실패', membersRes?.data?.message);
+    //   }
+    // };
+    // testPost();
+    // const testDeletemem = async () => {
+    //   const membersRes = await DeleteMembers('2', '3');
+    //   console.log('멤버 리스트', membersRes);
+    // };
+    // testDeletemem();
+    // const testLeave = async () => {
+    //   const membersRes = await LeaveMembers2('2', '1');
+    //   console.log('멤버 리스트', membersRes);
+    // };
+    // testLeave();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      const data = await GetMembers(guildid);
+      console.log('raw data:', data);
+
+      if (data?.data) {
+        const parsed = data.data.map(parseGuildUser);
+        console.log('parsed data:', parsed);
+
+        setMembers(
+          parsed.map((user, index) => ({
+            memberId: data.data[index]?.memberId || `temp-${index}`,
+            data: user,
+            index,
+            total: data.data.length,
+          }))
+        );
+      } else {
+        console.log('data.data is empty');
+      }
+    } catch (error) {
+      console.error('Error fetching guild members:', error);
+    }
+  };
+
+  useEffect(() => {
+    console.log('guildId:', guildid);
+    fetchData();
+  }, [guildid]);
+
+  // const leader = members.find((m) => m.data.guild_role === 'OWNER');
+  // const managers = members.filter((m) => m.data.guild_role === 'MANAGER');
+
+  const handleToggleManager = async (memberId: string, role: string) => {
+    try {
+      console.log('Toggle 권한 변경: ', memberId, role);
+      // 예: 매니저 권한 부여 or 회수
+      if (role === 'MEMBER') {
+        await PutManager(guildid, memberId);
+        await fetchData();
+        alert('매니저 권한이 부여 되었습니다.');
+      } else if (role === 'MANAGER') {
+        await DeleteManager(guildid, memberId);
+        await fetchData();
+        alert('매니저 권한이 회수되었습니다.');
+      }
+    } catch (error) {
+      console.error('매니저 권한 변경 실패:', error);
+      alert('권한 변경 실패');
+    }
+  };
+
+  const handleKickMember = async (memberId: string) => {
+    try {
+      console.log('퇴출할 멤버: ', memberId);
+      await DeleteMembers(guildid, memberId);
+      alert('해당 멤버가 퇴출되었습니다.');
+      await fetchData();
+    } catch (error) {
+      console.error('멤버 퇴출 실패:', error);
+      alert('퇴출 실패');
+    }
+  };
+
+  // console.log('멤버 데이터:', members);
 
   return (
     <div className="flex flex-col mt-36 mb-36 gap-14">
@@ -44,6 +193,7 @@ export default function GuildAdmin() {
             <div className="text-lg flex">
               <span className="font-bold w-[120px]">길드장</span>
               <span>{dummyGuild.owner.nickname}</span>
+              <span></span>
             </div>
             <div className="text-lg flex">
               <span className="font-bold w-[120px]">전체 인원</span>
@@ -122,11 +272,18 @@ export default function GuildAdmin() {
             <p className="text-3xl text-neutral-900 font-bold">멤버 관리</p>
           </AccordionTrigger>
           <AccordionContent>
-            <GuildUser data={dummyGuildUser} index={0} total={5} />
-            <GuildUser data={dummyGuildUser} index={1} total={5} />
-            <GuildUser data={dummyGuildUser} index={2} total={5} />
-            <GuildUser data={dummyGuildUser} index={3} total={5} />
-            <GuildUser data={dummyGuildUser} index={4} total={5} />
+            {members.map((member, index) => {
+              return (
+                <GuildUser
+                  key={`${member.memberId}-${index}`}
+                  data={member.data}
+                  index={index}
+                  total={members.length}
+                  onToggleManager={() => handleToggleManager(member.memberId, member.data.guild_role)}
+                  onKickMember={() => handleKickMember(member.memberId)}
+                />
+              );
+            })}
           </AccordionContent>
         </AccordionItem>
       </Accordion>
