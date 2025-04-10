@@ -6,7 +6,7 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 export const useAxios = () => {
   const apiInstance = axios.create({
     baseURL: API_BASE_URL,
-    timeout: 2000,
+    timeout: 3000,
     withCredentials: true,
   });
 
