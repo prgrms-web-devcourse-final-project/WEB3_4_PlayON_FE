@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useAuthStore } from '@/stores/authStore';
 import UserInfoLogin from './UserInfoLogin';
 import UserInfoLogout from './UserInfoLogout';
 import { userSimple } from '@/types/user';
@@ -35,14 +36,8 @@ const linkStyle = `
     `;
 
 export default function Header() {
+  const { user } = useAuthStore();
   const [loginToken, setLoginToken] = useState(false);
-  const [userInfo, setUserInfo] = useState<userSimple>({
-    username: 'gildong-abc',
-    nickname: '홍길동',
-    user_title: '게임 수집가',
-    img_src: 'https://github.com/shadcn.png',
-  });
-
   const [showHeader, setShowHeader] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
 
@@ -59,6 +54,14 @@ export default function Header() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, [lastScrollY]);
+
+  useEffect(() => {
+    if (!user) {
+      setLoginToken(false);
+    } else {
+      setLoginToken(true);
+    }
+  }, [user]);
 
   //로그인 보여주기 위한 임시 코드
   const handleLoginToken = (): void => {
@@ -89,7 +92,7 @@ export default function Header() {
             커뮤니티
           </Link>
         </div>
-        {loginToken && userInfo && <UserInfoLogin userInfo={userInfo} />}
+        {loginToken && user && <UserInfoLogin userInfo={user} />}
         {!loginToken && <UserInfoLogout onLogin={handleLoginToken} />}
       </div>
     </header>
