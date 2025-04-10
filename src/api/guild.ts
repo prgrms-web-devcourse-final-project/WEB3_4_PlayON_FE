@@ -42,13 +42,14 @@ export const useGuild = () => {
   }
 
   async function UpdateGuild(guildId: string, newData: GuildUpdateRequest) {
-    const response = await axios.Put(GUILD.modify(guildId), newData, {}, true);
-    const data = response?.data;
-    if (data.msg === 'OK') {
-      alert('수정되었습니다!');
+    try {
+      const response = await axios.Put(GUILD.modify(guildId), newData, {}, true);
+      const data = response?.data.data;
+      console.log(data);
+      return { guildId: data.id, presignedUrl: data.presignedUrl };
+    } catch (error) {
+      console.log(error);
     }
-    console.log(data);
-    return data;
   }
 
   async function DeleteGuild(guildId: string) {
@@ -132,6 +133,29 @@ export const useGuild = () => {
       return true;
     } catch (error) {
       console.log('길드 생성 중 오류 발생: ', error);
+    }
+  }
+  async function UpdateGuildWithImg(guildId: string, newData: GuildUpdateRequest, imageFile: File | null) {
+    try {
+      // 1. 길드 수정
+      const updateResponse = await UpdateGuild(guildId, newData);
+      if (updateResponse && imageFile) {
+        const { guildId, presignedUrl } = updateResponse;
+        // 2. S3 presigned URL로 이미지 업로드
+        const s3Response = await uploadToS3(imageFile, presignedUrl);
+        if (s3Response.success) {
+          const imageUrl = s3Response.url;
+          console.log('이미지 업로드 완료: ', imageUrl);
+          // 3. 이미지 URL 서버에 등록
+          await UploadImageURL(guildId, imageUrl);
+          console.log('길드 수정 완료(이미지O)');
+          return true;
+        }
+      }
+      console.log('길드 수정 완료(이미지X)');
+      return true;
+    } catch (error) {
+      console.log('길드 수정 중 오류 발생: ', error);
     }
   }
 
@@ -253,5 +277,6 @@ export const useGuild = () => {
     GetGuildRecommend,
     GetGuildPopular,
     CreateGuildWithImg,
+    UpdateGuildWithImg,
   };
 };
