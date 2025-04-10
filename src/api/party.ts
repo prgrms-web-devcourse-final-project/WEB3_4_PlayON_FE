@@ -1,10 +1,11 @@
 'use client';
 
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { PARTY_ENDPOINTS } from '@/constants/endpoints/party';
 import { PATH } from '@/constants/routes';
 import { useAxios } from '@/hooks/useAxios';
 import { createPartyReq, getPartiesReq, party } from '@/types/party';
+import { getSteamImage } from './steamImg';
 export const useParty = () => {
   const axios = useAxios();
   const router = useRouter();
@@ -51,24 +52,26 @@ export const useParty = () => {
     );
     if (res && res.status == 200) {
       const data = res.data.data;
-      console.log('raw data : ', data);
-
-      console.log('파티 상세 임시 조회 ');
-
       return {
-        parties: data.items.map(async (party) => {
-          const partyDetail = await GetParty(party.partyId);
-          return {
-            party_name: party.name,
-            description: party.description,
-            start_time: new Date(party.partyAt),
-            tags: party.partyTags.map((tag) => tag.tagValue),
-            participation: party.members,
-            selected_game: party.appId,
-            num_maximum: partyDetail?.num_maximum,
-            num_minimum: partyDetail?.num_minimum,
-          };
-        }),
+        parties: await Promise.all(
+          data.items.map(async (party) => {
+            return {
+              party_name: party.name,
+              description: party.description,
+              start_time: new Date(party.partyAt),
+              tags: party.partyTags.map((tag) => tag.tagValue),
+              participation: party.members,
+              selected_game: {
+                title: party.gameName,
+                genre: [],
+                img_src: await getSteamImage(party.appId, 'header'),
+                background_src: await getSteamImage(party.appId, 'background'),
+              },
+              num_maximum: party.maximum,
+              num_minimum: party.minimum,
+            };
+          })
+        ),
         totalPages: data.totalPages,
         totalItems: data.totalItems,
       };

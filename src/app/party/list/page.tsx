@@ -4,7 +4,7 @@ import { useParty } from '@/api/party';
 import HeroSwiperBanner from '@/components/common/HeroSwiperBanner';
 import SortRadioGroup, { SortOption } from '@/components/common/SortRadioGroup';
 import PartySearchComponent from '@/components/party/party-search-component';
-import PartyCard from '@/components/party/PartyCard';
+import PartyCard, { PartyCardSkeleton } from '@/components/party/PartyCard';
 import { Label } from '@/components/ui/label';
 import {
   Pagination,
@@ -16,8 +16,8 @@ import {
   PaginationPrevious,
 } from '@/components/ui/pagination';
 import { Switch } from '@/components/ui/switch';
+import { useAuthStore } from '@/stores/authStore';
 import { party } from '@/types/party';
-import { dummyParty } from '@/utils/dummyData';
 
 import { ChevronDown } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
@@ -37,6 +37,7 @@ const imageList = [
 ];
 
 export default function PartyList() {
+  const { user } = useAuthStore();
   const party = useParty();
   const params = useSearchParams();
 
@@ -44,7 +45,7 @@ export default function PartyList() {
   const [totalPages, setTotalPage] = useState(0);
   const [totalItems, setTotalItem] = useState(0);
 
-  const userName = '홍길동';
+  const userName = user?.nickname ?? '플레이어';
 
   function splitTag(params: URLSearchParams, paramName: string, type: string): { type: string; value: string }[] {
     const raw = params.get(paramName) ?? '';
@@ -79,7 +80,7 @@ export default function PartyList() {
 
   useEffect(() => {
     fetchData(params);
-  }, [fetchData, params]);
+  }, [params]);
 
   return (
     <div className="relative space-y-16 mb-24">
@@ -136,9 +137,11 @@ export default function PartyList() {
           </div>
         </div>
         <div className="grid grid-cols-3 gap-6">
-          {/* {parties.map((party, idx) => (
-            <PartyCard key={idx} data={party} />
-          ))} */}
+          {parties.length > 0 ? (
+            parties.map((party, idx) => <PartyCard key={idx} data={party} />)
+          ) : (
+            <PartyCardSkeleton />
+          )}
         </div>
         <Pagination>
           <PaginationContent>
