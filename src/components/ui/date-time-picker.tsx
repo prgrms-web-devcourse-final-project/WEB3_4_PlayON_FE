@@ -10,7 +10,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 
-export function DateTimePicker(props: { onSelect: (date: Date | undefined) => void }) {
+export function DateTimePicker(props: { init: Date | undefined; onSelect: (date: Date | undefined) => void }) {
   const [date, setDate] = React.useState<Date>();
   const [isOpen, setIsOpen] = React.useState(false);
 
@@ -36,8 +36,11 @@ export function DateTimePicker(props: { onSelect: (date: Date | undefined) => vo
   };
 
   React.useEffect(() => {
+    setDate(props.init);
+  }, [props.init]);
+  React.useEffect(() => {
     props.onSelect(date);
-  }, [date, props]);
+  }, [date]);
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
@@ -47,7 +50,7 @@ export function DateTimePicker(props: { onSelect: (date: Date | undefined) => vo
           className={cn('w-full justify-start text-left font-normal', !date && 'text-muted-foreground')}
         >
           <CalendarIcon className="text-neutral-400 mr-2 h-4 w-4" />
-          {date ? format(date, 'MM/dd/yyyy hh:mm aa') : <span>날짜와 시간을 선택해주세요</span>}
+          {date ? format(date, 'MM/dd/yyyy hh:mm aa') : <span>{`날짜와 시간을 선택해주세요`}</span>}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0">
