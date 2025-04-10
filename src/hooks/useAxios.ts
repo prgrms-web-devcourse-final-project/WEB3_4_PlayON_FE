@@ -11,10 +11,19 @@ export const useAxios = () => {
   });
 
   const Toast = useToast();
+
   const errorHandler = (error, toast: boolean) => {
+    let titleMessage = '';
+    if (axios.isAxiosError(error)) {
+      titleMessage = error.message;
+    } else {
+      console.log('에러 메세지 분기 처리 필요');
+      console.log('하단 에러 메세지를 확인해주세요.');
+      console.log(error);
+    }
     if (toast) {
       Toast.toast({
-        title: error.response.data,
+        title: titleMessage,
         variant: 'destructive',
       });
     }
