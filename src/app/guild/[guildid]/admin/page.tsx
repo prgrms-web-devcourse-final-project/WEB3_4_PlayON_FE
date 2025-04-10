@@ -25,7 +25,7 @@ interface guildUserProps {
 export function parseGuildUser(raw: any): guildUser {
   const user: userDetail = {
     username: raw.username,
-    nickname: raw.username,
+    nickname: raw.nickname,
     user_title: '',
     img_src: raw?.profileImg ?? '',
     last_login_at: raw?.lastLoginAt ? new Date(raw.lastLoginAt) : new Date(),
@@ -45,7 +45,7 @@ export function parseGuildUser(raw: any): guildUser {
 
 export default function GuildAdmin() {
   const [members, setMembers] = useState<guildUserProps[]>([]);
-  const [nickname, setNickname] = useState('');
+  const [username, setUsername] = useState('');
   const [loading, setLoading] = useState(false);
   const params = useParams();
   const guildid = params?.guildid as string;
@@ -116,18 +116,20 @@ const [guildInfo, setGuildInfo] = useState<{
   const managers = members.filter((m) => m.data.guild_role === 'MANAGER');
 
   // 길드 멤버 초대 핸들러
-  const handleInviteMember = async (nickname: string) => {
-    if (!nickname) {
-      alert('닉네임을 입력해주세요.');
+  const handleInviteMember = async (username: string) => {
+    if (!username) {
+      alert('USERNAME을 입력해주세요.');
       return;
     }
 
     setLoading(true);
     try {
-      const response = await InviteMembers(guildid, nickname);
+      const response = await InviteMembers(guildid, username);
       if (response?.status === 200) {
         alert('초대 완료!');
-        setNickname('');
+        setUsername('');
+        await fetchData();
+
       } else {
         alert(response?.data.message || '초대 실패');
       }
@@ -218,7 +220,6 @@ const [guildInfo, setGuildInfo] = useState<{
               <div className="text-lg flex">
                 <span className="font-bold w-[120px]">운영진</span>
                 <div className="flex">
-
                   {managers.length > 0 ? (
                     managers.map((m, ind) => (
                       <span
@@ -258,19 +259,17 @@ const [guildInfo, setGuildInfo] = useState<{
               <div className="flex flex-col flex-auto border border-neutral-400 rounded-2xl px-6 py-8">
                 <p className="text-2xl font-bold mb-3">길드 초대하기</p>
                 <label htmlFor="" className="mb-1">
-                  닉네임
+                  유저네임
                 </label>
                 <div className="flex gap-4">
                   <Input
-                    placeholder="초대받을 멤버의 닉네임을 적어주세요"
-                    value={nickname}
-                    onChange={(e) => setNickname(e.target.value)}
+                    placeholder="초대받을 멤버의 USERNAME을 적어주세요"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
                   />
-                  <Button onClick={() => handleInviteMember(nickname)} disabled={loading}>
+                  <Button onClick={() => handleInviteMember(username)} disabled={loading}>
                     {loading ? '초대 중...' : '초대장 발급'}
                   </Button>
-                  {/* <Input placeholder="초대받을 멤버의 이메일을 적어주세요"></Input>
-                  <Button>초대장 발급</Button> */}
                 </div>
               </div>
             </div>
