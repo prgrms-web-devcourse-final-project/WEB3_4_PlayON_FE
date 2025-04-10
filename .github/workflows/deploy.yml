@@ -1,0 +1,39 @@
+name: Deploy Frontend to EC2 with Docker
+
+on:
+  push:
+    branches: ['main']
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Log in to DockerHub
+        run: echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+
+      - name: Build Docker Image
+        run: docker build -t ${{ secrets.DOCKER_IMAGE_NAME_FE }} .
+
+      - name: Push Docker Image
+        run: docker push ${{ secrets.DOCKER_IMAGE_NAME_FE }}
+
+      - name: SSH into EC2 and deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            docker stop playon-frontend || true
+            docker rm playon-frontend || true
+            docker pull ${{ secrets.DOCKER_IMAGE_NAME_FE }}
+            docker run -d --name playon-frontend -p 3000:3000 ${{ secrets.DOCKER_IMAGE_NAME_FE }}
