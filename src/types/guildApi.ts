@@ -2,7 +2,13 @@ type FileType = 'png' | 'jpg' | 'jpeg' | 'webp';
 
 export type Sort = 'latest' | 'activity' | 'members';
 
-// 길드 생성 시 필요
+interface GuildTag {
+  type: string;
+  value: string;
+}
+
+// ReQuest
+
 export interface GuildCreateRequest {
   name: string;
   description: string;
@@ -13,7 +19,6 @@ export interface GuildCreateRequest {
   tags: GuildTag[];
 }
 
-// 길드 생성 시 필요
 export interface GuildUpdateRequest {
   name: string;
   description: string;
@@ -24,33 +29,46 @@ export interface GuildUpdateRequest {
   tags: GuildTag[];
 }
 
-interface GuildTag {
-  type: string;
-  value: string;
+export interface GuildLIstRequest {
+  name: string;
+  appids: number[];
+  tags: GuildTag[];
 }
 
+// Response
+
 export interface GuildDetail {
-  createdAt: string;
-  description: string;
-  guildImg: string;
   id: number;
-  isPublic: boolean;
-  leaderImg: string;
-  leaderName: string;
-  maxMembers: number;
-  memberCount: number;
-  myRole: string;
   name: string;
-  tags: string[];
+  description: string;
+  leaderName: string;
+  leaderImg: string;
+  memberCount: number;
+  maxMembers: number;
+  isPublic: boolean;
+  guildImg: string;
+  createdAt: string;
+  myRole: string;
+  tags: GuildTag[];
 }
 
 export interface GuildSimple {
   guildId: number;
   guildImg: string;
   name: string;
+  gameName: string;
   description: string;
   memberCount: number;
-  tags: string[];
+  tags: GuildTag[];
+}
+
+export interface GuildDetailMember {
+  memberId: number;
+  username: string;
+  profileImg: string;
+  title: string;
+  role: string;
+  joinedAt: string;
 }
 
 export interface GuildDetailResponse {
@@ -83,7 +101,7 @@ export interface GuildAdminResponse {
     guildImg: string;
     createdAt: string;
     myRole: string;
-    tags: string[];
+    tags: GuildTag[];
   };
 }
 
@@ -91,4 +109,10 @@ export interface GuildMainResponse {
   resultCode: string;
   msg: string;
   data: GuildSimple[];
+}
+
+export interface GuildDetailMemberResponse {
+  resultCode: string;
+  msg: string;
+  data: GuildDetailMember[];
 }

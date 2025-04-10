@@ -1,5 +1,5 @@
 import { userDetail, userSimple } from './user';
-import { guildTags } from './Tags/guildTags';
+// import { guildTags } from './Tags/guildTags';
 import { gameSimple } from './games';
 
 export interface guild {
@@ -11,10 +11,10 @@ export interface guild {
   owner: userSimple;
   created_at: Date;
   myRole: string;
-  play_style: (typeof guildTags.partyStyle.items)[number][];
-  skill_level: (typeof guildTags.skillLevel.items)[number][];
-  gender: (typeof guildTags.gender.items)[number][];
-  friendly: (typeof guildTags.friendly.items)[number][];
+  play_style: string[];
+  skill_level: string[];
+  gender: string[];
+  friendly: string[];
 }
 
 export interface guildUser {
