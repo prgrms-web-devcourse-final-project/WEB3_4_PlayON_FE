@@ -6,28 +6,53 @@ import { PATH } from '@/constants/routes';
 import { useAxios } from '@/hooks/useAxios';
 import { createPartyReq, getPartiesReq, party } from '@/types/party';
 import { getSteamImage } from './steamImg';
+import { userSimple } from '@/types/user';
+import { gameSimple } from '@/types/games';
 
 export const useParty = () => {
   const axios = useAxios();
   const router = useRouter();
 
-  async function GetParty(partyId: string | number) {
+  async function GetParty(partyId: string | number): Promise<{
+    partyId: string;
+    party_name: string;
+    description: string;
+    start_time: Date;
+    end_time?: Date;
+    tags: string[];
+    participation: userSimple[];
+    selected_game: gameSimple;
+    num_maximum: number;
+    num_minimum?: number;
+  } | null> {
     const res = await axios.Get(PARTY_ENDPOINTS.detail(String(partyId)), {}, false);
     if (res?.status == 200) {
       const party = res.data.data;
-      console.log(party);
+      console.log('raw data : ', party);
       return {
+        partyId: party.partyId,
         party_name: party.name,
         description: party.description,
         start_time: party.partyAt,
         end_time: party.endedAt,
-        tags: Object.values(party.partyTags),
+        tags: party.partyTags.map((tag) => tag.tagValue),
         participation: party.partyMembers,
-        selected_game: party.game, //수정 필요
-        num_maximum: 0, //수정 필요
-        num_minimum: 0, //수정 필요
+        selected_game: {
+          title: party.gameName,
+          genre: [],
+          img_src: await getSteamImage(1, 'header'),
+          background_src: await getSteamImage(1, 'background'),
+          // img_src: await getSteamImage(party.appId, 'header'),
+          // background_src: await getSteamImage(party.appId, 'background'),
+        },
+        num_maximum: 10,
+        num_minimum: 2,
+        // num_maximum: party.maximum,
+        // num_minimum: party.minimum,
       };
     }
+    console.log('로딩 중 문제가 발생했습니다.');
+    return null;
   }
   async function GetParties(
     filter: getPartiesReq,
