@@ -31,14 +31,12 @@ export const useGuildsMembers = () => {
         true
       );
       if (response?.status === 200) {
-        const data = response?.data;
+        const data = response;
         console.log('성공 응답', data);
         return data;
       }
     } catch (err: any) {
-      // console.log('에러 발생1', err.response?.data);
       console.log('에러 발생2', err.response);
-      // return err.response?.data;
     }
   }
 
@@ -54,7 +52,6 @@ export const useGuildsMembers = () => {
       if (response?.status === 200) {
         const data = response.data;
         console.log('성공 응답1', data);
-        // console.log('성공 응답2', data.data);
         return data;
       }
     } catch (err: any) {
@@ -64,7 +61,6 @@ export const useGuildsMembers = () => {
   async function DeleteMembers(guildId: string, targetMemberId: string) {
     const response = await axios.Delete(
       guildMember.delete_member(guildId),
-      // { params: { guildId: guildId }, data: { targetMemberId: targetMemberId } },
       { data: { targetMemberId } },
       true
     );
@@ -99,25 +95,7 @@ export const useGuildsMembers = () => {
     console.log(data);
     console.log('호출');
   }
-  // async function LeaveMembers2(guildId: string, newLeaderId: string) {
-  //   try {
-  //     const response = await axios.Delete(
-  //       guildMember.leave(guildId),
-  //       {
-  //         params: { guildId },
-  //         data: { newLeaderId },
-  //       },
-  //       true
-  //     );
-  //     console.log('성공 응답', response?.data);
-  //     return response?.data;
-  //   } catch (error: any) {
-  //     console.log('에러 발생1', error.response?.data);
-  //     console.log('에러 발생2', error.response);
-  //     // console.log('에러 발생3', response.data);
-  //     return error.response?.data;
-  //   }
-  // }
+
 
   return { PutManager, DeleteManager, GetMembers, InviteMembers, DeleteMembers, GetAdmin, LeaveMembers };
 };
