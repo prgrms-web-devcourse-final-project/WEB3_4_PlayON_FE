@@ -4,7 +4,6 @@ import { ChevronUp, Send, SquarePen, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import UserInfoHorizontal from '../../components/UserInfoHorizontal';
 import { dummyUserSimple } from '@/utils/dummyData';
-import { partyInfo } from '@/utils/dummyData';
 import UserApprove from '../../components/UserApprove';
 import { userSimple } from '@/types/user';
 import RetroButton from '@/components/common/RetroButton';
@@ -16,6 +15,9 @@ import { party } from '@/types/party';
 import { AvatarFallback, AvatarImage } from '@radix-ui/react-avatar';
 import GhostSVG from '@/components/svg/ghost_fill';
 import { useAuthStore } from '@/stores/authStore';
+import { useRouter } from 'next/navigation';
+import { PATH } from '@/constants/routes';
+import { useParty } from '@/api/party';
 
 type Props = {
   partyInfo: party;
@@ -23,12 +25,14 @@ type Props = {
   setParticipated: React.Dispatch<React.SetStateAction<boolean>>;
 };
 export default function InfoAccordion({ partyInfo, participated, setParticipated }: Props) {
+  const router = useRouter();
+  const party = useParty();
   const { user } = useAuthStore();
   const [open, setOpen] = useState(true);
-  const [partyHost, setPartyHost] = useState<userSimple | null>(null);
+  // const [partyHost, setPartyHost] = useState<userSimple | null>(null);
   const [isAuthor, setIsAuthor] = useState(false);
   useEffect(() => {
-    setPartyHost(partyInfo.participation[0]);
+    // setPartyHost(partyInfo.participation[0]);
     setIsAuthor(user?.username == partyInfo.participation[0].username);
   }, []);
   function getButtonLabel(participating: boolean): { text: string; action: () => void } {
@@ -36,7 +40,7 @@ export default function InfoAccordion({ partyInfo, participated, setParticipated
       return {
         text: '로그인하고 파티 참가하기',
         action: () => {
-          alert('로그인 보내기');
+          router.push(PATH.login);
         },
       };
     else if (participating)
@@ -50,8 +54,15 @@ export default function InfoAccordion({ partyInfo, participated, setParticipated
     else {
       return {
         text: '파티 참가하기',
-        action: () => {
-          alert('파티 참가 신청 보내기');
+        action: async () => {
+          const res = await party.PartyJoin(partyInfo.partyId);
+          if (res) {
+            alert('참가 신청 성공');
+            // router.push(PATH.party_detail(partyInfo.partyId));
+            //이거 왠지 모르겠지만 업데이트가 안됨
+          } else {
+            alert('참가 신청 실패');
+          }
         },
       };
     }
@@ -94,10 +105,20 @@ export default function InfoAccordion({ partyInfo, participated, setParticipated
                 <button className="flex items-center">
                   <Send className="h-3" /> 초대장 보내기
                 </button>
-                <button className="flex items-center">
+                <button
+                  className="flex items-center"
+                  onClick={() => {
+                    router.push(PATH.party_modify(partyInfo.partyId));
+                  }}
+                >
                   <SquarePen className="h-3" /> 파티 수정
                 </button>
-                <button className="flex items-center">
+                <button
+                  className="flex items-center"
+                  onClick={() => {
+                    party.DeleteParty(partyInfo.partyId);
+                  }}
+                >
                   <Trash2 className="h-3" /> 파티 삭제
                 </button>
               </div>

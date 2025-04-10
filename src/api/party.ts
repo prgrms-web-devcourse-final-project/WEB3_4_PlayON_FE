@@ -144,9 +144,13 @@ export const useParty = () => {
     );
     console.log(res);
   }
-  async function PartyJoin(partyId: string) {
+  async function PartyJoin(partyId: string): Promise<boolean> {
     const res = await axios.Post(PARTY_ENDPOINTS.join(partyId), {}, {}, true);
-    console.log(res);
+    if (res && res.status == 204) {
+      return true;
+    } else {
+      return false;
+    }
   }
   async function PartyInvite(partyId: string, memberId: string) {
     const res = await axios.Post(PARTY_ENDPOINTS.invite(partyId, memberId), {}, {}, true);
