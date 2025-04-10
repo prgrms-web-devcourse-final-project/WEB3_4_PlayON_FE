@@ -27,6 +27,7 @@ export default function PartySearchComponent(props: PartySearchComponentProps) {
   const selectedArr = [partyStyle, skillLevel, gender, friendly];
   const searchParam = useSearchParams();
   const { user } = useAuthStore();
+  const [charText, setCharText] = useState('');
 
   const handleSearchByName = useCallback((value: string) => {
     setSearchName(value);
@@ -112,15 +113,18 @@ export default function PartySearchComponent(props: PartySearchComponentProps) {
     window.history.pushState({}, '', newUrl);
   }, [selectedGenres]);
   useEffect(() => {
+    const newUrl = new URL(window.location.href);
     if (searchName.length > 0) {
-      const newUrl = new URL(window.location.href);
       newUrl.searchParams.set('name', searchName);
       // router.replace(newUrl.toString(), { scroll: false });
       window.history.pushState({}, '', newUrl);
     }
+    if (searchName.length === 0) {
+      newUrl.searchParams.delete('name');
+      window.history.pushState({}, '', newUrl);
+    }
   }, [searchName]);
 
-  const [charText, setCharText] = useState('');
   useEffect(() => {
     const newCharText: string[] = [];
     const PartyStyle = searchParam.get('partyStyle');
