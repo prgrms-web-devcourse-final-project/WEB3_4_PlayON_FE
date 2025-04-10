@@ -11,7 +11,7 @@ export interface userDetail {
   username: string;
   nickname: string;
   user_title: string;
-  img_src: string;
+  img_src: string | null;
   last_login_at: Date;
   steam_id: string;
   gender: (typeof userCategories.gender.items)[number];
