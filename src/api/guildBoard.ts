@@ -2,57 +2,51 @@ import { GUILD_BOARD_ENDPOINTS } from '@/constants/endpoints/guild-board';
 import { useAxios } from '@/hooks/useAxios';
 import { post } from '@/types/community';
 import { guildCommunityTags } from '@/types/Tags/communityTags';
-import typeConverter from '@/utils/typeConverter';
 
 export const useGuildBoard = () => {
   const axios = useAxios();
-
-  type guildPostResponseType = {
+  type comment = {
+    id: number;
+    authorNickname: string;
+    authorProfileImg: string;
+    content: string;
+    createdAt: Date;
+  };
+  type guild = {
+    id: number;
+    name: string;
+    description: string;
+    guildImg: string;
+    memberCount: number;
+  };
+  type post = {
     id: number;
     title: string;
     content: string;
-    authorNickname: string;
     tag: string;
-    likeCount: number;
-    commentCount: number;
     hit: number;
+    likeCount: number;
     imageUrl: string;
-    createdAt: string;
-    guild: {
-      id: number;
-      name: string;
-      description: string;
-      guildImg: string;
-      memberCount: number;
-    };
+    authorNickname: string;
+    comments: comment[];
+    guild: guild;
   };
-  async function GuildPostDetail(guildId: string, boardId: string) {
+  async function GuildPostDetail(guildId: number, boardId: number) {
     const response = await axios.Get(GUILD_BOARD_ENDPOINTS.guildPostDetail(guildId, boardId), {}, true);
     if (response && response.status === 200) {
-      const responseData: post = {
-        channel: '길드',
-        tag: response.data.tag,
-        user: response.data.user,
-        comments: response.data.user,
-        content: response.data.comment,
-        created_at: response.data.created_at,
-        hits: response.data.hits,
-        img_src: response.data.img_src,
-        num_likes: response.data.num_likes,
-        title: response.data.title,
-      };
-      console.log(responseData);
+      const postData = response.data.data as post;
+      return postData;
     }
   }
-  async function GuildPostChange(guildId: string, boardId: string) {
+  async function GuildPostChange(guildId: number, boardId: number) {
     const response = await axios.Put(GUILD_BOARD_ENDPOINTS.guildPostChange(guildId, boardId), {}, {}, true);
     console.log(response);
   }
-  async function GuildPostDelete(guildId: string, boardId: string) {
+  async function GuildPostDelete(guildId: number, boardId: number) {
     const response = await axios.Delete(GUILD_BOARD_ENDPOINTS.guildPostDelete(guildId, boardId), {}, true);
     console.log(response);
   }
-  async function GuildPostCommentChange(guildId: string, boardId: string, commentId: string) {
+  async function GuildPostCommentChange(guildId: number, boardId: number, commentId: number) {
     const response = await axios.Put(
       GUILD_BOARD_ENDPOINTS.guildPostCommentChange(guildId, boardId, commentId),
       {},
@@ -61,7 +55,7 @@ export const useGuildBoard = () => {
     );
     console.log(response);
   }
-  async function GuildPostCommentDelete(guildId: string, boardId: string, commentId: string) {
+  async function GuildPostCommentDelete(guildId: number, boardId: number, commentId: number) {
     const response = await axios.Delete(
       GUILD_BOARD_ENDPOINTS.guildPostCommentDelete(guildId, boardId, commentId),
       {},
@@ -70,7 +64,7 @@ export const useGuildBoard = () => {
     console.log(response);
   }
   async function GuildPostList(
-    guildId: string,
+    guildId: number,
     data: {
       tag?: string;
       keyword?: string;
@@ -82,22 +76,22 @@ export const useGuildBoard = () => {
     console.log(data);
     const response = await axios.Get(GUILD_BOARD_ENDPOINTS.guildPostList(guildId), { params: { ...data } }, true);
     if (response) {
-      const posts: guildPostResponseType[] = response.data.data.content;
+      const posts: post[] = response.data.data.content;
       return posts;
     }
   }
   async function GuildPostCreate(
-    guildId: string,
+    guildId: number,
     data: { title: string; content: string; tag: (typeof guildCommunityTags)[number]; imageUrl: string }
   ) {
     const response = await axios.Post(GUILD_BOARD_ENDPOINTS.guildPostCreate(guildId), { ...data }, {}, true);
     console.log(response);
   }
-  async function GuildPostLike(guildId: string, boardId: string) {
+  async function GuildPostLike(guildId: number, boardId: number) {
     const response = await axios.Get(GUILD_BOARD_ENDPOINTS.guildPostLike(guildId, boardId), {}, true);
     console.log(response);
   }
-  async function GuildPostCommentCreate(guildId: string, boardId: string, comment: string) {
+  async function GuildPostCommentCreate(guildId: number, boardId: number, comment: number) {
     const response = await axios.Post(
       GUILD_BOARD_ENDPOINTS.guildPostCommentCreate(guildId, boardId),
       { comment },
@@ -106,11 +100,11 @@ export const useGuildBoard = () => {
     );
     console.log(response);
   }
-  async function GuildNoticesPost(guildId: string) {
+  async function GuildNoticesPost(guildId: number) {
     const response = await axios.Get(GUILD_BOARD_ENDPOINTS.guildNoticesPost(guildId), {}, true);
     console.log(response);
   }
-  async function GuildLatestPost(guildId: string) {
+  async function GuildLatestPost(guildId: number) {
     const response = await axios.Get(GUILD_BOARD_ENDPOINTS.guildLatestPost(guildId), {}, true);
     console.log(response);
   }
