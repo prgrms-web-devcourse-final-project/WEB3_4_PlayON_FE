@@ -74,7 +74,15 @@ export default function LoginInitial() {
     <div className="bg-purple-900 text-purple-400 w-full h-screen flex flex-col items-center mt-[68px]">
       <button
         onClick={async () => {
-          const response = await members.MyGames(10);
+          const response = members.steamLink();
+          console.log(response);
+        }}
+      >
+        click me
+      </button>
+      <button
+        onClick={async () => {
+          const response = members.GetMe();
           console.log(response);
         }}
       >

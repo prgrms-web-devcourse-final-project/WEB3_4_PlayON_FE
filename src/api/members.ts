@@ -51,6 +51,7 @@ export const useMembers = () => {
       user_title: '',
       username: data.memberDetail.username,
     };
+    console.log(data);
     return ret;
   }
   async function PutMe(
@@ -125,6 +126,10 @@ export const useMembers = () => {
   async function steamLink() {
     const response = await axios.Post(MEMBER.steamLinks, {}, {}, true);
     console.log(response);
+    if (response && response.status === 200) {
+      return true;
+    }
+    return false;
   }
 
   return {

@@ -30,7 +30,8 @@ export default function LinkSteam() {
       const response = await member.steamAuthLinkCallback(JSON.stringify(params));
       if (response && response.status === 200) {
         toast({ title: `도전과제 달성!`, description: `스팀 연동 성공!`, variant: 'primary' });
-        setTimeout(() => router.push(USER_ROUTE.my_page), 500);
+        // setTimeout(() => router.push(USER_ROUTE.my_page), 500);
+        console.log(response);
       }
     }
     handleSteamAuth();
