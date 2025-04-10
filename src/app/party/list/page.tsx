@@ -1,6 +1,7 @@
 'use client';
 
 import { useParty } from '@/api/party';
+import CustomPagination from '@/components/common/CustomPagination';
 import HeroSwiperBanner from '@/components/common/HeroSwiperBanner';
 import SortRadioGroup, { SortOption } from '@/components/common/SortRadioGroup';
 import PartySearchComponent from '@/components/party/party-search-component';
@@ -44,7 +45,6 @@ export default function PartyList() {
   const params = useSearchParams();
 
   const [parties, setParties] = useState<party[]>([]);
-  const [totalPages, setTotalPage] = useState(0);
   const [totalItems, setTotalItem] = useState(0);
 
   const userName = user?.nickname ?? '플레이어';
@@ -80,7 +80,6 @@ export default function PartyList() {
     );
     if (!res) return;
     setParties(res.parties);
-    setTotalPage(res.totalPages);
     setTotalItem(res.totalItems);
   }, []);
 
@@ -153,27 +152,7 @@ export default function PartyList() {
             <PartyCardSkeleton />
           )}
         </div>
-        <Pagination>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious href="#" className="text-base" />
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink href="#" isActive>
-                1
-              </PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink href="#">2</PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationEllipsis />
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationNext href="#" className="text-base" />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
+        {totalItems > 9 && <CustomPagination totalItems={totalItems} pageSize={9} />}
       </section>
     </div>
   );
