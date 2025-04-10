@@ -41,30 +41,30 @@ export const useGame = () => {
   };
   const axios = useAxios();
 
-  async function GamePartyList(appid: number, pageable: paging) {
+  async function GamePartyList(appid: number, pageable?: paging) {
     const response = await axios.Get(GAME_ENDPOINTS.party(appid), { params: { ...pageable } }, true);
     console.log(response);
     if (response && response.status === 200) {
       return {
-        currentPageNumber: response.data.currentPageNumber as number,
-        pageSize: response.data.pageSize as number,
-        totalPages: response.data.totalPages as number,
-        totalItems: response.data.totalItems as number,
-        items: response.data.items as party[],
+        currentPageNumber: response.data.data.currentPageNumber as number,
+        pageSize: response.data.data.pageSize as number,
+        totalPages: response.data.data.totalPages as number,
+        totalItems: response.data.data.totalItems as number,
+        items: response.data.data.items as party[],
       };
     }
     return false;
   }
-  async function GamePartyLogList(appid: number, pageable: paging) {
+  async function GamePartyLogList(appid: number, pageable?: paging) {
     const response = await axios.Get(GAME_ENDPOINTS.logs(appid), { params: { ...pageable } }, true);
     console.log(response);
     if (response && response.status === 200) {
       return {
-        currentPageNumber: response.data.currentPageNumber as number,
-        pageSize: response.data.pageSize as number,
-        totalPages: response.data.totalPages as number,
-        totalItems: response.data.totalItems as number,
-        items: response.data.items as partyLog[],
+        currentPageNumber: response.data.data.currentPageNumber as number,
+        pageSize: response.data.data.pageSize as number,
+        totalPages: response.data.data.totalPages as number,
+        totalItems: response.data.data.totalItems as number,
+        items: response.data.data.items as partyLog[],
       };
     }
     return false;
@@ -72,10 +72,11 @@ export const useGame = () => {
   async function GameDetailWithPartyLog(appid: number) {
     const response = await axios.Get(GAME_ENDPOINTS.details(appid), {}, true);
     if (response && response.status === 200) {
+      console.log(response);
       return {
-        game: response.data.game as game,
-        partyList: response.data.partyList as party[],
-        partyLogList: response.data.partyLogList as partyLog[],
+        game: response.data.data.game as game,
+        partyList: response.data.data.partyList as party[],
+        partyLogList: response.data.data.partyLogList as partyLog[],
       };
     }
     return false;
@@ -101,7 +102,7 @@ export const useGame = () => {
     }
     return false;
   }
-  async function GameRecommentFriend() {
+  async function GameRecommendFriend() {
     const response = await axios.Get(GAME_ENDPOINTS.friends, {}, true);
     if (response && response.status === 200) {
       return response.data.data as { appid: number; name: string; headerImage: string; genres: string[] }[];
@@ -123,23 +124,23 @@ export const useGame = () => {
     return false;
   }
   async function GameSearch(
-    condition: {
-      keyword: string;
-      isMacSupported: boolean;
-      releaseAfter: Date;
-      releaseStatus: Date;
-      playerType: string;
-      genres: string[];
+    condition?: {
+      keyword?: string;
+      isMacSupported?: boolean;
+      releaseAfter?: Date;
+      releaseStatus?: Date;
+      playerType?: string;
+      genres?: string[];
     },
-    pageable: paging
+    pageable?: paging
   ) {
     const response = await axios.Get(GAME_ENDPOINTS.list, { params: { ...condition, ...pageable } }, true);
     if (response && response.status === 200) {
       return {
-        currentPageNumber: response.data.currentPageNumber as number,
-        pageSize: response.data.pageSize as number,
-        totalPages: response.data.totalPages as number,
-        totalItems: response.data.totalItems as number,
+        currentPageNumber: response.data.data.currentPageNumber as number,
+        pageSize: response.data.data.pageSize as number,
+        totalPages: response.data.data.totalPages as number,
+        totalItems: response.data.data.totalItems as number,
         items: response.data.data.items as { appid: number; name: string; headerImage: string; genres: string[] }[],
       };
     }
@@ -151,7 +152,7 @@ export const useGame = () => {
     GameSearchByKeyword,
     GameRecommendGenre,
     GameMostPlayTime,
-    GameRecommentFriend,
+    GameRecommendFriend,
     GameRanking,
     GamePopular,
     GameSearch,
