@@ -1,3 +1,5 @@
+'use client';
+
 import SortRadioGroup, { SortOption } from '@/components/common/SortRadioGroup';
 import CommunityPostImageLong from '@/components/community/post-image-long';
 import WeNeedYou from '@/components/guild/guild-we-need-you';
@@ -13,6 +15,9 @@ import {
 import { post } from '@/types/community';
 import { guild } from '@/types/guild';
 import { dummyGuild, dummyPost } from '@/utils/dummyData';
+import { useEffect } from 'react';
+import { useGuildBoard } from '@/api/guildBoard';
+import { useSearchParams } from 'next/navigation';
 
 const sortOptions: SortOption[] = [
   { id: 'latest', label: '최신순' },
@@ -22,6 +27,11 @@ const sortOptions: SortOption[] = [
 export default function Community() {
   const postList: post[] = Array(5).fill(dummyPost);
   const guild: guild = dummyGuild;
+
+  const guildBoards = useGuildBoard();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {}, [searchParams, guildBoards]);
 
   return (
     <div className="wrapper relative mb-12 mt-28">

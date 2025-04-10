@@ -22,6 +22,7 @@ export default function WeNeedYou(props: WeNeedYouProps) {
     console.log(query);
     setQuery('');
   }
+  function HandleSelectChange() {}
 
   return (
     <div className={`flex flex-col p-8 gap-9 rounded-xl border border-neutral-200 bg-white ${props.className} `}>
