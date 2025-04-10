@@ -1,5 +1,8 @@
 'use client';
 
+import { useGuild } from '@/api/guild';
+import { useGuildJoin } from '@/api/guildJoin';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { uploadToS3 } from '@/utils/uploadToS3';
 import { ChangeEvent } from 'react';
@@ -15,9 +18,30 @@ export default function Test() {
       console.log(response);
     }
   };
+  const GuildJoin = useGuildJoin();
+  const Guild = useGuild();
+
+  const handleClickJoin = async () => {
+    await GuildJoin.RequestGuildJoin('22');
+  };
+  const handleClickList = async () => {
+    await GuildJoin.GetGuildJoinList('22');
+  };
+  const handleReject = async () => {
+    await GuildJoin.RejectGuildJoin('22', '6');
+  };
+  const handleApprove = async () => {
+    await GuildJoin.ApproveGuildJoin('22', '7');
+  };
   return (
     <div className="wrapper mt-32">
       <Input type="file" onChange={handleChange} className="w-[500px]" />
+      <div className="inline-flex flex-col gap-4 mt-3 ">
+        <Button onClick={handleClickJoin}>길드 참여 요청보내기</Button>
+        <Button onClick={handleClickList}>길드 요청 리스트 확인</Button>
+        <Button onClick={handleReject}>6번 요청 취소</Button>
+        <Button onClick={handleApprove}>7번 요청 승인</Button>
+      </div>
     </div>
   );
 }
