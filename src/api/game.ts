@@ -1,6 +1,5 @@
 import { GAME_ENDPOINTS } from '@/constants/endpoints/game';
 import { useAxios } from '@/hooks/useAxios';
-import { gameDetail } from '@/types/games';
 
 export const useGame = () => {
   type paging = {
@@ -74,7 +73,7 @@ export const useGame = () => {
     const response = await axios.Get(GAME_ENDPOINTS.details(appid), {}, true);
     if (response && response.status === 200) {
       return {
-        game: response.data.game,
+        game: response.data.game as game,
         partyList: response.data.partyList as party[],
         partyLogList: response.data.partyLogList as partyLog[],
       };
