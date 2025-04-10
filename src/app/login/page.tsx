@@ -24,7 +24,7 @@ const loginSchema = z.object({
 });
 type LoginSchema = z.infer<typeof loginSchema>;
 
-export default function SignupInitial() {
+export default function LoginInitial() {
   const playOnASCII = `##########  ######      ####### ######  ######       #######    ####### #####
 ##################      #######%#############      ###########% ####### #####
 #####%###########      #########  #########      ############################
@@ -72,6 +72,14 @@ export default function SignupInitial() {
 
   return (
     <div className="bg-purple-900 text-purple-400 w-full h-screen flex flex-col items-center mt-[68px]">
+      <button
+        onClick={async () => {
+          const response = await members.MyGames(10);
+          console.log(response);
+        }}
+      >
+        click me
+      </button>
       <div className="overlay pointer-events-none"></div>
       <div className="scanline pointer-events-none"></div>
       <div className="scrollanimation">
