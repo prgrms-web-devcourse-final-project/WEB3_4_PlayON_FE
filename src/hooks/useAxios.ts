@@ -6,7 +6,7 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 export const useAxios = () => {
   const apiInstance = axios.create({
     baseURL: API_BASE_URL,
-    timeout: 2000,
+    timeout: 3000,
     withCredentials: true,
   });
 
@@ -62,10 +62,20 @@ export const useAxios = () => {
     }
   }
 
+  async function TypedGet<T>(path: string, config: AxiosRequestConfig, toast: boolean) {
+    try {
+      const response = await apiInstance.get<T>(path, config);
+      return response.data;
+    } catch (err) {
+      errorHandler(err, toast);
+    }
+  }
+
   return {
     Get,
     Delete,
     Post,
     Put,
+    TypedGet,
   };
 };

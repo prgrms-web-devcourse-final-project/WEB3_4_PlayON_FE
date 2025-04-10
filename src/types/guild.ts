@@ -1,5 +1,5 @@
 import { userDetail, userSimple } from './user';
-import { guildTags } from './Tags/guildTags';
+// import { guildTags } from './Tags/guildTags';
 import { gameSimple } from './games';
 
 export interface guild {
@@ -10,10 +10,11 @@ export interface guild {
   num_members: number; // 길드 인원 수
   owner: userSimple;
   created_at: Date;
-  play_style: (typeof guildTags.partyStyle.items)[number][];
-  skill_level: (typeof guildTags.skillLevel.items)[number][];
-  gender: (typeof guildTags.gender.items)[number][];
-  friendly: (typeof guildTags.friendly.items)[number][];
+  myRole: string;
+  play_style: string[];
+  skill_level: string[];
+  gender: string[];
+  friendly: string[];
 }
 
 export interface guildUser {
