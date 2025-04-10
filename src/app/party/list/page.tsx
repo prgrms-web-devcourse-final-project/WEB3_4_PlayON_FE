@@ -16,18 +16,20 @@ import {
   PaginationPrevious,
 } from '@/components/ui/pagination';
 import { Switch } from '@/components/ui/switch';
+import { PATH } from '@/constants/routes';
 import { useAuthStore } from '@/stores/authStore';
 import { party } from '@/types/party';
 
 import { ChevronDown } from 'lucide-react';
+import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 
 const sortOptions: SortOption[] = [
-  { id: 'popularity', label: '인기순' },
-  { id: 'latest', label: '최신순' },
-  { id: 'capacity', label: '마감임박' },
-  { id: 'members', label: '인원순' },
+  { id: 'popular', label: '인기순' },
+  { id: 'createdAt', label: '최신순' },
+  { id: 'partyAt', label: '마감임박' },
+  { id: 'personal', label: '인원순' },
 ];
 
 const imageList = [
@@ -62,15 +64,19 @@ export default function PartyList() {
     const friendly = splitTag(params, 'friendly', 'SOCIALIZING');
     const genres = params.get('genres')?.split(',');
     const partyDate = params.get('partyDate');
+    const orderBy = params.get('sort');
+    const page = Number(params.get('page'));
     const partyAt = (partyDate && new Date(partyDate)) || new Date();
-
+    console.log('page', page);
     const res = await party.GetParties(
       {
         gameId: '',
         genres: genres || [],
         tags: [...partyStyle, ...skillLevel, ...gender, ...friendly],
       },
-      partyAt
+      partyAt,
+      page == 0 ? 1 : page,
+      orderBy ?? ''
     );
     if (!res) return;
     setParties(res.parties);
@@ -80,7 +86,7 @@ export default function PartyList() {
 
   useEffect(() => {
     fetchData(params);
-  }, [params]);
+  }, [params.toString()]);
 
   return (
     <div className="relative space-y-16 mb-24">
@@ -122,7 +128,7 @@ export default function PartyList() {
           <ChevronDown size={32} className="peer-checked:rotate-180 transition-transform" />
         </label>
         <div className="w-full max-h-[500px] duration-500 ease-in-out group-has-[input:checked]:max-h-0 group-has-[input:checked]:overflow-hidden">
-          <PartySearchComponent className="w-full group-has-[input:checked]:opacity-0 transition-all duration-300 ease-in-out" />
+          {/* <PartySearchComponent className="w-full group-has-[input:checked]:opacity-0 transition-all duration-300 ease-in-out" /> */}
         </div>
       </section>
 
@@ -138,7 +144,11 @@ export default function PartyList() {
         </div>
         <div className="grid grid-cols-3 gap-6">
           {parties.length > 0 ? (
-            parties.map((party, idx) => <PartyCard key={idx} data={party} />)
+            parties.map((party, idx) => (
+              <Link key={party.party_name + idx} href={PATH.party_detail(party.partyId)}>
+                <PartyCard key={idx} data={party} />
+              </Link>
+            ))
           ) : (
             <PartyCardSkeleton />
           )}

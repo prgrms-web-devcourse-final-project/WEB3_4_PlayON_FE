@@ -6,9 +6,11 @@ import { PATH } from '@/constants/routes';
 import { useAxios } from '@/hooks/useAxios';
 import { createPartyReq, getPartiesReq, party } from '@/types/party';
 import { getSteamImage } from './steamImg';
+
 export const useParty = () => {
   const axios = useAxios();
   const router = useRouter();
+
   async function GetParty(partyId: string | number) {
     const res = await axios.Get(PARTY_ENDPOINTS.detail(String(partyId)), {}, false);
     if (res?.status == 200) {
@@ -52,10 +54,12 @@ export const useParty = () => {
     );
     if (res && res.status == 200) {
       const data = res.data.data;
+      // console.log('raw data : ', data);
       return {
         parties: await Promise.all(
           data.items.map(async (party) => {
             return {
+              partyId: party.partyId,
               party_name: party.name,
               description: party.description,
               start_time: new Date(party.partyAt),
