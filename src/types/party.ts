@@ -35,3 +35,24 @@ export interface userScreenShot {
   author: userSimple;
   comment: string;
 }
+
+type tag = {
+  type: string;
+  value: string;
+};
+export type createPartyReq = {
+  name: string;
+  description: string;
+  partyAt: Date;
+  isPublic: boolean;
+  minimum: number;
+  maximum: number;
+  gameId: number | string;
+  tags: tag[];
+};
+
+export type getPartiesReq = {
+  gameId?: string | number;
+  genres?: string[];
+  tags?: tag[];
+};
