@@ -40,11 +40,11 @@ const createPartyFormSchema = z
     min_part: z
       .number()
       .min(2, { message: '파티 최소 인원은 2명부터 가능합니다.' })
-      .max(15, { message: '파티 최대 인원은 50명까지 가능합니다.' }),
+      .max(50, { message: '파티 최대 인원은 50명까지 가능합니다.' }),
     max_part: z
       .number()
       .min(2, { message: '파티 최소 인원은 2명부터 가능합니다.' })
-      .max(15, { message: '파티 최대 인원은 50명까지 가능합니다.' }),
+      .max(50, { message: '파티 최대 인원은 50명까지 가능합니다.' }),
     description: z.string().max(100).optional(),
     partyStyle: z.array(z.string()),
     skillLevel: z.array(z.string()),
@@ -60,7 +60,6 @@ export default function PartyCreate() {
   const dateInputRef = useRef<HTMLInputElement>(null);
   const Toast = useToast();
   const party = useParty();
-  party.GetParty('1');
   const form = useForm<z.infer<typeof createPartyFormSchema>>({
     defaultValues: {
       public: true,
@@ -75,25 +74,25 @@ export default function PartyCreate() {
     shouldFocusError: true,
   });
 
-  function onSubmit(data: z.infer<typeof createPartyFormSchema>) {
+  async function onSubmit(data: z.infer<typeof createPartyFormSchema>) {
     const reqData = {
       name: data.name,
       description: data.description || '',
       partyAt: new Date(data.date),
-      tags: ['수정필요'],
-      participation: [dummyUserSimple],
+      tags: [
+        { type: '성별', value: '남자만' },
+        { type: '성별', value: '여자만' },
+      ],
       gameId: data.game,
       minimum: data.max_part,
       maximum: data.min_part,
       isPublic: data.public,
     };
-    party.CreateParty(reqData);
-    console.log('data : ', data);
+    await party.CreateParty(reqData);
   }
 
   function errorHandler(err: object) {
     const firstError: ToastError = Object.values(err)[0];
-    console.log(firstError);
     if (firstError.ref.name == 'date') dateInputRef.current?.focus();
     if (firstError.message == 'Required') return;
     Toast.toast({
@@ -281,7 +280,7 @@ export default function PartyCreate() {
                 <button className="bg-neutral-400 text-white rounded-full w-32 mt-2 h-12 hover:bg-neutral-600 transition-colors">
                   취소
                 </button>
-                <button type="submit" onClick={() => console.log(form.formState.errors)}>
+                <button type="submit">
                   <RetroButton type="purple" className="w-60 h-12">
                     파티 생성
                   </RetroButton>

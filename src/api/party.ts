@@ -1,9 +1,13 @@
+'use client';
+
+import { useRouter } from 'next/navigation';
 import { PARTY_ENDPOINTS } from '@/constants/endpoints/party';
+import { PATH } from '@/constants/routes';
 import { useAxios } from '@/hooks/useAxios';
 import { party } from '@/types/party';
 export const useParty = () => {
   const axios = useAxios();
-
+  const router = useRouter();
   async function GetParty(partyId: string | number) {
     const res = await axios.Get(PARTY_ENDPOINTS.detail(String(partyId)), {}, false);
     if (res?.status == 200) {
@@ -52,6 +56,11 @@ export const useParty = () => {
     const res = await axios.Delete(PARTY_ENDPOINTS.reject_member(partyId, memberId), {}, true);
     console.log(res);
   }
+
+  type tag = {
+    type: string;
+    value: string;
+  };
   type createPartyReq = {
     name: string;
     description: string;
@@ -60,11 +69,14 @@ export const useParty = () => {
     minimum: number;
     maximum: number;
     gameId: number | string;
-    tags: string[];
+    tags: tag[];
   };
+
   async function CreateParty(data: createPartyReq) {
-    const res = axios.Post(PARTY_ENDPOINTS.create, { ...data }, {}, true);
-    console.log('axios response : ', res);
+    const res = await axios.Post(PARTY_ENDPOINTS.create, { ...data }, {}, true);
+    if (res && res.status == 201) {
+      router.push(PATH.party_list);
+    }
   }
   async function ModifyParty(data: party & { public: boolean; partyId: string }) {
     const res = axios.Put(
