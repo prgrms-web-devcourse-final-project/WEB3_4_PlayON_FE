@@ -1,13 +1,17 @@
-# Step 1: Build
-FROM node:20-alpine as builder
+# Dockerfile
+
+FROM node:18
+
 WORKDIR /app
-COPY . .
+
+COPY package*.json ./
 RUN npm install
+
+COPY . .
+
+COPY .env .env
+
 RUN npm run build
 
-# Step 2: Run with Next.js built-in server
-FROM node:20-alpine
-WORKDIR /app
-COPY --from=builder /app ./
 EXPOSE 3000
 CMD ["npm", "start"]
