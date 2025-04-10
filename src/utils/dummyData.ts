@@ -36,8 +36,7 @@ export const dummyUserDetail: userDetail = {
   last_login_at: new Date(),
   nickname: 'Morty',
   gender: '남자',
-  party_style: ['노멀', '도전과제', '맛보기'],
-  friendly: '게임 전용',
+  party_style: '노멀',
   skill_level: '뉴비',
   steam_id: '123456789',
   user_title: 'AdventureTime!',
@@ -125,6 +124,7 @@ export const dummyGuild: guild = {
   play_style: ['노멀', '도전과제'],
   skill_level: ['뉴비', '마스터'],
   main_game: dummyGameSimple,
+  myRole: '',
 };
 
 export const dummyGuildUser: guildUser = {

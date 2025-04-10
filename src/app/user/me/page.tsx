@@ -42,10 +42,9 @@ export default function MyPage() {
   const dummyGameArr = new Array<gameSimple>(8).fill(dummyGameSimple);
   const [selectedGame, setSelectedGame] = useState<number>(0);
   const isSteamToken = 'abc';
-  const playStyle = [...dummyUserDetail.party_style];
+  const playStyle = dummyUserDetail.party_style;
   const skillLevel = dummyUserDetail.skill_level;
   const gender = dummyUserDetail.gender;
-  const friendly = dummyUserDetail.friendly;
 
   return (
     <main>
@@ -85,11 +84,9 @@ export default function MyPage() {
                     <div className="flex items-center gap-2">
                       <p className="w-[118px] font-dgm text-neutral-900">플레이 스타일</p>
                       <div className="flex gap-2">
-                        {dummyUserDetail.party_style.map((e, ind) => (
-                          <Tag style="retro" size="small" background="dark" key={`playStyle_${ind}`}>
-                            {e}
-                          </Tag>
-                        ))}
+                        <Tag style="retro" size="small" background="dark">
+                          {playStyle}
+                        </Tag>
                       </div>
                     </div>
                     <div className="flex gap-2">
@@ -102,12 +99,6 @@ export default function MyPage() {
                       <p className="w-[118px] font-dgm text-neutral-900">성별</p>
                       <Tag style="retro" size="small" background="dark">
                         {gender}
-                      </Tag>
-                    </div>
-                    <div className="flex gap-2">
-                      <p className="w-[118px] font-dgm text-neutral-900">친목 여부</p>
-                      <Tag style="retro" size="small" background="dark">
-                        {friendly}
                       </Tag>
                     </div>
                   </div>

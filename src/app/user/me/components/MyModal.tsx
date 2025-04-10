@@ -32,7 +32,6 @@ export function EditInfo() {
     playStyle: useState(new Array(userCategories.playStyle.items.length).fill(false)),
     skillLevel: useState(new Array(userCategories.skillLevel.items.length).fill(false)),
     gender: useState(new Array(userCategories.gender.items.length).fill(false)),
-    friendly: useState(new Array(userCategories.friendly.items.length).fill(false)),
   };
   const selectedArr = Object.values(selected);
   const categoryItemStyle =
