@@ -16,7 +16,8 @@ export const useGuildsMembers = () => {
   }
 
   async function DeleteManager(guildId: string, targetMemberId: string) {
-    const response = await axios.Delete(guildMember.delete_manager(guildId), { data: { targetMemberId } }, true);
+    const response = await axios.Delete(guildMember.delete_manager(guildId),
+      { data: { targetMemberId } }, true);
     const data = response?.data;
     console.log(data);
   }
@@ -69,8 +70,8 @@ export const useGuildsMembers = () => {
     );
     const data = response?.data;
     console.log(data);
-    return data;
   }
+
 
   async function GetAdmin(guildId: string) {
     const response = await axios.Get(
