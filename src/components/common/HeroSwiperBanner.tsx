@@ -35,7 +35,7 @@ export default function HeroSwiperBanner({ data, children }: HeroSwiperBannerPro
           <SwiperSlide key={item.title}>
             <div style={{ backgroundImage: `url(${item.img_src})` }} className="size-full bg-center bg-cover">
               <div className="size-full bg-purple-600/15">
-                <div className="flex wrapper pt-5 justify-end">
+                <div className="flex wrapper pt-5 justify-end items-start">
                   <Tag size="big" style="retro" background="dark" className="py-2">
                     {item.title}
                   </Tag>
