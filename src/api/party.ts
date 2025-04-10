@@ -123,7 +123,7 @@ export const useParty = () => {
   async function CreateParty(data: createPartyReq) {
     const res = await axios.Post(PARTY_ENDPOINTS.create, { ...data }, {}, true);
     if (res && res.status == 201) {
-      router.push(PATH.party_list);
+      router.push(PATH.party_detail(res.data.data.id));
     }
   }
   async function ModifyParty(data: party & { public: boolean; partyId: string }) {
