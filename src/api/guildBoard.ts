@@ -62,7 +62,11 @@ export const useGuildBoard = () => {
     console.log(response);
   }
   async function GuildPostCommentDelete(guildId: string, boardId: string, commentId: string) {
-    const response = await axios.Delete(GUILD_BOARD_ENDPOINTS.guildPostDelete(guildId, boardId), {}, true);
+    const response = await axios.Delete(
+      GUILD_BOARD_ENDPOINTS.guildPostCommentDelete(guildId, boardId, commentId),
+      {},
+      true
+    );
     console.log(response);
   }
   async function GuildPostList(
