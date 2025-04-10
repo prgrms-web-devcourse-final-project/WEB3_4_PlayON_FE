@@ -69,9 +69,11 @@ export default function Party() {
             subtitle="구인중인 파티를 확인하고 빠르게 게임을 시작하세요"
             icon_src="./img/icons/pixel_swords.svg"
           >
-            <RetroButton type="purple" className="w-[344px] h-[48px]">
-              파티 상세 검색
-            </RetroButton>
+            <Link href={PATH.party_list}>
+              <RetroButton type="purple" className="w-[344px] h-[48px]">
+                파티 상세 검색
+              </RetroButton>
+            </Link>
           </SectionTitle>
           <div className="flex">
             <PixelCharacter char="mage" motion="attack" />
@@ -104,11 +106,10 @@ export default function Party() {
       </section>
 
       <section className="wrapper space-y-20">
-        <SectionTitle title="최신 파티 로그 살펴보기" subtitle="최근 플레이한 유저들의 플레이 기록을 보고 싶다면?">
-          <RetroButton type="purple" className="w-[344px] h-[48px]">
-            최신 파티 로그 살펴보기
-          </RetroButton>
-        </SectionTitle>
+        <SectionTitle
+          title="최신 파티 로그 살펴보기"
+          subtitle="최근 플레이한 유저들의 플레이 기록을 보고 싶다면?"
+        ></SectionTitle>
         <div className="grid grid-cols-3 gap-6">
           {dummyPartyLogList.map((partyLog, idx) => (
             <PartyLogCard key={partyLog.party_info.party_name + idx} data={partyLog} />
