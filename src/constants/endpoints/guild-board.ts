@@ -10,7 +10,7 @@ export const GUILD_BOARD_ENDPOINTS = Object.freeze({
   guildPostCreate: (guildId: number) => `/guilds/${guildId}/board`,
   guildPostLike: (guildId: number, boardId: number) => `/guilds/${guildId}/board/${boardId}/like`,
   guildPostCommentCreate: (guildId: number, boardId: number) => `/guilds/${guildId}/board/${boardId}/comments`,
-  guildNoticesPost: (guildId: string) => `/guilds/${guildId}/boards/notices`,
+  guildNoticesPost: (guildId: number) => `/guilds/${guildId}/boards/notices`,
   guildLatestPost: (guildId: number) => `/guilds/${guildId}/boards/latest`,
-  guildPostImageUpload: () => `/guilds/board/image-upload-url`,
+  guildPostImageUpload: (guildId: number, boardId: number) => `/guilds/${guildId}/board/${boardId}/img`,
 });
