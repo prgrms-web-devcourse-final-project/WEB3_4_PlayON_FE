@@ -5,6 +5,7 @@ import { useState } from 'react';
 type CapsuleCategoryMenuProps = {
   items: string[];
   multiple: boolean;
+  onSelectChange: (newSelected: boolean[]) => void;
 };
 
 export default function CapsuleCategoryMenu(props: CapsuleCategoryMenuProps) {
@@ -23,6 +24,10 @@ export default function CapsuleCategoryMenu(props: CapsuleCategoryMenuProps) {
       newSelected[0] = false;
     }
     if (index === 0) {
+      newSelected[0] = true;
+      for (let i = 1; i < newSelected.length; i++) newSelected[i] = false;
+    }
+    if (newSelected.slice(1, newSelected.length).filter((e) => !e).length <= 0) {
       newSelected[0] = true;
       for (let i = 1; i < newSelected.length; i++) newSelected[i] = false;
     }
