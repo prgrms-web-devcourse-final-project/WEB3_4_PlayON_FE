@@ -4,10 +4,11 @@ import { party } from '@/types/party';
 export const useParty = () => {
   const axios = useAxios();
 
-  async function GetParty(partyId: string | number): Promise<party> {
+  async function GetParty(partyId: string | number) {
     const res = await axios.Get(PARTY_ENDPOINTS.detail(String(partyId)), {}, false);
     if (res?.status == 200) {
       const party = res.data.data;
+      console.log(party);
       return {
         party_name: party.name,
         description: party.description,
@@ -20,7 +21,6 @@ export const useParty = () => {
         num_minimum: 0, //수정 필요
       };
     }
-    throw error('파티 로그를 불러오는데 실패했습니다.');
   }
   async function GetParties(
     partyAt?: Date,
@@ -52,23 +52,19 @@ export const useParty = () => {
     const res = await axios.Delete(PARTY_ENDPOINTS.reject_member(partyId, memberId), {}, true);
     console.log(res);
   }
-  async function CreateParty(data: party & { public: boolean }) {
-    const res = axios.Post(
-      PARTY_ENDPOINTS.create,
-      {
-        name: data.party_name,
-        description: data.description,
-        partyAt: data.start_time,
-        isPublic: true,
-        minimum: data.num_minimum && 2,
-        maximum: data.num_maximum,
-        gameId: data.selected_game,
-        tags: data.tags,
-      },
-      {},
-      true
-    );
-    console.log(res);
+  type createPartyReq = {
+    name: string;
+    description: string;
+    partyAt: Date;
+    isPublic: boolean;
+    minimum: number;
+    maximum: number;
+    gameId: number | string;
+    tags: string[];
+  };
+  async function CreateParty(data: createPartyReq) {
+    const res = axios.Post(PARTY_ENDPOINTS.create, { ...data }, {}, true);
+    console.log('axios response : ', res);
   }
   async function ModifyParty(data: party & { public: boolean; partyId: string }) {
     const res = axios.Put(
