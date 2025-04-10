@@ -1,5 +1,6 @@
 'use client';
 
+import { useParty } from '@/api/party';
 import HeroSwiperBanner from '@/components/common/HeroSwiperBanner';
 import SortRadioGroup, { SortOption } from '@/components/common/SortRadioGroup';
 import PartySearchComponent from '@/components/party/party-search-component';
@@ -19,6 +20,8 @@ import { party } from '@/types/party';
 import { dummyParty } from '@/utils/dummyData';
 
 import { ChevronDown } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
+import { useCallback, useEffect, useState } from 'react';
 
 const sortOptions: SortOption[] = [
   { id: 'popularity', label: '인기순' },
@@ -34,9 +37,50 @@ const imageList = [
 ];
 
 export default function PartyList() {
-  const dummyPartyList: party[] = Array(9).fill(dummyParty);
-  const totalPartyNum = 82;
+  const party = useParty();
+  const params = useSearchParams();
+
+  const [parties, setParties] = useState<party[]>([]);
+  const [totalPages, setTotalPage] = useState(0);
+  const [totalItems, setTotalItem] = useState(0);
+
   const userName = '홍길동';
+
+  function splitTag(params: URLSearchParams, paramName: string, type: string): { type: string; value: string }[] {
+    const raw = params.get(paramName) ?? '';
+    if (!raw) {
+      return [];
+    }
+    return raw.split(',').map((value) => ({ type: type, value: value }));
+  }
+
+  const fetchData = useCallback(async (params: URLSearchParams) => {
+    const partyStyle = splitTag(params, 'partyStyle', 'PARTY_STYLE');
+    const skillLevel = splitTag(params, 'skillLevel', 'GAME_SKILL');
+    const gender = splitTag(params, 'gender', 'GENDER');
+    const friendly = splitTag(params, 'friendly', 'SOCIALIZING');
+    const genres = params.get('genres')?.split(',');
+    const partyDate = params.get('partyDate');
+    const partyAt = (partyDate && new Date(partyDate)) || new Date();
+
+    const res = await party.GetParties(
+      {
+        gameId: '',
+        genres: genres || [],
+        tags: [...partyStyle, ...skillLevel, ...gender, ...friendly],
+      },
+      partyAt
+    );
+    if (!res) return;
+    setParties(res.parties);
+    setTotalPage(res.totalPages);
+    setTotalItem(res.totalItems);
+  }, []);
+
+  useEffect(() => {
+    fetchData(params);
+  }, [fetchData, params]);
+
   return (
     <div className="relative space-y-16 mb-24">
       <section className="w-full h-[520px] mt-16">
@@ -56,7 +100,7 @@ export default function PartyList() {
           <p className="font-dgm text-5xl">WE NEED YOU!</p>
           <div>
             <p className="text-lg leading-5">
-              전체 <span className="font-bold">{totalPartyNum}</span>개의 파티가
+              전체 <span className="font-bold">{totalItems}</span>개의 파티가
             </p>
             <p className="text-lg">
               <span className="font-bold">{userName}</span>님을 기다리고 있습니다.
@@ -92,9 +136,9 @@ export default function PartyList() {
           </div>
         </div>
         <div className="grid grid-cols-3 gap-6">
-          {dummyPartyList.map((party) => (
-            <PartyCard key={party.party_name} data={party} />
-          ))}
+          {/* {parties.map((party, idx) => (
+            <PartyCard key={idx} data={party} />
+          ))} */}
         </div>
         <Pagination>
           <PaginationContent>

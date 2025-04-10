@@ -12,11 +12,12 @@ import { FormControl, FormField, FormItem, Form } from '@/components/ui/form';
 import { SearchIcon } from 'lucide-react';
 import { DateTimePicker } from '@/components/ui/date-time-picker';
 import SelectedGameCard from '@/components/game/SelectedGameCard';
-import { dummyGameSimple } from '@/utils/dummyData';
+import { dummyGameSimple, dummyUserSimple } from '@/utils/dummyData';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { useRef } from 'react';
+import { useParty } from '@/api/party';
 type ToastError = {
   message: string;
   ref: { name: string };
@@ -38,13 +39,13 @@ const createPartyFormSchema = z
       }),
     min_part: z
       .number()
-      .min(2, { message: '파티 인원이 2명 이하입니다.' })
-      .max(15, { message: '파티 인원은 15명까지 가능합니다.' }),
+      .min(2, { message: '파티 최소 인원은 2명부터 가능합니다.' })
+      .max(50, { message: '파티 최대 인원은 50명까지 가능합니다.' }),
     max_part: z
       .number()
-      .min(2, { message: '파티 인원이 2명 이하입니다.' })
-      .max(15, { message: '파티 인원은 15명까지 가능합니다.' }),
-    desc: z.string().max(100).optional(),
+      .min(2, { message: '파티 최소 인원은 2명부터 가능합니다.' })
+      .max(50, { message: '파티 최대 인원은 50명까지 가능합니다.' }),
+    description: z.string().max(100).optional(),
     partyStyle: z.array(z.string()),
     skillLevel: z.array(z.string()),
     gender: z.array(z.string()),
@@ -56,12 +57,14 @@ const createPartyFormSchema = z
   });
 
 export default function PartyCreate() {
-  const dateInputRef = useRef(null);
+  const dateInputRef = useRef<HTMLInputElement>(null);
   const Toast = useToast();
+  const party = useParty();
   const form = useForm<z.infer<typeof createPartyFormSchema>>({
     defaultValues: {
       public: true,
       min_part: 2,
+      max_part: 50,
       partyStyle: ['전체'],
       skillLevel: ['전체'],
       gender: ['전체'],
@@ -71,15 +74,26 @@ export default function PartyCreate() {
     shouldFocusError: true,
   });
 
-  function onSubmit(data: z.infer<typeof createPartyFormSchema>) {
-    alert('성공적으로 생성했습니다.');
-    console.log('data : ', data);
+  async function onSubmit(data: z.infer<typeof createPartyFormSchema>) {
+    const reqData = {
+      name: data.name,
+      description: data.description || '',
+      partyAt: new Date(data.date),
+      tags: [
+        { type: '성별', value: '남자만' },
+        { type: '성별', value: '여자만' },
+      ],
+      gameId: data.game,
+      minimum: data.max_part,
+      maximum: data.min_part,
+      isPublic: data.public,
+    };
+    await party.CreateParty(reqData);
   }
 
   function errorHandler(err: object) {
     const firstError: ToastError = Object.values(err)[0];
-    console.log(firstError);
-    if (firstError.ref.name == 'date') dateInputRef.current.focus();
+    if (firstError.ref.name == 'date') dateInputRef.current?.focus();
     if (firstError.message == 'Required') return;
     Toast.toast({
       className: cn('border-cherry-main text-cherry-main'),
@@ -175,6 +189,8 @@ export default function PartyCreate() {
                               type="text"
                               className="absolute w-0 h-0 opacity-0 pointer-events-none peer"
                               ref={dateInputRef}
+                              value={''}
+                              readOnly
                             />
                             <div className="rounded-md ring-1 ring-transparent peer-focus:ring-1 peer-focus:ring-purple-600 transition">
                               <DateTimePicker onSelect={(date) => date && form.setValue('date', formatISO(date))} />
@@ -264,7 +280,7 @@ export default function PartyCreate() {
                 <button className="bg-neutral-400 text-white rounded-full w-32 mt-2 h-12 hover:bg-neutral-600 transition-colors">
                   취소
                 </button>
-                <button type="submit" onClick={() => console.log(form.formState.errors)}>
+                <button type="submit">
                   <RetroButton type="purple" className="w-60 h-12">
                     파티 생성
                   </RetroButton>

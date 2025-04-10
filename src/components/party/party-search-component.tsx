@@ -75,7 +75,7 @@ export default function PartySearchComponent(props: PartySearchComponentProps) {
       newSearchQuery.push('genres=' + selectedGenres.current.reduce((acc, cur) => acc + ',' + cur));
     }
     if (partyDate.current) {
-      const dateString = partyDate.current.toLocaleString();
+      const dateString = partyDate.current.toISOString();
       newSearchQuery.push(`partyDate=${dateString}`);
     }
     window.history.pushState(null, '', `${pathname}?${newSearchQuery.join('&')}`);

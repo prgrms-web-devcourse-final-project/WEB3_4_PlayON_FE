@@ -1,13 +1,18 @@
+'use client';
+
+import { useRouter, useSearchParams } from 'next/navigation';
 import { PARTY_ENDPOINTS } from '@/constants/endpoints/party';
+import { PATH } from '@/constants/routes';
 import { useAxios } from '@/hooks/useAxios';
-import { party } from '@/types/party';
+import { createPartyReq, getPartiesReq, party } from '@/types/party';
 export const useParty = () => {
   const axios = useAxios();
-
-  async function GetParty(partyId: string | number): Promise<party> {
+  const router = useRouter();
+  async function GetParty(partyId: string | number) {
     const res = await axios.Get(PARTY_ENDPOINTS.detail(String(partyId)), {}, false);
     if (res?.status == 200) {
       const party = res.data.data;
+      console.log(party);
       return {
         party_name: party.name,
         description: party.description,
@@ -20,26 +25,56 @@ export const useParty = () => {
         num_minimum: 0, //수정 필요
       };
     }
-    throw error('파티 로그를 불러오는데 실패했습니다.');
   }
   async function GetParties(
+    filter: getPartiesReq,
     partyAt?: Date,
-    params?: {
-      gameId: string | number;
-      genres: string[];
-      tags: {};
-    },
-    orderBy?: string,
     page?: number,
-    pageSize?: number
-  ) {
-    axios.Get(
-      `${PARTY_ENDPOINTS.list}/${partyAt}`,
+    orderBy?: string
+  ): Promise<{
+    parties: party[];
+    totalPages: number;
+    totalItems: number;
+  } | null> {
+    const res = await axios.Post(
+      PARTY_ENDPOINTS.list,
+      { ...filter },
       {
-        params: {},
+        params: {
+          partyAt,
+          page,
+          orderBy,
+          pageSize: 9,
+        },
       },
-      true
+      false
     );
+    if (res && res.status == 200) {
+      const data = res.data.data;
+      console.log('raw data : ', data);
+
+      console.log('파티 상세 임시 조회 ');
+
+      return {
+        parties: data.items.map(async (party) => {
+          const partyDetail = await GetParty(party.partyId);
+          return {
+            party_name: party.name,
+            description: party.description,
+            start_time: new Date(party.partyAt),
+            tags: party.partyTags.map((tag) => tag.tagValue),
+            participation: party.members,
+            selected_game: party.appId,
+            num_maximum: partyDetail?.num_maximum,
+            num_minimum: partyDetail?.num_minimum,
+          };
+        }),
+        totalPages: data.totalPages,
+        totalItems: data.totalItems,
+      };
+    }
+    console.log('로딩 중 문제가 발생했습니다.');
+    return null;
   }
   async function DeleteParty(partyId: string) {
     const res = await axios.Delete(PARTY_ENDPOINTS.cancel(partyId), {}, true);
@@ -52,23 +87,12 @@ export const useParty = () => {
     const res = await axios.Delete(PARTY_ENDPOINTS.reject_member(partyId, memberId), {}, true);
     console.log(res);
   }
-  async function CreateParty(data: party & { public: boolean }) {
-    const res = axios.Post(
-      PARTY_ENDPOINTS.create,
-      {
-        name: data.party_name,
-        description: data.description,
-        partyAt: data.start_time,
-        isPublic: true,
-        minimum: data.num_minimum && 2,
-        maximum: data.num_maximum,
-        gameId: data.selected_game,
-        tags: data.tags,
-      },
-      {},
-      true
-    );
-    console.log(res);
+
+  async function CreateParty(data: createPartyReq) {
+    const res = await axios.Post(PARTY_ENDPOINTS.create, { ...data }, {}, true);
+    if (res && res.status == 201) {
+      router.push(PATH.party_list);
+    }
   }
   async function ModifyParty(data: party & { public: boolean; partyId: string }) {
     const res = axios.Put(
