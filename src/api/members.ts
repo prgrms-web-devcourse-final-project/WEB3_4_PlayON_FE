@@ -3,9 +3,13 @@ import { MEMBER_ENDPOINTS as MEMBER } from '@/constants/endpoints/member';
 import { userDetail } from '@/types/user';
 import typeConverter from '@/utils/typeConverter';
 import { STEAM_AUTH_ENDPOINTS } from '@/constants/endpoints/steam-auth';
+import { useAuthStore } from '@/stores/authStore';
+import { useToast } from '@/hooks/use-toast';
 
 export const useMembers = () => {
   const axios = useAxios();
+  const { setUser } = useAuthStore();
+  const { toast } = useToast();
 
   async function login(username: string, password: string) {
     const response = await axios.Post(
@@ -47,6 +51,7 @@ export const useMembers = () => {
       user_title: '',
       username: data.memberDetail.username,
     };
+    console.log(data);
     return ret;
   }
   async function PutMe(
@@ -74,11 +79,12 @@ export const useMembers = () => {
     return response;
   }
   async function MyGames(count?: number) {
-    const response = await axios.Delete(
+    const response = await axios.Get(
       MEMBER.games,
       { params: { count }, headers: { 'Content-Type': 'application/json' } },
       true
     );
+    console.log(response);
     return response;
   }
   async function steamAuthSignup() {
@@ -108,10 +114,22 @@ export const useMembers = () => {
     const response = await axios.Get(STEAM_AUTH_ENDPOINTS.callback_link, { params: JSON.parse(callbackParam) }, true);
     return response;
   }
-  //보유게임 목록 갱신
+  async function logout() {
+    setUser(undefined);
+    const response = await axios.Post(STEAM_AUTH_ENDPOINTS.logout, {}, {}, true);
+    if (response && response.status === 204) {
+      toast({ title: '로그아웃 되셨습니다', description: '내일 봐!', variant: 'primary' });
+      return true;
+    }
+    return false;
+  }
   async function steamLink() {
-    const response = await axios.Post(MEMBER_ENDPOINTS.steamLinks, {}, true);
-    return response;
+    const response = await axios.Post(MEMBER.steamLinks, {}, {}, true);
+    console.log(response);
+    if (response && response.status === 200) {
+      return true;
+    }
+    return false;
   }
 
   return {
@@ -128,6 +146,7 @@ export const useMembers = () => {
     steamAuthLoginCallback,
     steamAuthLink,
     steamAuthLinkCallback,
+    logout,
     steamLink,
   };
 };

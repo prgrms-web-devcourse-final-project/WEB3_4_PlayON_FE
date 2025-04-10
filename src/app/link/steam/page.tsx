@@ -4,12 +4,11 @@ import SteamSVG from '@/components/svg/steam';
 import './style.css';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useMembers } from '@/api/members';
-import { useAuthStore } from '@/stores/authStore';
 import { useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { USER_ROUTE } from '@/constants/routes/user';
 
-export default function SignupSteam() {
+export default function LinkSteam() {
   const playOnASCII = `##########  ######      ####### ######  ######       #######    ####### #####
 ##################      #######%#############      ###########% ####### #####
 #####%###########      #########  #########      ############################
@@ -19,7 +18,7 @@ export default function SignupSteam() {
 #####      ################  ##### ######           #########  ######  ######`;
   const router = useRouter();
   const member = useMembers();
-  const { setUser } = useAuthStore();
+  const { toast } = useToast();
 
   const searchParams = useSearchParams();
   useEffect(() => {
@@ -28,13 +27,11 @@ export default function SignupSteam() {
       searchParams.forEach((value, key) => {
         params[key] = value;
       });
-      const response = await member.steamAuthSignupCallback(JSON.stringify(params));
+      const response = await member.steamAuthLinkCallback(JSON.stringify(params));
       if (response && response.status === 200) {
-        const me = await member.GetMe();
-        if (me) {
-          setUser(me);
-          router.push(USER_ROUTE.signup_userdata);
-        }
+        toast({ title: `도전과제 달성!`, description: `스팀 연동 성공!`, variant: 'primary' });
+        // setTimeout(() => router.push(USER_ROUTE.my_page), 500);
+        console.log(response);
       }
     }
     handleSteamAuth();
@@ -56,7 +53,7 @@ export default function SignupSteam() {
             </div>
           </div>
           <div className="font-dgm text-purple-400 mt-5 flex flex-col items-center dashed-border mb-10">
-            <p className="text-4xl text-purple-400 font-dgm bg-purple-900 title">회원가입 성공!</p>
+            <p className="text-4xl text-purple-400 font-dgm bg-purple-900 title">스팀 연동 성공!</p>
             <div className="flex flex-col items-center h-[500px] justify-center gap-10">
               <p className="text-4xl text-purple-400 font-dgm bg-purple-900">스팀 인증에 성공하셨습니다</p>
               <SteamSVG fill="#8c6af0" stroke="" width={200} height={200} />
