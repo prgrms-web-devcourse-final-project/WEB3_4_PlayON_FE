@@ -1,5 +1,6 @@
 'use client';
 
+import { useGuildBoard } from '@/api/guildBoard';
 import UserInfoHorizontal from '@/app/party/components/UserInfoHorizontal';
 import Tag from '@/components/common/Tag';
 import CommentCard from '@/components/community/comment-card';
@@ -13,6 +14,8 @@ import { guild } from '@/types/guild';
 import { dummyGuild, dummyPost } from '@/utils/dummyData';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ChevronDown, ChevronUp, Eye, SquarePen, ThumbsUp, Trash2 } from 'lucide-react';
+import { useParams } from 'next/navigation';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -26,12 +29,18 @@ export default function Community() {
   const form = useForm<z.infer<typeof commentSchema>>({
     resolver: zodResolver(commentSchema),
   });
-
   function onSubmit(data: CommentType) {
     console.log(data);
   }
   const post: post = dummyPost;
   const guild: guild = dummyGuild;
+
+  // const guildBoard = useGuildBoard();
+  // const param = useParams();
+  // const guildId = param.guildid[0];
+  // const boardId = param.postid[0];
+  // console.log(guildId, boardId);
+
   return (
     <div className="wrapper relative mb-12 mt-28">
       <div>

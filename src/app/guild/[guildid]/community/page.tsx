@@ -1,3 +1,5 @@
+'use client';
+
 import SortRadioGroup, { SortOption } from '@/components/common/SortRadioGroup';
 import CommunityPostImageLong from '@/components/community/post-image-long';
 import WeNeedYou from '@/components/guild/guild-we-need-you';
@@ -13,15 +15,56 @@ import {
 import { post } from '@/types/community';
 import { guild } from '@/types/guild';
 import { dummyGuild, dummyPost } from '@/utils/dummyData';
+import { useEffect } from 'react';
+import { useGuildBoard } from '@/api/guildBoard';
+import { useSearchParams, usePathname, useParams } from 'next/navigation';
+import typeConverter from '@/utils/typeConverter';
+import { guildCommunityTags } from '@/types/Tags/communityTags';
 
 const sortOptions: SortOption[] = [
-  { id: 'latest', label: '최신순' },
-  { id: 'popularity', label: '인기순' },
+  { id: 'LATEST', label: '최신순' },
+  { id: 'POPULAR', label: '인기순' },
 ];
 
 export default function Community() {
   const postList: post[] = Array(5).fill(dummyPost);
   const guild: guild = dummyGuild;
+
+  const guildBoards = useGuildBoard();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const params = useParams();
+  const guildId = params.guildid[0];
+
+  useEffect(() => {
+    // searchParams.forEach((value, key) => {
+    //   console.log(`${key} : ${value}`);
+    // });
+    function convertTag(tag: string) {
+      if (tag === '공지') return 'NOTICE';
+      if (tag === '자유') return 'FREE';
+      if (tag === '게임관련') return 'GAMES';
+      return '';
+    }
+    async function fetchPosts() {
+      const data = {};
+      const tag = searchParams.get('tag');
+      const keyword = searchParams.get('search');
+      const page = 0;
+      const pageSize = 10;
+      const sort = searchParams.get('sort');
+
+      if (tag && tag !== '전체') Object.assign(data, { tag: convertTag(tag) });
+      if (keyword) Object.assign(data, { keyword });
+      if (page !== null) Object.assign(data, { page });
+      if (pageSize) Object.assign(data, { pageSize });
+      if (sort) Object.assign(data, { sort });
+
+      const posts = await guildBoards.GuildPostList(guildId, data);
+      console.log(posts);
+    }
+    fetchPosts();
+  }, [guildBoards, guildId, searchParams]);
 
   return (
     <div className="wrapper relative mb-12 mt-28">
