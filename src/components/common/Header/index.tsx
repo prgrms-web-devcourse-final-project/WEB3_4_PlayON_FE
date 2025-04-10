@@ -62,10 +62,9 @@ export default function Header() {
       setUser(user);
       return;
     }
-    // const token = Cookies().get('accessToken');
-    // if (!token) {
-    //   return;
-    // }
+    if (!document.cookie.includes('accessToken=')) {
+      return;
+    }
     const fetchUserInfo = async () => {
       try {
         const userInfo = await member.GetMe();
