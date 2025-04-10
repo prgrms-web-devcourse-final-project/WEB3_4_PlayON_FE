@@ -12,25 +12,23 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 import { LogOut, User } from 'lucide-react';
-import { userSimple } from '@/types/user';
+import { userDetail } from '@/types/user';
 import Link from 'next/link';
 import { useAuthStore } from '@/stores/authStore';
 import { useMembers } from '@/api/members';
+import GhostSVG from '@/components/svg/ghost_fill';
+import { PATH } from '@/constants/routes';
 
 type Props = {
-  userInfo: userSimple;
+  userInfo: userDetail;
 };
 export default function UserInfoLogin({ userInfo }: Props) {
   const { logout } = useAuthStore();
   const member = useMembers();
   const clearUserStorage = useAuthStore.persist.clearStorage;
-  const unsub = useAuthStore.persist.onFinishHydration((state) => {
-    console.log('hydration finished');
-  });
   const handleLogout = async () => {
     await member.logout();
     clearUserStorage();
-    unsub();
     logout();
     //추후 수정 필요
     window.location.reload();
@@ -46,15 +44,19 @@ export default function UserInfoLogin({ userInfo }: Props) {
               <span>{userInfo.nickname}</span>님
             </p>
           </div>
-          <Avatar className="w-8 aspect-square rounded-full overflow-hidden">
+          <Avatar className="w-8 aspect-square rounded-full overflow-hidden bg-purple-400">
             <AvatarImage src={userInfo.img_src} alt="프로필 이미지" />
-            <AvatarFallback className="text-center">{userInfo.nickname}</AvatarFallback>
+            <AvatarFallback className="flex items-end justify-center">
+              <div className="animate-bounce duration-1000 mt-2 ">
+                <GhostSVG fill="#FFFFFF" stroke="" width={20} />
+              </div>
+            </AvatarFallback>
           </Avatar>
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" sideOffset={12}>
         <DropdownMenuGroup>
-          <Link href="/user/me">
+          <Link href={PATH.my_page}>
             <DropdownMenuItem>
               <User /> 마이페이지
             </DropdownMenuItem>

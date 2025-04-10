@@ -69,7 +69,6 @@ export const useGuildsMembers = () => {
     );
     const data = response?.data;
     console.log(data);
-    return data;
   }
 
   async function GetAdmin(guildId: string) {
