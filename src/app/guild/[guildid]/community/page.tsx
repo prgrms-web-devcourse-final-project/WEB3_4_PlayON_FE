@@ -60,7 +60,7 @@ export default function Community() {
       if (pageSize) Object.assign(data, { pageSize });
       if (sort) Object.assign(data, { sort });
 
-      const posts = await guildBoards.GuildPostList(guildId, data);
+      const posts = await guildBoards.GuildPostList(parseInt(guildId), data);
       console.log(posts);
     }
     fetchPosts();
