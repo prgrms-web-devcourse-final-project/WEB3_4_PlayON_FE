@@ -75,8 +75,9 @@ export const useGuild = () => {
       },
       true
     );
+    console.log(response);
     const data = response?.data.data.items;
-    // console.log(data);
+    console.log(data);
     if (data && data.length > 0) {
       const guildList: guild[] = data.map((item: GuildSimple) => {
         const tags = categorizeTags(item.tags);
@@ -94,8 +95,13 @@ export const useGuild = () => {
           friendly: tags.friendly,
         };
       });
-      console.log(guildList);
-      return guildList;
+      return {
+        currentPageNumber: response.data.data.currentPageNumber,
+        pageSize: response.data.data.pageSize,
+        totalItems: response.data.data.totalItems,
+        totalPages: response.data.data.totalPages,
+        guildList: guildList,
+      };
     }
     console.log('데이터가 없습니다.');
     return null;
@@ -189,6 +195,7 @@ export const useGuild = () => {
     const response = await axios.TypedGet<GuildDetailMemberResponse>(GUILD.detail_member(guildId), {}, true);
     const data = response?.data;
     console.log(data);
+    return data;
   }
 
   async function UploadImageURL(guildId: string, url: string) {

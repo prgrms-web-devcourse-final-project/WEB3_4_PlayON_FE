@@ -6,7 +6,7 @@ import { useGuildJoin } from '@/api/guildJoin';
 import UserApprove from '@/app/party/components/UserApprove';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { AdditionalInfo, GuildCreateRequest, GuildUpdateRequest } from '@/types/guildApi';
+import { AdditionalInfo, GuildCreateRequest, GuildLIstRequest, GuildUpdateRequest } from '@/types/guildApi';
 import { ChangeEvent, useState } from 'react';
 
 export default function Test() {
@@ -48,6 +48,24 @@ export default function Test() {
     ],
   };
 
+  const guildListRequestData: GuildLIstRequest = {
+    name: '테스트',
+    appids: [],
+    tags: [
+      { type: '파티 스타일', value: '전체' },
+      { type: '게임 실력', value: '전체' },
+      { type: '성별', value: '전체' },
+      { type: '친목', value: '전체' },
+    ],
+  };
+
+  const handleChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setImage(e.target.files[0]);
+      console.log(e.target.files[0]);
+    }
+  };
+
   const createGuild = async () => {
     await Guild.CreateGuildWithImg(newData_create, image);
     // console.log(response);
@@ -57,11 +75,14 @@ export default function Test() {
     // console.log(response);
   };
 
-  const handleChange = async (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setImage(e.target.files[0]);
-      console.log(e.target.files[0]);
-    }
+  const getGuildList = async () => {
+    const response = await Guild.GetGuildList(guildListRequestData, 0);
+    console.log(response);
+  };
+  const getGuildMembers = async () => {
+    const response = await Guild.GetGuildMembers('33');
+    console.log(response);
+    // console.log(typeof response[0].memberId);
   };
 
   //  GuildJoin -----------------------------------------------
@@ -156,6 +177,12 @@ export default function Test() {
           </Button>
           <Button onClick={updateGuild} className="bg-purple-400">
             53번 길드 수정
+          </Button>
+          <Button onClick={getGuildList} className="bg-purple-500">
+            길드 리스트 보기
+          </Button>
+          <Button onClick={getGuildMembers} className="bg-purple-500">
+            길드 멤버 보기
           </Button>
         </div>
         <div className="inline-flex flex-col gap-5 mt-6 border border-neutral-300 p-4">
