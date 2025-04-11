@@ -4,3 +4,21 @@
   background-size: contain;
   padding-top: 140px;
 }
+
+.chatBubble {
+  position: relative;
+}
+.chatBubble::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border: 14px solid transparent;
+  border-top-color: #8258ff;
+  border-top-width: 16px;
+  border-bottom: 0;
+  margin-left: -14px;
+  margin-bottom: -8px;
+}

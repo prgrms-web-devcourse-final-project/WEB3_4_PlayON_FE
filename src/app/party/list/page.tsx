@@ -7,21 +7,14 @@ import SortRadioGroup, { SortOption } from '@/components/common/SortRadioGroup';
 import PartySearchComponent from '@/components/party/party-search-component';
 import PartyCard, { PartyCardSkeleton } from '@/components/party/PartyCard';
 import { Label } from '@/components/ui/label';
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from '@/components/ui/pagination';
 import { Switch } from '@/components/ui/switch';
 import { PATH } from '@/constants/routes';
 import { useAuthStore } from '@/stores/authStore';
 import { party } from '@/types/party';
+import styles from '@/app/party/[partyid]/partyDetail.module.css';
 
 import { ChevronDown } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
@@ -114,12 +107,6 @@ export default function PartyList() {
           </div>
         </div>
       </div>
-      <div className="fixed right-14 top-[600px] z-50">
-        <button className="rounded-full size-16 bg-neutral-300 text-neutral-700" onClick={() => alert('click!')}>
-          생성
-        </button>
-      </div>
-
       <section className="relative wrapper group space-y-6 min-h-16">
         <label className="inline-flex gap-8 items-center">
           <input type="checkbox" className="peer hidden" />
@@ -153,6 +140,23 @@ export default function PartyList() {
           )}
         </div>
         {totalItems > 9 && <CustomPagination totalItems={totalItems} pageSize={9} />}
+        <div className="fixed right-8 bottom-8 z-50 animate-bounce delay-150">
+          <Link href={PATH.party_create} className="relative group">
+            <p
+              className={`${styles.chatBubble} opacity-0 translate-y-12 transition-all duration-300 
+    text-white text-center font-dgm bg-purple-500 py-2 px-3 shadow-md rounded-lg
+    group-hover:opacity-100 group-hover:translate-y-0 group-hover:rotate-6 mb-2 -translate-x-3
+  `}
+            >
+              파티 만들기
+            </p>
+            <img
+              className="group-hover:scale-[120%] group-hover:-rotate-12 transition-all w-[98px]"
+              src="/img/3d_object/game_pad.png"
+              alt="game pad"
+            />
+          </Link>
+        </div>
       </section>
     </div>
   );
