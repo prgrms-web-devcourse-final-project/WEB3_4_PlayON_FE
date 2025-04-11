@@ -40,7 +40,7 @@ export const useGuild = () => {
       console.log(guildDetail);
       return guildDetail;
     }
-    throw Error;
+    return false;
   }
 
   async function UpdateGuild(guildId: string, newData: GuildUpdateRequest) {
@@ -198,9 +198,23 @@ export const useGuild = () => {
 
   async function GetGuildMembers(guildId: string) {
     const response = await axios.TypedGet<GuildDetailMemberResponse>(GUILD.detail_member(guildId), {}, true);
+    console.log(response);
     const data = response?.data;
     console.log(data);
-    return data;
+    if (response && data && data.length > 0) {
+      const guildMemberList = data.map((member) => {
+        return {
+          username: member.username,
+          title: member.title,
+          role: member.role,
+          img_src: member.profileImg || 'https://placehold.co/200',
+          member_id: member.memberId,
+          joined_at: new Date(member.joinedAt),
+        };
+      });
+      return guildMemberList;
+    }
+    return false;
   }
 
   async function UploadImageURL(guildId: string, url: string) {

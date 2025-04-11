@@ -27,3 +27,15 @@ export interface comment {
   content: string;
   createdAt: Date;
 }
+
+export interface postSimple {
+  postId: number;
+  author_nickname: string;
+  author_img: string;
+  title: string;
+  content: string;
+  img_src: string;
+  num_likes: number;
+  comments_num: number;
+  tag: string;
+}

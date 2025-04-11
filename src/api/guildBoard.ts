@@ -1,5 +1,6 @@
 import { GUILD_BOARD_ENDPOINTS } from '@/constants/endpoints/guild-board';
 import { useAxios } from '@/hooks/useAxios';
+import { postSimple } from '@/types/community';
 import { uploadToS3 } from '@/utils/uploadToS3';
 // import { guildCommunityTags } from '@/types/Tags/communityTags';
 
@@ -211,7 +212,22 @@ export const useGuildBoard = () => {
   async function GuildNoticesPost(guildId: number) {
     const response = await axios.Get(GUILD_BOARD_ENDPOINTS.guildNoticesPost(guildId), {}, true);
     if (response && response.status === 200) {
-      return response.data.data as noticesPost[];
+      // return response.data.data as noticesPost[];
+      const data = response.data.data as noticesPost[];
+      const postData = data.map((post) => {
+        return {
+          postId: post.id,
+          author_nickname: post.authorNickname,
+          author_img: post.authorAvatar,
+          title: post.title,
+          content: post.content,
+          img_src: post.imageUrl,
+          num_likes: post.likeCount,
+          comments_num: post.commentCount,
+          tag: '공지',
+        };
+      });
+      return postData as postSimple[];
     }
     return false;
   }
@@ -219,7 +235,22 @@ export const useGuildBoard = () => {
   async function GuildLatestPost(guildId: number) {
     const response = await axios.Get(GUILD_BOARD_ENDPOINTS.guildLatestPost(guildId), {}, true);
     if (response && response.status === 200) {
-      return response.data.data as noticesPost;
+      // return response.data.data as noticesPost[];
+      const data = response.data.data as noticesPost[];
+      const postData = data.map((post) => {
+        return {
+          postId: post.id,
+          author_nickname: post.authorNickname,
+          author_img: post.authorAvatar,
+          title: post.title,
+          content: post.content,
+          img_src: post.imageUrl,
+          num_likes: post.likeCount,
+          comments_num: post.commentCount,
+          tag: '자유',
+        };
+      });
+      return postData as postSimple[];
     }
     return false;
   }

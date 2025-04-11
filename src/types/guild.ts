@@ -25,3 +25,12 @@ export interface guildUser {
   joined_at: Date;
   num_guild_posts: number;
 }
+
+export interface guildUserSimple {
+  username: string;
+  title: string | null;
+  role: string;
+  img_src: string;
+  member_id: number;
+  joined_at: Date;
+}

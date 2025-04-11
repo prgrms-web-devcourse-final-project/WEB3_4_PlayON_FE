@@ -1,12 +1,13 @@
-import { post } from '@/types/community';
-
+import { postSimple } from '@/types/community';
 import { ThumbsUpIcon, SubtitlesIcon } from 'lucide-react';
 import AvatarName, { AvatarNameSkeleton } from './common/avatar-name';
 import { Skeleton } from '../ui/skeleton';
 import Tag from '@/components/common/Tag';
+import { PATH } from '@/constants/routes';
+import { useRouter } from 'next/navigation';
 
 type CommunityPostImageShortProps = {
-  data: post;
+  data: postSimple;
   className: string;
 };
 
@@ -31,11 +32,15 @@ export function CommunityPostImageShortSkeleton(props: { className: string }) {
 }
 
 export default function CommunityPostImageShort(props: CommunityPostImageShortProps) {
+  const router = useRouter();
   return (
-    <div className={`flex gap-5 p-5 rounded-xl border border-neutral-300 ` + props.className}>
+    <div
+      className={`flex gap-5 p-5 rounded-xl border border-neutral-300 ` + props.className}
+      onClick={() => router.push(PATH.community_detail(String(props.data.postId)))}
+    >
       <img src={props.data.img_src} alt="Loading" className="object-cover h-full aspect-[1/1] rounded-xl" />
-      <div className="flex flex-col justify-between">
-        <AvatarName userName={props.data.user.nickname} avatar={props.data.user.img_src} />
+      <div className="flex flex-col justify-between w-full">
+        <AvatarName userName={props.data.author_nickname} avatar={props.data.author_img} />
         <p className="text-xl font-suit font-bold">{props.data.title}</p>
         <p className="text-base font-suit line-clamp-2 text-justify ">{props.data.content}</p>
         <div className="flex justify-between">
@@ -51,7 +56,7 @@ export default function CommunityPostImageShort(props: CommunityPostImageShortPr
             </div>
             <div className="flex items-center gap-1">
               <SubtitlesIcon className="text-neutral-400 w-4 h-4 stroke" />
-              <p className="font-suit text-sm font-medium text-neutral-400">{props.data.comments.length}</p>
+              <p className="font-suit text-sm font-medium text-neutral-400">{props.data.comments_num}</p>
             </div>
           </div>
         </div>
