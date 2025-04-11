@@ -1,6 +1,7 @@
 import { useAxios } from './useAxios';
 import SockJS from 'sockjs-client';
-import { Stomp } from '@stomp/stompjs';
+import { Frame, Stomp } from '@stomp/stompjs';
+import { CHAT_ENDPOINTS } from '@/constants/endpoints/chat-room';
 
 export const useStomp = () => {
   const axios = useAxios();
@@ -15,20 +16,14 @@ export const useStomp = () => {
     message: string;
     sendAt: Date;
   };
-  type ChatMemberDTO = {
-    memberId: number;
-    nickname: string;
-    profileImg: string;
-  };
 
   async function JoinRequest(partyId: number, xuserid: number) {
     const response = await axios.Post(
-      `/chat/enter/${partyId}`,
+      CHAT_ENDPOINTS.join(partyId),
       {},
       { headers: { 'Content-Type': 'application/json', 'X-USER-ID': xuserid } },
       true
     );
-    console.log(response);
     if (response && response.status === 200) {
       return {
         partyRoomId: response.data.partyRoomId,
@@ -48,12 +43,11 @@ export const useStomp = () => {
   }
   async function LeaveRequest(partyId: number, xuserid: number) {
     const response = await axios.Post(
-      `/api/chat/leave/${partyId}`,
+      CHAT_ENDPOINTS.leave(partyId),
       {},
       { headers: { 'Content-Type': 'application/json', 'X-USER-ID': xuserid } },
       true
     );
-    console.log(response);
     if (response && response.status === 200) {
       return true;
     }
@@ -62,19 +56,15 @@ export const useStomp = () => {
   async function Connect(partyId: number) {
     stompClient.connect(
       {},
-      function (frame) {
+      function (frame: Frame) {
         console.log('🟢 STOMP 연결됨');
 
         // STOMP 구독
-        stompClient.subscribe(`/topic/chat/party/${partyId}`, function (msg) {
+        stompClient.subscribe(CHAT_ENDPOINTS.subscribe_message(partyId), function (msg) {
           console.log('📥 메시지: ' + msg.body);
         });
-
-        stompClient.subscribe(`/topic/chat/party/${partyId}/members`, function (msg) {
-          console.log('👥 멤버 갱신: ' + msg.body);
-        });
       },
-      function (error) {
+      function (error: Frame | string) {
         console.error('❌ STOMP 연결 실패: ' + error);
       }
     );
@@ -104,87 +94,3 @@ export const useStomp = () => {
     SendMessage,
   };
 };
-
-// function enterAndConnect() {
-//   const partyId = document.getElementById("partyId").value;
-//   userId = document.getElementById("userId").value;  // 사용자 ID를 전역 변수에 할당
-//   memberId = userId;  // memberId는 사용자 ID와 동일하게 설정
-
-//   fetch(`http://localhost:8080/api/chat/enter/${partyId}`, {
-//       method: "POST",
-//       headers: {
-//           "Content-Type": "application/json",
-//           "X-USER-ID": userId   // 👉 백엔드에서 사용 시 커스텀 헤더로 처리 가능
-//       }
-//   })
-//       .then(res => res.json())
-//       .then(data => {
-//           log("✅ 입장 성공: " + JSON.stringify(data));
-//           connectStomp(partyId);
-//       })
-//       .catch(err => {
-//           log("❌ 입장 실패: " + err);
-//       });
-// }
-
-// function connectStomp(partyId) {
-//   const socket = new SockJS("http://localhost:8080/ws");  // WebSocket URL
-//   stompClient = Stomp.over(socket);
-
-//   stompClient.connect({}, function (frame) {
-//       log("🟢 STOMP 연결됨");
-
-//       // STOMP 구독
-//       stompClient.subscribe(`/topic/chat/party/${partyId}`, function (msg) {
-//           log("📥 메시지: " + msg.body);
-//       });
-
-//       stompClient.subscribe(`/topic/chat/party/${partyId}/members`, function (msg) {
-//           log("👥 멤버 갱신: " + msg.body);
-//       });
-//   }, function (error) {
-//       log("❌ STOMP 연결 실패: " + error);
-//   });
-// }
-
-// function disconnect() {
-//   const partyId = document.getElementById("partyId").value;
-
-//   // 먼저 퇴장 요청
-//   fetch(`http://localhost:8080/api/chat/leave/${partyId}`, {
-//       method: "POST",
-//       headers: {
-//           "Content-Type": "application/json",
-//           "X-USER-ID": userId
-//       }
-//   })
-//       .then(res => {
-//           if (!res.ok) throw new Error("퇴장 실패");
-//           log("🚪 퇴장 요청 완료");
-//       })
-//       .catch(err => {
-//           log("❌ 퇴장 요청 실패: " + err);
-//       })
-//       .finally(() => {
-//           // STOMP 연결 해제
-//           if (stompClient) {
-//               stompClient.disconnect(() => {
-//                   log("🔴 STOMP 연결 해제됨");
-//               });
-//           }
-//       });
-// }
-
-// function sendMessage() {
-//   const partyId = document.getElementById("partyId").value;
-//   const message = document.getElementById("messageInput").value;
-
-//   if (!stompClient || !stompClient.connected) {
-//       log("❌ STOMP 연결이 안 됨! 메시지를 보낼 수 없음.");
-//       return;
-//   }
-
-//   console.log("멤버 ID", memberId)
-//   stompClient.send(`/app/chat.send/${partyId}/member/${memberId}`, {}, JSON.stringify(message));
-//   log("📤 보낸 메시지: " + JSON.stringify(messagePayload));
-// }
