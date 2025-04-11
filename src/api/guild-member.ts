@@ -4,6 +4,7 @@ import { useAxios } from '@/hooks/useAxios';
 export const useGuildsMembers = () => {
   const axios = useAxios();
 
+  // 매니저 권한 부여
   async function PutManager(guildId: string, targetMemberId: string) {
     const response = await axios.Put(
       guildMember.select_manager(guildId),
@@ -15,6 +16,7 @@ export const useGuildsMembers = () => {
     console.log(data);
   }
 
+  // 매니저 권한 회수
   async function DeleteManager(guildId: string, targetMemberId: string) {
     const response = await axios.Delete(guildMember.delete_manager(guildId),
       { data: { targetMemberId } }, true);
@@ -22,26 +24,26 @@ export const useGuildsMembers = () => {
     console.log(data);
   }
 
-  async function InviteMembers(guildId: string, nickname: string) {
+  // 길드 멤버 초대
+  async function InviteMembers(guildId: string, username: string) {
     try {
       const response = await axios.Post(
         guildMember.invite(guildId),
-        { guildId: guildId, nickname: nickname },
+        { guildId: guildId, username: username },
         { headers: { 'Content-Type': 'application/json' } },
         true
       );
       if (response?.status === 200) {
-        const data = response?.data;
+        const data = response;
         console.log('성공 응답', data);
         return data;
       }
     } catch (err: any) {
-      // console.log('에러 발생1', err.response?.data);
       console.log('에러 발생2', err.response);
-      // return err.response?.data;
     }
   }
 
+  // 길드 멤버 리스트
   async function GetMembers(guildId: string) {
     try {
       const response = await axios.Get(
@@ -54,17 +56,17 @@ export const useGuildsMembers = () => {
       if (response?.status === 200) {
         const data = response.data;
         console.log('성공 응답1', data);
-        // console.log('성공 응답2', data.data);
         return data;
       }
     } catch (err: any) {
       console.log('에러 발생2', err.response);
     }
   }
+
+  // 멤버 퇴출
   async function DeleteMembers(guildId: string, targetMemberId: string) {
     const response = await axios.Delete(
       guildMember.delete_member(guildId),
-      // { params: { guildId: guildId }, data: { targetMemberId: targetMemberId } },
       { data: { targetMemberId } },
       true
     );
@@ -73,6 +75,7 @@ export const useGuildsMembers = () => {
   }
 
 
+  // 길드 관리페이지 길드정보
   async function GetAdmin(guildId: string) {
     const response = await axios.Get(
       guildMember.get_admin(guildId),
@@ -86,6 +89,7 @@ export const useGuildsMembers = () => {
     return data;
   }
 
+  // 길드 탈퇴
   async function LeaveMembers(guildId: string, newLeaderId: string) {
     const response = await axios.Delete(
       guildMember.leave(guildId),
@@ -99,25 +103,7 @@ export const useGuildsMembers = () => {
     console.log(data);
     console.log('호출');
   }
-  // async function LeaveMembers2(guildId: string, newLeaderId: string) {
-  //   try {
-  //     const response = await axios.Delete(
-  //       guildMember.leave(guildId),
-  //       {
-  //         params: { guildId },
-  //         data: { newLeaderId },
-  //       },
-  //       true
-  //     );
-  //     console.log('성공 응답', response?.data);
-  //     return response?.data;
-  //   } catch (error: any) {
-  //     console.log('에러 발생1', error.response?.data);
-  //     console.log('에러 발생2', error.response);
-  //     // console.log('에러 발생3', response.data);
-  //     return error.response?.data;
-  //   }
-  // }
+
 
   return { PutManager, DeleteManager, GetMembers, InviteMembers, DeleteMembers, GetAdmin, LeaveMembers };
 };

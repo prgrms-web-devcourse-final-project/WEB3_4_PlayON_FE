@@ -10,13 +10,11 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { PATH } from '@/constants/routes';
 import { useMembers } from '@/api/members';
 import { useToast } from '@/hooks/use-toast';
 import { useAuthStore } from '@/stores/authStore';
-import typeConverter from '@/utils/typeConverter';
-import { uploadToS3 } from '@/utils/uploadToS3';
 
 const loginSchema = z.object({
   email: z.string().min(1, { message: '아이디를 입력해주세요' }),
@@ -72,22 +70,6 @@ export default function LoginInitial() {
 
   return (
     <div className="bg-purple-900 text-purple-400 w-full h-screen flex flex-col items-center mt-[68px]">
-      <button
-        onClick={async () => {
-          const response = members.steamLink();
-          console.log(response);
-        }}
-      >
-        click me
-      </button>
-      <button
-        onClick={async () => {
-          const response = members.GetMe();
-          console.log(response);
-        }}
-      >
-        click me
-      </button>
       <div className="overlay pointer-events-none"></div>
       <div className="scanline pointer-events-none"></div>
       <div className="scrollanimation">

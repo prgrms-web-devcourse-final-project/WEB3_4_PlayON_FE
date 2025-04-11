@@ -13,6 +13,7 @@ export default function Test() {
   const newData_create: GuildCreateRequest = {
     name: '최종 테스트12 이미지 있음',
     description: '테스트입니다.',
+    
     maxMembers: 3,
     isPublic: true,
     appid: 1,

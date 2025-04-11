@@ -71,6 +71,16 @@ export interface GuildDetailMember {
   joinedAt: string;
 }
 
+export interface GuildJoinRequest {
+  approvalState: 'PENDING' | 'APPROVED' | 'REJECTED';
+  memberId: number;
+  profileImg: string | null;
+  requestId: number;
+  requestedAt: string;
+  titleName: string;
+  username: string;
+}
+
 export interface GuildDetailResponse {
   msg: string;
   resultCode: string;
@@ -116,3 +126,16 @@ export interface GuildDetailMemberResponse {
   msg: string;
   data: GuildDetailMember[];
 }
+
+export interface GuildJoinRequestsResponse {
+  resultCode: string;
+  msg: string;
+  data: GuildJoinRequest[];
+}
+
+export type AdditionalInfo = userSimple & {
+  memberId: number;
+  requestId: number;
+  requestedAt: Date;
+  approvalState: string;
+};
