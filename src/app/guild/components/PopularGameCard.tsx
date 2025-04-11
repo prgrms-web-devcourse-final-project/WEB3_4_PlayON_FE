@@ -1,3 +1,4 @@
+import { PATH } from '@/constants/routes';
 import { cn } from '@/lib/utils';
 import { gameSimple } from '@/types/games';
 import { useRouter } from 'next/navigation';
@@ -15,7 +16,7 @@ export function PopularGameCard({ data, size }: PopularGameCardProps) {
         backgroundImage: `url(${data.img_src})`,
       }}
       className="w-full h-full bg-center bg-cover rounded-lg overflow-hidden cursor-pointer"
-      onClick={() => router.push('#')}
+      onClick={() => router.push(`${PATH.guild_list}?game=`)}
     >
       <div
         className={cn('w-full h-full bg-gradient-to-t from-black/50 to-black/0  flex items-end hover:from-black/30', {

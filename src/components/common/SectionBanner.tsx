@@ -19,7 +19,10 @@ export default function SectionBanner({
 }: SectionBannerProps) {
   return (
     <div
-      className={cn('w-full h-60 bg-purple-500 rounded-xl px-16 py-12 flex items-center justify-between', className)}
+      className={cn(
+        'w-full h-60 bg-purple-500 rounded-xl px-16 py-12 flex items-center justify-between cursor-pointer',
+        className
+      )}
       onClick={onClick}
     >
       <div className={`flex flex-col h-full ${introText ? 'justify-between' : 'justify-center'}`}>
