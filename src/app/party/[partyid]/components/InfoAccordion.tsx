@@ -130,12 +130,11 @@ export default function InfoAccordion() {
 function PartyHostInfo({ partyHost }: { partyHost: userSimple }) {
   return (
     <div className="flex gap-3 border-b border-white/20 pb-8">
-      <Avatar id="createdUser" className="bg-purple-400 w-20 h-20 aspect-square rounded-full overflow-hidden">
-        <AvatarImage src={partyHost.img_src} />
-        <AvatarFallback className="flex items-end justify-center w-full">
-          <GhostSVG fill="#FFFFFF" stroke="" width={40} />
-        </AvatarFallback>
-      </Avatar>
+      <Link href={PATH.user_page(partyHost.memberId)}>
+        <Avatar id="createdUser" className="bg-purple-400 w-20 h-20 aspect-square rounded-full overflow-hidden">
+          <AvatarImage src={partyHost.img_src || '/img/dummy_profile.jpg'} />
+        </Avatar>
+      </Link>
       <div>
         <span className="text-sm text-neutral-600">{partyHost.user_title}</span>
         <p className="text-2xl font-extrabold">{partyHost.nickname}님의 파티</p>
@@ -184,12 +183,9 @@ function ParticipationInfo() {
         <div className="flex gap-3 items-center">
           {partyInfo.participation.map((member, idx) =>
             idx < 8 ? (
-              <Link key={idx} href={`user/${member.username}`} target="_blank">
+              <Link key={idx} href={`user/${member.memberId}`} target="_blank">
                 <Avatar className="bg-purple-400 w-12 h-12 aspect-square rounded-full overflow-hidden">
-                  <AvatarImage src={member.img_src} />
-                  <AvatarFallback className="flex items-end justify-center w-full">
-                    <GhostSVG fill="#FFFFFF" stroke="" width={24} />
-                  </AvatarFallback>
+                  <AvatarImage src={member.img_src || '/img/dummy_profile.jpg'} />
                 </Avatar>
               </Link>
             ) : null
