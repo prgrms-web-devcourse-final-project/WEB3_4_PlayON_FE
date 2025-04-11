@@ -75,7 +75,7 @@ export const useParty = () => {
           pageSize: 9,
         },
       },
-      false
+      true
     );
     if (res && res.status == 200) {
       const data = res.data.data;
@@ -160,12 +160,18 @@ export const useParty = () => {
     const res = await axios.Get(PARTY_ENDPOINTS.result(partyId), {}, false);
     console.log(res);
   }
-  async function PendingPartyJoin(partyId: string) {
+  async function GetPendingList(partyId: string) {
     const res = await axios.Get(PARTY_ENDPOINTS.pending(partyId), {}, false);
-    console.log(res);
+    if (res && res.status == 200) {
+      return res.data.data.partyMembers;
+    }
+    console.log('로딩 중 문제가 발생했습니다.');
+    return null;
   }
 
   // 메인 페이지용 요청
+  async function PartyMainPending(limit: number) {}
+
   return {
     GetParty,
     GetParties,
@@ -177,6 +183,6 @@ export const useParty = () => {
     PartyJoin,
     PartyInvite,
     PartyResult,
-    PendingPartyJoin,
+    GetPendingList,
   };
 };
