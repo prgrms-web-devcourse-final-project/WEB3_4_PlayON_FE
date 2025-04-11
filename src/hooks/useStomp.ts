@@ -1,13 +1,10 @@
 import { useAxios } from './useAxios';
 import SockJS from 'sockjs-client';
-import { Frame, Stomp } from '@stomp/stompjs';
+import { Client } from '@stomp/stompjs';
 import { CHAT_ENDPOINTS } from '@/constants/endpoints/chat-room';
+import { useState } from 'react';
 
 export const useStomp = () => {
-  const axios = useAxios();
-  const socket = new SockJS('http://localhost:8080/ws'); // WebSocket URL
-  const stompClient = Stomp.over(socket);
-
   type ChatMessageDTO = {
     senderMemberId: number;
     nickname: string;
@@ -16,20 +13,49 @@ export const useStomp = () => {
     message: string;
     sendAt: Date;
   };
+  const axios = useAxios();
+  const [id, setId] = useState<number | null>(null);
+  const client = new Client({
+    webSocketFactory: () => {
+      return new SockJS('http://localhost:8080/ws');
+    },
+    reconnectDelay: 5000,
+    heartbeatIncoming: 4000,
+    heartbeatOutgoing: 4000,
+  });
+  client.onConnect = (frame) => {
+    if (!id) {
+      console.error('❌ ID가 없습니다. 연결을 종료합니다.');
+      return;
+    }
+    console.log('🟢 STOMP 연결됨', frame);
+    client.subscribe(CHAT_ENDPOINTS.subscribe_message(id), (message) => {
+      const chatMessage: ChatMessageDTO = JSON.parse(message.body);
 
-  async function JoinRequest(partyId: number, xuserid: number) {
+      console.log('📥 메시지 수신됨:', chatMessage);
+    });
+  };
+  client.onDisconnect = (frame) => {
+    console.log('🔴 STOMP 연결 해제됨', frame);
+  };
+  client.onStompError = (frame) => {
+    console.error('❌ STOMP 에러 발생', frame);
+  };
+
+  async function JoinRequest(partyId: number) {
     const response = await axios.Post(
       CHAT_ENDPOINTS.join(partyId),
       {},
-      { headers: { 'Content-Type': 'application/json', 'X-USER-ID': xuserid } },
+      { headers: { 'Content-Type': 'application/json' } },
       true
     );
     if (response && response.status === 200) {
+      setId(partyId);
       return {
-        partyRoomId: response.data.partyRoomId,
-        partyId: response.data.partyId,
-        members: response.data.members as { memberId: number; nickname: string; profileImg: string }[],
-        messages: response.data.messages as {
+        partyRoomId: response.data.data.partyRoomId,
+        partyId: response.data.data.partyId,
+        members: response.data.data.members as { memberId: number; nickname: string; profileImg: string }[],
+        messages: response.data.data.messages as {
           senderMemberId: number;
           title: string;
           nickname: string;
@@ -41,11 +67,11 @@ export const useStomp = () => {
     }
     return false;
   }
-  async function LeaveRequest(partyId: number, xuserid: number) {
+  async function LeaveRequest(partyId: number) {
     const response = await axios.Post(
       CHAT_ENDPOINTS.leave(partyId),
       {},
-      { headers: { 'Content-Type': 'application/json', 'X-USER-ID': xuserid } },
+      { headers: { 'Content-Type': 'application/json' } },
       true
     );
     if (response && response.status === 200) {
@@ -53,37 +79,27 @@ export const useStomp = () => {
     }
     return false;
   }
-  async function Connect(partyId: number) {
-    stompClient.connect(
-      {},
-      function (frame: Frame) {
-        console.log('🟢 STOMP 연결됨');
-
-        // STOMP 구독
-        stompClient.subscribe(CHAT_ENDPOINTS.subscribe_message(partyId), function (msg) {
-          console.log('📥 메시지: ' + msg.body);
-        });
-      },
-      function (error: Frame | string) {
-        console.error('❌ STOMP 연결 실패: ' + error);
-      }
-    );
+  async function Connect() {
+    client.activate();
   }
   async function Disconnect() {
-    if (stompClient) {
-      stompClient.disconnect(() => {
-        console.log('🔴 STOMP 연결 해제됨');
-      });
-    }
+    client.deactivate();
+    setId(null);
   }
-  function SendMessage(partyId: number, memberId: number, message: string) {
-    if (!stompClient || !stompClient.connected) {
-      console.log('❌ STOMP 연결이 안 됨! 메시지를 보낼 수 없음.');
-      return;
-    }
-    console.log('멤버 ID', memberId);
-    stompClient.send(`/app/chat.send/${partyId}/member/${memberId}`, {}, JSON.stringify(message));
-    console.log('📤 보낸 메시지: ' + JSON.stringify(messagePayload));
+  async function SendMessage(partyId: number, xuserid: number, message: string) {
+    const _message: ChatMessageDTO = {
+      senderMemberId: xuserid,
+      nickname: `nickname_${xuserid}`,
+      partyOwner: 'partyOwner',
+      profileImg: 'profileImg',
+      message: message,
+      sendAt: new Date(),
+    };
+    client.publish({
+      destination: CHAT_ENDPOINTS.subscribe_message(partyId),
+      body: JSON.stringify(_message),
+      skipContentLengthHeader: true,
+    });
   }
 
   return {
