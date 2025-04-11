@@ -23,6 +23,7 @@ export const useGuild = () => {
     if (data) {
       const tags = categorizeTags(data?.tags);
       const guildDetail: guild = {
+        guild_id: data.id,
         guild_name: data?.name,
         description: data?.description,
         img_src: data?.guildImg,
@@ -82,6 +83,7 @@ export const useGuild = () => {
       const guildList: guild[] = data.map((item: GuildSimple) => {
         const tags = categorizeTags(item.tags);
         return {
+          guild_id: item.guildId,
           guild_name: item.name,
           description: item.description,
           img_src: item.guildImg,
@@ -172,6 +174,7 @@ export const useGuild = () => {
     if (data) {
       const tags = categorizeTags(data.tags);
       const guildDetail: guild & { managerNames: string[] } = {
+        guild_id: data.id,
         guild_name: data?.name,
         description: 'test',
         img_src: data?.guildImg,
@@ -224,6 +227,7 @@ export const useGuild = () => {
       const guildList: guild[] = data.map((item) => {
         const tags = categorizeTags(item.tags);
         return {
+          guild_id: item.guildId,
           guild_name: item.name,
           description: item.description,
           img_src: item.guildImg,
@@ -252,9 +256,10 @@ export const useGuild = () => {
       const guildList: guild[] = data.map((item) => {
         const tags = categorizeTags(item.tags);
         return {
+          guild_id: item.guildId,
           guild_name: item.name,
           description: item.description,
-          img_src: item.guildImg,
+          img_src: item.guildImg || 'https://placehold.co/600x400?text=PlayOn+Guild',
           num_members: item.memberCount,
           owner: { username: 'test', nickname: 'test', user_title: 'title', img_src: 'test' },
           created_at: new Date(1),
@@ -265,7 +270,7 @@ export const useGuild = () => {
           friendly: tags.friendly,
         };
       });
-      console.log(guildList);
+      // console.log(guildList);
       return guildList;
     }
     console.log('데이터가 없습니다.');

@@ -3,6 +3,7 @@ import { userDetail, userSimple } from './user';
 import { gameSimple } from './games';
 
 export interface guild {
+  guild_id: number;
   guild_name: string; // 길드명
   description: string; // 소개글
   main_game?: gameSimple; // 선택 게임
