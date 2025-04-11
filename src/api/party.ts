@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { PARTY_ENDPOINTS } from '@/constants/endpoints/party';
 import { PATH } from '@/constants/routes';
 import { useAxios } from '@/hooks/useAxios';
-import { createPartyReq, getPartiesReq, party } from '@/types/party';
+import { createPartyReq, getPartiesReq, getPartyRes, party } from '@/types/party';
 import { getSteamImage } from './steamImg';
 import { userSimple } from '@/types/user';
 import { gameSimple } from '@/types/games';
@@ -178,7 +178,21 @@ export const useParty = () => {
   }
 
   // 메인 페이지용 요청
-  async function PartyMainPending(limit: number) {}
+  async function MainPendingParty(limit: number): Promise<getPartyRes[]> {
+    const res = await axios.Get(
+      PARTY_ENDPOINTS.main_pending,
+      {
+        params: {
+          limit: limit,
+        },
+      },
+      false
+    );
+    if (res && res.status === 200) {
+      return res?.data.data.parties;
+    }
+    return [];
+  }
 
   return {
     GetParty,
@@ -192,5 +206,6 @@ export const useParty = () => {
     PartyInvite,
     PartyResult,
     GetPendingList,
+    MainPendingParty,
   };
 };

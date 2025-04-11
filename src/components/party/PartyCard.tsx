@@ -1,11 +1,15 @@
-import { Avatar } from '../ui/avatar';
-import Tag from '../common/Tag';
-import { Skeleton } from '../ui/skeleton';
+import { Avatar, AvatarImage } from '@/components/ui/avatar';
+import Tag from '@/components/common/Tag';
+import { Skeleton } from '@/components/ui/skeleton';
 import formatDate from '@/utils/formatDate';
-import { party } from '@/types/party';
+import { getPartyRes } from '@/types/party';
+import { getSteamImage } from '@/api/steamImg';
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { PATH } from '@/constants/routes';
 
 interface PartyCardProps {
-  data: party;
+  data: getPartyRes;
 }
 
 export function PartyCardSkeleton() {
@@ -32,66 +36,74 @@ export function PartyCardSkeleton() {
 }
 
 export default function PartyCard({ data }: PartyCardProps) {
-  const open_position = data.num_maximum - data.participation.length;
-  const remainingHours = getRemainingHours(new Date(data.start_time));
+  const open_position = data.maximum - data.total;
+  const remainingHours = getRemainingHours(new Date(data.partyAt));
+  const [bg, setBg] = useState('');
+  useEffect(() => {
+    const fetchBg = async () => {
+      const res = await getSteamImage(data.appId, 'header');
+      setBg(res);
+    };
+    fetchBg();
+  }, []);
+
   return (
-    <div className="flex flex-col gap-2 p-5 rounded-xl bg-white border-2 border-neutral-300 cursor-pointer w-full aspect-[113/100]">
+    <Link
+      href={PATH.party_detail(data.partyId.toString())}
+      className="flex flex-col gap-2 p-5 rounded-xl bg-white border-2 border-neutral-300 cursor-pointer w-full aspect-[113/100]"
+    >
       <div
         style={{
-          backgroundImage: `url(${data.selected_game.img_src})`,
+          backgroundImage: `url(${bg})`,
         }}
         className="flex flex-col aspect-[366/160] rounded-xl overflow-hidden justify-between group bg-cover bg-center"
       >
         <div className="flex gap-2 ml-4 mt-4">
           {remainingHours >= 3 ? (
-            <Tag style="time">{formatDate(data.start_time)}</Tag>
+            <Tag style="time">{formatDate(data.partyAt)}</Tag>
           ) : (
             <Tag style="time" background="red">
-              {formatDate(data.start_time)}
+              {formatDate(data.partyAt)}
             </Tag>
           )}
           {open_position === 1 && <Tag background="red">마감임박</Tag>}
           {open_position < 1 && <Tag background="red">마감</Tag>}
         </div>
         <div className="flex opacity-0 bg-gradient-to-t from-neutral-900/70 to-neutral-900/0 p-4 h-28 translate-y-4 transition-all duration-200 ease-in-out group-hover:opacity-100 group-hover:translate-y-0 justify-end items-end">
-          <p className="font-suit text-4xl font-bold text-end text-white max-w-full truncate">
-            {data.selected_game.title}
-          </p>
+          <p className="font-suit text-4xl font-bold text-end text-white max-w-full truncate">{data.gameName}</p>
         </div>
       </div>
       <div className="flex gap-2 py-2">
-        {data.tags.map((tag) => (
-          <Tag background="medium" key={tag}>
-            {tag}
-          </Tag>
-        ))}
+        {data.partyTags.map((tag, idx) => {
+          return (
+            <Tag background="medium" key={data.partyId + '_tag_' + idx}>
+              {tag.tagValue}
+            </Tag>
+          );
+        })}
       </div>
       <div className="flex flex-col gap-1 content-start">
-        <div className="font-suit text-2xl font-semibold text-neutral-900 truncate">{data.party_name}</div>
+        <div className="font-suit text-2xl font-semibold text-neutral-900 truncate">{data.name}</div>
         <p className="font-suit text-base text-neutral-900 truncate">{data.description}</p>
       </div>
       <div className="flex py-2 justify-between">
         <div className="flex gap-1 items-center">
-          {data.participation.map((member, idx) =>
+          {data.members.map((member, idx) =>
             idx < 4 ? (
-              <Avatar
-                key={idx}
-                style={{
-                  backgroundImage: `url(${member.img_src})`,
-                }}
-                className="bg-cover bg-center w-5 h-5"
-              />
+              <Avatar key={member.memberId + data.partyId} className="bg-cover bg-center w-5 h-5">
+                <AvatarImage src={member.img_src || '/img/dummy_profile.jpg'} />
+              </Avatar>
             ) : null
           )}
-          {data.participation.length - 4 >= 1 && (
-            <div className="font-suit text-xs text-neutral-500">+{data.participation.length - 4}</div>
+          {data.members.length - 4 >= 1 && (
+            <div className="font-suit text-xs text-neutral-500">+{data.members.length - 4}</div>
           )}
         </div>
         <div className="font-suit text-sm text-neutral-500">
-          {data.participation.length}명 / {data.num_maximum}명
+          {data.members.length}명 / {data.maximum}명
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
 

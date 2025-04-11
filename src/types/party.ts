@@ -57,3 +57,20 @@ export type getPartiesReq = {
   genres?: string[];
   tags?: tag[];
 };
+
+type onlyValueTag = {
+  tagValue: string;
+};
+export type getPartyRes = {
+  appId: number;
+  description: string;
+  gameName: string;
+  maximum: number;
+  minimum: number;
+  members: userSimple[];
+  name: string;
+  partyAt: Date;
+  partyId: number;
+  partyTags: onlyValueTag[];
+  total: number;
+};

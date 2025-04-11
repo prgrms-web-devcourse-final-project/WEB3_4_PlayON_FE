@@ -6,16 +6,16 @@ import RetroButton from '@/components/common/RetroButton';
 import SearchBar from '@/components/common/SearchBar';
 import SectionBanner from '@/components/common/SectionBanner';
 import SectionTitle from '@/components/common/SectionTitle';
-import PartyCard from '@/components/party/PartyCard';
+import PartyCard, { PartyCardSkeleton } from '@/components/party/PartyCard';
 import PartyLogCard from '@/components/party/PartyLogCard';
 import PixelCharacter from '@/components/PixelCharacter/PixelCharacter';
 import { PATH } from '@/constants/routes';
 import { gameSimple } from '@/types/games';
-import { party, partyLog } from '@/types/party';
+import { getPartyRes, party, partyLog } from '@/types/party';
 import { dummyParty, dummyPartyLog } from '@/utils/dummyData';
 import Link from 'next/link';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const popularGames: gameSimple[] = [
   {
@@ -34,8 +34,8 @@ const popularGames: gameSimple[] = [
 
 export default function Party() {
   const party = useParty();
-  party.GetParty(1);
   const [query, setQuery] = useState<string>('');
+  const [parties, setParties] = useState<getPartyRes[]>([]);
   const handleChange = (value: string) => {
     setQuery(value);
     console.log(query);
@@ -44,7 +44,16 @@ export default function Party() {
     alert('search click!');
   };
 
-  const dummyPartyList: party[] = Array(6).fill(dummyParty);
+  useEffect(() => {
+    const fetchParty = async () => {
+      const res = await party.MainPendingParty(6);
+      if (res) {
+        setParties(res);
+      }
+    };
+    fetchParty();
+  }, []);
+
   const dummyPartyLogList: partyLog[] = Array(3).fill(dummyPartyLog);
   return (
     <div
@@ -82,9 +91,9 @@ export default function Party() {
           </div>
         </div>
         <div className="grid grid-cols-3 gap-6">
-          {dummyPartyList.map((party, idx) => (
-            <PartyCard key={idx} data={party} />
-          ))}
+          {parties.length > 0
+            ? parties.map((party, idx) => <PartyCard key={'party' + idx} data={party} />)
+            : Array.from({ length: 6 }).map((_, idx) => <PartyCardSkeleton key={idx} />)}
         </div>
       </section>
 
