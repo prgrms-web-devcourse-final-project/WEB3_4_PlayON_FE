@@ -23,7 +23,7 @@ export const useStomp = () => {
 
   async function JoinRequest(partyId: number, xuserid: number) {
     const response = await axios.Post(
-      `/api/chat/enter/${partyId}`,
+      `/chat/enter/${partyId}`,
       {},
       { headers: { 'Content-Type': 'application/json', 'X-USER-ID': xuserid } },
       true

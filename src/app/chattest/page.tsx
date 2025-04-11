@@ -15,7 +15,7 @@ export default function ChatTest() {
       <button
         className="text-4xl font-dgm border border-purple-400 p-5"
         onClick={async () => {
-          const response = await stomp.JoinRequest(1, 1);
+          const response = await stomp.JoinRequest(13, 5);
           if (response) {
             toast({ title: 'join success' });
           } else {
@@ -23,20 +23,20 @@ export default function ChatTest() {
           }
         }}
       >
-        Join
+        Join 5
       </button>
       <button
         className="text-4xl font-dgm border border-purple-400 p-5"
         onClick={async () => {
-          const response = await stomp.LeaveRequest(1, 1);
+          const response = await stomp.JoinRequest(13, 6);
           if (response) {
-            toast({ title: 'leave success' });
+            toast({ title: 'join success' });
           } else {
-            toast({ title: 'leave fail', variant: 'destructive' });
+            toast({ title: 'join fail', variant: 'destructive' });
           }
         }}
       >
-        Leave
+        Join 6
       </button>
     </div>
   );
