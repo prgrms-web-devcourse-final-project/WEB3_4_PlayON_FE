@@ -15,7 +15,7 @@ export default function Test() {
   const [data, setData] = useState<AdditionalInfo[]>();
 
   const newData_create: GuildCreateRequest = {
-    name: '테스트2',
+    name: '테스트 최종!! 이미지 추가22',
     description: '테스트입니다.',
 
     maxMembers: 3,
@@ -32,7 +32,7 @@ export default function Test() {
   };
 
   const newData_update: GuildUpdateRequest = {
-    name: '테스트 수정입니다 다시 다시 시도',
+    name: '테스트 최종 수정입니다',
     description: 'test2 test2',
     maxMembers: 3,
     isPublic: true,
@@ -71,7 +71,7 @@ export default function Test() {
     // console.log(response);
   };
   const updateGuild = async () => {
-    await Guild.UpdateGuildWithImg('53', newData_update, image);
+    await Guild.UpdateGuildWithImg(37, newData_update, image);
     // console.log(response);
   };
 
@@ -80,7 +80,7 @@ export default function Test() {
     console.log(response);
   };
   const getGuildMembers = async () => {
-    const response = await Guild.GetGuildMembers('33');
+    const response = await Guild.GetGuildMembers(33);
     console.log(response);
     // console.log(typeof response[0].memberId);
   };
@@ -89,35 +89,35 @@ export default function Test() {
   const GuildJoin = useGuildJoin();
 
   const handleClickJoin = async () => {
-    await GuildJoin.RequestGuildJoin('33');
+    await GuildJoin.RequestGuildJoin(33);
   };
   const handleClickList = async () => {
-    const data = await GuildJoin.GetGuildJoinRequests('33');
+    const data = await GuildJoin.GetGuildJoinRequests(33);
     if (data) {
       setData(data);
     }
   };
   const handleReject = async () => {
-    await GuildJoin.RejectGuildJoin('33', '33');
+    await GuildJoin.RejectGuildJoin(33, 33);
   };
   const handleApprove = async () => {
-    await GuildJoin.ApproveGuildJoin('33', '34');
+    await GuildJoin.ApproveGuildJoin(33, 35);
   };
 
   // GuildBoard -----------------------------------------------
   const GuildBoard = useGuildBoard();
 
   const newPostData = {
-    title: '자유 게시판111',
+    title: '자유 게시판 테스트2',
     content: 'test test',
     tag: '자유',
     fileType: 'webp',
   };
   const updatePostData = {
-    title: '자유 게시판을 게임관련 게시판으로 수정',
+    title: '자유 게시판 webp를 jpg로 수정',
     content: 'test test',
-    tag: '게임관련',
-    newFileType: 'webp',
+    tag: '자유',
+    newFileType: 'jpg',
   };
 
   const createPost = async () => {
@@ -125,7 +125,7 @@ export default function Test() {
     console.log(response);
   };
   const updatePost = async () => {
-    const response = await GuildBoard.GuildPostChangeWithImg(33, 39, updatePostData, image);
+    const response = await GuildBoard.GuildPostChangeWithImg(33, 41, updatePostData, image);
     console.log(response);
   };
 
@@ -146,7 +146,7 @@ export default function Test() {
     console.log(response);
   };
   const deletePost = async () => {
-    const response = await GuildBoard.GuildPostDelete(33, 38);
+    const response = await GuildBoard.GuildPostDelete(33, 42);
     console.log(response);
   };
   const LikePost = async () => {
@@ -155,15 +155,15 @@ export default function Test() {
   };
   // 댓글
   const createComment = async () => {
-    const response = await GuildBoard.GuildPostCommentCreate(33, 40, '멋져요');
+    const response = await GuildBoard.GuildPostCommentCreate(33, 40, '최종 테스트!');
     console.log(response);
   };
   const updateComment = async () => {
-    const response = await GuildBoard.GuildPostCommentChange(33, 40, 33, '수정한 댓글');
+    const response = await GuildBoard.GuildPostCommentChange(33, 40, 36, '최종 테스트!수정한 댓글');
     console.log(response);
   };
   const deleteComment = async () => {
-    const response = await GuildBoard.GuildPostCommentDelete(33, 40, 35);
+    const response = await GuildBoard.GuildPostCommentDelete(33, 40, 36);
     console.log(response);
   };
 
@@ -176,7 +176,7 @@ export default function Test() {
             길드 생성
           </Button>
           <Button onClick={updateGuild} className="bg-purple-400">
-            53번 길드 수정
+            37번 길드 수정
           </Button>
           <Button onClick={getGuildList} className="bg-purple-500">
             길드 리스트 보기
@@ -189,7 +189,7 @@ export default function Test() {
           <Button onClick={handleClickJoin}>길드 참여 요청보내기</Button>
           <Button onClick={handleClickList}>길드 요청 리스트 확인</Button>
           <Button onClick={handleReject}>33번 요청 취소</Button>
-          <Button onClick={handleApprove}>34번 요청 승인</Button>
+          <Button onClick={handleApprove}>35번 요청 승인</Button>
           {data && <UserApprove data={data[0]} onApprove={() => {}} onReject={() => {}} />}
         </div>
         <div className="flex gap-5 mt-6 border border-neutral-300 p-4">
@@ -200,13 +200,13 @@ export default function Test() {
             <Button onClick={getPostDetail}>길드 게시글 상세 보기</Button>
             <Button onClick={getLatestPost}>길드 최신글 보기</Button>
             <Button onClick={getNoticesPost}>길드 공지 보기</Button>
-            <Button onClick={deletePost}>38번 게시글 삭제</Button>
+            <Button onClick={deletePost}>42번 게시글 삭제</Button>
             <Button onClick={LikePost}>40번 게시글 좋아요</Button>
           </div>
           <div className="flex flex-col gap-5">
             <Button onClick={createComment}> 40번 게시글 댓글 작성</Button>
-            <Button onClick={updateComment}> 40번 게시글 33번 댓글 수정</Button>
-            <Button onClick={deleteComment}> 40번 게시글 35번 댓글 삭제</Button>
+            <Button onClick={updateComment}> 40번 게시글 36번 댓글 수정</Button>
+            <Button onClick={deleteComment}> 40번 게시글 36번 댓글 삭제</Button>
           </div>
         </div>
       </div>

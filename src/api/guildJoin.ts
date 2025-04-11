@@ -5,7 +5,7 @@ import { AdditionalInfo, GuildJoinRequestsResponse } from '@/types/guildApi';
 export const useGuildJoin = () => {
   const axios = useAxios();
 
-  async function RequestGuildJoin(guildId: string) {
+  async function RequestGuildJoin(guildId: number) {
     const response = await axios.Post(GuildJoin.join(guildId), {}, {}, true);
     const data = response?.data;
     console.log(data);
@@ -15,7 +15,7 @@ export const useGuildJoin = () => {
     return false;
   }
 
-  async function RejectGuildJoin(guildId: string, requestId: string) {
+  async function RejectGuildJoin(guildId: number, requestId: number) {
     const response = await axios.Post(GuildJoin.reject(guildId, requestId), {}, {}, true);
     const data = response?.data;
     console.log(data);
@@ -25,7 +25,7 @@ export const useGuildJoin = () => {
     return false;
   }
 
-  async function ApproveGuildJoin(guildId: string, requestId: string) {
+  async function ApproveGuildJoin(guildId: number, requestId: number) {
     const response = await axios.Post(GuildJoin.approve(guildId, requestId), {}, {}, true);
     const data = response?.data;
     console.log(data);
@@ -35,15 +35,15 @@ export const useGuildJoin = () => {
     return false;
   }
 
-  async function GetGuildJoinRequests(guildId: string) {
+  async function GetGuildJoinRequests(guildId: number) {
     const response = await axios.TypedGet<GuildJoinRequestsResponse>(GuildJoin.requests(guildId), {}, true);
     const data = response;
-    // console.log(data);
+    console.log(data);
     if (data?.msg === 'OK' && data.data.length > 0) {
       const pendingUserList: AdditionalInfo[] = data.data.map((user) => ({
         img_src: user.profileImg ?? 'https://avatars.githubusercontent.com/u/124599?v=4',
-        nickname: user.username,
-        username: user.username,
+        nickname: user.nickname,
+        username: user.nickname,
         user_title: user.titleName,
         memberId: user.memberId,
         requestId: user.requestId,

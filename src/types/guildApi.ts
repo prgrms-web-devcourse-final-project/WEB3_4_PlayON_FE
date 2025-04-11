@@ -76,11 +76,11 @@ export interface GuildDetailMember {
 export interface GuildJoinRequest {
   approvalState: 'PENDING' | 'APPROVED' | 'REJECTED';
   memberId: number;
+  nickname: string;
   profileImg: string | null;
   requestId: number;
   requestedAt: string;
   titleName: string;
-  username: string;
 }
 
 export interface GuildDetailResponse {
