@@ -20,6 +20,8 @@ export function GuildHorizonSkeleton(props: { className: string }) {
   );
 }
 
+const defaultImg = 'https://placehold.co/600x400/9884F0/3F1AC4?text=PlayOn+Guild';
+
 export default function GuildHorizon(props: GuildHorizonProps) {
   const tagsArr = [
     ...props.data.play_style,
@@ -29,7 +31,7 @@ export default function GuildHorizon(props: GuildHorizonProps) {
   ].slice(0, 3);
   return (
     <div className={`bg-white rounded-2xl overflow-hidden border border-neutral-200 ` + props.className}>
-      <img src={props.data.img_src} alt="loading" className="w-full object-cover aspect-[16/9]" />
+      <img src={props.data.img_src || defaultImg} alt="loading" className="w-full object-cover aspect-[16/9]" />
       <div className="p-5 gap-1">
         <p className="font-suit text-2xl font-bold pb-2">{props.data.guild_name}</p>
         <p className="font-suit text-base font-medium text-nowrap text-ellipsis overflow-hidden">

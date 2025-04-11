@@ -5,18 +5,18 @@ import RetroButton from '@/components/common/RetroButton';
 import SearchBar from '@/components/common/SearchBar';
 import SectionBanner from '@/components/common/SectionBanner';
 import SectionTitle from '@/components/common/SectionTitle';
-import GuildHorizon, { GuildHorizonSkeleton } from '@/components/guild/guild-horizon';
 import PixelCharacter from '@/components/PixelCharacter/PixelCharacter';
 import { gameSimple } from '@/types/games';
-import { guild } from '@/types/guild';
-import { dummyGameSimple, dummyGuild } from '@/utils/dummyData';
+import { dummyGameSimple } from '@/utils/dummyData';
 import PopularGameList from './components/PopularGameList';
 import SearchGuildWithGame from '@/components/common/search-guild-with-game';
 import { useRouter } from 'next/navigation';
 import { PATH } from '@/constants/routes';
 import { useGuild } from '@/api/guild';
-import { useQuery } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { Suspense } from 'react';
+import PopularGuildListSkeleton from './components/PopularGuildListSkeleton';
+import PopularGuildList from './components/PopularGuildList';
 
 const banner = [
   {
@@ -25,37 +25,21 @@ const banner = [
   },
 ];
 
-// const placeholderImage = 'https://placehold.co/600x400?text=PlayOn+Guild';
-
 export default function Guild() {
   const router = useRouter();
   const Guild = useGuild();
 
-  // const [popularGuildList, setPopularGuild] = useState<guild[]>([]);
-
-  // const { data: popularGuildList, isLoading } = useQuery({
-  //   queryKey: ['PopularGuilds'],
-  //   queryFn: () => Guild.GetGuildPopular(),
-  // });
+  const { data: popularGuildList } = useSuspenseQuery({
+    queryKey: ['PopularGuilds'],
+    queryFn: () => Guild.GetGuildPopular(),
+  });
 
   const handleSearch = (value: string) => {
     router.push(`${PATH.guild_list}?keyword=${value}`);
   };
 
-  // const dummyGuildList: guild[] = Array(3).fill(dummyGuild);
   const dummyGameList: gameSimple[] = Array(4).fill(dummyGameSimple);
 
-  // const fetchPopularData = async () => {
-  //   const response = await Guild.GetGuildPopular();
-  //   if (response) {
-  //     setPopularGuild(response);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   fetchPopularData();
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
   return (
     <div className="space-y-20 pb-20 pt-[68px]">
       <section className="w-full h-[400px]">
@@ -76,13 +60,10 @@ export default function Guild() {
             <PixelCharacter char="warrior" motion="attack" />
           </div>
         </div>
-        <div className="grid grid-cols-3 gap-6">
-          {/* {isLoading
-            ? [...Array(3)].map((_, index) => <GuildHorizonSkeleton className="" key={index} />)
-            : popularGuildList?.map((guild) => <GuildHorizon key={guild.guild_name} data={guild} />)} */}
-          {/* {popularGuildList.length > 0 &&
-            popularGuildList.map((guild) => <GuildHorizon key={guild.guild_name} data={guild} />)} */}
-        </div>
+        <div className="grid grid-cols-3 gap-6"></div>
+        <Suspense fallback={<PopularGuildListSkeleton />}>
+          <PopularGuildList data={popularGuildList} />
+        </Suspense>
       </section>
       <section>
         <PlayOnRollingBanner duration={20} direction="left" />
