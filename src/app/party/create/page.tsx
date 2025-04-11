@@ -84,8 +84,8 @@ export default function PartyCreate() {
         { type: '성별', value: '여자만' },
       ],
       gameId: data.game,
-      minimum: data.max_part,
-      maximum: data.min_part,
+      minimum: data.min_part,
+      maximum: data.max_part,
       isPublic: data.public,
     };
     await party.CreateParty(reqData);
@@ -261,7 +261,7 @@ export default function PartyCreate() {
                 <p className="h2 mt-8 mb-3">파티 룸 소개</p>
                 <FormField
                   control={form.control}
-                  name="desc"
+                  name="description"
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
