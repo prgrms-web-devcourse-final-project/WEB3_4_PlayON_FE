@@ -5,6 +5,7 @@ export interface userSimple {
   nickname: string;
   user_title: string;
   img_src: string;
+  memberId: string;
 }
 
 export interface userDetail {

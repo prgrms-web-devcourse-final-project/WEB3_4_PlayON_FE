@@ -12,6 +12,8 @@ type PartyContextType = {
   joinState: JoinStateType;
   joinParty: () => void;
   cancleJoin: () => void;
+  acceptJoin: (pendingUser: userSimple) => void;
+  rejectJoin: (pendingUser: userSimple) => void;
   viewLevel: (viewLevel: 'owner' | 'notOwner' | 'joined' | 'pending' | 'notJoined') => boolean;
 };
 
@@ -80,6 +82,20 @@ export const PartyContextProvider = ({ children }: { children: React.ReactNode }
     setJoinState('notJoined');
   }, []);
 
+  const acceptJoin = useCallback(async (pendingUser: userSimple) => {
+    const res = await partyAPI.AcceptPartyJoin(nowPartyId, pendingUser.memberId);
+    if (res == true) {
+      setPartyInfo((prev) => (prev ? { ...prev, participation: [...prev.participation, pendingUser] } : prev));
+      setPendingList((prev) => prev.filter((user) => user.memberId !== pendingUser.memberId));
+    }
+  }, []);
+  const rejectJoin = useCallback(async (pendingUser: userSimple) => {
+    const res = await partyAPI.RejectPartyJoin(nowPartyId, pendingUser.memberId);
+    if (res == true) {
+      setPendingList((prev) => prev.filter((user) => user.memberId !== pendingUser.memberId));
+    }
+  }, []);
+
   const viewLevel = useCallback(
     (viewLevel: string) => {
       switch (viewLevel) {
@@ -118,11 +134,13 @@ export const PartyContextProvider = ({ children }: { children: React.ReactNode }
       partyInfo,
       pendingList,
       joinState,
+      viewLevel,
       joinParty,
       cancleJoin,
-      viewLevel,
+      acceptJoin,
+      rejectJoin,
     }),
-    [partyInfo, pendingList, joinState, joinParty, cancleJoin, viewLevel]
+    [partyInfo, pendingList, joinState, viewLevel, joinParty, cancleJoin, acceptJoin, rejectJoin]
   );
 
   return <PartyContext.Provider value={value}>{children}</PartyContext.Provider>;

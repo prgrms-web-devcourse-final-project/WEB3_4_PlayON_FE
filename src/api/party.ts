@@ -40,15 +40,11 @@ export const useParty = () => {
         selected_game: {
           title: party.gameName,
           genre: [],
-          img_src: await getSteamImage(1, 'header'),
-          background_src: await getSteamImage(1, 'background'),
-          // img_src: await getSteamImage(party.appId, 'header'),
-          // background_src: await getSteamImage(party.appId, 'background'),
+          img_src: await getSteamImage(party.appId, 'header'),
+          background_src: await getSteamImage(party.appId, 'background'),
         },
-        num_maximum: 10,
-        num_minimum: 2,
-        // num_maximum: party.maximum,
-        // num_minimum: party.minimum,
+        num_maximum: party.maximum,
+        num_minimum: party.minimum,
       };
     }
     console.log('로딩 중 문제가 발생했습니다.');
@@ -113,11 +109,22 @@ export const useParty = () => {
   }
   async function AcceptPartyJoin(partyId: string, memberId: string) {
     const res = await axios.Put(PARTY_ENDPOINTS.accept_member(partyId, memberId), {}, {}, true);
-    console.log(res);
+    console.log('game join accept', res);
+    if (res) {
+      return true;
+    } else {
+      return false;
+    }
   }
   async function RejectPartyJoin(partyId: string, memberId: string) {
     const res = await axios.Delete(PARTY_ENDPOINTS.reject_member(partyId, memberId), {}, true);
+    console.log('game Reject accept', res);
     console.log(res);
+    if (res) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   async function CreateParty(data: createPartyReq) {
@@ -163,6 +170,7 @@ export const useParty = () => {
   async function GetPendingList(partyId: string) {
     const res = await axios.Get(PARTY_ENDPOINTS.pending(partyId), {}, false);
     if (res && res.status == 200) {
+      console.log(res.data.data.partyMembers);
       return res.data.data.partyMembers;
     }
     console.log('로딩 중 문제가 발생했습니다.');

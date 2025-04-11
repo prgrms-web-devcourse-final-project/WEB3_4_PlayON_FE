@@ -21,7 +21,8 @@ export default function InfoAccordion() {
   const router = useRouter();
   const { user } = useAuthStore();
   const [open, setOpen] = useState(true);
-  const { joinState, pendingList, partyInfo, joinParty, cancleJoin, viewLevel } = usePartyContext();
+  const { joinState, pendingList, partyInfo, joinParty, cancleJoin, acceptJoin, rejectJoin, viewLevel } =
+    usePartyContext();
 
   function getButtonLabel(joinState: string): { text: string; action: () => void } {
     if (!user)
@@ -65,7 +66,16 @@ export default function InfoAccordion() {
                     <>
                       <p className="font-bold text-xl">파티 신청 대기 중</p>
                       {pendingList.map((user, idx) => (
-                        <UserApprove key={user.username + idx} data={user} onApprove={() => {}} onReject={() => {}} />
+                        <UserApprove
+                          key={user.username + idx}
+                          data={user}
+                          onApprove={() => {
+                            acceptJoin(user);
+                          }}
+                          onReject={() => {
+                            rejectJoin(user);
+                          }}
+                        />
                       ))}
                     </>
                   )}
