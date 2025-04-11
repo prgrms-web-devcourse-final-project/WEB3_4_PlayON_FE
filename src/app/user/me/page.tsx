@@ -26,7 +26,7 @@ import {
   dummyUserDetail,
   dummyUserSimple,
 } from '@/utils/dummyData';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, MailIcon, Pencil, SquarePen } from 'lucide-react';
 import { useState } from 'react';
 import { EditInfo } from './components/MyModal';
 import SteamSVG from '@/components/svg/steam';

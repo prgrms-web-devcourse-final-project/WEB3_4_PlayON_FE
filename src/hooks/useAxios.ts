@@ -71,11 +71,21 @@ export const useAxios = () => {
     }
   }
 
+  async function PostText(path: string, data: string, config: AxiosRequestConfig, toast: boolean) {
+    try {
+      const response = await apiInstance.post(path, data, { headers: { 'Content-Type': 'text/plain' }, ...config });
+      return response;
+    } catch (err) {
+      errorHandler(err, toast);
+    }
+  }
+
   return {
     Get,
     Delete,
     Post,
     Put,
     TypedGet,
+    PostText,
   };
 };

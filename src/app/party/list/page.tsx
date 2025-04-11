@@ -1,10 +1,11 @@
 'use client';
 
 import { useParty } from '@/api/party';
+import CustomPagination from '@/components/common/CustomPagination';
 import HeroSwiperBanner from '@/components/common/HeroSwiperBanner';
 import SortRadioGroup, { SortOption } from '@/components/common/SortRadioGroup';
 import PartySearchComponent from '@/components/party/party-search-component';
-import PartyCard from '@/components/party/PartyCard';
+import PartyCard, { PartyCardSkeleton } from '@/components/party/PartyCard';
 import { Label } from '@/components/ui/label';
 import {
   Pagination,
@@ -16,18 +17,20 @@ import {
   PaginationPrevious,
 } from '@/components/ui/pagination';
 import { Switch } from '@/components/ui/switch';
+import { PATH } from '@/constants/routes';
+import { useAuthStore } from '@/stores/authStore';
 import { party } from '@/types/party';
-import { dummyParty } from '@/utils/dummyData';
 
 import { ChevronDown } from 'lucide-react';
+import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 
 const sortOptions: SortOption[] = [
-  { id: 'popularity', label: '인기순' },
-  { id: 'latest', label: '최신순' },
-  { id: 'capacity', label: '마감임박' },
-  { id: 'members', label: '인원순' },
+  { id: 'popular', label: '인기순' },
+  { id: 'createdAt', label: '최신순' },
+  { id: 'partyAt', label: '마감임박' },
+  { id: 'personal', label: '인원순' },
 ];
 
 const imageList = [
@@ -37,14 +40,14 @@ const imageList = [
 ];
 
 export default function PartyList() {
+  const { user } = useAuthStore();
   const party = useParty();
   const params = useSearchParams();
 
   const [parties, setParties] = useState<party[]>([]);
-  const [totalPages, setTotalPage] = useState(0);
   const [totalItems, setTotalItem] = useState(0);
 
-  const userName = '홍길동';
+  const userName = user?.nickname ?? '플레이어';
 
   function splitTag(params: URLSearchParams, paramName: string, type: string): { type: string; value: string }[] {
     const raw = params.get(paramName) ?? '';
@@ -61,25 +64,28 @@ export default function PartyList() {
     const friendly = splitTag(params, 'friendly', 'SOCIALIZING');
     const genres = params.get('genres')?.split(',');
     const partyDate = params.get('partyDate');
+    const orderBy = params.get('sort');
+    const page = Number(params.get('page'));
     const partyAt = (partyDate && new Date(partyDate)) || new Date();
-
+    console.log('page', page);
     const res = await party.GetParties(
       {
         gameId: '',
         genres: genres || [],
         tags: [...partyStyle, ...skillLevel, ...gender, ...friendly],
       },
-      partyAt
+      partyAt,
+      page == 0 ? 1 : page,
+      orderBy ?? ''
     );
     if (!res) return;
     setParties(res.parties);
-    setTotalPage(res.totalPages);
     setTotalItem(res.totalItems);
   }, []);
 
   useEffect(() => {
     fetchData(params);
-  }, [fetchData, params]);
+  }, [params, fetchData]);
 
   return (
     <div className="relative space-y-16 mb-24">
@@ -136,31 +142,17 @@ export default function PartyList() {
           </div>
         </div>
         <div className="grid grid-cols-3 gap-6">
-          {/* {parties.map((party, idx) => (
-            <PartyCard key={idx} data={party} />
-          ))} */}
+          {parties.length > 0 ? (
+            parties.map((party, idx) => (
+              <Link key={party.party_name + idx} href={PATH.party_detail(party.partyId)}>
+                <PartyCard key={idx} data={party} />
+              </Link>
+            ))
+          ) : (
+            <PartyCardSkeleton />
+          )}
         </div>
-        <Pagination>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious href="#" className="text-base" />
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink href="#" isActive>
-                1
-              </PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink href="#">2</PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationEllipsis />
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationNext href="#" className="text-base" />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
+        {totalItems > 9 && <CustomPagination totalItems={totalItems} pageSize={9} />}
       </section>
     </div>
   );

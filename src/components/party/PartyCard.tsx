@@ -3,7 +3,6 @@ import Tag from '../common/Tag';
 import { Skeleton } from '../ui/skeleton';
 import formatDate from '@/utils/formatDate';
 import { party } from '@/types/party';
-import { useSteamImg } from '@/api/steamImg';
 
 interface PartyCardProps {
   data: party;
@@ -33,18 +32,13 @@ export function PartyCardSkeleton() {
 }
 
 export default function PartyCard({ data }: PartyCardProps) {
-  console.log(data.participation);
-  const open_position = 0;
-  // const open_position = data.num_maximum - data.participation.length;
-  console.log(data.start_time);
-  const remainingHours = getRemainingHours(new Date());
-  // const remainingHours = getRemainingHours(data.start_time);
-
+  const open_position = data.num_maximum - data.participation.length;
+  const remainingHours = getRemainingHours(new Date(data.start_time));
   return (
     <div className="flex flex-col gap-2 p-5 rounded-xl bg-white border-2 border-neutral-300 cursor-pointer w-full aspect-[113/100]">
       <div
         style={{
-          backgroundImage: `url(${useSteamImg().getHeader(data.selected_game)})`,
+          backgroundImage: `url(${data.selected_game.img_src})`,
         }}
         className="flex flex-col aspect-[366/160] rounded-xl overflow-hidden justify-between group bg-cover bg-center"
       >
