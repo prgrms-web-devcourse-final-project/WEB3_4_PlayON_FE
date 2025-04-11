@@ -5,45 +5,68 @@ import RetroButton from '@/components/common/RetroButton';
 import SearchBar from '@/components/common/SearchBar';
 import SectionBanner from '@/components/common/SectionBanner';
 import SectionTitle from '@/components/common/SectionTitle';
-import GuildHorizon from '@/components/guild/guild-horizon';
+import GuildHorizon, { GuildHorizonSkeleton } from '@/components/guild/guild-horizon';
 import PixelCharacter from '@/components/PixelCharacter/PixelCharacter';
 import { gameSimple } from '@/types/games';
 import { guild } from '@/types/guild';
 import { dummyGameSimple, dummyGuild } from '@/utils/dummyData';
-import { useState } from 'react';
 import PopularGameList from './components/PopularGameList';
 import SearchGuildWithGame from '@/components/common/search-guild-with-game';
+import { useRouter } from 'next/navigation';
+import { PATH } from '@/constants/routes';
+import { useGuild } from '@/api/guild';
+import { useQuery } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
 
 const banner = [
   {
     title: 'Together!',
-    img_src: './img/hero/bg_guild_main.webp',
+    img_src: '/img/hero/bg_guild_main.webp',
   },
 ];
 
+// const placeholderImage = 'https://placehold.co/600x400?text=PlayOn+Guild';
+
 export default function Guild() {
-  const [query, setQuery] = useState<string>('');
-  const handleChange = (value: string) => {
-    setQuery(value);
-    console.log(query);
-  };
-  const handleSearch = () => {
-    alert('search click!');
+  const router = useRouter();
+  const Guild = useGuild();
+
+  // const [popularGuildList, setPopularGuild] = useState<guild[]>([]);
+
+  // const { data: popularGuildList, isLoading } = useQuery({
+  //   queryKey: ['PopularGuilds'],
+  //   queryFn: () => Guild.GetGuildPopular(),
+  // });
+
+  const handleSearch = (value: string) => {
+    router.push(`${PATH.guild_list}?keyword=${value}`);
   };
 
-  const dummyGuildList: guild[] = Array(3).fill(dummyGuild);
+  // const dummyGuildList: guild[] = Array(3).fill(dummyGuild);
   const dummyGameList: gameSimple[] = Array(4).fill(dummyGameSimple);
+
+  // const fetchPopularData = async () => {
+  //   const response = await Guild.GetGuildPopular();
+  //   if (response) {
+  //     setPopularGuild(response);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   fetchPopularData();
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
   return (
     <div className="space-y-20 pb-20 pt-[68px]">
       <section className="w-full h-[400px]">
         <HeroTypingBanner data={banner} isStatic>
-          <SearchBar onChange={handleChange} onSearch={handleSearch} className="w-[640px]" />
+          <SearchBar onChange={() => {}} onSearch={handleSearch} className="w-[640px]" />
         </HeroTypingBanner>
       </section>
       <section className="wrapper space-y-20">
         <div className="flex justify-between items-end">
           <SectionTitle title="활동량 TOP 길드" subtitle="혼자서 게임하지 마세요!" icon_src="./img/icons/pixel_box.svg">
-            <RetroButton type="purple" className="w-[344px] h-[48px]">
+            <RetroButton type="purple" className="w-[344px] h-[48px]" callback={() => router.push(PATH.guild_list)}>
               더 많은 길드 찾기
             </RetroButton>
           </SectionTitle>
@@ -54,9 +77,11 @@ export default function Guild() {
           </div>
         </div>
         <div className="grid grid-cols-3 gap-6">
-          {dummyGuildList.map((guild) => (
-            <GuildHorizon key={guild.guild_name} data={guild} />
-          ))}
+          {/* {isLoading
+            ? [...Array(3)].map((_, index) => <GuildHorizonSkeleton className="" key={index} />)
+            : popularGuildList?.map((guild) => <GuildHorizon key={guild.guild_name} data={guild} />)} */}
+          {/* {popularGuildList.length > 0 &&
+            popularGuildList.map((guild) => <GuildHorizon key={guild.guild_name} data={guild} />)} */}
         </div>
       </section>
       <section>
@@ -77,7 +102,7 @@ export default function Guild() {
         <SectionBanner
           description="성향 및 목표가 같은 동료들과 함께하고 싶다면"
           highlight="지금 바로 나만의 길드를 만들어보세요!"
-          onClick={() => alert('click')}
+          onClick={() => router.push(PATH.guild_create)}
           className="bg-purple-400"
         >
           <img src="./img/3d_object/castle.webp" alt="icon" className="h-[180px]" />
