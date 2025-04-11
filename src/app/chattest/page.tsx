@@ -15,7 +15,7 @@ export default function ChatTest() {
       <button
         className="text-4xl font-dgm border border-purple-400 p-5"
         onClick={async () => {
-          const response = await stomp.JoinRequest(25, 5);
+          const response = await stomp.JoinRequest(26);
           if (response) {
             toast({ title: 'join success' });
           } else {
@@ -28,7 +28,7 @@ export default function ChatTest() {
       <button
         className="text-4xl font-dgm border border-purple-400 p-5"
         onClick={async () => {
-          const response = await stomp.JoinRequest(25, 6);
+          const response = await stomp.JoinRequest(26);
           if (response) {
             toast({ title: 'join success' });
           } else {
@@ -57,7 +57,7 @@ export default function ChatTest() {
       <button
         className="text-4xl font-dgm border border-purple-400 p-5"
         onClick={async () => {
-          stomp.SendMessage(25, 5, 'hello world!');
+          stomp.SendMessage(26, 5, 'hello world!');
         }}
       >
         SendMessage 5

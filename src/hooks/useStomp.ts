@@ -3,21 +3,42 @@ import SockJS from 'sockjs-client';
 import { Client } from '@stomp/stompjs';
 import { CHAT_ENDPOINTS } from '@/constants/endpoints/chat-room';
 import { useState } from 'react';
+import { useAuthStore } from '@/stores/authStore';
 
-export const useStomp = () => {
-  type ChatMessageDTO = {
-    senderMemberId: number;
-    nickname: string;
-    partyOwner: string;
-    profileImg: string;
-    message: string;
-    sendAt: Date;
-  };
+export type ChatMessageDTO = {
+  senderMemberId: number;
+  title: string;
+  nickname: string;
+  profileImg: string;
+  message: string;
+  sendAt: Date;
+};
+export type ChatMemberDTO = {
+  senderMemberId: number;
+  title: string;
+  nickname: string;
+  profileImg: string;
+  message: string;
+  sendAt: Date;
+};
+export const useStomp = (onReceiveMessageCallback: (message: ChatMessageDTO) => void) => {
   const axios = useAxios();
   const [id, setId] = useState<number | null>(null);
+  const [memberId, setMemberId] = useState<number | null>(null);
+  const auth = useAuthStore();
+
+  if (!auth.user) {
+    console.error('❌ 유저 정보가 없습니다. STOMP 연결을 종료합니다.');
+    return;
+  }
+
   const client = new Client({
     webSocketFactory: () => {
       return new SockJS('http://localhost:8080/ws');
+    },
+    connectHeaders: {
+      'Content-Type': 'application/json',
+      'X-Authorization': `Bearer ${document.cookie.includes('accessToken') ? document.cookie.split('accessToken=')[1].split(';')[0] : ''}`,
     },
     reconnectDelay: 5000,
     heartbeatIncoming: 4000,
@@ -31,8 +52,13 @@ export const useStomp = () => {
     console.log('🟢 STOMP 연결됨', frame);
     client.subscribe(CHAT_ENDPOINTS.subscribe_message(id), (message) => {
       const chatMessage: ChatMessageDTO = JSON.parse(message.body);
-
+      onReceiveMessageCallback(chatMessage);
       console.log('📥 메시지 수신됨:', chatMessage);
+    });
+    client.subscribe(CHAT_ENDPOINTS.member_update(id), (message) => {
+      const memberUpdate: ChatMemberDTO = JSON.parse(message.body);
+      onReceiveMessageCallback(memberUpdate);
+      console.log('👥 멤버 업데이트:', memberUpdate);
     });
   };
   client.onDisconnect = (frame) => {
@@ -50,8 +76,7 @@ export const useStomp = () => {
       true
     );
     if (response && response.status === 200) {
-      setId(partyId);
-      return {
+      const data = {
         partyRoomId: response.data.data.partyRoomId,
         partyId: response.data.data.partyId,
         members: response.data.data.members as { memberId: number; nickname: string; profileImg: string }[],
@@ -64,6 +89,8 @@ export const useStomp = () => {
           sendAt: Date;
         }[],
       };
+      setId(data.partyId);
+      setMemberId(data.messages[0].senderMemberId);
     }
     return false;
   }
@@ -86,20 +113,28 @@ export const useStomp = () => {
     client.deactivate();
     setId(null);
   }
-  async function SendMessage(partyId: number, xuserid: number, message: string) {
+  async function SendMessage(partyId: number, message: string) {
+    if (!auth.user || !memberId) {
+      console.error('❌ 유저 정보가 없습니다. 메시지를 전송할 수 없습니다.');
+      return;
+    }
     const _message: ChatMessageDTO = {
-      senderMemberId: xuserid,
-      nickname: `nickname_${xuserid}`,
-      partyOwner: 'partyOwner',
-      profileImg: 'profileImg',
+      senderMemberId: memberId,
+      nickname: auth.user.nickname,
+      profileImg: auth.user.img_src ?? '',
       message: message,
       sendAt: new Date(),
+      title: 'hello world',
     };
-    client.publish({
-      destination: CHAT_ENDPOINTS.subscribe_message(partyId),
-      body: JSON.stringify(_message),
-      skipContentLengthHeader: true,
-    });
+    try {
+      client.publish({
+        destination: CHAT_ENDPOINTS.send_message(partyId),
+        body: JSON.stringify(_message),
+        skipContentLengthHeader: true,
+      });
+    } catch (error) {
+      console.error('❌ 메시지 전송 실패', error);
+    }
   }
 
   return {
