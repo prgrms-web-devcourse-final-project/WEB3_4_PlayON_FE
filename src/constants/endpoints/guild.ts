@@ -1,12 +1,12 @@
 export const GUILD_ENDPOINTS = Object.freeze({
-  detail: (guildId: number) => `/guilds/${guildId}`,
-  modify: (guildId: number) => `/guilds/${guildId}`,
-  delete: (guildId: number) => `/guilds/${guildId}`,
+  detail: (guildId: string) => `/guilds/${guildId}`,
+  modify: (guildId: string) => `/guilds/${guildId}`,
+  delete: (guildId: string) => `/guilds/${guildId}`,
   create: '/guilds',
-  upload_image: (guildId: number) => `/guilds/${guildId}/img`,
+  upload_image: (guildId: string) => `/guilds/${guildId}/img`,
   list: '/guilds/list',
-  detail_member: (guildId: number) => `/guilds/${guildId}/members/page`,
-  admin: (guildId: number) => `/guilds/${guildId}/admin`,
+  detail_member: (guildId: string) => `/guilds/${guildId}/members/page`,
+  admin: (guildId: string) => `/guilds/${guildId}/admin`,
   recommend: '/guilds/recommend',
   popular: '/guilds/popular',
 });

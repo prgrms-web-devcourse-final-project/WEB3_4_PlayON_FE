@@ -16,7 +16,7 @@ import { uploadToS3 } from '@/utils/uploadToS3';
 export const useGuild = () => {
   const axios = useAxios();
 
-  async function GetGuild(guildId: number) {
+  async function GetGuild(guildId: string) {
     const response = await axios.TypedGet<GuildDetailResponse>(GUILD.detail(guildId), {}, true);
     const data = response?.data;
     console.log(data);
@@ -24,10 +24,11 @@ export const useGuild = () => {
       const tags = categorizeTags(data?.tags);
       const guildDetail: guild = {
         guild_id: data.id,
-        guild_name: data?.name,
-        description: data?.description,
-        img_src: data?.guildImg,
-        num_members: data?.memberCount,
+        guild_name: data.name,
+        description: data.description,
+        img_src: data.guildImg || '/img/hero/bg_community_main.webp',
+        num_members: data.memberCount,
+        max_members: data.maxMembers,
         owner: { username: 'test', nickname: data.leaderName, user_title: 'title', img_src: data.leaderImg },
         created_at: new Date(data.createdAt),
         myRole: data.myRole,
@@ -39,10 +40,10 @@ export const useGuild = () => {
       console.log(guildDetail);
       return guildDetail;
     }
-    return null;
+    throw Error;
   }
 
-  async function UpdateGuild(guildId: number, newData: GuildUpdateRequest) {
+  async function UpdateGuild(guildId: string, newData: GuildUpdateRequest) {
     try {
       const response = await axios.Put(GUILD.modify(guildId), newData, {}, true);
       const data = response?.data.data;
@@ -53,7 +54,7 @@ export const useGuild = () => {
     }
   }
 
-  async function DeleteGuild(guildId: number) {
+  async function DeleteGuild(guildId: string) {
     const response = await axios.Delete(GUILD.delete(guildId), {}, true);
     const data = response?.data;
     if (data.msg === 'OK') {
@@ -143,7 +144,7 @@ export const useGuild = () => {
       console.log('길드 생성 중 오류 발생: ', error);
     }
   }
-  async function UpdateGuildWithImg(guildId: number, newData: GuildUpdateRequest, imageFile: File | null) {
+  async function UpdateGuildWithImg(guildId: string, newData: GuildUpdateRequest, imageFile: File | null) {
     try {
       // 1. 길드 수정
       const updateResponse = await UpdateGuild(guildId, newData);
@@ -167,7 +168,7 @@ export const useGuild = () => {
     }
   }
 
-  async function GetAdmin(guildId: number) {
+  async function GetAdmin(guildId: string) {
     const response = await axios.TypedGet<GuildAdminResponse>(GUILD.admin(guildId), {}, true);
     const data = response?.data;
     // console.log(data);
@@ -177,8 +178,9 @@ export const useGuild = () => {
         guild_id: data.id,
         guild_name: data?.name,
         description: 'test',
-        img_src: data?.guildImg,
-        num_members: data?.memberCount,
+        img_src: data.guildImg,
+        num_members: data.memberCount,
+        max_members: data.memberCount,
         owner: { username: 'test', nickname: data.leaderName, user_title: 'title', img_src: '' },
         created_at: new Date(data.createdAt),
         myRole: data.myRole,
@@ -194,14 +196,14 @@ export const useGuild = () => {
     return null;
   }
 
-  async function GetGuildMembers(guildId: number) {
+  async function GetGuildMembers(guildId: string) {
     const response = await axios.TypedGet<GuildDetailMemberResponse>(GUILD.detail_member(guildId), {}, true);
     const data = response?.data;
     console.log(data);
     return data;
   }
 
-  async function UploadImageURL(guildId: number, url: string) {
+  async function UploadImageURL(guildId: string, url: string) {
     const response = await axios.Post(GUILD.upload_image(guildId), { url: url }, {}, true);
     console.log(response);
     if (response?.status === 204) {
@@ -232,6 +234,7 @@ export const useGuild = () => {
           description: item.description,
           img_src: item.guildImg,
           num_members: item.memberCount,
+          max_members: item.memberCount,
           owner: { username: 'test', nickname: 'test', user_title: 'title', img_src: 'test' },
           created_at: new Date(1),
           myRole: 'test',
@@ -261,6 +264,7 @@ export const useGuild = () => {
           description: item.description,
           img_src: item.guildImg || 'https://placehold.co/600x400?text=PlayOn+Guild',
           num_members: item.memberCount,
+          max_members: item.memberCount,
           owner: { username: 'test', nickname: 'test', user_title: 'title', img_src: 'test' },
           created_at: new Date(1),
           myRole: 'test',
@@ -292,3 +296,16 @@ export const useGuild = () => {
     UpdateGuildWithImg,
   };
 };
+
+// const [{
+//   data: guildData,
+//   isLoading,
+//   isError,
+// },{data: guildMemberData, isLoading, isError}] = useSuspenseQueries({
+//   queryKey: ['GuildDetail'],
+//   queryFn: () => Guild.GetGuild(guildId),
+// });
+
+// const getTagList = (data: guild) => {
+//   return [...data.friendly, ...data.gender, ...data.play_style, ...data.skill_level];
+// };

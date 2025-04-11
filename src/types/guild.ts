@@ -9,6 +9,7 @@ export interface guild {
   main_game?: gameSimple; // 선택 게임
   img_src: string; // 대표이미지
   num_members: number; // 길드 인원 수
+  max_members: number;
   owner: userSimple;
   created_at: Date;
   myRole: string;
