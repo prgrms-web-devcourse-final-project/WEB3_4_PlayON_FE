@@ -53,6 +53,7 @@ export const useGuildJoin = () => {
       console.log(pendingUserList);
       return pendingUserList;
     }
+    console.log('길드 가입 요청이 없습니다.');
     return null;
   }
 
