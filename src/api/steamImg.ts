@@ -1,74 +1,56 @@
-import axios from 'axios';
+type SteamImageType = 'header' | 'capsule' | 'background';
+type Options = {
+  filtered?: boolean;
+};
 
-export const useSteamImg = () => {
-  /**
-   * 게임 ID를 받아 16:7 사이즈의 이미지 URL을 반환합니다.
-   *
-   * @param {string} gameId - Steam 게임 앱 ID
-   * @returns {string} - 16:7 비율의 이미지 URL
-   */
-  const getHeader = async (gameId: string | number): Promise<string> => {
-    const imageUrl = `https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/${gameId}/header_koreana.jpg`;
-    const fallback = `https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/${gameId}/header.jpg`;
+export const getSteamImage = async (
+  gameId: string | number,
+  type: SteamImageType,
+  options: Options = {}
+): Promise<string> => {
+  const checkImage = (urls: string[], fallback: string): Promise<string> => {
+    return new Promise((resolve) => {
+      const tryNext = (index: number) => {
+        if (index >= urls.length) {
+          resolve(fallback);
+          return;
+        }
 
-    try {
-      const res = await axios.head(imageUrl);
-      if (res.status === 200) {
-        return imageUrl;
-      } else {
-        return fallback;
-      }
-    } catch {
-      console.log('게임에 헤더 이미지가 없습니다.');
-      return '';
-    }
+        const img = new Image();
+        img.onload = () => resolve(urls[index]);
+        img.onerror = () => tryNext(index + 1);
+        img.src = urls[index];
+      };
+
+      tryNext(0);
+    });
   };
 
-  /**
-   * 게임 ID를 받아 16:9 사이즈의 이미지 URL을 반환합니다.
-   *
-   * @param {string} gameId - Steam 게임 앱 ID
-   * @returns {string} - 16:9 비율의 이미지 URL
-   */
-  const getCapsule = async (gameId: string | number): Promise<string> => {
-    const imageUrl = `https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/${gameId}/capsule_616x353_koreana.jpg`;
-    const fallback = `https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/${gameId}/capsule_616x353.jpg`;
-    try {
-      const res = await axios.head(imageUrl);
-      if (res.status === 200) {
-        return imageUrl;
-      } else {
-        return fallback;
-      }
-    } catch {
-      console.log('게임에 캡슐 이미지가 없습니다.');
-      return '';
-    }
-  };
+  let urls: string[] = [];
+  let fallback = '/img/dummy_capsule.jpg';
 
-  /**
- * 게임 ID를 받아 16:9 사이즈의 이미지 URL을 반환합니다.
- *
- * @param {string} gameId - Steam 게임 앱 ID
- * @param {boolean} filtered - Steam 게임 앱 ID
+  switch (type) {
+    case 'header':
+      urls = [
+        `https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/${gameId}/header_koreana.jpg`,
+        `https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/${gameId}/header.jpg`,
+      ];
+      break;
+    case 'capsule':
+      urls = [
+        `https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/${gameId}/capsule_616x353_koreana.jpg`,
+        `https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/${gameId}/capsule_616x353.jpg`,
+      ];
+      break;
+    case 'background':
+      urls = [
+        options.filtered
+          ? `https://store.akamai.steamstatic.com/images/storepagebackground/app/${gameId}`
+          : `https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/${gameId}/page_bg_raw.jpg`,
+      ];
+      fallback = '';
+      break;
+  }
 
- * @returns {string} - 스팀 기준 배경 꾸미는 이미지 URL 반환
- */
-  const getBackground = async (gameId: string | number, filtered: boolean = false): Promise<string> => {
-    const normalBg = `https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/${gameId}/page_bg_raw.jpg`;
-    const filteredBg = `https://store.akamai.steamstatic.com/images/storepagebackground/app/${gameId}`;
-
-    try {
-      const res = await axios.head(filtered ? filteredBg : normalBg);
-      if (res.status === 200) return filtered ? filteredBg : normalBg;
-      else {
-        console.log('게임에 배경 이미지가 없습니다.');
-        return '';
-      }
-    } catch {
-      console.log('게임에 배경 이미지가 없습니다.');
-      return '';
-    }
-  };
-  return { getHeader, getCapsule, getBackground };
+  return await checkImage(urls, fallback);
 };

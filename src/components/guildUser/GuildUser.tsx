@@ -2,11 +2,11 @@
 
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import { guildUser } from '@/types/guild';
-import {  useMemo } from 'react';
+import { useMemo } from 'react';
 
 interface guildUserProps {
   data: guildUser;
-  membetId: string
+  membetId: string;
   index: number;
   total: number;
   onToggleManager: (userId: string, guild_role: string) => void;
@@ -25,7 +25,6 @@ export default function GuildUser(props: guildUserProps) {
   const isList = useMemo(() => index === total - 1, [index, total]);
 
   console.log('GuildUser 렌더링 확인:', data);
-
 
   return (
     <>
@@ -53,8 +52,18 @@ export default function GuildUser(props: guildUserProps) {
         </div>
 
         <div className="flex gap-3">
-          <button onClick={() => onToggleManager(data.user.id, data.guild_role)} className="font-suit text-base font-medium whitespace-nowrap flex-shrink-0 min-w-fit">권한변경</button>
-          <button onClick={() => onKickMember(data.user.id)} className="font-suit text-base font-medium whitespace-nowrap flex-shrink-0 min-w-fit">퇴출</button>
+          <button
+            onClick={() => onToggleManager(data.user.id, data.guild_role)}
+            className="font-suit text-base font-medium whitespace-nowrap flex-shrink-0 min-w-fit"
+          >
+            권한변경
+          </button>
+          <button
+            onClick={() => onKickMember(data.user.id)}
+            className="font-suit text-base font-medium whitespace-nowrap flex-shrink-0 min-w-fit"
+          >
+            퇴출
+          </button>
         </div>
       </div>
 

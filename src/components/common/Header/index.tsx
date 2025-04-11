@@ -36,8 +36,8 @@ const linkStyle = `
     `;
 
 export default function Header() {
-  const user = useAuthStore((state) => state.user);
-  const { setUser } = useAuthStore();
+  // const user = useAuthStore((state) => state.user);
+  const { user, setUser } = useAuthStore();
   const [isLogin, setisLogin] = useState(false);
   const [showHeader, setShowHeader] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
@@ -62,9 +62,9 @@ export default function Header() {
       setUser(user);
       return;
     }
-    if (!document.cookie.includes('accessToken=')) {
-      return;
-    }
+    // if (!document.cookie.includes('accessToken=')) {
+    //   return;
+    // }
     const fetchUserInfo = async () => {
       try {
         const userInfo = await member.GetMe();
@@ -73,12 +73,12 @@ export default function Header() {
         } else {
           setUser(undefined);
         }
-      } catch (error) {
+      } catch {
         setUser(undefined);
       }
     };
     fetchUserInfo();
-  }, []);
+  }, [user]);
 
   return (
     <header

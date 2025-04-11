@@ -5,7 +5,7 @@ import Tag from '@/components/common/Tag';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { dummyGuild, dummyGuildUser, dummyUserSimple } from '@/utils/dummyData';
+import { dummyUserSimple } from '@/utils/dummyData';
 import UserApprove from '@/app/party/components/UserApprove';
 import GuildUser from '@/components/guildUser/GuildUser';
 import { useGuildsMembers } from '@/api/guild-member';
@@ -21,11 +21,11 @@ interface guildUserProps {
   total: number;
 }
 
-
+// api 응답 데이터 파싱 함수
 export function parseGuildUser(raw: any): guildUser {
   const user: userDetail = {
     username: raw.username,
-    nickname: raw.username,
+    nickname: raw.nickname,
     user_title: '',
     img_src: raw?.profileImg ?? '',
     last_login_at: raw?.lastLoginAt ? new Date(raw.lastLoginAt) : new Date(),
@@ -42,69 +42,44 @@ export function parseGuildUser(raw: any): guildUser {
     num_guild_posts: raw.postCount,
   };
 }
+
 export default function GuildAdmin() {
-  const allTags = [...dummyGuild.friendly, ...dummyGuild.gender, ...dummyGuild.play_style, ...dummyGuild.skill_level];
-  const numDays = Math.trunc((new Date().getTime() - dummyGuild.created_at.getTime()) / 1000 / 60 / 60);
-  const managers = [dummyGuildUser, dummyGuildUser, dummyGuildUser];
   const [members, setMembers] = useState<guildUserProps[]>([]);
-
-  const { PutManager, DeleteManager, GetMembers, InviteMembers, DeleteMembers, GetAdmin, LeaveMembers, LeaveMembers2 } =
-    useGuildsMembers();
-  
-
-
+  const [username, setUsername] = useState('');
+  const [loading, setLoading] = useState(false);
   const params = useParams();
   const guildid = params?.guildid as string;
-  // const guildLeader = members.
+  const { PutManager, DeleteManager, GetMembers, InviteMembers, DeleteMembers, GetAdmin } =
+    useGuildsMembers();
 
+
+const [guildInfo, setGuildInfo] = useState<{
+  name: string;
+  imageUrl: string | null;
+  tags: string[];
+  createdDate: string;
+  leaderNickname: string;
+  totalMemberCount: number;
+  managerNicknames: (string | null)[];
+} | null>(null);
+  
   useEffect(() => {
-    //   const testPut = async () => {
-    //     const membersRes = await PutManager('2', '8');
-    //     console.log('멤버 리스트', membersRes);
-    //   };
-    //   testPut();
+    const fetchGuildInfo = async () => {
+      try {
+        const res = await GetAdmin(guildid);
+        if (res.resultCode === 'OK') {
+          setGuildInfo(res.data);
+        }
+      } catch (error) {
+        console.error('길드 정보 불러오기 실패', error);
+      }
+    };
+    fetchGuildInfo();
+  }, [guildid]);
 
-    // const testDelete = async () => {
-    //   const membersRes = await DeleteManager('2', '8');
-    //   console.log('멤버 리스트', membersRes);
-    // };
-    // testDelete();
-
-    // const testGet = async () => {
-    //   const membersRes = await GetMembers('2');
-    //   console.log('멤버 리스트', membersRes);
-    //   // console.log('guildid',guildId);
-    // };
-    // testGet();
-
-    // const testGetAdmin = async () => {
-    //   const membersRes = await GetAdmin('2');
-    //   console.log('getAdmin 멤버 리스트', membersRes);
-    // };
-    // testGetAdmin();
-
-    // const testPost = async () => {
-    //   const membersRes = await InviteMembers('2', 'partyOwner');
-    //   if (membersRes.status === 200) {
-    //     console.log('멤버 리스트', membersRes);
-    //   } else {
-    //     console.log('실패', membersRes?.data?.message);
-    //   }
-    // };
-    // testPost();
-
-    // const testDeletemem = async () => {
-    //   const membersRes = await DeleteMembers('2', '3');
-    //   console.log('멤버 리스트', membersRes);
-    // };
-    // testDeletemem();
-
-    // const testLeave = async () => {
-    //   const membersRes = await LeaveMembers2('2', '1');
-    //   console.log('멤버 리스트', membersRes);
-    // };
-    // testLeave();
-  }, []);
+  const numDays = guildInfo?.createdDate
+    ? Math.floor((new Date().getTime() - new Date(guildInfo.createdDate).getTime()) / (1000 * 60 * 60 * 24))
+    : 0;
 
 
   const fetchData = async () => {
@@ -130,104 +105,140 @@ export default function GuildAdmin() {
     } catch (error) {
       console.error('Error fetching guild members:', error);
     }
-  }
-  
+  };
+
   useEffect(() => {
     console.log('guildId:', guildid);
     fetchData();
   }, [guildid]);
 
-  // const leader = members.find((m) => m.data.guild_role === 'OWNER');
-  // const managers = members.filter((m) => m.data.guild_role === 'MANAGER');
+  // const leader = members.find((m) => m.data.guild_role === 'LEADER');
+  const managers = members.filter((m) => m.data.guild_role === 'MANAGER');
 
+  // 길드 멤버 초대 핸들러
+  const handleInviteMember = async (username: string) => {
+    if (!username) {
+      alert('USERNAME을 입력해주세요.');
+      return;
+    }
 
-
-    const handleToggleManager = async (memberId: string, role: string) => {
-      try {
-        console.log('Toggle 권한 변경: ', memberId, role);
-        // 예: 매니저 권한 부여 or 회수
-        if (role === 'MEMBER') {
-          await PutManager(guildid, memberId);
-          await fetchData();
-          alert('매니저 권한이 부여 되었습니다.');
-        } else if (role === 'MANAGER') {
-          await DeleteManager(guildid, memberId);
-          await fetchData();
-          alert('매니저 권한이 회수되었습니다.');
-        }
-      } catch (error) {
-        console.error('매니저 권한 변경 실패:', error);
-        alert('권한 변경 실패');
-      }
-    };
-
-    const handleKickMember = async (memberId: string) => {
-      try {
-        console.log('퇴출할 멤버: ', memberId);
-        await DeleteMembers(guildid, memberId);
-        alert('해당 멤버가 퇴출되었습니다.');
+    setLoading(true);
+    try {
+      const response = await InviteMembers(guildid, username);
+      if (response?.status === 200) {
+        alert('초대 완료!');
+        setUsername('');
         await fetchData();
-      } catch (error) {
-        console.error('멤버 퇴출 실패:', error);
-        alert('퇴출 실패');
+
+      } else {
+        alert(response?.data.message || '초대 실패');
       }
-    };
-  
+    } catch (error: any) {
+      alert(error?.response?.data?.message || '서버 오류');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 길드 멤버 매니저 권한 부여 & 회수 핸들러
+  const handleToggleManager = async (memberId: string, role: string) => {
+    try {
+      console.log('Toggle 권한 변경: ', memberId, role);
+      if (role === 'MEMBER') {
+        await PutManager(guildid, memberId);
+        await fetchData();
+        alert('매니저 권한이 부여 되었습니다.');
+      } else if (role === 'MANAGER') {
+        await DeleteManager(guildid, memberId);
+        await fetchData();
+        alert('매니저 권한이 회수되었습니다.');
+      }
+    } catch (error) {
+      console.error('매니저 권한 변경 실패:', error);
+      alert('권한 변경 실패');
+    }
+  };
+
+  // 길드 멤버 퇴출 핸들러
+  const handleKickMember = async (memberId: string) => {
+    try {
+      console.log('퇴출할 멤버: ', memberId);
+      await DeleteMembers(guildid, memberId);
+      alert('해당 멤버가 퇴출되었습니다.');
+      await fetchData();
+    } catch (error) {
+      console.error('멤버 퇴출 실패:', error);
+      alert('퇴출 실패');
+    }
+  };
+
   // console.log('멤버 데이터:', members);
-  
+
   return (
     <div className="flex flex-col mt-36 mb-36 gap-14">
-      <div className="flex gap-6 w-[67%] self-center">
-        <div className="w-[300px] aspect-square overflow-hidden">
-          <img src={dummyGuild.img_src} alt="" className="h-full object-cover rounded-3xl" />
-        </div>
-        <div className="flex flex-col flex-auto gap-5">
-          <p className="text-5xl text-neutral-900 font-bold">{dummyGuild.guild_name}</p>
-          <div className="flex flex-col gap-3">
-            <p>
-              <span className="text-lg text-neutral-900">{`함께한지 `}</span>
-              <span className="text-lg text-neutral-900 font-bold">{numDays}</span>
-              <span className="text-lg text-neutral-900">{` 일째`}</span>
-            </p>
-            <div className="flex gap-2">
-              {allTags.map((e, ind) => (
-                <Tag style="retro" size="small" background="dark" className="" key={ind}>
-                  {e}
-                </Tag>
-              ))}
-            </div>
+      {guildInfo && (
+        <div className="flex gap-6 w-[67%] self-center">
+          <div className="w-[300px] aspect-square overflow-hidden">
+            <img
+              src={
+                guildInfo.imageUrl ||
+                'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/489830/header.jpg?t=1721923149'
+              }
+              alt="guild"
+              className="h-full object-cover rounded-3xl"
+            />
           </div>
-          <div className="border border-neutral-400 rounded-2xl py-8 px-9 grid grid-cols-2">
-            <div className="text-lg flex">
-              <span className="font-bold w-[120px]">결성일</span>
-              <span>{dummyGuild.created_at.toLocaleDateString()}</span>
+          <div className="flex flex-col flex-auto gap-5">
+            <p className="text-5xl text-neutral-900 font-bold">{guildInfo.name}</p>
+            <div className="flex flex-col gap-3">
+              <p>
+                <span className="text-lg text-neutral-900">{`함께한지 `}</span>
+                <span className="text-lg text-neutral-900 font-bold">{numDays}</span>
+                <span className="text-lg text-neutral-900">{` 일째`}</span>
+              </p>
+              <div className="flex gap-2">
+                {guildInfo.tags.map((tag, i) => (
+                  <Tag key={i} style="retro" size="small" background="dark">
+                    {tag}
+                  </Tag>
+                ))}
+              </div>
             </div>
-            <div className="text-lg flex">
-              <span className="font-bold w-[120px]">길드장</span>
-              <span>{dummyGuild.owner.nickname}</span>
-              <span></span>
-            </div>
-            <div className="text-lg flex">
-              <span className="font-bold w-[120px]">전체 인원</span>
-              <span>{dummyGuild.num_members}</span>
-            </div>
-            <div className="text-lg flex">
-              <span className="font-bold w-[120px]">운영진</span>
-              <div className="flex">
-                {managers.map((e, ind) => {
-                  return (
-                    <span
-                      className={`px-4 ${ind === 0 ? 'pl-0' : ''} ${ind < managers.length - 1 ? 'border-r border-neutral-400' : ''}`}
-                    >
-                      {e.user.nickname}
-                    </span>
-                  );
-                })}
+            <div className="border border-neutral-400 rounded-2xl py-8 px-9 grid grid-cols-2">
+              <div className="text-lg flex">
+                <span className="font-bold w-[120px]">결성일</span>
+                <span>{new Date(guildInfo.createdDate).toLocaleDateString()}</span>
+              </div>
+              <div className="text-lg flex">
+                <span className="font-bold w-[120px]">길드장</span>
+                <span>{guildInfo.leaderNickname}</span>
+              </div>
+              <div className="text-lg flex">
+                <span className="font-bold w-[120px]">전체 인원</span>
+                <span>{guildInfo.totalMemberCount}</span>
+              </div>
+              <div className="text-lg flex">
+                <span className="font-bold w-[120px]">운영진</span>
+                <div className="flex">
+                  {managers.length > 0 ? (
+                    managers.map((m, ind) => (
+                      <span
+                        key={m.memberId}
+                        className={`px-4 ${ind === 0 ? 'pl-0' : ''} ${ind < managers.length - 1 ? 'border-r border-neutral-400' : ''}`}
+                      >
+                        {m.data.user.nickname}
+                      </span>
+                    ))
+                  ) : (
+                    <span className="text-neutral-500">없음</span>
+                  )}
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
+
       <PlayOnRollingBanner direction="left" duration={20} />
       <Accordion type="multiple" className="w-[67%] self-center">
         <AccordionItem value="item-1">
@@ -248,11 +259,17 @@ export default function GuildAdmin() {
               <div className="flex flex-col flex-auto border border-neutral-400 rounded-2xl px-6 py-8">
                 <p className="text-2xl font-bold mb-3">길드 초대하기</p>
                 <label htmlFor="" className="mb-1">
-                  Email
+                  유저네임
                 </label>
                 <div className="flex gap-4">
-                  <Input placeholder="초대받을 멤버의 이메일을 적어주세요"></Input>
-                  <Button>초대장 발급</Button>
+                  <Input
+                    placeholder="초대받을 멤버의 USERNAME을 적어주세요"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                  />
+                  <Button onClick={() => handleInviteMember(username)} disabled={loading}>
+                    {loading ? '초대 중...' : '초대장 발급'}
+                  </Button>
                 </div>
               </div>
             </div>
@@ -284,7 +301,6 @@ export default function GuildAdmin() {
             <p className="text-3xl text-neutral-900 font-bold">멤버 관리</p>
           </AccordionTrigger>
           <AccordionContent>
-
             {members.map((member, index) => {
               return (
                 <GuildUser
@@ -297,9 +313,7 @@ export default function GuildAdmin() {
                 />
               );
             })}
-
           </AccordionContent>
-          
         </AccordionItem>
       </Accordion>
     </div>

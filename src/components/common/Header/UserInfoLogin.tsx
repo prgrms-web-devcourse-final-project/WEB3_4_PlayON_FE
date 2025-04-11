@@ -14,25 +14,26 @@ import {
 import { LogOut, User } from 'lucide-react';
 import { userDetail } from '@/types/user';
 import Link from 'next/link';
+import { useAuthStore } from '@/stores/authStore';
+import { useMembers } from '@/api/members';
 import GhostSVG from '@/components/svg/ghost_fill';
 import { PATH } from '@/constants/routes';
-import { useAuthStore } from '@/stores/authStore';
-import { useRouter } from 'next/navigation';
-import { useMembers } from '@/api/members';
+
 type Props = {
   userInfo: userDetail;
 };
-
 export default function UserInfoLogin({ userInfo }: Props) {
   const { logout } = useAuthStore();
   const member = useMembers();
-  const router = useRouter();
+  const clearUserStorage = useAuthStore.persist.clearStorage;
   const handleLogout = async () => {
-    logout();
     await member.logout();
-    router.push(PATH.main);
+    clearUserStorage();
+    logout();
+    //추후 수정 필요
+    window.location.reload();
+    // router.refresh();
   };
-
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild className="cursor-pointer">

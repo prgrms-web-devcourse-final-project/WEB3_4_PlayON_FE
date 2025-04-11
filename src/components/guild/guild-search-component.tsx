@@ -4,8 +4,8 @@ import { guildTags } from '@/types/Tags/guildTags';
 import SearchBar from '../common/SearchBar';
 import PixelCharacter from '../PixelCharacter/PixelCharacter';
 import Chip from '@/components/common/chip';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { usePathname, useSearchParams } from 'next/navigation';
+import { useCallback, useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { CoolerCategoryMenu } from '@/app/signup/userdata/component/cooler-category-menu';
 import TiltToggle from '../common/tilt-toggle';
 
@@ -14,116 +14,147 @@ type GuildSearchComponentProps = {
 };
 
 export default function GuildSearchComponent(props: GuildSearchComponentProps) {
-  const searchQuery = useSearchParams();
-  const pathname = usePathname();
+  const searchParam = useSearchParams();
 
-  const selectedGames = useRef<string[]>([]);
-  const searchByName = useRef<string>('');
-  const selected = {
-    partyStyle: useState([true, ...new Array(guildTags.partyStyle.items.length).fill(false)]),
-    skillLevel: useState([true, ...new Array(guildTags.skillLevel.items.length).fill(false)]),
-    gender: useState([true, ...new Array(guildTags.gender.items.length).fill(false)]),
-    friendly: useState([true, ...new Array(guildTags.friendly.items.length).fill(false)]),
-  };
-  const selectedArr = Object.values(selected);
+  const [selectedGames, setSelectedGames] = useState<string[]>([]);
+  const [searchByName, setSearchByName] = useState<string>('');
+  const partyStyle = useState([true, ...new Array(guildTags.partyStyle.items.length).fill(false)]);
+  const skillLevel = useState([true, ...new Array(guildTags.skillLevel.items.length).fill(false)]);
+  const gender = useState([true, ...new Array(guildTags.gender.items.length).fill(false)]);
+  const friendly = useState([true, ...new Array(guildTags.friendly.items.length).fill(false)]);
+  const selectedArr = [partyStyle, skillLevel, gender, friendly];
   const [charText, setCharText] = useState('');
 
-  // handlers
   const handleSearchByName = useCallback((value: string) => {
-    searchByName.current = value;
-    accInputs();
+    setSearchByName(value);
   }, []);
-  const handleChipAdded = useCallback((value: string) => {
-    if (selectedGames.current.findIndex((e) => e === value) !== -1) return;
-    selectedGames.current.push(value);
-    accInputs();
-  }, []);
-  const handleChipDelete = useCallback((content: string) => {
-    const index = selectedGames.current.findIndex((e) => e === content);
-    if (index === -1) return;
-    selectedGames.current.splice(index, 1);
-    accInputs();
-  }, []);
-  function accInputs() {
-    const newSearchQuery = [];
-    if (searchByName.current !== '') {
-      newSearchQuery.push(`name=${searchByName.current}`);
-    }
-    for (let i = 0; i < selectedArr.length; i++) {
-      const selectedState = selectedArr[i][0];
-      const guildTagNames = Object.keys(guildTags);
-      const guildTagItems = Object.values(guildTags).map((e) => e.items);
-
-      if (selectedState[0]) {
-        //do nothing
-      } else if (selectedState.slice(1, selectedState.length).filter((e) => e).length > 0) {
-        const temp = guildTagItems[i]
-          .map((e, ind) => (selectedState[ind + 1] ? e : null))
-          .filter((e) => e)
-          .join(',');
-        newSearchQuery.push(`${guildTagNames[i]}=${temp}`);
-      }
-    }
-    if (selectedGames.current.length > 0) {
-      newSearchQuery.push('games=' + selectedGames.current.reduce((acc, cur) => acc + ',' + cur));
-    }
-    window.history.pushState(null, '', `${pathname}?${newSearchQuery.join('&')}`);
-  }
+  const handleChipAdded = useCallback(
+    (value: string) => {
+      if (selectedGames.findIndex((e) => e === value) === -1) setSelectedGames([...selectedGames, value]);
+    },
+    [selectedGames]
+  );
+  const handleChipDelete = useCallback(
+    (content: string) => {
+      const index = selectedGames.findIndex((e) => e === content);
+      const temp = [...selectedGames];
+      temp.splice(index, 1);
+      setSelectedGames(temp);
+    },
+    [selectedGames]
+  );
 
   useEffect(() => {
-    accInputs();
-  }, [selected.partyStyle, selected.skillLevel, selected.gender, selected.friendly]);
+    const newUrl = new URL(window.location.href);
+    if (!partyStyle[0][0]) {
+      const PartyStyle = partyStyle[0]
+        .slice(1, partyStyle[0].length)
+        .map((e, ind) => (e ? guildTags.partyStyle.items[ind] : null))
+        .filter((e) => e);
+      newUrl.searchParams.set('partyStyle', PartyStyle.join(','));
+    } else {
+      newUrl.searchParams.delete('partyStyle');
+    }
+    if (!skillLevel[0][0]) {
+      const SkillLevel = skillLevel[0]
+        .slice(1, skillLevel[0].length)
+        .map((e, ind) => (e ? guildTags.skillLevel.items[ind] : null))
+        .filter((e) => e);
+      newUrl.searchParams.set('skillLevel', SkillLevel.join(','));
+    } else {
+      newUrl.searchParams.delete('skillLevel');
+    }
+    if (!gender[0][0]) {
+      const Gender = gender[0]
+        .slice(1, gender[0].length)
+        .map((e, ind) => (e ? guildTags.gender.items[ind] : null))
+        .filter((e) => e);
+      newUrl.searchParams.set('gender', Gender.join(','));
+    } else {
+      newUrl.searchParams.delete('gender');
+    }
+
+    if (!friendly[0][0]) {
+      const Friendly = friendly[0]
+        .slice(1, friendly[0].length)
+        .map((e, ind) => (e ? guildTags.friendly.items[ind] : null))
+        .filter((e) => e);
+      newUrl.searchParams.set('friendly', Friendly.join(','));
+    } else {
+      newUrl.searchParams.delete('friendly');
+    }
+    // router.replace(newUrl.toString(), { scroll: false });
+    window.history.pushState({}, '', newUrl);
+  }, [partyStyle, skillLevel, gender, friendly]);
+  useEffect(() => {
+    const newUrl = new URL(window.location.href);
+    const newGenres = selectedGames.join(',');
+    if (newGenres.length > 0) {
+      newUrl.searchParams.set('genres', newGenres);
+      // router.replace(newUrl.toString(), { scroll: false });
+    } else {
+      newUrl.searchParams.delete('genres');
+    }
+    window.history.pushState({}, '', newUrl);
+  }, [selectedGames]);
+  useEffect(() => {
+    const newUrl = new URL(window.location.href);
+    if (searchByName.length > 0) {
+      newUrl.searchParams.set('name', searchByName);
+      // router.replace(newUrl.toString(), { scroll: false });
+      window.history.pushState({}, '', newUrl);
+    }
+    if (searchByName.length === 0) {
+      newUrl.searchParams.delete('name');
+      window.history.pushState({}, '', newUrl);
+    }
+  }, [searchByName]);
+
   useEffect(() => {
     const newCharText: string[] = [];
-    const partyStyle = searchQuery.get('partyStyle');
-    const skillLevel = searchQuery.get('skillLevel');
-    const friendly = searchQuery.get('friendly');
+    const PartyStyle = searchParam.get('partyStyle');
+    const Gender = searchParam.get('gender');
+    const SkillLevel = searchParam.get('skillLevel');
+    const Friendly = searchParam.get('friendly');
+    if (Gender) newCharText.push(Gender.slice(0, -1) + '와 함께하고 싶은');
+    if (PartyStyle) newCharText.push(PartyStyle + ' 스타일의');
+    if (Friendly) newCharText.push(Friendly + ' ');
+    if (SkillLevel) newCharText.push(SkillLevel + ' ');
 
-    if (partyStyle && partyStyle !== '전체') newCharText.push(partyStyle + ' 스타일의');
-    if (friendly && friendly !== '전체') newCharText.push(friendly + ' ');
-    if (skillLevel && skillLevel !== '전체') newCharText.push(skillLevel);
     setCharText(newCharText.join(' ') + ' ');
-  }, [pathname, searchQuery]);
+  }, [friendly, partyStyle, skillLevel, searchParam]);
+
   useEffect(() => {
-    const partyStyle = searchQuery.get('partyStyle');
-    const skillLevel = searchQuery.get('skillLevel');
-    const friendly = searchQuery.get('friendly');
-    const gender = searchQuery.get('gender');
-    // console.log('partyStyle : ', partyStyle);
-    // console.log('skillLevel : ', skillLevel);
-    // console.log('friendly : ', friendly);
-    // console.log('gender : ', gender);
-    if (partyStyle) {
-      const arr = partyStyle.split(',');
-      const temp = [false];
-      for (let i = 0; i < guildTags.partyStyle.items.length; i++) {
-        temp.push(arr.findIndex((e) => e === guildTags.partyStyle.items[i]) !== -1);
-      }
-      selected.partyStyle[1](temp);
+    const PartyStyle = searchParam.get('partyStyle');
+    if (PartyStyle && PartyStyle !== '전체') {
+      const temp = PartyStyle.split(',');
+      partyStyle[1]([false, ...guildTags.partyStyle.items.map((e) => temp.includes(e))]);
     }
-    if (skillLevel) {
-      const arr = skillLevel.split(',');
-      const temp = [false];
-      for (let i = 0; i < guildTags.skillLevel.items.length; i++) {
-        temp.push(arr.findIndex((e) => e === guildTags.skillLevel.items[i]) !== -1);
-      }
-      selected.skillLevel[1](temp);
+    const SkillLevel = searchParam.get('skillLevel');
+    if (SkillLevel && SkillLevel !== '전체') {
+      const temp = SkillLevel.split(',');
+      skillLevel[1]([false, ...guildTags.skillLevel.items.map((e) => temp.includes(e))]);
     }
-    if (gender) {
-      const arr = gender.split(',');
-      const temp = [false];
-      for (let i = 0; i < guildTags.gender.items.length; i++) {
-        temp.push(arr.findIndex((e) => e === guildTags.gender.items[i]) !== -1);
-      }
-      selected.gender[1](temp);
+    const Gender = searchParam.get('gender');
+    if (Gender && Gender !== '전체') {
+      const temp = Gender.split(',');
+      gender[1]([false, ...guildTags.gender.items.map((e) => temp.includes(e))]);
     }
-    if (friendly) {
-      const arr = friendly.split(',');
-      const temp = [false];
-      for (let i = 0; i < guildTags.friendly.items.length; i++) {
-        temp.push(arr.findIndex((e) => e === guildTags.friendly.items[i]) !== -1);
-      }
-      selected.friendly[1](temp);
+    const Friendly = searchParam.get('friendly');
+    if (Friendly && Friendly !== '전체') {
+      const temp = Friendly.split(',');
+      friendly[1]([false, ...guildTags.friendly.items.map((e) => temp.includes(e))]);
+    }
+
+    const Genres = searchParam.get('genres');
+    if (Genres) {
+      const temp = Genres.split(',');
+      setSelectedGames(temp);
+    }
+
+    const searchByName = searchParam.get('name');
+    if (searchByName) {
+      setSearchByName(searchByName);
     }
   }, []);
 
@@ -133,13 +164,13 @@ export default function GuildSearchComponent(props: GuildSearchComponentProps) {
         <div className="flex gap-4">
           <div className="flex flex-col w-full gap-2">
             <p>길드 이름</p>
-            <SearchBar onChange={() => {}} onSearch={handleSearchByName} />
+            <SearchBar onChange={() => {}} onSearch={handleSearchByName} placeholder={searchByName} />
           </div>
           <div className="flex flex-col w-full gap-2">
             <p>길드 메인 게임</p>
             <SearchBar onChange={() => {}} onSearch={handleChipAdded} />
             <div className="flex gap-2 h-6">
-              {selectedGames.current.map((e, ind) => (
+              {selectedGames.map((e, ind) => (
                 <Chip content={e} onClickDelete={(content) => handleChipDelete(content)} key={ind} />
               ))}
             </div>

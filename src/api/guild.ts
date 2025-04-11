@@ -11,11 +11,11 @@ import {
   GuildAdminResponse,
 } from '@/types/guildApi';
 import categorizeTags from '@/utils/categorizeTags';
+import { uploadToS3 } from '@/utils/uploadToS3';
 
 export const useGuild = () => {
   const axios = useAxios();
 
-  // ✅ 파싱 완료, 테스트 완료
   async function GetGuild(guildId: string) {
     const response = await axios.TypedGet<GuildDetailResponse>(GUILD.detail(guildId), {}, true);
     const data = response?.data;
@@ -41,18 +41,17 @@ export const useGuild = () => {
     return null;
   }
 
-  // ✅ 테스트 완료
   async function UpdateGuild(guildId: string, newData: GuildUpdateRequest) {
-    const response = await axios.Put(GUILD.modify(guildId), newData, {}, true);
-    const data = response?.data;
-    if (data.msg === 'OK') {
-      alert('수정되었습니다!');
+    try {
+      const response = await axios.Put(GUILD.modify(guildId), newData, {}, true);
+      const data = response?.data.data;
+      console.log(data);
+      return { guildId: data.id, presignedUrl: data.presignedUrl };
+    } catch (error) {
+      console.log(error);
     }
-    console.log(data);
-    return data;
   }
 
-  // ✅ 테스트 완료
   async function DeleteGuild(guildId: string) {
     const response = await axios.Delete(GUILD.delete(guildId), {}, true);
     const data = response?.data;
@@ -63,7 +62,6 @@ export const useGuild = () => {
     return data;
   }
 
-  // ❌ 테스트 실패
   async function GetGuildList(request: GuildLIstRequest, page?: number, pageSize?: number, sort?: Sort) {
     const response = await axios.Post(
       GUILD.list,
@@ -103,22 +101,64 @@ export const useGuild = () => {
     return null;
   }
 
-  // ✅  테스트 완료
   async function CreateGuild(newData: GuildCreateRequest) {
     try {
       const response = await axios.Post(GUILD.create, newData, {}, true);
       const data = response?.data.data;
       console.log(data);
-      if (data) {
-        alert('길드가 생성되었습니다!');
-      }
-      return data;
+      return { guildId: data.id, presignedUrl: data.presignedUrl };
     } catch (error) {
       console.log(error);
     }
   }
 
-  // ✅  테스트 완료
+  async function CreateGuildWithImg(newData: GuildCreateRequest, imageFile: File | null) {
+    try {
+      // 1. 길드 생성
+      const createResponse = await CreateGuild(newData);
+      if (createResponse && imageFile) {
+        const { guildId, presignedUrl } = createResponse;
+        // 2. S3 presigned URL로 이미지 업로드
+        const s3Response = await uploadToS3(imageFile, presignedUrl);
+        if (s3Response.success) {
+          const imageUrl = s3Response.url;
+          console.log('이미지 업로드 완료: ', imageUrl);
+          // 3. 이미지 URL 서버에 등록
+          await UploadImageURL(guildId, imageUrl);
+          console.log('길드 생성 완료(이미지O)');
+          return true;
+        }
+      }
+      console.log('길드 생성 완료(이미지X)');
+      return true;
+    } catch (error) {
+      console.log('길드 생성 중 오류 발생: ', error);
+    }
+  }
+  async function UpdateGuildWithImg(guildId: string, newData: GuildUpdateRequest, imageFile: File | null) {
+    try {
+      // 1. 길드 수정
+      const updateResponse = await UpdateGuild(guildId, newData);
+      if (updateResponse && imageFile) {
+        const { guildId, presignedUrl } = updateResponse;
+        // 2. S3 presigned URL로 이미지 업로드
+        const s3Response = await uploadToS3(imageFile, presignedUrl);
+        if (s3Response.success) {
+          const imageUrl = s3Response.url;
+          console.log('이미지 업로드 완료: ', imageUrl);
+          // 3. 이미지 URL 서버에 등록
+          await UploadImageURL(guildId, imageUrl);
+          console.log('길드 수정 완료(이미지O)');
+          return true;
+        }
+      }
+      console.log('길드 수정 완료(이미지X)');
+      return true;
+    } catch (error) {
+      console.log('길드 수정 중 오류 발생: ', error);
+    }
+  }
+
   async function GetAdmin(guildId: string) {
     const response = await axios.TypedGet<GuildAdminResponse>(GUILD.admin(guildId), {}, true);
     const data = response?.data;
@@ -145,20 +185,21 @@ export const useGuild = () => {
     return null;
   }
 
-  //
   async function GetGuildMembers(guildId: string) {
     const response = await axios.TypedGet<GuildDetailMemberResponse>(GUILD.detail_member(guildId), {}, true);
     const data = response?.data;
     console.log(data);
   }
 
-  // ❌ 테스트 불가 (로직 수정 중)
   async function UploadImageURL(guildId: string, url: string) {
-    const response = await axios.Post(GUILD.upload_image(guildId), { url }, {}, true);
+    const response = await axios.PostText(GUILD.upload_image(guildId), url, {}, true);
     console.log(response);
+    if (response?.status === 204) {
+      return true;
+    }
+    return false;
   }
 
-  // ✅ 파싱 완료, 테스트 완료
   async function GetGuildRecommend(appid: string, count?: number) {
     const response = await axios.TypedGet<GuildMainResponse>(
       GUILD.recommend,
@@ -196,7 +237,6 @@ export const useGuild = () => {
     return null;
   }
 
-  // ✅ 파싱 완료, 테스트 완료
   async function GetGuildPopular() {
     const response = await axios.TypedGet<GuildMainResponse>(GUILD.popular, {}, true);
     const data = response?.data;
@@ -236,5 +276,7 @@ export const useGuild = () => {
     GetGuildMembers,
     GetGuildRecommend,
     GetGuildPopular,
+    CreateGuildWithImg,
+    UpdateGuildWithImg,
   };
 };
