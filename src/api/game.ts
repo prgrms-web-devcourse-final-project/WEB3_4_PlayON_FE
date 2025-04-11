@@ -121,7 +121,7 @@ export const useGame = () => {
     if (response && response.status === 200) {
       return response.data.data as { appid: number; name: string; headerImage: string; genres: string[] }[];
     }
-    return false;
+    throw new Error('Failed to fetch');
   }
   async function GameSearch(
     condition?: {
