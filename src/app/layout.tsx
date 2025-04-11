@@ -2,6 +2,7 @@ import Header from '@/components/common/Header';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { Suspense } from 'react';
+import ReactQueryProviders from '@/hooks/useReactQuery';
 
 export default function RootLayout({
   children,
@@ -12,7 +13,9 @@ export default function RootLayout({
     <html lang="ko">
       <body>
         <Header />
-        <Suspense>{children}</Suspense>
+        <ReactQueryProviders>
+          <Suspense>{children}</Suspense>
+        </ReactQueryProviders>
         <Toaster />
       </body>
     </html>
