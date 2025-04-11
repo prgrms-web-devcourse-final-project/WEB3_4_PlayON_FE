@@ -5,10 +5,17 @@ import PlayOnRollingBanner from '@/components/common/play-on-rolling-banner';
 import SearchBar from '@/components/common/SearchBar';
 import SectionTitle from '@/components/common/SectionTitle';
 import PickCard from '@/components/game/PickCard';
-import PopularCard from '@/components/game/PopularCard';
+import PopularCard, { PopularCardSkeleton } from '@/components/game/PopularCard';
 import SteamCard from '@/components/game/SteamCard';
 import { dummyGameDetail, dummyGameSimple, dummyUserSimple } from '@/utils/dummyData';
 import styles from './game.module.css';
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { useGame } from '@/api/game';
+import { PopularGameCard } from '../guild/components/PopularGameCard';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Suspense } from 'react';
+import { useRouter } from 'next/navigation';
+import { GAME_ROUTE } from '@/constants/routes/game';
 
 export default function Game() {
   const imageList = [
@@ -16,6 +23,22 @@ export default function Game() {
     { title: 'Unravel Two', img_src: '/img/hero/bg_game_3.webp' },
     { title: "No Man's Sky", img_src: '/img/hero/bg_game_2.webp' },
   ];
+  const game = useGame();
+  const router = useRouter();
+  const { data, isError, isLoading } = useSuspenseQuery({
+    queryKey: ['PopularGames'],
+    queryFn: () => game.GamePopular(),
+    staleTime: Infinity,
+  });
+  const PopularGamesListSkeleton = () => {
+    return (
+      <div>
+        <PopularCardSkeleton />
+        <PopularCardSkeleton />
+        <PopularCardSkeleton />
+      </div>
+    );
+  };
 
   return (
     <main className="mb-20 space-y-20">
@@ -30,7 +53,7 @@ export default function Game() {
                 className="w-[640px] place-self-center mb-20"
                 placeholder="게임 이름으로 검색하세요"
                 onChange={() => console.log('change')}
-                onSearch={() => alert('click')}
+                onSearch={(value) => router.push(GAME_ROUTE.game_list + `?name=${value}`)}
               />
               <div className={`box-content w-[340px] bg-white rounded-xl place-self-center ${styles.chatBubble}`}>
                 <div className="py-3 space-y-2 ">
@@ -40,9 +63,15 @@ export default function Game() {
               </div>
 
               <div className="grid grid-cols-3 md:grid-cols-3 gap-6 pt-4">
-                <PopularCard data={dummyGameSimple} />
-                <PopularCard data={dummyGameSimple} />
-                <PopularCard data={dummyGameSimple} />
+                <Suspense fallback={PopularGamesListSkeleton()}>
+                  {!(isError || isLoading) &&
+                    data.map((e) => (
+                      <PopularCard
+                        key={e.appid}
+                        data={{ background_src: '', genre: e.genres, img_src: e.headerImage, title: e.name }}
+                      />
+                    ))}
+                </Suspense>
               </div>
             </div>
           </div>
