@@ -1,36 +1,116 @@
+'use client';
+
+import { useEffect, useRef, useState } from 'react';
+import gsap from 'gsap';
+import ScrollTrigger from 'gsap/ScrollTrigger';
+import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
+import AnimatedSection from './AnimatedSection';
 import Link from 'next/link';
-// import gsap from 'gsap';
-// import { useGSAP } from '@gsap/react';
-// import { ScrollTrigger } from 'gsap/all';
-// import { useRef } from 'react';
+import PickCard from '@/components/game/PickCard';
+import { dummyGameSimple, dummyPost } from '@/utils/dummyData';
+import SearchGuildWithGame from '@/components/common/search-guild-with-game';
+import CommunityPostShort from '@/components/community/post-short';
+import CommunityPostImageShort from '@/components/community/post-image-short';
+
+gsap.registerPlugin(ScrollToPlugin);
 
 function TotalSection() {
-  //동시실행시키려면?
-  // 타임라인 두개 써야하나...
-  // 1. -=이랑 duration 같이 맞추면 동시에 실행됨
-  // label넣어서 하나 끝나고 추가하기
-  //signup 종료후 ㅇ
-  //titles ref 묶음이랑 각각의 sections들이 함께!!! (단 시차는 있게 올라와야함)
-  //title 올라오고 section 아주 조금 있다 올라오기
-  //title이랑 section 동시 홀드
-  // section 내려가고 title도 없어지기
-  //바닥에서 쑥 올라오는 느낌 내고 싶은데 이건 CSS 먼저 잡아놓고 해야할듯 아대가리야
+  const containerRef = useRef<HTMLDivElement>(null);
+  const sectionRefs = useRef<HTMLElement[]>([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const isScrolling = useRef(false);
 
-  //아니면? 걍 묶어서 올려보내기
-  //title&section 다 적어놓은 다음에 ref를 둘을 묶은 div에 넣고
-  //div 올라오면 scrollTrigger onEnter였나 그거 써서 일반 애니메이션 실행
-  //각각 div absolute로 얹기
+  // 섹션 등록용 함수
+  const registerSection = (el: HTMLElement | null) => {
+    if (el && !sectionRefs.current.includes(el)) {
+      sectionRefs.current.push(el);
+    }
+  };
+
+  useEffect(() => {
+    const onWheel = (e: WheelEvent) => {
+      if (!containerRef.current || !ScrollTrigger.isInViewport(containerRef.current)) return;
+      if (isScrolling.current) return;
+
+      const direction = e.deltaY > 0 ? 1 : -1;
+      const newIndex = currentIndex + direction;
+
+      if (newIndex < 0 || newIndex >= sectionRefs.current.length) return;
+
+      isScrolling.current = true;
+      setCurrentIndex(newIndex);
+
+      gsap.to(window, {
+        scrollTo: {
+          y: sectionRefs.current[newIndex].offsetTop - 68,
+          autoKill: false,
+        },
+        duration: 1,
+        ease: 'power2.out',
+        onComplete: () => {
+          isScrolling.current = false;
+        },
+      });
+
+      e.preventDefault();
+    };
+
+    window.addEventListener('wheel', onWheel, { passive: false });
+    return () => window.removeEventListener('wheel', onWheel);
+  }, [currentIndex]);
 
   return (
-    <section className="bg-purple-50 py-16 h-screen">
+    <section className="bg-purple-50 overflow-hidden" ref={containerRef}>
       <div className="wrapper">
-        <div className="text-purple-700 relative">
-          <div>
-            <Link className="font-dgm text-8xl  underline absolute" href="/signup">
+        <section className="h-screen sub-section" ref={registerSection}>
+          <div className="flex items-center justify-left h-full">
+            <Link
+              className="font-dgm text-8xl underline absolute -mt-24 hover:text-purple-600 transition-all"
+              href="/signup"
+            >
               Sign UP
             </Link>
           </div>
-        </div>
+        </section>
+
+        <section className="h-screen" ref={registerSection}>
+          <AnimatedSection title="맞춤형 게임 탐색하기">
+            <div>
+              <p className="font-suit text-lg font-medium">로그인 후 맞춤 정보를 받아보세요</p>
+              <div className="flex items-center gap-5 pt-1">
+                <p className="font-suit text-5xl font-extrabold text-purple-700">파티원 PICK</p>
+                <img src="/img/icons/pixel_chat_heart.svg" className="h-10" alt="" />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 pt-8">
+              {/* <PickCard data={dummyGameSimple} />
+              <PickCard data={dummyGameSimple} />
+              <PickCard data={dummyGameSimple} />
+              <PickCard data={dummyGameSimple} /> */}
+            </div>
+          </AnimatedSection>
+        </section>
+
+        <section className="h-screen" ref={registerSection}>
+          <AnimatedSection title="내게 맞는 맞춤 길드 추천">
+            <SearchGuildWithGame
+              leftCarouselTitle={<p className="text-3xl font-bold text-neutral-900 mb-6">보유 게임으로 길드 탐색</p>}
+              theme="light"
+            />
+          </AnimatedSection>
+        </section>
+
+        <section className="h-screen" ref={registerSection}>
+          <AnimatedSection title="게이머를 위한 커뮤니티">
+            <div className="w-full grid grid-cols-2 gap-x-6 gap-y-6">
+              {/* <CommunityPostShort data={dummyPost} className="h-52" />
+              <CommunityPostImageShort data={dummyPost} className="h-52" />
+              <CommunityPostShort data={dummyPost} className="h-52" />
+              <CommunityPostImageShort data={dummyPost} className="h-52" /> */}
+            </div>
+          </AnimatedSection>
+        </section>
       </div>
     </section>
   );
