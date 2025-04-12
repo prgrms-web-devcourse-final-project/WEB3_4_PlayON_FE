@@ -1,7 +1,7 @@
 'use client';
 
 import PlayOnRollingBanner from '@/components/common/play-on-rolling-banner';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { Suspense, useEffect, useState } from 'react';
 import GuildInfoSection from './components/GuildInfoSection';
 import GuildInfoSectionSkeleton from './components/GuildInfoSectionSkeleton';
@@ -11,8 +11,17 @@ import GuildBoardNoticeSection from './components/GuildBoardNoticeSection';
 import { useGuildBoard } from '@/api/guildBoard';
 import { useQuery } from '@tanstack/react-query';
 import { useGuild } from '@/api/guild';
+import { useAuthStore } from '@/stores/authStore';
+import { PATH } from '@/constants/routes';
 
 export default function GuildDetails() {
+  const router = useRouter();
+  const { user } = useAuthStore();
+
+  if (user === undefined) {
+    router.push(PATH.login);
+  }
+
   const params = useParams();
   const guildId = params.guildid as string;
 
