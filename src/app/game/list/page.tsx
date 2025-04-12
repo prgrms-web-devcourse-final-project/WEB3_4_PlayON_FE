@@ -1,21 +1,17 @@
 'use client';
 
-import CategoryMenu from '@/components/common/category-menu';
 import HeroSwiperBanner from '@/components/common/HeroSwiperBanner';
 import { DateTimePicker } from '@/components/ui/date-time-picker';
-import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
-import { dummyGameDetail2, dummyGameSimple } from '@/utils/dummyData';
-import { SearchIcon } from 'lucide-react';
+import { dummyGameDetail2 } from '@/utils/dummyData';
 import PickCard from '@/components/game/PickCard';
-import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { useGame, game } from '@/api/game';
 import { Suspense, useEffect, useRef, useState } from 'react';
 import typeConverter from '@/utils/typeConverter';
 import { CoolerCategoryMenu } from '@/app/signup/userdata/component/cooler-category-menu';
 import TiltToggle from '@/components/common/tilt-toggle';
 import SearchBar from '@/components/common/SearchBar';
-import { release } from 'os';
 import { gameDetail } from '@/types/games';
 import CustomPagination from '@/components/common/CustomPagination';
 import { useSearchParams } from 'next/navigation';
@@ -139,11 +135,37 @@ export default function GameList() {
     } else {
       newUrl.searchParams.delete('releaseStatus');
     }
+
+    if (mac) {
+      newUrl.searchParams.set('mac', String(mac));
+    } else {
+      newUrl.searchParams.delete('mac');
+    }
+    if (keyword.length > 0) {
+      newUrl.searchParams.set('keyword', keyword);
+    } else {
+      newUrl.searchParams.delete('keyword');
+    }
+    if (releaseDate) {
+      newUrl.searchParams.set('releaseDate', String(releaseDate));
+    } else {
+      newUrl.searchParams.delete('releaseDate');
+    }
+
     window.history.pushState({}, '', newUrl);
   }, [genre, playerType, releaseStatus, mac, releaseDate, keyword]);
   useEffect(() => {
     refetch();
-  }, [searchParams]);
+  }, [refetch, searchParams]);
+
+  // const queryClient = useQueryClient();
+  // useEffect(() => {
+  //   return {
+  //     onUnmount: () => {
+  //       queryClient.cancelQueries({ queryKey: ['GameList'] });
+  //     },
+  //   };
+  // }, []);
 
   return (
     <div className="flex flex-col items-center">
