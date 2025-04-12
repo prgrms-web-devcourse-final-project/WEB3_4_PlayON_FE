@@ -25,6 +25,7 @@ export default function GuildDetails() {
 
   const params = useParams();
   const guildId = params.guildid as string;
+  console.log(guildId);
 
   const Guild = useGuild();
   const GuildBoard = useGuildBoard();
@@ -55,9 +56,7 @@ export default function GuildDetails() {
   }, [guildData]);
   return (
     <div className="flex flex-col mt-36 mb-36 gap-14">
-      <Suspense fallback={<GuildInfoSectionSkeleton />}>
-        {guildData && <GuildInfoSection guildData={guildData} />}
-      </Suspense>
+      <Suspense fallback={<GuildInfoSectionSkeleton />}>{guildData && <GuildInfoSection guildId={guildId} />}</Suspense>
 
       <PlayOnRollingBanner direction="right" duration={20} />
       <Suspense fallback={<div>데이터 불러오는 중...</div>}>
@@ -69,7 +68,7 @@ export default function GuildDetails() {
       <Suspense fallback={<div>데이터 불러오는 중...</div>}>
         {guildBoardLatest && <GuildBoardLatestSection guildId={guildId} guildBoardLatest={guildBoardLatest} />}
       </Suspense>
-      {!isNotGuest && (
+      {guildData && !isNotGuest && (
         <div className="w-[67%] self-center">
           <SectionBanner
             description="길드의 활동이 궁금하신가요?"

@@ -358,7 +358,7 @@ export default function GuildAdmin() {
               {pendingList.length > 0 ? (
                 pendingList.map((user) => {
                   return (
-                    <div key={user.memberId} className="border border-neutral-400 rounded-lg p-5">
+                    <div key={user.memberId} className="border border-neutral-400 rounded-lg p-5 min-w-[288px]">
                       <UserApprove
                         data={user}
                         onApprove={() => approveRequest(user.requestId)}

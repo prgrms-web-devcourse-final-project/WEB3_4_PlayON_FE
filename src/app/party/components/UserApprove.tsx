@@ -17,7 +17,7 @@ export default function UserApprove({ data, onApprove, onReject }: UserApprovePr
     <div className="flex justify-between items-center w-full">
       <div className="flex gap-3">
         <Link href={PATH.user_page(data.memberId)}>
-          <Avatar>
+          <Avatar className="shrink-0">
             <AvatarImage
               src={data.img_src || '/img/dummy_profile.jpg'}
               className="bg-cover bg-center size-12 rounded-full shrink-0"

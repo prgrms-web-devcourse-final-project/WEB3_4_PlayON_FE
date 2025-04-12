@@ -47,7 +47,7 @@ export default function Guild() {
           <SearchBar onChange={() => {}} onSearch={handleSearch} className="w-[640px]" />
         </HeroTypingBanner>
       </section>
-      <section className="wrapper space-y-20">
+      <section className="wrapper space-y-10">
         <div className="flex justify-between items-end">
           <SectionTitle title="활동량 TOP 길드" subtitle="혼자서 게임하지 마세요!" icon_src="./img/icons/pixel_box.svg">
             <RetroButton type="purple" className="w-[344px] h-[48px]" callback={() => router.push(PATH.guild_list)}>
