@@ -163,12 +163,11 @@ export const useParty = () => {
     const res = await axios.Get(
       PARTY_ENDPOINTS.main_pending,
       {
-        params: { limit: limit + 1 },
+        params: { limit: limit },
       },
       false
     );
     if (res && res.status === 200) {
-      console.log('요청 개수 : ', limit);
       return res.data.data.parties;
     }
     return [];
