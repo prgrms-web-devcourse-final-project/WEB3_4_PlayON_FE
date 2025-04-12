@@ -15,6 +15,7 @@ export const useAxios = () => {
   const errorHandler = (error, toast: boolean) => {
     let titleMessage = '';
     if (axios.isAxiosError(error)) {
+      console.log(error);
       titleMessage = error.message;
     } else {
       console.log('에러 메세지 분기 처리 필요');
@@ -34,6 +35,7 @@ export const useAxios = () => {
       const response = await apiInstance.get(path, config);
       return response;
     } catch (err) {
+      console.log('Get error');
       errorHandler(err, toast);
     }
   }

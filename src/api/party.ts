@@ -75,28 +75,9 @@ export const useParty = () => {
     );
     if (res && res.status == 200) {
       const data = res.data.data;
-      // console.log('raw data : ', data);
+      console.log('raw data : ', data);
       return {
-        parties: await Promise.all(
-          data.items.map(async (party) => {
-            return {
-              partyId: party.partyId,
-              party_name: party.name,
-              description: party.description,
-              start_time: new Date(party.partyAt),
-              tags: party.partyTags.map((tag) => tag.tagValue),
-              participation: party.members,
-              selected_game: {
-                title: party.gameName,
-                genre: [],
-                img_src: await getSteamImage(party.appId, 'header'),
-                background_src: await getSteamImage(party.appId, 'background'),
-              },
-              num_maximum: party.maximum,
-              num_minimum: party.minimum,
-            };
-          })
-        ),
+        parties: data.items,
         totalPages: data.totalPages,
         totalItems: data.totalItems,
       };
@@ -182,14 +163,27 @@ export const useParty = () => {
     const res = await axios.Get(
       PARTY_ENDPOINTS.main_pending,
       {
-        params: {
-          limit: limit,
-        },
+        params: { limit: limit },
       },
       false
     );
     if (res && res.status === 200) {
-      return res?.data.data.parties;
+      return res.data.data.parties;
+    }
+    return [];
+  }
+
+  async function MainLoggedParty(limit: number): Promise<getPartyRes[]> {
+    const res = await axios.Get(
+      PARTY_ENDPOINTS.main_completed,
+      {
+        params: { limit: limit },
+      },
+      false
+    );
+    if (res && res.status == 200) {
+      console.log('logged party : ', res);
+      return res.data.data.parties;
     }
     return [];
   }
@@ -207,5 +201,6 @@ export const useParty = () => {
     PartyResult,
     GetPendingList,
     MainPendingParty,
+    MainLoggedParty,
   };
 };

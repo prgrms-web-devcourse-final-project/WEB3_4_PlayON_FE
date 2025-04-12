@@ -49,7 +49,7 @@ export default function PartyCard({ data }: PartyCardProps) {
 
   return (
     <Link
-      href={PATH.party_detail(data.partyId.toString())}
+      href={PATH.party_detail(data.partyId)}
       className="flex flex-col gap-2 p-5 rounded-xl bg-white border-2 border-neutral-300 cursor-pointer w-full aspect-[113/100]"
     >
       <div

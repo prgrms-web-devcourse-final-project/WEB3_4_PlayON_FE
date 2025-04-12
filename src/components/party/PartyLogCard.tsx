@@ -5,10 +5,12 @@ import { Skeleton } from '../ui/skeleton';
 import { Button } from '../ui/button';
 import formatDate from '@/utils/formatDate';
 import { useRouter } from 'next/navigation';
-import { partyLog } from '@/types/party';
+import { getPartyRes } from '@/types/party';
+import { useEffect, useState } from 'react';
+import { getSteamImage } from '@/api/steamImg';
 
 interface PartyCardProps {
-  data: partyLog;
+  data: getPartyRes;
 }
 
 export function PartyLogCardSkeleton() {
@@ -36,26 +38,34 @@ export default function PartyLogCard({ data }: PartyCardProps) {
   const handleClick = () => {
     router.push('/');
   };
+  const [bg, setBg] = useState('');
+  useEffect(() => {
+    const fetchBg = async () => {
+      const res = await getSteamImage(data.appId, 'header');
+      setBg(res);
+    };
+    fetchBg();
+  }, []);
   return (
     <div className="flex flex-col gap-4 p-5 rounded-xl bg-white border-[1px] border-neutral-300 cursor-pointer w-full aspect-[113/100]">
       <div
         style={{
-          backgroundImage: `url(${data.party_info.selected_game.img_src})`,
+          backgroundImage: `url(${bg})`,
         }}
         className="flex flex-col aspect-[366/160] rounded-xl overflow-hidden justify-between group bg-cover bg-center"
       ></div>
       <div className="flex flex-col gap-1">
-        <div className="font-suit text-2xl font-semibold truncate text-neutral-900">{data.party_info.party_name}</div>
+        <div className="font-suit text-2xl font-semibold truncate text-neutral-900">{data.name}</div>
         <div className="flex justify-between items-center">
           <Tag style="time" className="px-0">
-            {formatDate(data.party_info.start_time)}
+            {formatDate(data.partyAt)}
           </Tag>
-          <div className="font-suit text-sm text-neutral-500">전체 {data.party_info.participation.length}명</div>
+          <div className="font-suit text-sm text-neutral-500">전체 {data.total}명</div>
         </div>
         <div className="flex gap-2 py-2">
-          {data.party_info.tags.map((tag) => (
-            <Tag background="medium" key={tag}>
-              {tag}
+          {data.partyTags.map((tag, idx) => (
+            <Tag background="medium" key={tag.tagValue + idx}>
+              {tag.tagValue}
             </Tag>
           ))}
         </div>

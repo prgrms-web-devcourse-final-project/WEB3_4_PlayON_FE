@@ -1,6 +1,6 @@
 import { useParty } from '@/api/party';
 import { useAuthStore } from '@/stores/authStore';
-import { party } from '@/types/party';
+import { getPartyRes, party } from '@/types/party';
 import { userSimple } from '@/types/user';
 import { usePathname } from 'next/navigation';
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
@@ -26,7 +26,7 @@ export const PartyContextProvider = ({ children }: { children: React.ReactNode }
 
   const partyAPI = useParty();
 
-  const [partyInfo, setPartyInfo] = useState<party | null>(null);
+  const [partyInfo, setPartyInfo] = useState<getPartyRes>(null);
   const [pendingList, setPendingList] = useState<userSimple[]>([]);
   const [joinState, setJoinState] = useState<JoinStateType>('notJoined');
 
