@@ -8,15 +8,19 @@ import { Switch } from '@/components/ui/switch';
 import { dummyGameDetail2, dummyGameSimple } from '@/utils/dummyData';
 import { SearchIcon } from 'lucide-react';
 import PickCard from '@/components/game/PickCard';
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from '@/components/ui/pagination';
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { useGame, game } from '@/api/game';
+import { Suspense, useEffect, useRef, useState } from 'react';
+import typeConverter from '@/utils/typeConverter';
+import { CoolerCategoryMenu } from '@/app/signup/userdata/component/cooler-category-menu';
+import TiltToggle from '@/components/common/tilt-toggle';
+import SearchBar from '@/components/common/SearchBar';
+import { release } from 'os';
+import { gameDetail } from '@/types/games';
+import CustomPagination from '@/components/common/CustomPagination';
+import { useSearchParams } from 'next/navigation';
+import Link from 'next/link';
+import { GAME_ROUTE } from '@/constants/routes/game';
 
 export default function GameList() {
   const imageList = [
@@ -27,6 +31,119 @@ export default function GameList() {
     { title: 'Dark Souls 3', img_src: '/img/hero/bg_gameList_5.webp' },
   ];
   const dummyGames = new Array(12).fill(dummyGameDetail2);
+
+  const genres = ['액션', '인디', '어드벤처', '시뮬레이션', 'RPG', '전략', '캐주얼'] as const;
+  const playerTypes = ['멀티플레이', '싱글플레이'] as const;
+  const releaseStatuses = ['발매', '출시예정'] as const;
+  const [genre, setGenre] = useState<boolean[]>([true, ...genres.map(() => false)]);
+  const [playerType, setPlayerType] = useState<boolean[]>([...playerTypes.map(() => false)]);
+  const [releaseStatus, setReleaseStatus] = useState<boolean[]>([...releaseStatuses.map(() => false)]);
+
+  const [keyword, setKeyword] = useState('');
+  const [mac, setMac] = useState(false);
+  const [releaseDate, setReleaseDate] = useState<Date | undefined>(undefined);
+
+  const searchParams = useSearchParams();
+  const totalItems = useRef(48);
+
+  const [fetchData, setFetchData] = useState(false);
+
+  function convertToClientGame(data: game): gameDetail {
+    return {
+      about: data.aboutTheGame,
+      detail_desc: data.aboutTheGame,
+      developer: [data.developers],
+      genre: data.genres,
+      homepage_url: data.website,
+      img_src: data.headerImage,
+      movie_src: data.movies,
+      screenshot_src: data.screenshots,
+      os: {
+        linux: data.isLinuxSupported,
+        mac: data.isMacSupported,
+        windows: data.isWindowsSupported,
+      },
+      publisher: [data.publishers],
+      release_date: data.releaseDate,
+      short_desc: data.shortDescription,
+      title: data.name,
+    };
+  }
+  const game = useGame();
+  const { data, refetch } = useSuspenseQuery({
+    queryKey: ['GameList'],
+    queryFn: async () => {
+      const playerTypeInd = playerType.findIndex((e) => e === true);
+      const releaseStatusInd = releaseStatus.findIndex((e) => e === true);
+
+      const data = await game.GameSearch(
+        {
+          keyword: keyword.length > 0 ? keyword : undefined,
+          genres: genre[0]
+            ? undefined
+            : genre
+                .map((e, ind) => (e ? typeConverter('GameGenreTags', 'KoToEn', genres[ind - 1]) : undefined))
+                .filter((e) => e !== undefined)
+                .join(','),
+          releaseAfter: releaseDate,
+          isMacSupported: mac,
+          playerType: typeConverter('GamePlayerTypeTags', 'KoToEn', playerTypes[playerTypeInd]),
+          releaseStatus: typeConverter('GameReleaseStatusTags', 'KoToEn', releaseStatuses[releaseStatusInd]),
+        },
+        {
+          page: Number(searchParams.get('page')) || 0,
+          size: 12,
+          sort: [],
+        }
+      );
+      if (data) {
+        totalItems.current = data.totalItems;
+        console.log(totalItems.current);
+        const appIds = data.items.map((e) => e.appid);
+        const gameData = await Promise.all(
+          appIds.map(async (appid) => {
+            const data = await game.GameDetailWithPartyLog(appid);
+            if (data === undefined) return undefined;
+            return { ...convertToClientGame(data.game), appid: appid };
+          })
+        );
+        return gameData.filter((e) => e !== undefined);
+      }
+      return dummyGames;
+    },
+    staleTime: 1000 * 60 * 5,
+  });
+
+  useEffect(() => {
+    const newUrl = new URL(window.location.href);
+    if (!genre[0]) {
+      const Genre = genre
+        .slice(1, genre.length)
+        .map((e, ind) => (e ? genres[ind] : null))
+        .filter((e) => e);
+      newUrl.searchParams.set('genre', Genre.join(','));
+    } else {
+      newUrl.searchParams.delete('genre');
+    }
+    const playerTypeInd = playerType.findIndex((e) => e === true);
+    const playerTypeValue = playerTypes[playerTypeInd];
+    if (playerTypeInd !== -1) {
+      newUrl.searchParams.set('playerType', playerTypeValue);
+    } else {
+      newUrl.searchParams.delete('playerType');
+    }
+    const releaseStatusInd = releaseStatus.findIndex((e) => e === true);
+    const releaseStatusValue = releaseStatuses[releaseStatusInd];
+    if (releaseStatusInd !== -1) {
+      newUrl.searchParams.set('releaseStatus', releaseStatusValue);
+    } else {
+      newUrl.searchParams.delete('releaseStatus');
+    }
+    window.history.pushState({}, '', newUrl);
+  }, [genre, playerType, releaseStatus, mac, releaseDate, keyword]);
+  useEffect(() => {
+    refetch();
+  }, [searchParams]);
 
   return (
     <div className="flex flex-col items-center">
@@ -45,14 +162,15 @@ export default function GameList() {
             <p className="font-bold">게임 이름</p>
             <div className="flex gap-10">
               <div className="flex flex-auto items-center border border-neutral-300 rounded px-2 gap-2">
-                <SearchIcon className="text-neutral-400" width={16} height={16} />
-                <Input
-                  placeholder="게임 제목으로 검색하세요"
-                  className="border-none shadow-none focus-visible:ring-transparent"
-                ></Input>
+                <SearchBar
+                  onChange={() => {}}
+                  onSearch={(value) => setKeyword(value)}
+                  className="bg-transparent border-none "
+                  placeholder={`${keyword}`}
+                />
               </div>
               <div className="flex items-center gap-2">
-                <Switch checked={true} />
+                <Switch checked={mac} onCheckedChange={(e) => setMac(e)} />
                 <p>맥OS 지원</p>
               </div>
             </div>
@@ -60,62 +178,60 @@ export default function GameList() {
           <div className="flex gap-8 mt-4 items-center">
             <div className="flex flex-col gap-2">
               <p className="font-bold">{`출시일 (선택일 이후)`}</p>
-              <DateTimePicker onSelect={() => {}} />
+              <DateTimePicker
+                init={undefined}
+                onSelect={(date) => {
+                  setReleaseDate(date);
+                }}
+              />
             </div>
             <div className="flex flex-col gap-2">
               <p className="font-bold">{`출시일 (선택일 이후)`}</p>
-              <CategoryMenu categoryItems={['#발매', '#출시 예정']} categoryName="" onSelect={() => {}} />
+              <CoolerCategoryMenu
+                state={releaseStatus}
+                setState={setReleaseStatus}
+                className="flex gap-2"
+                type="single"
+              >
+                {[...releaseStatuses].map((item, item_ind) => (
+                  <TiltToggle label={item} toggle={releaseStatus[item_ind]} key={`releaseStatus_${item}`} />
+                ))}
+              </CoolerCategoryMenu>
             </div>
           </div>
           <div className="flex gap-8 mt-4 items-center">
             <div className="flex flex-col gap-2">
               <p className="font-bold">{`플레이어`}</p>
-              <CategoryMenu
-                categoryItems={['#멀티 플레이', '#싱글 플레이']}
-                categoryName="플레이어"
-                onSelect={() => {}}
-              />
+              <CoolerCategoryMenu state={playerType} setState={setPlayerType} className="flex gap-2" type="single">
+                {[...playerTypes].map((item, item_ind) => (
+                  <TiltToggle label={item} toggle={playerType[item_ind]} key={`playerType_${item}`} />
+                ))}
+              </CoolerCategoryMenu>
             </div>
           </div>
           <div className="flex gap-8 mt-4 items-center">
             <div className="flex flex-col gap-2">
               <p className="font-bold">{`인기 장르`}</p>
-              <CategoryMenu
-                categoryItems={['#인디', '#액션', '#어드벤처', '#RPG', '#시뮬레이션', '#경쟁', '#퍼즐']}
-                categoryName="인기장르"
-                onSelect={() => {}}
-              />
+              <CoolerCategoryMenu state={genre} setState={setGenre} className="flex gap-2" type="multiple" enableAll>
+                {['전체', ...genres].map((item, item_ind) => (
+                  <TiltToggle label={item} toggle={genre[item_ind]} key={`genre_${item}`} />
+                ))}
+              </CoolerCategoryMenu>
             </div>
           </div>
         </div>
       </div>
       <div className="lg:w-[1280px] grid grid-cols-4 grid-rows-3 gap-x-6 gap-y-12 mt-[100px]">
-        {dummyGames.map((e, ind) => (
-          <PickCard key={ind} data={e} />
-        ))}
+        <Suspense fallback={<div className="col-span-4">Loading...</div>}>
+          {data.map((e, ind) => (
+            <Link href={GAME_ROUTE.game_detail(e.appid)} key={ind}>
+              <PickCard data={e} />
+            </Link>
+          ))}
+        </Suspense>
       </div>
       <div className="mt-[100px] mb-[100px]">
-        <Pagination>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious href="#" className="text-base" />
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink href="#" isActive>
-                1
-              </PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink href="#">2</PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationEllipsis />
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationNext href="#" className="text-base" />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
+        <CustomPagination pageSize={12} totalItems={totalItems.current} />
       </div>
     </div>
   );

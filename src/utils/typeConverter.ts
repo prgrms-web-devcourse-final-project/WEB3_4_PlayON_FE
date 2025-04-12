@@ -1,3 +1,4 @@
+import Game from '@/app/game/page';
 import { communityTags } from '@/types/Tags/communityTags';
 
 const typeMap = {
@@ -86,6 +87,46 @@ const typeMap = {
       FREE: '공지',
       GAME: '자유',
       NOTICE: '게임관련',
+    },
+  },
+  GameGenreTags: {
+    KoToEn: {
+      액션: 'Action',
+      인디: 'Indie',
+      어드벤처: 'Adventure',
+      시뮬레이션: 'Simulation',
+      RPG: 'RPG',
+      전략: 'Strategy',
+      캐주얼: 'Casual',
+    },
+    EnToKo: {
+      Action: '액션',
+      Indie: '인디',
+      Adventure: '어드벤처',
+      Simulation: '시뮬레이션',
+      RPG: 'RPG',
+      Strategy: '전략',
+      Casual: '캐주얼',
+    },
+  },
+  GamePlayerTypeTags: {
+    KoToEn: {
+      멀티플레이: 'MULTI',
+      싱글플레이: 'SINGLE',
+    },
+    EnToKo: {
+      MULTIPLE: '멀티플레이',
+      SINGLE: '싱글플레이',
+    },
+  },
+  GameReleaseStatusTags: {
+    KoToEn: {
+      발매: 'RELEASED',
+      출시예정: 'UNRELEASED',
+    },
+    EnToKo: {
+      RELEASED: '발매',
+      UNRELEASED: '출시예정',
     },
   },
 };

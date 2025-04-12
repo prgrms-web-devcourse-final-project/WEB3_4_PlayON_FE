@@ -7,16 +7,16 @@ import SectionTitle from '@/components/common/SectionTitle';
 import PickCard from '@/components/game/PickCard';
 import PopularCard from '@/components/game/PopularCard';
 import SteamCard from '@/components/game/SteamCard';
-import { dummyGameDetail, dummyGameSimple, dummyUserSimple } from '@/utils/dummyData';
+import { dummyGameDetail, dummyGameSimple } from '@/utils/dummyData';
 import styles from './game.module.css';
-import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { game, party, partyLog, useGame } from '@/api/game';
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { game, useGame } from '@/api/game';
 import { Suspense } from 'react';
 import { useRouter } from 'next/navigation';
 import { GAME_ROUTE } from '@/constants/routes/game';
 import { useAuthStore } from '@/stores/authStore';
 import { gameDetail } from '@/types/games';
-import { ErrorBoundary } from 'react-error-boundary';
+import Link from 'next/link';
 
 export default function Game() {
   const imageList = [
@@ -41,14 +41,6 @@ export default function Game() {
         title: e.name,
       })),
   });
-
-  const { data: friendGames, isSuccess: friendGamesIsSuccess } = useQuery({
-    queryKey: ['FriendGames'],
-    queryFn: () => game.GameRecommendFriend(),
-    staleTime: Infinity,
-    select: (data) => data.map((e) => e.appid),
-    enabled: user !== undefined,
-  });
   function convertToClientGame(data: game): gameDetail {
     return {
       about: data.aboutTheGame,
@@ -70,16 +62,86 @@ export default function Game() {
       title: data.name,
     };
   }
-
-  const personalGames = useQuery({
-    queryKey: ['PersonalGames'],
-    queryFn: () => game.GameRecommendGenre(),
+  const { data: friendGames, isSuccess: friendGamesIsSuccess } = useSuspenseQuery({
+    queryKey: ['FriendGames'],
+    queryFn: async () => {
+      try {
+        const appIds = (await game.GameRecommendFriend()).slice(0, 4).map((e) => e.appid);
+        const gameData = await Promise.all(
+          appIds.map(async (appid) => {
+            const data = await game.GameDetailWithPartyLog(appid);
+            if (data === undefined) return undefined;
+            return { ...convertToClientGame(data.game), appid: appid };
+          })
+        );
+        return gameData.filter((e) => e !== undefined);
+      } catch (e) {
+        console.log(e);
+        return [
+          { ...dummyGameDetail, appid: 1 },
+          { ...dummyGameDetail, appid: 1 },
+          { ...dummyGameDetail, appid: 1 },
+          { ...dummyGameDetail, appid: 1 },
+        ];
+      }
+    },
     staleTime: Infinity,
-    enabled: user !== undefined,
   });
-  const playTimeGames = useQuery({
+  const { data: personalGames, isSuccess: personalGamesIsSuccess } = useSuspenseQuery({
+    queryKey: ['PersonalGames'],
+    queryFn: async () => {
+      try {
+        const appIds = (await game.GameRecommendGenre()).map((e) => e.appid);
+        const gameData = await Promise.all(
+          appIds.map(async (appid) => {
+            const data = await game.GameDetailWithPartyLog(appid);
+            if (data === undefined) return undefined;
+            return { ...convertToClientGame(data.game), appid: appid };
+          })
+        );
+        return gameData.slice(0, 4).filter((e) => e !== undefined);
+      } catch (e) {
+        console.log(e);
+        return [
+          { ...dummyGameDetail, appid: 1 },
+          { ...dummyGameDetail, appid: 1 },
+          { ...dummyGameDetail, appid: 1 },
+          { ...dummyGameDetail, appid: 1 },
+        ];
+      }
+    },
+    staleTime: Infinity,
+  });
+  const { data: playTimeGames } = useSuspenseQuery({
     queryKey: ['PlayTimeGames'],
-    queryFn: () => game.GameMostPlayTime(),
+    queryFn: async () => {
+      const appIds = (await game.GameMostPlayTime()).map((e) => e.appid);
+      const gameData = await Promise.all(
+        appIds.map(async (appid) => {
+          const data = await game.GameDetailWithPartyLog(appid);
+          if (data === undefined) return undefined;
+          return { ...convertToClientGame(data.game), appid: appid };
+        })
+      );
+      return gameData.slice(0, 3).filter((e) => e !== undefined);
+    },
+    staleTime: Infinity,
+  });
+  const { data: steamRanking } = useSuspenseQuery({
+    queryKey: ['SteamRanking'],
+    queryFn: async () => {
+      const data = await game.GameRanking();
+      if (!data) return undefined;
+      return data.map((e) => {
+        return {
+          background_src: '',
+          appid: e.appid,
+          genre: e.genres,
+          img_src: e.headerImage,
+          title: e.name,
+        };
+      });
+    },
     staleTime: Infinity,
   });
 
@@ -108,7 +170,7 @@ export default function Game() {
               <div className="grid grid-cols-3 md:grid-cols-3 gap-6 pt-4">
                 <Suspense>
                   {popularGames.map((e) => (
-                    <PopularCard key={e.appid} data={e} />
+                    <PopularCard data={e} />
                   ))}
                 </Suspense>
               </div>
@@ -125,7 +187,28 @@ export default function Game() {
           icon_src="/img/icons/pixel_chat_heart.svg"
         />
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 pt-8">
-          <Suspense></Suspense>
+          {user && friendGamesIsSuccess && friendGames.length > 0 ? (
+            friendGames.map((e, ind) => (
+              <Link href={GAME_ROUTE.game_detail(e.appid)} key={`friendGames_${ind}`}>
+                <PickCard data={e} />
+              </Link>
+            ))
+          ) : (
+            <>
+              <Link href={GAME_ROUTE.game_detail(1)}>
+                <PickCard data={dummyGameDetail} />
+              </Link>
+              <Link href={GAME_ROUTE.game_detail(1)}>
+                <PickCard data={dummyGameDetail} />
+              </Link>
+              <Link href={GAME_ROUTE.game_detail(1)}>
+                <PickCard data={dummyGameDetail} />
+              </Link>
+              <Link href={GAME_ROUTE.game_detail(1)}>
+                <PickCard data={dummyGameDetail} />
+              </Link>
+            </>
+          )}
         </div>
       </section>
 
@@ -136,24 +219,45 @@ export default function Game() {
               <p className="text-5xl font-suit font-bold text-white">STEAM RANKING</p>
 
               <div className="flex gap-6">
-                <div className="w-[845px] h-[394px] space-y-8">
-                  <div className="relative pt-3">
-                    <img src={dummyGameSimple.img_src} className="w-full rounded-xl bg-neutral-400 object-cover" />
-                    <div className="absolute top-0 left-0 pt-6 pl-3 w-32">
-                      <img src="/img/laurel/laurel_1st.png" />
+                <Link href={GAME_ROUTE.game_detail(steamRanking ? steamRanking[0].appid : 1)}>
+                  <div className="w-[845px] h-[394px] space-y-8">
+                    <div className="relative pt-3">
+                      <img
+                        src={steamRanking ? steamRanking[0].img_src : ''}
+                        className="w-full rounded-xl bg-neutral-400 object-cover"
+                      />
+                      <div className="absolute top-0 left-0 pt-6 pl-3 w-32">
+                        <img src="/img/laurel/laurel_1st.png" />
+                      </div>
+                    </div>
+                    <div className="space-y-4">
+                      <p className="font-suit text-5xl font-bold text-white">
+                        {' '}
+                        {steamRanking ? steamRanking[0].title : ''}
+                      </p>
+                      <p className="text-lg text-white font-medium">
+                        {' '}
+                        {steamRanking ? steamRanking[0].genre.join(', ') : []}
+                      </p>
                     </div>
                   </div>
-                  <div className="space-y-4">
-                    <p className="font-suit text-5xl font-bold text-white"> {dummyGameSimple.title}</p>
-                    <p className="text-lg text-white font-medium"> {dummyGameSimple.genre.join(', ')}</p>
-                  </div>
-                </div>
+                </Link>
 
                 <div className="grid grid-cols-2 gap-6 w-[411px]">
-                  <SteamCard data={dummyGameSimple} className="text-white" theme="dark" />
-                  <SteamCard data={dummyGameSimple} className="text-white" theme="dark" />
-                  <SteamCard data={dummyGameSimple} className="text-white" theme="dark" />
-                  <SteamCard data={dummyGameSimple} className="text-white" theme="dark" />
+                  {steamRanking && steamRanking.length > 0 ? (
+                    steamRanking.slice(1, 5).map((e, ind) => (
+                      <Link href={GAME_ROUTE.game_detail(e.appid)} key={`steamRanking_${ind + 1}`}>
+                        <SteamCard theme="dark" data={e} />
+                      </Link>
+                    ))
+                  ) : (
+                    <>
+                      <SteamCard data={dummyGameSimple} className="text-white" theme="dark" />
+                      <SteamCard data={dummyGameSimple} className="text-white" theme="dark" />
+                      <SteamCard data={dummyGameSimple} className="text-white" theme="dark" />
+                      <SteamCard data={dummyGameSimple} className="text-white" theme="dark" />
+                    </>
+                  )}
                 </div>
               </div>
             </div>
@@ -164,15 +268,25 @@ export default function Game() {
       <section className="wrapper space-y-20">
         <div className="space-y-8">
           <SectionTitle
-            title={`${dummyUserSimple.nickname}님 맞춤 추천`}
+            title={`${user ? user.nickname + '님 맞춤 추천' : '이런 게임은 어떠세요?'}`}
             subtitle="내가 좋아하는 장르 위주로"
             icon_src="/img/icons/pixel_present.svg"
           />
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <PickCard data={dummyGameDetail} />
-            <PickCard data={dummyGameDetail} />
-            <PickCard data={dummyGameDetail} />
-            <PickCard data={dummyGameDetail} />
+            {personalGamesIsSuccess && personalGames.length > 0 ? (
+              personalGames.map((e, ind) => (
+                <Link href={GAME_ROUTE.game_detail(e.appid)} key={`personal_${ind}`}>
+                  <PickCard data={e} />
+                </Link>
+              ))
+            ) : (
+              <>
+                <PickCard data={dummyGameDetail} />
+                <PickCard data={dummyGameDetail} />
+                <PickCard data={dummyGameDetail} />
+                <PickCard data={dummyGameDetail} />
+              </>
+            )}
           </div>
         </div>
 
@@ -182,11 +296,23 @@ export default function Game() {
             subtitle="오래해도 떨어지지 않는 재미"
             icon_src="/img/icons/pixel_box.svg"
           />
-          <div className="grid grid-cols-3 md:grid-cols-3 gap-6">
-            <PopularCard data={dummyGameSimple} />
-            <PopularCard data={dummyGameSimple} />
-            <PopularCard data={dummyGameSimple} />
-          </div>
+          <Suspense>
+            <div className="grid grid-cols-3 md:grid-cols-3 gap-6">
+              {playTimeGames.length > 0 ? (
+                playTimeGames.map((e, ind) => (
+                  <Link href={GAME_ROUTE.game_detail(e.appid)} key={`playTimeGames_${ind}`}>
+                    <PopularCard data={e} />
+                  </Link>
+                ))
+              ) : (
+                <>
+                  <PopularCard data={dummyGameSimple} />
+                  <PopularCard data={dummyGameSimple} />
+                  <PopularCard data={dummyGameSimple} />
+                </>
+              )}
+            </div>
+          </Suspense>
         </div>
       </section>
     </main>

@@ -33,7 +33,7 @@ export default function SearchBar({ className, placeholder, onChange, onSearch }
         ref={valueRef}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange(e.target.value)}
         onKeyDown={handleKeyPress}
-        className="font-suit placeholder:font-suit placeholder:text-neutral-400 placeholder:font-normal w-full focus:outline-none"
+        className="font-suit placeholder:font-suit placeholder:text-neutral-400 placeholder:font-normal w-full focus:outline-none bg-transparent"
         placeholder={placeholder || '검색어를 입력하세요'}
       />
       <button
