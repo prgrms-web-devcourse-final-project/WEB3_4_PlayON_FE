@@ -20,7 +20,7 @@ export function GuildHorizonSkeleton(props: { className: string }) {
   );
 }
 
-const defaultImg = 'https://placehold.co/600x400/9884F0/3F1AC4?text=PlayOn+Guild';
+const defaultImg = '/img/hero/bg_community_main.webp';
 
 export default function GuildHorizon(props: GuildHorizonProps) {
   const tagsArr = [

@@ -276,7 +276,7 @@ export const useGuild = () => {
           guild_id: item.guildId,
           guild_name: item.name,
           description: item.description,
-          img_src: item.guildImg || 'https://placehold.co/600x400?text=PlayOn+Guild',
+          img_src: item.guildImg,
           num_members: item.memberCount,
           max_members: item.memberCount,
           owner: { username: 'test', nickname: 'test', user_title: 'title', img_src: 'test' },
@@ -288,7 +288,7 @@ export const useGuild = () => {
           friendly: tags.friendly,
         };
       });
-      // console.log(guildList);
+      console.log('GuildPopular', guildList);
       return guildList;
     }
     console.log('데이터가 없습니다.');
@@ -310,16 +310,3 @@ export const useGuild = () => {
     UpdateGuildWithImg,
   };
 };
-
-// const [{
-//   data: guildData,
-//   isLoading,
-//   isError,
-// },{data: guildMemberData, isLoading, isError}] = useSuspenseQueries({
-//   queryKey: ['GuildDetail'],
-//   queryFn: () => Guild.GetGuild(guildId),
-// });
-
-// const getTagList = (data: guild) => {
-//   return [...data.friendly, ...data.gender, ...data.play_style, ...data.skill_level];
-// };
