@@ -16,6 +16,7 @@ import { useAuthStore } from '@/stores/authStore';
 import { useToast } from '@/hooks/use-toast';
 import typeConverter from '@/utils/typeConverter';
 import { uploadToS3 } from '@/utils/uploadToS3';
+import { set } from 'date-fns';
 
 const userDataSchema = userSchema.pick({
   nickname: true,
@@ -51,27 +52,44 @@ export default function SignupUserdata() {
   const member = useMembers();
   const router = useRouter();
   const { toast } = useToast();
+  const [imageFile, setImageFile] = useState<File | undefined>(undefined);
+  const [dataUrl, setDataUrl] = useState<string | undefined>('');
+  const [changeImage, setChangeImage] = useState(false);
+
   async function onSubmit(data: UserDataSchema) {
     console.log(data);
     const response = await member.PutMe(
       data.nickname,
-      data.avatar,
+      changeImage,
+      data.avatar ?? '',
       typeConverter('playStyle', 'KoToEn', data.playStyle) ?? 'BEGINNER',
       typeConverter('skillLevel', 'KoToEn', data.skillLevel) ?? 'NEWBIE',
       typeConverter('userGender', 'KoToEn', data.gender) ?? 'MALE'
     );
+    if (user && response.success && imageFile) {
+      user.nickname = data.nickname;
+      user.gender = data.gender;
+      user.party_style = data.playStyle;
+      user.skill_level = data.skillLevel;
+
+      const s3Response = await uploadToS3(imageFile, response.presignedUrl);
+      if (s3Response.success) {
+        const imageUrl = s3Response.url;
+        console.log('이미지 업로드 완료: ', imageUrl);
+        user.img_src = imageUrl;
+        await member.profileImg(imageUrl);
+      }
+    }
     toast({ title: '도전 과제 달성', description: '회원 가입 성공!', variant: 'primary' });
     setTimeout(() => {
       router.push('/');
     }, 500);
   }
 
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imgExt, setImgExt] = useState('');
-  const [dataUrl, setDataUrl] = useState('');
   const onChangeImage = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       //validation here
+      setChangeImage(true);
       setImageFile(e.target.files[0]);
       const fileType = e.target.files[0].type;
       const fileExt = fileType.slice(fileType.indexOf('/') + 1, fileType.length);
@@ -147,7 +165,7 @@ export default function SignupUserdata() {
     selected.skillLevel[1](skillLevel);
     selected.gender[1](gender);
 
-    setDataUrl(user.img_src);
+    setDataUrl(user.img_src ?? undefined);
   }, []);
 
   const CategorySelectMenus = () => {
