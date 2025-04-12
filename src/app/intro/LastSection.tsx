@@ -1,9 +1,18 @@
+import LogoAni from '@/assets/main_logo.json';
+import dynamic from 'next/dynamic';
+const Lottie = dynamic(() => import('react-lottie-player'), {
+  ssr: false,
+  loading: () => <div className="-mt-1 w-[124px] h-[36px]"></div>,
+});
+
 function LastSection() {
   return (
     <section className="h-screen flex items-center justify-center bg-purple-200">
       <div className="wrapper">
-        <img src="/img/3d_object/logo_front.svg" alt="3D logo" className="w-[620px] rotate-3" />
-        <p className="text-center text-6xl font-extrabold mt-6 text-purple-800">Together</p>
+        <video autoPlay={true} muted={true} loop={true} className="w-[920px] -mt-60">
+          <source src="/animation/logo-ani2.webm" type="video/webm" />
+        </video>
+        <p className="text-center text-5xl font-extrabold text-purple-700 -mt-40">Together!</p>
       </div>
     </section>
   );
