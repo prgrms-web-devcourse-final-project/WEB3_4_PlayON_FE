@@ -2,7 +2,6 @@
 
 import RetroButton from '@/components/common/RetroButton';
 import Tag from '@/components/common/Tag';
-import GhostSVG from '@/components/svg/ghost_fill';
 import { Button } from '@/components/ui/button';
 import { PATH } from '@/constants/routes';
 import { guild } from '@/types/guild';
@@ -47,13 +46,11 @@ export default function GuildInfoSection({ guildData }: { guildData: guild }) {
             <div className="flex gap-6">
               <div className="w-36 py-5 bg-neutral-100 rounded-lg aspect-square flex flex-col items-center justify-start gap-2">
                 <p className="font-semibold">CAPTAIN</p>
-                {guildData.owner.img_src ? (
-                  <img src={guildData.owner.img_src} alt="" className="w-12 rounded-full object-cover" />
-                ) : (
-                  <div className="bg-purple-300 size-12 rounded-full flex justify-center items-center">
-                    <GhostSVG width={24} fill="#FFFFFF" stroke="" />
-                  </div>
-                )}
+                <img
+                  src={guildData.owner.img_src || '/img/dummy_profile.jpg'}
+                  alt=""
+                  className="w-12 rounded-full object-cover"
+                />
                 <p>{guildData.owner.nickname}</p>
               </div>
               <div className="w-36 py-5 bg-neutral-100 rounded-lg aspect-square flex flex-col items-center justify-start gap-5">

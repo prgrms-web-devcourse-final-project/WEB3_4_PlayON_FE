@@ -4,7 +4,6 @@ import { useAxios } from '@/hooks/useAxios';
 import { guild } from '@/types/guild';
 import {
   GuildDetailResponse,
-  Sort,
   GuildMainResponse,
   GuildUpdateRequest,
   GuildCreateRequest,
@@ -70,7 +69,7 @@ export const useGuild = () => {
     return data;
   }
 
-  async function GetGuildList(request: GuildLIstRequest, page?: number, pageSize?: number, sort?: Sort) {
+  async function GetGuildList(request: GuildLIstRequest, page?: number, pageSize?: number, sort?: string) {
     const response = await axios.Post(
       GUILD.list,
       request,
@@ -83,9 +82,9 @@ export const useGuild = () => {
       },
       true
     );
-    console.log(response);
+    // console.log(response);
     const data = response?.data.data.items;
-    console.log(data);
+    // console.log(data);
     if (data && data.length > 0) {
       const guildList: guild[] = data.map((item: GuildSimple) => {
         const tags = categorizeTags(item.tags);
@@ -213,7 +212,7 @@ export const useGuild = () => {
           username: member.username,
           title: member.title,
           role: member.role,
-          img_src: member.profileImg || 'https://placehold.co/200',
+          img_src: member.profileImg || '/img/dummy_profile.jpg',
           member_id: member.memberId,
           joined_at: new Date(member.joinedAt),
         };
