@@ -44,7 +44,6 @@ export const useGame = () => {
 
   async function GamePartyList(appid: number, pageable?: paging) {
     const response = await axios.Get(GAME_ENDPOINTS.party(appid), { params: { ...pageable } }, true);
-    console.log(response);
     if (response && response.status === 200) {
       return {
         currentPageNumber: response.data.data.currentPageNumber as number,
@@ -58,7 +57,6 @@ export const useGame = () => {
   }
   async function GamePartyLogList(appid: number, pageable?: paging) {
     const response = await axios.Get(GAME_ENDPOINTS.logs(appid), { params: { ...pageable } }, true);
-    console.log(response);
     if (response && response.status === 200) {
       return {
         currentPageNumber: response.data.data.currentPageNumber as number,
@@ -73,7 +71,6 @@ export const useGame = () => {
   async function GameDetailWithPartyLog(appid: number) {
     const response = await axios.Get(GAME_ENDPOINTS.details(appid), {}, true);
     if (response && response.status === 200) {
-      console.log(response);
       return {
         game: response.data.data.game as game,
         partyList: response.data.data.partyList as party[],
@@ -90,35 +87,35 @@ export const useGame = () => {
     return false;
   }
   async function GameRecommendGenre() {
-    const response = await axios.Get(GAME_ENDPOINTS.recommend, {}, true);
+    const response = await axios.Get(GAME_ENDPOINTS.recommend, {}, false);
     if (response && response.status === 200) {
       return response.data.data as { appid: number; name: string; headerImage: string; genres: string[] }[];
     }
     throw new Error('Failed to fetch');
   }
   async function GameMostPlayTime() {
-    const response = await axios.Get(GAME_ENDPOINTS.playTime, {}, true);
+    const response = await axios.Get(GAME_ENDPOINTS.playTime, {}, false);
     if (response && response.status === 200) {
       return response.data.data as { appid: number; name: string; headerImage: string; genres: string[] }[];
     }
-    return false;
+    throw new Error('Failed to fetch');
   }
   async function GameRecommendFriend() {
-    const response = await axios.Get(GAME_ENDPOINTS.friends, {}, true);
+    const response = await axios.Get(GAME_ENDPOINTS.friends, {}, false);
     if (response && response.status === 200) {
       return response.data.data as { appid: number; name: string; headerImage: string; genres: string[] }[];
     }
     throw new Error('Failed to fetch');
   }
   async function GameRanking() {
-    const response = await axios.Get(GAME_ENDPOINTS.ranking, {}, true);
+    const response = await axios.Get(GAME_ENDPOINTS.ranking, {}, false);
     if (response && response.status === 200) {
       return response.data.data as { appid: number; name: string; headerImage: string; genres: string[] }[];
     }
     return false;
   }
   async function GamePopular() {
-    const response = await axios.Get(GAME_ENDPOINTS.popular, {}, true);
+    const response = await axios.Get(GAME_ENDPOINTS.popular, {}, false);
     if (response && response.status === 200) {
       return response.data.data as { appid: number; name: string; headerImage: string; genres: string[] }[];
     }
@@ -129,9 +126,9 @@ export const useGame = () => {
       keyword?: string;
       isMacSupported?: boolean;
       releaseAfter?: Date;
-      releaseStatus?: Date;
+      releaseStatus?: string;
       playerType?: string;
-      genres?: string[];
+      genres?: string;
     },
     pageable?: paging
   ) {
@@ -142,7 +139,7 @@ export const useGame = () => {
         pageSize: response.data.data.pageSize as number,
         totalPages: response.data.data.totalPages as number,
         totalItems: response.data.data.totalItems as number,
-        items: response.data.data.items as { appid: number; name: string; headerImage: string; genres: string[] }[],
+        items: response.data.data.items as { appid: number; name: string; headerImage: string; genres: string }[],
       };
     }
   }
