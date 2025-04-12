@@ -4,5 +4,5 @@ export const PARTY_ROUTE = Object.freeze({
   party_create: '/party/create',
   party_detail: (partyId: string | number) => `/party/${partyId}`,
   party_modify: (partyId: string) => `/party/${partyId}/modify`,
-  party_log: (partyId: string) => `/party/log/${partyId}`,
+  party_log: (partyId: string | number) => `/party/log/${partyId}`,
 });

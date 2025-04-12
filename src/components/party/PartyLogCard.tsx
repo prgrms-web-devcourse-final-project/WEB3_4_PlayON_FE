@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation';
 import { getPartyRes } from '@/types/party';
 import { useEffect, useState } from 'react';
 import { getSteamImage } from '@/api/steamImg';
+import { PATH } from '@/constants/routes';
 
 interface PartyCardProps {
   data: getPartyRes;
@@ -36,7 +37,7 @@ export function PartyLogCardSkeleton() {
 export default function PartyLogCard({ data }: PartyCardProps) {
   const router = useRouter();
   const handleClick = () => {
-    router.push('/');
+    router.push(PATH.party_log(data.partyId));
   };
   const [bg, setBg] = useState('');
   useEffect(() => {
