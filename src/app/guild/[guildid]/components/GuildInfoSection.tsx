@@ -1,22 +1,16 @@
 'use client';
 
-import { useGuild } from '@/api/guild';
 import RetroButton from '@/components/common/RetroButton';
 import Tag from '@/components/common/Tag';
 import GhostSVG from '@/components/svg/ghost_fill';
 import { Button } from '@/components/ui/button';
+import { PATH } from '@/constants/routes';
 import { guild } from '@/types/guild';
-import { useQuery } from '@tanstack/react-query';
 import { ClipboardPenIcon } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
-export default function GuildInfoSection({ guildId }: { guildId: string }) {
-  const Guild = useGuild();
-
-  const { data: guildData } = useQuery({
-    queryKey: ['GuildDetail', guildId],
-    queryFn: () => Guild.GetGuild(guildId),
-  });
-
+export default function GuildInfoSection({ guildData }: { guildData: guild }) {
+  const router = useRouter();
   const getTagList = (data: guild) => {
     return [...data.friendly, ...data.gender, ...data.play_style, ...data.skill_level];
   };
@@ -30,7 +24,11 @@ export default function GuildInfoSection({ guildId }: { guildId: string }) {
               className=" size-full rounded-3xl bg-center bg-cover"
             />
             {(guildData.myRole === 'LEADER' || guildData.myRole === 'MANAGER') && (
-              <Button variant="outline" className="w-fit px-4 py-2 text-neutral-500">
+              <Button
+                variant="outline"
+                className="w-fit px-4 py-2 text-neutral-500"
+                onClick={() => router.push(PATH.guild_admin(String(guildData.guild_id)))}
+              >
                 <ClipboardPenIcon />
                 <span>길드 관리</span>
               </Button>

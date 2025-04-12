@@ -1,21 +1,19 @@
 'use client';
-import { useGuildBoard } from '@/api/guildBoard';
 import CommunityPostImageLong from '@/components/community/post-image-long';
 import CommunityPostLong from '@/components/community/post-long';
 import { PATH } from '@/constants/routes';
-import { useQuery } from '@tanstack/react-query';
+import { postSimple } from '@/types/community';
 import { ChevronRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
-export default function GuildBoardNoticeSection({ guildId }: { guildId: string }) {
-  const guildid = Number(guildId);
-  const GuildBoard = useGuildBoard();
+export default function GuildBoardNoticeSection({
+  guildId,
+  guildBoardNotice,
+}: {
+  guildId: string;
+  guildBoardNotice: postSimple[];
+}) {
   const router = useRouter();
-
-  const { data: guildBoardData } = useQuery({
-    queryKey: ['GuildBoardNotice', guildId],
-    queryFn: () => GuildBoard.GuildNoticesPost(guildid),
-  });
   return (
     <div className="flex flex-col w-[67%] self-center">
       <div className="flex w-full justify-between">
@@ -29,21 +27,21 @@ export default function GuildBoardNoticeSection({ guildId }: { guildId: string }
         </div>
       </div>
       <div className="flex flex-col divide-y divide-neutral-200">
-        {guildBoardData && guildBoardData[0] && (
+        {guildBoardNotice && guildBoardNotice[0] && (
           <CommunityPostImageLong
-            data={guildBoardData[0]}
+            data={guildBoardNotice[0]}
             className="h-44 "
             onClick={() => {
-              router.push(PATH.guild_community_detail(guildId, String(guildBoardData[0].postId)));
+              router.push(PATH.guild_community_detail(guildId, String(guildBoardNotice[0].postId)));
             }}
           />
         )}
-        {guildBoardData && guildBoardData[1] && (
+        {guildBoardNotice && guildBoardNotice[1] && (
           <CommunityPostLong
-            data={guildBoardData[1]}
+            data={guildBoardNotice[1]}
             className="h-44"
             onClick={() => {
-              router.push(PATH.guild_community_detail(guildId, String(guildBoardData[1].postId)));
+              router.push(PATH.guild_community_detail(guildId, String(guildBoardNotice[1].postId)));
             }}
           />
         )}

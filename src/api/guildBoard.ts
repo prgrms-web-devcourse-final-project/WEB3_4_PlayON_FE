@@ -230,6 +230,7 @@ export const useGuildBoard = () => {
       return postData as postSimple[];
     }
     return false;
+    // throw new Error('Fail to fetch');
   }
 
   async function GuildLatestPost(guildId: number) {

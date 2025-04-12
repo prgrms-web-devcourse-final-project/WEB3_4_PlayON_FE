@@ -1,22 +1,20 @@
 'use client';
 
-import { useGuildBoard } from '@/api/guildBoard';
 import CommunityPostImageShort from '@/components/community/post-image-short';
 import CommunityPostShort from '@/components/community/post-short';
 import { PATH } from '@/constants/routes';
-import { useQuery } from '@tanstack/react-query';
+import { postSimple } from '@/types/community';
 import { ChevronRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
-export default function GuildBoardLatestSection({ guildId }: { guildId: string }) {
-  const guildid = Number(guildId);
-  const GuildBoard = useGuildBoard();
+export default function GuildBoardLatestSection({
+  guildId,
+  guildBoardLatest,
+}: {
+  guildId: string;
+  guildBoardLatest: postSimple[];
+}) {
   const router = useRouter();
-
-  const { data: guildBoardData } = useQuery({
-    queryKey: ['GuildBoard', guildId],
-    queryFn: () => GuildBoard.GuildLatestPost(guildid),
-  });
 
   return (
     <div className="flex flex-col gap-6 w-[67%] self-center">
@@ -31,8 +29,8 @@ export default function GuildBoardLatestSection({ guildId }: { guildId: string }
         </div>
       </div>
       <div className="grid grid-cols-2 gap-x-6 gap-y-6">
-        {guildBoardData &&
-          guildBoardData.map((post) => {
+        {guildBoardLatest &&
+          guildBoardLatest.map((post) => {
             if (post.img_src) {
               return <CommunityPostImageShort key={post.postId} data={post} className="h-52 cursor-pointer" />;
             } else {
