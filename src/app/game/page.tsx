@@ -5,17 +5,18 @@ import PlayOnRollingBanner from '@/components/common/play-on-rolling-banner';
 import SearchBar from '@/components/common/SearchBar';
 import SectionTitle from '@/components/common/SectionTitle';
 import PickCard from '@/components/game/PickCard';
-import PopularCard, { PopularCardSkeleton } from '@/components/game/PopularCard';
+import PopularCard from '@/components/game/PopularCard';
 import SteamCard from '@/components/game/SteamCard';
 import { dummyGameDetail, dummyGameSimple, dummyUserSimple } from '@/utils/dummyData';
 import styles from './game.module.css';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { useGame } from '@/api/game';
-import { PopularGameCard } from '../guild/components/PopularGameCard';
-import { Skeleton } from '@/components/ui/skeleton';
+import { game, party, partyLog, useGame } from '@/api/game';
 import { Suspense } from 'react';
 import { useRouter } from 'next/navigation';
 import { GAME_ROUTE } from '@/constants/routes/game';
+import { useAuthStore } from '@/stores/authStore';
+import { gameDetail } from '@/types/games';
+import { ErrorBoundary } from 'react-error-boundary';
 
 export default function Game() {
   const imageList = [
@@ -25,20 +26,62 @@ export default function Game() {
   ];
   const game = useGame();
   const router = useRouter();
-  const { data, isError, isLoading } = useSuspenseQuery({
+  const { user } = useAuthStore();
+
+  const { data: popularGames } = useSuspenseQuery({
     queryKey: ['PopularGames'],
     queryFn: () => game.GamePopular(),
     staleTime: Infinity,
+    select: (results) =>
+      results.map((e) => ({
+        background_src: '',
+        appid: e.appid,
+        genre: e.genres,
+        img_src: e.headerImage,
+        title: e.name,
+      })),
   });
-  const PopularGamesListSkeleton = () => {
-    return (
-      <div>
-        <PopularCardSkeleton />
-        <PopularCardSkeleton />
-        <PopularCardSkeleton />
-      </div>
-    );
-  };
+
+  const { data: friendGames, isSuccess: friendGamesIsSuccess } = useQuery({
+    queryKey: ['FriendGames'],
+    queryFn: () => game.GameRecommendFriend(),
+    staleTime: Infinity,
+    select: (data) => data.map((e) => e.appid),
+    enabled: user !== undefined,
+  });
+  function convertToClientGame(data: game): gameDetail {
+    return {
+      about: data.aboutTheGame,
+      detail_desc: data.aboutTheGame,
+      developer: [data.developers],
+      genre: data.genres,
+      homepage_url: data.website,
+      img_src: data.headerImage,
+      movie_src: data.movies,
+      screenshot_src: data.screenshots,
+      os: {
+        linux: data.isLinuxSupported,
+        mac: data.isMacSupported,
+        windows: data.isWindowsSupported,
+      },
+      publisher: [data.publishers],
+      release_date: data.releaseDate,
+      short_desc: data.shortDescription,
+      title: data.name,
+    };
+  }
+
+  const personalGames = useQuery({
+    queryKey: ['PersonalGames'],
+    queryFn: () => game.GameRecommendGenre(),
+    staleTime: Infinity,
+    enabled: user !== undefined,
+  });
+  const playTimeGames = useQuery({
+    queryKey: ['PlayTimeGames'],
+    queryFn: () => game.GameMostPlayTime(),
+    staleTime: Infinity,
+  });
 
   return (
     <main className="mb-20 space-y-20">
@@ -63,14 +106,10 @@ export default function Game() {
               </div>
 
               <div className="grid grid-cols-3 md:grid-cols-3 gap-6 pt-4">
-                <Suspense fallback={PopularGamesListSkeleton()}>
-                  {!(isError || isLoading) &&
-                    data.map((e) => (
-                      <PopularCard
-                        key={e.appid}
-                        data={{ background_src: '', genre: e.genres, img_src: e.headerImage, title: e.name }}
-                      />
-                    ))}
+                <Suspense>
+                  {popularGames.map((e) => (
+                    <PopularCard key={e.appid} data={e} />
+                  ))}
                 </Suspense>
               </div>
             </div>
@@ -86,10 +125,7 @@ export default function Game() {
           icon_src="/img/icons/pixel_chat_heart.svg"
         />
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 pt-8">
-          <PickCard data={dummyGameDetail} />
-          <PickCard data={dummyGameDetail} />
-          <PickCard data={dummyGameDetail} />
-          <PickCard data={dummyGameDetail} />
+          <Suspense></Suspense>
         </div>
       </section>
 

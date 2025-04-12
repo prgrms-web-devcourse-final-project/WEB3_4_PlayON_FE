@@ -8,6 +8,6 @@ export const GAME_ENDPOINTS = Object.freeze({
   ranking: '/games/ranking',
   popular: '/games/popular',
   list: '/games/list',
-  friends: '/api/games/recommend/friends',
-  playTime: '/api/games/recommend/playtime/top',
+  friends: '/games/recommend/friends',
+  playTime: '/games/recommend/playtime/top',
 });
