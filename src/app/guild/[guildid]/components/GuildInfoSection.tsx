@@ -1,18 +1,40 @@
 'use client';
 
+import { useGuildJoin } from '@/api/guildJoin';
 import RetroButton from '@/components/common/RetroButton';
 import Tag from '@/components/common/Tag';
 import { Button } from '@/components/ui/button';
 import { PATH } from '@/constants/routes';
+import { useToast } from '@/hooks/use-toast';
 import { guild } from '@/types/guild';
 import { ClipboardPenIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useCallback } from 'react';
 
 export default function GuildInfoSection({ guildData }: { guildData: guild }) {
   const router = useRouter();
+  const guildJoin = useGuildJoin();
+  const Toast = useToast();
   const getTagList = (data: guild) => {
     return [...data.friendly, ...data.gender, ...data.play_style, ...data.skill_level];
   };
+
+  const requestGuildJoin = useCallback(async () => {
+    const response = await guildJoin.RequestGuildJoin(guildData.guild_id);
+    if (response) {
+      Toast.toast({
+        title: '길드 가입 요청을 보냈습니다.',
+        variant: 'primary',
+      });
+    } else {
+      Toast.toast({
+        title: '길드 가입 요청에 실패했습니다.',
+      });
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <>
       {guildData && (
@@ -62,7 +84,7 @@ export default function GuildInfoSection({ guildData }: { guildData: guild }) {
               </div>
             </div>
             {guildData.myRole === 'GUEST' ? (
-              <RetroButton type="purple" className="w-60">
+              <RetroButton type="purple" className="w-60" callback={requestGuildJoin}>
                 길드 참여
               </RetroButton>
             ) : (

@@ -11,6 +11,7 @@ import GuildBoardNoticeSection from './components/GuildBoardNoticeSection';
 import { useGuildBoard } from '@/api/guildBoard';
 import { useQuery } from '@tanstack/react-query';
 import { useGuild } from '@/api/guild';
+import SectionBanner from '@/components/common/SectionBanner';
 // import { useAuthStore } from '@/stores/authStore';
 // import { PATH } from '@/constants/routes';
 
@@ -68,6 +69,17 @@ export default function GuildDetails() {
       <Suspense fallback={<div>데이터 불러오는 중...</div>}>
         {guildBoardLatest && <GuildBoardLatestSection guildId={guildId} guildBoardLatest={guildBoardLatest} />}
       </Suspense>
+      {!isNotGuest && (
+        <div className="w-[67%] self-center">
+          <SectionBanner
+            description="길드의 활동이 궁금하신가요?"
+            highlight="지금 바로 길드에 가입하세요!"
+            className="bg-purple-300"
+          >
+            <img src="/img/3d_object/game_pad.png" alt="icon" className="h-[180px]" />
+          </SectionBanner>
+        </div>
+      )}
     </div>
   );
 }
