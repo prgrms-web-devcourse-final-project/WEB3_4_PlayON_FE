@@ -4,13 +4,11 @@ import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import ScrollTrigger from 'gsap/ScrollTrigger';
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
-import AnimatedSection from './AnimatedSection';
 import Link from 'next/link';
-import PickCard from '@/components/game/PickCard';
-import { dummyGameSimple, dummyPost } from '@/utils/dummyData';
 import SearchGuildWithGame from '@/components/common/search-guild-with-game';
-import CommunityPostShort from '@/components/community/post-short';
-import CommunityPostImageShort from '@/components/community/post-image-short';
+import Image from 'next/image';
+import AnimatedSection from './AnimatedSection';
+import styles from '@/app/intro/GuildSection.module.css';
 
 gsap.registerPlugin(ScrollToPlugin);
 
@@ -62,14 +60,52 @@ function TotalSection() {
   return (
     <section className="bg-purple-50 overflow-hidden" ref={containerRef}>
       <div className="wrapper">
-        <section className="h-screen sub-section" ref={registerSection}>
-          <div className="flex items-center justify-left h-full">
+        <section className="h-screen sub-section relative z-10" ref={registerSection}>
+          <div className="flex items-center justify-left h-full relative">
             <Link
-              className="font-dgm text-8xl underline absolute -mt-24 hover:text-purple-600 transition-all"
+              className="font-dgm text-8xl underline -mt-24 hover:text-purple-700 text-purple-500 transition-all relative z-50"
               href="/signup"
             >
               Sign UP
             </Link>
+            <video autoPlay={true} muted={true} loop={true} className="absolute left-[420px] -mt-20 z-0 w-[220px]">
+              <source src="/animation/arrow.webm" type="video/webm" />
+            </video>
+            <Image
+              src="/img/3d_object/balloon.svg"
+              alt="balloon"
+              width={188}
+              height={300}
+              className={`absolute z-50 -left-[60px] top-[40px] -rotate-[20deg] blur-xl opacity-75 select-none ${styles.balloonMT}`}
+            />
+            <Image
+              src="/img/3d_object/balloon.svg"
+              alt="balloon"
+              width={340}
+              height={300}
+              className={`absolute z-10 -right-[130px] -bottom-[12px] -rotate-[12deg] select-none ${styles.balloon}`}
+            />
+            <Image
+              src="/img/3d_object/balloon.svg"
+              alt="balloon"
+              width={280}
+              height={300}
+              className={`absolute z-10 left-[920px] top-[80px] rotate-[24deg] blur-sm select-none ${styles.balloonMT}`}
+            />
+            <Image
+              src="/img/3d_object/balloon.svg"
+              alt="balloon"
+              width={260}
+              height={300}
+              className={`absolute z-10 right-[200px] -bottom-[240px] rotate-[18deg] select-none ${styles.balloon}`}
+            />
+            <Image
+              src="/img/3d_object/balloon.svg"
+              alt="balloon"
+              width={240}
+              height={300}
+              className={`absolute z-10 left-[320px] bottom-[80px] -rotate-[28deg] blur-2xl opacity-20 select-none ${styles.balloon}`}
+            />
           </div>
         </section>
 

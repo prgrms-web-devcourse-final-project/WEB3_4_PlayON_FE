@@ -36,3 +36,32 @@
     border-color: white;
   }
 }
+
+.balloon {
+  animation: upAndDown 4s ease-in-out infinite alternate-reverse;
+}
+.balloon:nth-of-type(even) {
+  animation-delay: 0.8s;
+}
+.balloon:nth-of-type(odd) {
+  animation-delay: 0.2s;
+}
+.balloonMT {
+  animation: upAndDownMT 4s ease-in-out infinite alternate-reverse;
+}
+@keyframes upAndDown {
+  0% {
+    margin-bottom: -80px;
+  }
+  100% {
+    margin-bottom: 0;
+  }
+}
+@keyframes upAndDownMT {
+  0% {
+    margin-top: -80px;
+  }
+  100% {
+    margin-top: 0;
+  }
+}
