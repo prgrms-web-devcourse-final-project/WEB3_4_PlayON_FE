@@ -81,7 +81,7 @@ function HeroSection() {
             </Link>
           ))}
         </div>
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center absolute bottom-12 left-1/2 -translate-x-1/2">
           <Image src="/img/icons/mouse.png" alt="mouse icon" width={26} height={40} className="animate-bounce" />
           <span className="text-white text-xl">scroll down</span>
         </div>

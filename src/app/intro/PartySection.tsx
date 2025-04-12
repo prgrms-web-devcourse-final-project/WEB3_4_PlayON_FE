@@ -45,21 +45,39 @@ const partyDummyData = [
   },
 ];
 import SearchBar from '@/components/common/SearchBar';
-import PartyCard from '@/components/party/PartyCard';
+import PartyCard, { PartyCardSkeleton } from '@/components/party/PartyCard';
 import RetroButton from '@/components/common/RetroButton';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/all';
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { PATH } from '@/constants/routes';
+import { getPartyRes } from '@/types/party';
+import { useParty } from '@/api/party';
+import Link from 'next/link';
 
 function PartySection() {
+  const party = useParty();
   gsap.registerPlugin(useGSAP);
   gsap.registerPlugin(ScrollTrigger);
 
+  const [pendingParties, setPendingParties] = useState<getPartyRes[]>([]);
+  useEffect(() => {
+    const fetchParty = async () => {
+      const pendingRes = await party.MainPendingParty(2);
+      if (pendingRes) {
+        setPendingParties(pendingRes);
+      }
+    };
+    fetchParty();
+  }, []);
   const container = useRef<HTMLDivElement>(null);
   const title = useRef<HTMLHeadingElement>(null);
   const searchBar = useRef<HTMLDivElement>(null);
   const partyCompoRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const [query, setQuery] = useState<string>('');
+  const router = useRouter();
 
   useGSAP(() => {
     const Tl = gsap.timeline({
@@ -87,8 +105,8 @@ function PartySection() {
     });
   });
   return (
-    <section className="bg-purple-700 py-16" ref={container}>
-      <div className="wrapper text-right">
+    <section className="bg-purple-700 py-16">
+      <div className="wrapper text-right " ref={container}>
         <h2 className="text-[160px] font-black text-white" ref={title}>
           Find Party
         </h2>
@@ -96,26 +114,42 @@ function PartySection() {
           <p className="text-white text-left text-xl mb-2">보유중인 게임을 검색해 빠르게 모임을 찾아보세요</p>
           <SearchBar
             onSearch={() => {
-              alert('검색 이동');
+              router.push(`${PATH.party_list}?name=${query}`);
             }}
-            onChange={() => {}}
+            onChange={(value: string) => {
+              setQuery(value);
+            }}
           />
         </div>
         <div className="flex justify-end gap-6 my-12 max-w-screen-xl">
-          {partyDummyData.map((data, idx) => (
-            <div
-              ref={(el) => {
-                partyCompoRefs.current[idx] = el;
-              }}
-              key={idx}
-              className="max-w-[410px]"
-            >
-              <PartyCard data={data} />
-            </div>
-          ))}
+          {pendingParties.length > 0
+            ? pendingParties.map((party, idx) => (
+                <div
+                  ref={(el) => {
+                    partyCompoRefs.current[idx] = el;
+                  }}
+                  key={idx}
+                  className="w-full max-w-[420px]"
+                >
+                  <PartyCard key={'party_main_comp' + idx} data={party} />
+                </div>
+              ))
+            : Array.from({ length: 2 }).map((_, idx) => (
+                <div
+                  ref={(el) => {
+                    partyCompoRefs.current[idx] = el;
+                  }}
+                  key={idx}
+                  className="w-full max-w-[420px]"
+                >
+                  <PartyCardSkeleton key={idx} />
+                </div>
+              ))}
         </div>
         <div className="w-80 ml-auto">
-          <RetroButton type="purple">더 찾아보기</RetroButton>
+          <Link href={PATH.party_list}>
+            <RetroButton type="purple">더 찾아보기</RetroButton>
+          </Link>
         </div>
       </div>
     </section>
