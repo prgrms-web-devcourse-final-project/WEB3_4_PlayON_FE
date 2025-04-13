@@ -12,6 +12,7 @@ export const useGuildBoard = () => {
     authorProfileImg: string;
     content: string;
     createdAt: Date;
+    isAuthor: boolean;
   };
   type guild = {
     id: number;
@@ -82,7 +83,9 @@ export const useGuildBoard = () => {
             memberId: '',
           },
           content: comment.content,
-          createdAt: comment.createdAt,
+          createdAt: new Date(comment.createdAt),
+          commentId: comment.id,
+          isAuthor: comment.isAuthor,
         })),
         num_comments: postData.commentCount,
         hits: postData.hit,

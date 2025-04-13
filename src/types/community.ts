@@ -27,6 +27,8 @@ export interface comment {
   user: userSimple;
   content: string;
   createdAt: Date;
+  commentId: number;
+  isAuthor: boolean;
 }
 
 export interface postSimple {
