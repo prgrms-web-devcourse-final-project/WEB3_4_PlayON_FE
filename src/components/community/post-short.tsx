@@ -11,6 +11,7 @@ import removeHtmlTags from '@/utils/removeHtmlTags';
 type CommunityPostImageShortProps = {
   data: postSimple;
   className: string;
+  guildId?: string;
 };
 
 export function CommunityPostShortSkeleton(props: { className: string }) {
@@ -33,13 +34,18 @@ export function CommunityPostShortSkeleton(props: { className: string }) {
 export default function CommunityPostShort(props: CommunityPostImageShortProps) {
   const router = useRouter();
   const content = removeHtmlTags(props.data.content);
+  const handleClick = () => {
+    if (props.guildId) {
+      router.push(PATH.guild_community_detail(props.guildId, String(props.data.postId)));
+    } else {
+      router.push(PATH.community_detail(String(props.data.postId)));
+    }
+  };
 
   return (
     <div
       className={`border border-neutral-300 rounded-xl p-5 flex flex-col justify-between ` + props.className}
-      onClick={() => {
-        router.push(PATH.community_detail(String(props.data.postId)));
-      }}
+      onClick={handleClick}
     >
       <AvatarName userName={props.data.author_nickname} avatar={props.data.author_img} />
       <div>

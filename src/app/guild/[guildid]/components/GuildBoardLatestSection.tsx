@@ -35,7 +35,9 @@ export default function GuildBoardLatestSection({ guildId }: { guildId: string }
             if (post.img_src) {
               return <CommunityPostImageShort key={post.postId} data={post} className="h-52 cursor-pointer" />;
             } else {
-              return <CommunityPostShort key={post.postId} data={post} className="h-52 cursor-pointer" />;
+              return (
+                <CommunityPostShort key={post.postId} data={post} guildId={guildId} className="h-52 cursor-pointer" />
+              );
             }
           })}
       </div>

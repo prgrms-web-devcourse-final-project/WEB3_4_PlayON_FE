@@ -6,12 +6,13 @@ import WeNeedYou from '@/components/guild/guild-we-need-you';
 import { postSimple } from '@/types/community';
 import { useEffect, useState } from 'react';
 import { useGuildBoard } from '@/api/guildBoard';
-import { useSearchParams, useParams } from 'next/navigation';
+import { useSearchParams, useParams, useRouter } from 'next/navigation';
 import CustomPagination from '@/components/common/CustomPagination';
 import CommunityPostLong from '@/components/community/post-long';
 import { useQuery } from '@tanstack/react-query';
 import { useGuild } from '@/api/guild';
 import GhostSVG from '@/components/svg/ghost_fill';
+import { PATH } from '@/constants/routes';
 
 const sortOptions: SortOption[] = [
   { id: 'LATEST', label: '최신순' },
@@ -26,12 +27,17 @@ export default function Community() {
   const guildBoard = useGuildBoard();
   const searchParams = useSearchParams();
   const params = useParams();
+  const router = useRouter();
   const guildId = params.guildid[0];
 
   const { data: guildData } = useQuery({
     queryKey: ['GuildDetail', guildId],
     queryFn: () => guild.GetGuild(guildId),
   });
+
+  const handlePostClick = (postId: string) => {
+    router.push(PATH.guild_community_detail(guildId, postId));
+  };
 
   useEffect(() => {
     function convertTag(tag: string) {
@@ -44,13 +50,13 @@ export default function Community() {
       const data = {};
       const tag = searchParams.get('tag');
       const keyword = searchParams.get('search');
-      const page = 0;
+      const page = searchParams.get('page');
       const pageSize = 10;
       const sort = searchParams.get('sort');
 
       if (tag && tag !== '전체') Object.assign(data, { tag: convertTag(tag) });
       if (keyword) Object.assign(data, { keyword });
-      if (page !== null) Object.assign(data, { page });
+      if (page !== null) Object.assign(data, { page: Number(page) - 1 });
       if (pageSize) Object.assign(data, { pageSize });
       if (sort) Object.assign(data, { sort });
       // console.log('data:', data);
@@ -80,21 +86,36 @@ export default function Community() {
             <WeNeedYou guildData={guildData} className="sticky top-10 bg-white" />
           </div>
         )}
-        {totalItems > 0 ? (
+        {totalItems > 0 && (
           <section className="space-y-10 pt-8">
             <SortRadioGroup options={sortOptions} />
             <div className="divide-y divide-neutral-200">
               {postList.map((post) => {
                 if (post.img_src) {
-                  return <CommunityPostImageLong key={post.postId} data={post} className="w-full h-[180px]" />;
+                  return (
+                    <CommunityPostImageLong
+                      key={post.postId}
+                      data={post}
+                      onClick={() => handlePostClick(String(post.postId))}
+                      className="w-full h-[180px]"
+                    />
+                  );
                 } else {
-                  return <CommunityPostLong key={post.postId} data={post} className="w-full h-[180px]" />;
+                  return (
+                    <CommunityPostLong
+                      key={post.postId}
+                      data={post}
+                      onClick={() => handlePostClick(String(post.postId))}
+                      className="w-full h-[180px]"
+                    />
+                  );
                 }
               })}
             </div>
-            <CustomPagination totalItems={totalItems} pageSize={9} />
+            <CustomPagination totalItems={totalItems} pageSize={10} />
           </section>
-        ) : (
+        )}
+        {guildData && totalItems <= 0 && (
           <div className="flex self-start pt-20 gap-4">
             <GhostSVG width={32} fill="#9884F0" stroke="" />
             <p className="font-dgm text-2xl text-neutral-800">게시글이 없습니다.</p>

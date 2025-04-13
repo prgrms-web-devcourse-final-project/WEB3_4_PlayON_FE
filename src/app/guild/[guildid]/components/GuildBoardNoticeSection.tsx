@@ -29,14 +29,32 @@ export default function GuildBoardNoticeSection({ guildId }: { guildId: string }
         </div>
       </div>
       <div className="flex flex-col divide-y divide-neutral-200">
-        {guildBoardNotice && guildBoardNotice[0] && (
-          <CommunityPostImageLong
-            data={guildBoardNotice[0]}
-            className="h-44 "
-            onClick={() => {
-              router.push(PATH.guild_community_detail(guildId, String(guildBoardNotice[0].postId)));
-            }}
-          />
+        {guildBoardNotice &&
+          guildBoardNotice.map((post) => {
+            if (post.img_src) {
+              return (
+                <CommunityPostImageLong
+                  data={post}
+                  className="h-44 "
+                  onClick={() => {
+                    router.push(PATH.guild_community_detail(guildId, String(post.postId)));
+                  }}
+                />
+              );
+            } else {
+              return (
+                <CommunityPostLong
+                  data={post}
+                  className="h-44"
+                  onClick={() => {
+                    router.push(PATH.guild_community_detail(guildId, String(post.postId)));
+                  }}
+                />
+              );
+            }
+          })}
+        {/* {guildBoardNotice && guildBoardNotice[0] && (
+          
         )}
         {guildBoardNotice && guildBoardNotice[1] && (
           <CommunityPostLong
@@ -46,7 +64,7 @@ export default function GuildBoardNoticeSection({ guildId }: { guildId: string }
               router.push(PATH.guild_community_detail(guildId, String(guildBoardNotice[1].postId)));
             }}
           />
-        )}
+        )} */}
       </div>
     </div>
   );
