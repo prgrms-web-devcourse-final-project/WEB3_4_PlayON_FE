@@ -6,6 +6,7 @@ import { Skeleton } from '../ui/skeleton';
 import Tag from '@/components/common/Tag';
 import { useRouter } from 'next/navigation';
 import { PATH } from '@/constants/routes';
+import removeHtmlTags from '@/utils/removeHtmlTags';
 
 type CommunityPostImageLongProps = {
   data: postSimple;
@@ -32,6 +33,9 @@ export function CommunityPostLongSkeleton(props: { className: string }) {
 
 export default function CommunityPostLong(props: CommunityPostImageLongProps) {
   const router = useRouter();
+
+  const content = removeHtmlTags(props.data.content);
+  // console.log('content: ', content);
   return (
     <div
       className={`flex flex-col py-7 justify-between cursor-pointer ` + props.className}
@@ -40,7 +44,9 @@ export default function CommunityPostLong(props: CommunityPostImageLongProps) {
       <AvatarName userName={props.data.author_nickname} avatar={props.data.author_img} />
       <div>
         <p className="text-xl font-suit font-bold">{props.data.title}</p>
-        <p className="text-base font-suit line-clamp-2 text-justify ">{props.data.content}</p>
+        <p style={{ wordBreak: 'break-all' }} className="text-sm font-suit text-ellipsis line-clamp-2">
+          {content}
+        </p>
       </div>
       <div className="flex justify-between w-full">
         <div className="flex gap-1">

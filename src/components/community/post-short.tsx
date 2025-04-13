@@ -6,6 +6,7 @@ import { Skeleton } from '../ui/skeleton';
 import Tag from '@/components/common/Tag';
 import { useRouter } from 'next/navigation';
 import { PATH } from '@/constants/routes';
+import removeHtmlTags from '@/utils/removeHtmlTags';
 
 type CommunityPostImageShortProps = {
   data: postSimple;
@@ -31,6 +32,8 @@ export function CommunityPostShortSkeleton(props: { className: string }) {
 
 export default function CommunityPostShort(props: CommunityPostImageShortProps) {
   const router = useRouter();
+  const content = removeHtmlTags(props.data.content);
+
   return (
     <div
       className={`border border-neutral-300 rounded-xl p-5 flex flex-col justify-between ` + props.className}
@@ -41,7 +44,9 @@ export default function CommunityPostShort(props: CommunityPostImageShortProps) 
       <AvatarName userName={props.data.author_nickname} avatar={props.data.author_img} />
       <div>
         <p className="text-xl font-suit font-bold">{props.data.title}</p>
-        <p className="text-base font-suit line-clamp-2 text-justify ">{props.data.content}</p>
+        <p style={{ wordBreak: 'break-all' }} className="text-base font-suit text-ellipsis line-clamp-2">
+          {content}
+        </p>
       </div>
       <div className="flex justify-between">
         <div className="flex gap-1">

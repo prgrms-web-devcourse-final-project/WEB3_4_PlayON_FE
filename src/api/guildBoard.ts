@@ -6,13 +6,13 @@ import { uploadToS3 } from '@/utils/uploadToS3';
 
 export const useGuildBoard = () => {
   const axios = useAxios();
-  type comment = {
-    id: number;
-    authorNickname: string;
-    authorProfileImg: string;
-    content: string;
-    createdAt: Date;
-  };
+  // type comment = {
+  //   id: number;
+  //   authorNickname: string;
+  //   authorProfileImg: string;
+  //   content: string;
+  //   createdAt: Date;
+  // };
   type guild = {
     id: number;
     name: string;
@@ -29,8 +29,9 @@ export const useGuildBoard = () => {
     likeCount: number;
     imageUrl: string;
     authorNickname: string;
-    comments: comment[];
+    commentCount: number;
     guild: guild;
+    createdAt: string;
   };
   type noticesPost = {
     id: number;
@@ -41,6 +42,7 @@ export const useGuildBoard = () => {
     likeCount: number;
     commentCount: number;
     imageUrl: string;
+    tag: string;
   };
   type createRequest = { title: string; content: string; tag: string; fileType: string };
   type updateRequest = { title: string; content: string; tag: string; newFileType: string };
@@ -135,11 +137,25 @@ export const useGuildBoard = () => {
     console.log(data);
     const response = await axios.Get(GUILD_BOARD_ENDPOINTS.guildPostList(guildId), { params: { ...data } }, true);
     if (response && response.status === 200) {
+      const postList = response.data.data.content.map((post: post) => {
+        return {
+          postId: post.id,
+          author_nickname: post.authorNickname,
+          author_img: '',
+          title: post.title,
+          content: post.content,
+          img_src: post.imageUrl,
+          num_likes: post.likeCount,
+          comments_num: post.commentCount,
+          tag: post.tag,
+        };
+      });
+      console.log('postList', postList);
       return {
         totalElements: response.data.data.totalElements as number,
         totalPages: response.data.data.totalPages as number,
         size: response.data.data.size as number,
-        content: response.data.data.content as post[],
+        content: postList as postSimple[],
       };
     }
     return false;
@@ -248,7 +264,7 @@ export const useGuildBoard = () => {
           img_src: post.imageUrl,
           num_likes: post.likeCount,
           comments_num: post.commentCount,
-          tag: '자유',
+          tag: post.tag,
         };
       });
       return postData as postSimple[];

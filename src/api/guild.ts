@@ -32,7 +32,7 @@ export const useGuild = () => {
           username: 'test',
           nickname: data.leaderName,
           user_title: 'title',
-          img_src: data.leaderImg,
+          img_src: data.leaderImg || '/img/dummy_profile.jpg',
           memberId: '',
         },
         created_at: new Date(data.createdAt),

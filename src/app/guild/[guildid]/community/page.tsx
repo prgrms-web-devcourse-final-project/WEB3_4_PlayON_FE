@@ -3,23 +3,15 @@
 import SortRadioGroup, { SortOption } from '@/components/common/SortRadioGroup';
 import CommunityPostImageLong from '@/components/community/post-image-long';
 import WeNeedYou from '@/components/guild/guild-we-need-you';
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from '@/components/ui/pagination';
-import { post } from '@/types/community';
-import { guild } from '@/types/guild';
-import { dummyGuild, dummyPost } from '@/utils/dummyData';
-import { useEffect } from 'react';
+import { postSimple } from '@/types/community';
+import { useEffect, useState } from 'react';
 import { useGuildBoard } from '@/api/guildBoard';
-import { useSearchParams, usePathname, useParams } from 'next/navigation';
-import typeConverter from '@/utils/typeConverter';
-import { guildCommunityTags } from '@/types/Tags/communityTags';
+import { useSearchParams, useParams } from 'next/navigation';
+import CustomPagination from '@/components/common/CustomPagination';
+import CommunityPostLong from '@/components/community/post-long';
+import { useQuery } from '@tanstack/react-query';
+import { useGuild } from '@/api/guild';
+import GhostSVG from '@/components/svg/ghost_fill';
 
 const sortOptions: SortOption[] = [
   { id: 'LATEST', label: '최신순' },
@@ -27,23 +19,25 @@ const sortOptions: SortOption[] = [
 ];
 
 export default function Community() {
-  const postList: post[] = Array(5).fill(dummyPost);
-  const guild: guild = dummyGuild;
+  const [postList, setPostList] = useState<postSimple[]>([]);
+  const [totalItems, setTotalItems] = useState(0);
 
-  const guildBoards = useGuildBoard();
+  const guild = useGuild();
+  const guildBoard = useGuildBoard();
   const searchParams = useSearchParams();
-  const pathname = usePathname();
   const params = useParams();
   const guildId = params.guildid[0];
 
+  const { data: guildData } = useQuery({
+    queryKey: ['GuildDetail', guildId],
+    queryFn: () => guild.GetGuild(guildId),
+  });
+
   useEffect(() => {
-    // searchParams.forEach((value, key) => {
-    //   console.log(`${key} : ${value}`);
-    // });
     function convertTag(tag: string) {
       if (tag === '공지') return 'NOTICE';
       if (tag === '자유') return 'FREE';
-      if (tag === '게임관련') return 'GAMES';
+      if (tag === '게임관련') return 'GAME';
       return '';
     }
     async function fetchPosts() {
@@ -59,54 +53,53 @@ export default function Community() {
       if (page !== null) Object.assign(data, { page });
       if (pageSize) Object.assign(data, { pageSize });
       if (sort) Object.assign(data, { sort });
+      // console.log('data:', data);
 
-      const posts = await guildBoards.GuildPostList(parseInt(guildId), data);
+      const posts = await guildBoard.GuildPostList(parseInt(guildId), data);
       console.log(posts);
+      if (posts) {
+        setPostList(posts.content);
+        setTotalItems(posts.totalElements);
+      }
     }
     fetchPosts();
-  }, [guildBoards, guildId, searchParams]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [guildId, searchParams]);
 
   return (
     <div className="wrapper relative mb-12 mt-28">
       <section>
         <div
-          style={{ backgroundImage: `url(${guild.img_src})` }}
-          className=" w-full h-[160px] rounded-2xl mt-12 bg-cover bg-center"
+          style={{ backgroundImage: `url(${guildData && guildData.img_src})` }}
+          className=" w-full h-[160px] rounded-2xl mt-12 bg-cover bg-center bg-neutral-100"
         />
       </section>
       <section className="flex gap-12">
-        <div className="w-1/3 relative -top-16">
-          <WeNeedYou guildData={guild} className="sticky top-10 bg-white" />
-        </div>
-        <section className="space-y-10 pt-8">
-          <SortRadioGroup options={sortOptions} />
-          <div className="divide-y divide-neutral-200">
-            {postList.map((post) => (
-              <CommunityPostImageLong key={post.title} data={post} className="w-full h-[180px]" />
-            ))}
+        {guildData && (
+          <div className="w-1/3 relative -top-16">
+            <WeNeedYou guildData={guildData} className="sticky top-10 bg-white" />
           </div>
-          <Pagination>
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious href="#" className="text-base" />
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationLink href="#" isActive>
-                  1
-                </PaginationLink>
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationLink href="#">2</PaginationLink>
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationEllipsis />
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationNext href="#" className="text-base" />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
-        </section>
+        )}
+        {totalItems > 0 ? (
+          <section className="space-y-10 pt-8">
+            <SortRadioGroup options={sortOptions} />
+            <div className="divide-y divide-neutral-200">
+              {postList.map((post) => {
+                if (post.img_src) {
+                  return <CommunityPostImageLong key={post.postId} data={post} className="w-full h-[180px]" />;
+                } else {
+                  return <CommunityPostLong key={post.postId} data={post} className="w-full h-[180px]" />;
+                }
+              })}
+            </div>
+            <CustomPagination totalItems={totalItems} pageSize={9} />
+          </section>
+        ) : (
+          <div className="flex self-start pt-20 gap-4">
+            <GhostSVG width={32} fill="#9884F0" stroke="" />
+            <p className="font-dgm text-2xl text-neutral-800">게시글이 없습니다.</p>
+          </div>
+        )}
       </section>
     </div>
   );

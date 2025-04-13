@@ -17,6 +17,7 @@ interface postCore {
   created_at: Date;
   num_likes: number;
   comments: comment[];
+  num_comments: number;
   hits: number;
 }
 
