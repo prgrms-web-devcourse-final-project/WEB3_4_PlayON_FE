@@ -1,84 +1,93 @@
 'use client';
+import { useGuild } from '@/api/guild';
+import { useGuildBoard } from '@/api/guildBoard';
 import RetroButton from '@/components/common/RetroButton';
 import InputImage from '@/components/community/input-image';
 import TextEditor from '@/components/community/TextEditor';
-import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { guild } from '@/types/guild';
-import { communityTags } from '@/types/Tags/communityTags';
-import { dummyGuild } from '@/utils/dummyData';
+import { PATH } from '@/constants/routes';
+import { guildCommunityTags } from '@/types/Tags/communityTags';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useQuery } from '@tanstack/react-query';
 import { ChevronDown } from 'lucide-react';
+import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
+const validFileTypes = ['png', 'jpg', 'jpeg', 'webp', ''];
+
 const createCommunityFormSchema = z.object({
-  tag: z.string(),
-  title: z.string().min(1),
-  image: z.string(),
-  content: z.string().min(1),
+  tag: z.string().min(1, { message: '태그를 선택해주세요' }),
+  title: z.string().min(1, { message: '제목을 입력해주세요' }),
+  fileType: z.string(),
+  content: z.string().min(1, { message: '본문을 작성해주세요' }),
 });
 type createCommunityFormType = z.infer<typeof createCommunityFormSchema>;
 
 export default function CommunityCreate() {
-  const guild: guild = dummyGuild;
+  const router = useRouter();
+  const guild = useGuild();
+  const guildBoard = useGuildBoard();
+  const params = useParams();
+  const guildId = params.guildid as string;
+
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+
+  const { data: guildData } = useQuery({
+    queryKey: ['guildDetail', params.guildId],
+    queryFn: () => guild.GetGuild(guildId),
+  });
 
   const form = useForm<createCommunityFormType>({
     defaultValues: {
       tag: '',
       title: '',
-      image: '',
+      fileType: '',
       content: '',
     },
     resolver: zodResolver(createCommunityFormSchema),
   });
 
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  async function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
+    if (!e.target.files) return;
+    const imgFile = e.target.files[0];
+    const imgFileType = imgFile.type.split('/')[1];
 
-  function onSubmit(data: createCommunityFormType) {
-    console.log('data : ', data);
+    if (validFileTypes.includes(imgFileType)) {
+      if (form.formState.errors.fileType) {
+        form.clearErrors('fileType');
+      }
+      const url = URL.createObjectURL(imgFile);
+      setPreviewUrl(url);
+      setImageFile(imgFile);
+      form.setValue('fileType', imgFileType);
+    } else {
+      setPreviewUrl('');
+      setImageFile(null);
+      form.setError('fileType', {
+        type: 'manual',
+        message: '지원하지 않는 파일 타입입니다.',
+      });
+    }
   }
 
-  async function handleImageChange(e: React.ChangeEvent<HTMLInputElement>, onChange: (value: string) => void) {
-    const file = e.target.files?.[0];
-    if (!file) {
-      onChange('');
-      return;
-    }
-
-    const url = URL.createObjectURL(file);
-    setPreviewUrl(url);
-
-    try {
-      const uploadedUrl = await uploadImageToS3(file);
-      onChange(uploadedUrl);
-    } catch (error) {
-      console.error('이미지 업로드 실패:', error);
-    }
+  async function onSubmit(data: createCommunityFormType) {
+    const response = await guildBoard.GuildPostCreateWithImg(Number(guildId), data, imageFile);
+    console.log(response);
+    router.push(PATH.guild_community(guildId));
   }
-
-  // 모킹된 이미지 업로드 함수 (나주에 유틸 함수로 빼기)
-  const uploadImageToS3 = async (file: File): Promise<string> => {
-    return new Promise((resolve) => {
-      console.log('업로드할 파일:', file);
-
-      // 실제 S3 업로드 대신 딜레이 후 URL 반환
-      setTimeout(() => {
-        const mockUrl = `https://example-s3-bucket.amazonaws.com/${file.name}`;
-        console.log('업로드 성공! URL:', mockUrl);
-        resolve(mockUrl);
-      }, 1000); // 1초 딜레이 (업로드 시뮬레이션)
-    });
-  };
 
   return (
     <div className="wrapper mb-12 mt-28 space-y-10">
       <div
-        style={{ backgroundImage: `url(${guild.img_src})` }}
-        className=" w-full h-[160px] rounded-2xl mt-12 bg-cover bg-center"
+        style={{ backgroundImage: `url(${guildData && guildData.img_src})` }}
+        className=" w-full h-[160px] rounded-2xl mt-12 bg-cover bg-center bg-neutral-100"
       />
+
       <div className="text-4xl text-neutral-900 font-bold"> 게시글 작성</div>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-10">
@@ -88,20 +97,28 @@ export default function CommunityCreate() {
                 control={form.control}
                 name="tag"
                 render={({ field }) => (
-                  <Select value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger className="w-52 h-12 text-xl px-4 bg-white">
-                      <SelectValue placeholder="태그" className="placeholder:!text-neutral-400" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        {communityTags.map((tag) => (
-                          <SelectItem key={tag} value={tag} className="text-xl text-neutral-900">
-                            {tag}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
+                  <FormItem>
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <FormControl>
+                        <SelectTrigger className="w-52 h-12 text-xl px-4 bg-white focus-visible:ring-purple-600 focus:ring-purple-600">
+                          <SelectValue
+                            placeholder="태그"
+                            className="placeholder:!text-neutral-400 focus-visible:ring-purple-600 focus:ring-purple-600"
+                          />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectGroup>
+                          {guildCommunityTags.map((tag) => (
+                            <SelectItem key={tag} value={tag} className="text-xl text-neutral-900">
+                              {tag}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
                 )}
               />
               <FormField
@@ -114,9 +131,10 @@ export default function CommunityCreate() {
                         value={field.value}
                         onChange={field.onChange}
                         placeholder="제목을 입력해주세요"
-                        className="!text-xl w-full h-12 bg-white px-4 placeholder:text-neutral-400"
+                        className="!text-xl w-full h-12 bg-white px-4 placeholder:text-neutral-400 focus-visible:ring-purple-600"
                       />
                     </FormControl>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -130,12 +148,13 @@ export default function CommunityCreate() {
             </label>
             <FormField
               control={form.control}
-              name="image"
-              render={({ field }) => (
-                <FormItem className="pt-6 group-has-[input:checked]:opacity-0 group-has-[input:checked]:h-0 group-has-[input:checked]:pt-0 transition-all">
+              name="fileType"
+              render={() => (
+                <FormItem className="pt-6 group-has-[input:checked]:opacity-0 group-has-[input:checked]:h-0 group-has-[input:checked]:pt-0 transition-all focus-visible:ring-purple-600">
                   <FormControl>
-                    <InputImage onChange={(e) => handleImageChange(e, field.onChange)} previewUrl={previewUrl} />
+                    <InputImage onChange={(e) => handleImageChange(e)} previewUrl={previewUrl} />
                   </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -149,15 +168,20 @@ export default function CommunityCreate() {
                 <FormControl>
                   <TextEditor value={field.value} onChange={field.onChange} />
                 </FormControl>
+                <FormMessage />
               </FormItem>
             )}
           />
-
-          <button type="submit" className="self-end">
-            <RetroButton type="purple" className="w-64">
-              등록
+          <div className="flex gap-8 self-end">
+            <RetroButton type="grey" className="w-32" callback={() => router.push(PATH.guild_community(guildId))}>
+              취소
             </RetroButton>
-          </button>
+            <button type="submit" onClick={() => console.log(form.formState.errors)}>
+              <RetroButton type="purple" className="w-64">
+                등록
+              </RetroButton>
+            </button>
+          </div>
         </form>
       </Form>
     </div>

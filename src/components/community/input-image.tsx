@@ -21,12 +21,15 @@ export default function InputImage({ onChange, previewUrl }: InputImageProps) {
             <Image strokeWidth={1.6} className="text-neutral-300 size-10 place-self-center" />
           )}
         </Label>
-        <Input
-          type="file"
-          id="image"
-          onChange={onChange}
-          className="text-neutral-500 font-normal file:text-neutral-700 w-[400px] bg-white"
-        />
+        <div className="space-y-2">
+          <Input
+            type="file"
+            id="image"
+            onChange={onChange}
+            className="text-neutral-500 font-normal file:text-neutral-700 w-[400px] bg-white"
+          />
+          <p className="text-sm text-neutral-400 px-2">지원하는 파일 타입: png, jpg, jpeg, webp</p>
+        </div>
       </div>
     </>
   );
