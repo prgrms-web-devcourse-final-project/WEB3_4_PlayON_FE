@@ -147,6 +147,8 @@ export const useParty = () => {
   async function PartyResult(partyId: string) {
     const res = await axios.Get(PARTY_ENDPOINTS.result(partyId), {}, false);
     console.log(res);
+    console.log(res?.data);
+    return res;
   }
   async function GetPendingList(partyId: string) {
     const res = await axios.Get(PARTY_ENDPOINTS.pending(partyId), {}, false);
