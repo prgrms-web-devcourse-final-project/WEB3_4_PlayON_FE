@@ -3,7 +3,7 @@ const nextConfig = {
   distDir: 'build',
   transpilePackages: ['three'],
   images: {
-    domains: ['shared.fastly.steamstatic.com'],
+    domains: ['shared.fastly.steamstatic.com', 'devcouse4-team14-bucket.s3.ap-northeast-2.amazonaws.com'],
   },
   typescript: {
     ignoreBuildErrors: true,
