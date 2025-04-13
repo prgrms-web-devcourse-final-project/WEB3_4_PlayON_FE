@@ -1,19 +1,21 @@
 'use client';
+import { useGuildBoard } from '@/api/guildBoard';
 import CommunityPostImageLong from '@/components/community/post-image-long';
 import CommunityPostLong from '@/components/community/post-long';
 import { PATH } from '@/constants/routes';
-import { postSimple } from '@/types/community';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { ChevronRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
-export default function GuildBoardNoticeSection({
-  guildId,
-  guildBoardNotice,
-}: {
-  guildId: string;
-  guildBoardNotice: postSimple[];
-}) {
+export default function GuildBoardNoticeSection({ guildId }: { guildId: string }) {
   const router = useRouter();
+  const GuildBoard = useGuildBoard();
+
+  const { data: guildBoardNotice } = useSuspenseQuery({
+    queryKey: ['GuildBoardNotice', guildId],
+    queryFn: () => GuildBoard.GuildNoticesPost(Number(guildId)),
+  });
+
   return (
     <div className="flex flex-col w-[67%] self-center">
       <div className="flex w-full justify-between">

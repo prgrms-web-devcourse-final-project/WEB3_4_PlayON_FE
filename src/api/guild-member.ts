@@ -64,11 +64,7 @@ export const useGuildsMembers = () => {
 
   // 멤버 퇴출
   async function DeleteMembers(guildId: string, targetMemberId: string) {
-    const response = await axios.Delete(
-      guildMember.delete_member(guildId),
-      { data: { targetMemberId } },
-      true
-    );
+    const response = await axios.Delete(guildMember.delete_member(guildId), { data: { targetMemberId } }, true);
     const data = response?.data;
     console.log(data);
   }
@@ -102,7 +98,6 @@ export const useGuildsMembers = () => {
     console.log(data);
     console.log('호출');
   }
-
 
   return { PutManager, DeleteManager, GetMembers, InviteMembers, DeleteMembers, GetAdmin, LeaveMembers };
 };

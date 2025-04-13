@@ -7,6 +7,7 @@ export const MEMBER_ENDPOINTS = Object.freeze({
   nickname: '/members/nickname',
   games: '/members/me/games',
   steamLinks: '/members/steamLink',
+  profileImg: '/members/me/image',
 
   partyAccept: (partyId: number) => `/members/me/parties/${partyId}`,
   partyDecline: (partyId: number) => `/members/me/parties/${partyId}`,

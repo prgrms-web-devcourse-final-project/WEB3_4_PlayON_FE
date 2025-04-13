@@ -41,7 +41,7 @@ export const useGuildJoin = () => {
     console.log(data);
     if (data?.msg === 'OK' && data.data.length > 0) {
       const pendingUserList: AdditionalInfo[] = data.data.map((user) => ({
-        img_src: user.profileImg ?? 'https://avatars.githubusercontent.com/u/124599?v=4',
+        img_src: user.profileImg || '/img/dummy_profile.jpg',
         nickname: user.nickname,
         username: user.nickname,
         user_title: user.titleName,

@@ -5,14 +5,18 @@ import Tag from '@/components/common/Tag';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { dummyUserSimple } from '@/utils/dummyData';
 import UserApprove from '@/app/party/components/UserApprove';
 import GuildUser from '@/components/guildUser/GuildUser';
 import { useGuildsMembers } from '@/api/guild-member';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { guildUser } from '@/types/guild';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { userDetail } from '@/types/user';
+import { PATH } from '@/constants/routes';
+import { useGuild } from '@/api/guild';
+import { useAuthStore } from '@/stores/authStore';
+import { useGuildJoin } from '@/api/guildJoin';
+import { AdditionalInfo } from '@/types/guildApi';
 
 interface guildUserProps {
   memberId: string;
@@ -47,22 +51,25 @@ export default function GuildAdmin() {
   const [members, setMembers] = useState<guildUserProps[]>([]);
   const [username, setUsername] = useState('');
   const [loading, setLoading] = useState(false);
+  const [pendingList, setPendingList] = useState<AdditionalInfo[]>([]);
   const params = useParams();
   const guildid = params?.guildid as string;
-  const { PutManager, DeleteManager, GetMembers, InviteMembers, DeleteMembers, GetAdmin } =
-    useGuildsMembers();
+  const router = useRouter();
+  const guild = useGuild();
+  const guildJoin = useGuildJoin();
+  const { user } = useAuthStore();
+  const { PutManager, DeleteManager, GetMembers, InviteMembers, DeleteMembers, GetAdmin } = useGuildsMembers();
 
+  const [guildInfo, setGuildInfo] = useState<{
+    name: string;
+    imageUrl: string | null;
+    tags: string[];
+    createdDate: string;
+    leaderNickname: string;
+    totalMemberCount: number;
+    managerNicknames: (string | null)[];
+  } | null>(null);
 
-const [guildInfo, setGuildInfo] = useState<{
-  name: string;
-  imageUrl: string | null;
-  tags: string[];
-  createdDate: string;
-  leaderNickname: string;
-  totalMemberCount: number;
-  managerNicknames: (string | null)[];
-} | null>(null);
-  
   useEffect(() => {
     const fetchGuildInfo = async () => {
       try {
@@ -75,21 +82,21 @@ const [guildInfo, setGuildInfo] = useState<{
       }
     };
     fetchGuildInfo();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [guildid]);
 
   const numDays = guildInfo?.createdDate
     ? Math.floor((new Date().getTime() - new Date(guildInfo.createdDate).getTime()) / (1000 * 60 * 60 * 24))
     : 0;
 
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       const data = await GetMembers(guildid);
-      console.log('raw data:', data);
+      // console.log('raw data:', data);
 
       if (data?.data) {
         const parsed = data.data.map(parseGuildUser);
-        console.log('parsed data:', parsed);
+        // console.log('parsed data:', parsed);
 
         setMembers(
           parsed.map((user, index) => ({
@@ -105,11 +112,13 @@ const [guildInfo, setGuildInfo] = useState<{
     } catch (error) {
       console.error('Error fetching guild members:', error);
     }
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [guildid]);
 
   useEffect(() => {
-    console.log('guildId:', guildid);
+    // console.log('guildId:', guildid);
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [guildid]);
 
   // const leader = members.find((m) => m.data.guild_role === 'LEADER');
@@ -129,7 +138,6 @@ const [guildInfo, setGuildInfo] = useState<{
         alert('초대 완료!');
         setUsername('');
         await fetchData();
-
       } else {
         alert(response?.data.message || '초대 실패');
       }
@@ -172,66 +180,123 @@ const [guildInfo, setGuildInfo] = useState<{
     }
   };
 
+  const isLeader = user?.nickname === guildInfo?.leaderNickname;
+
+  const deleteGuild = useCallback(
+    async () => {
+      const response = await guild.DeleteGuild(guildid);
+      console.log(response);
+      router.push(PATH.guild_list);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [guildid]
+  );
+
+  const fetchPendingMemberList = useCallback(async () => {
+    const response = await guildJoin.GetGuildJoinRequests(Number(guildid));
+    console.log(response);
+    if (response) {
+      setPendingList(response);
+    } else {
+      setPendingList([]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const approveRequest = useCallback(
+    async (requestId: number) => {
+      const response = await guildJoin.ApproveGuildJoin(Number(guildid), requestId);
+      console.log(response);
+      fetchPendingMemberList();
+      fetchData();
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [fetchPendingMemberList, guildid]
+  );
+
+  const rejectRequest = useCallback(
+    async (requestId: number) => {
+      const response = await guildJoin.RejectGuildJoin(Number(guildid), requestId);
+      console.log(response);
+      fetchPendingMemberList();
+      fetchData();
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [fetchPendingMemberList, guildid]
+  );
+
+  useEffect(() => {
+    fetchPendingMemberList();
+  }, [fetchPendingMemberList]);
+
   // console.log('멤버 데이터:', members);
 
   return (
     <div className="flex flex-col mt-36 mb-36 gap-14">
       {guildInfo && (
-        <div className="flex gap-6 w-[67%] self-center">
-          <div className="w-[300px] aspect-square overflow-hidden">
-            <img
-              src={
-                guildInfo.imageUrl ||
-                'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/489830/header.jpg?t=1721923149'
-              }
-              alt="guild"
-              className="h-full object-cover rounded-3xl"
-            />
+        <div className="w-[67%] self-center flex flex-col gap-2">
+          <div className=" self-end">
+            <Button
+              variant="outline"
+              className="bg-white  hover:bg-purple-50 text-neutral-700"
+              onClick={() => router.push(PATH.guild_detail(guildid))}
+            >
+              돌아가기
+            </Button>
           </div>
-          <div className="flex flex-col flex-auto gap-5">
-            <p className="text-5xl text-neutral-900 font-bold">{guildInfo.name}</p>
-            <div className="flex flex-col gap-3">
-              <p>
-                <span className="text-lg text-neutral-900">{`함께한지 `}</span>
-                <span className="text-lg text-neutral-900 font-bold">{numDays}</span>
-                <span className="text-lg text-neutral-900">{` 일째`}</span>
-              </p>
-              <div className="flex gap-2">
-                {guildInfo.tags.map((tag, i) => (
-                  <Tag key={i} style="retro" size="small" background="dark">
-                    {tag}
-                  </Tag>
-                ))}
-              </div>
+          <div className="flex gap-6 ">
+            <div className="w-[300px] aspect-square overflow-hidden">
+              <img
+                src={guildInfo.imageUrl || '/img/hero/bg_community_main.webp'}
+                alt="guild"
+                className="h-full object-cover rounded-3xl"
+              />
             </div>
-            <div className="border border-neutral-400 rounded-2xl py-8 px-9 grid grid-cols-2">
-              <div className="text-lg flex">
-                <span className="font-bold w-[120px]">결성일</span>
-                <span>{new Date(guildInfo.createdDate).toLocaleDateString()}</span>
+            <div className="flex flex-col flex-auto gap-5">
+              <p className="text-5xl text-neutral-900 font-bold">{guildInfo.name}</p>
+              <div className="flex flex-col gap-3">
+                <p>
+                  <span className="text-lg text-neutral-900">{`함께한지 `}</span>
+                  <span className="text-lg text-neutral-900 font-bold">{numDays}</span>
+                  <span className="text-lg text-neutral-900">{` 일째`}</span>
+                </p>
+                <div className="flex gap-2">
+                  {guildInfo.tags.map((tag, i) => (
+                    <Tag key={i} style="retro" size="small" background="dark">
+                      {tag}
+                    </Tag>
+                  ))}
+                </div>
               </div>
-              <div className="text-lg flex">
-                <span className="font-bold w-[120px]">길드장</span>
-                <span>{guildInfo.leaderNickname}</span>
-              </div>
-              <div className="text-lg flex">
-                <span className="font-bold w-[120px]">전체 인원</span>
-                <span>{guildInfo.totalMemberCount}</span>
-              </div>
-              <div className="text-lg flex">
-                <span className="font-bold w-[120px]">운영진</span>
-                <div className="flex">
-                  {managers.length > 0 ? (
-                    managers.map((m, ind) => (
-                      <span
-                        key={m.memberId}
-                        className={`px-4 ${ind === 0 ? 'pl-0' : ''} ${ind < managers.length - 1 ? 'border-r border-neutral-400' : ''}`}
-                      >
-                        {m.data.user.nickname}
-                      </span>
-                    ))
-                  ) : (
-                    <span className="text-neutral-500">없음</span>
-                  )}
+              <div className="border border-neutral-400 rounded-2xl py-8 px-9 grid grid-cols-2">
+                <div className="text-lg flex">
+                  <span className="font-bold w-[120px]">결성일</span>
+                  <span>{new Date(guildInfo.createdDate).toLocaleDateString()}</span>
+                </div>
+                <div className="text-lg flex">
+                  <span className="font-bold w-[120px]">길드장</span>
+                  <span>{guildInfo.leaderNickname}</span>
+                </div>
+                <div className="text-lg flex">
+                  <span className="font-bold w-[120px]">전체 인원</span>
+                  <span>{guildInfo.totalMemberCount}</span>
+                </div>
+                <div className="text-lg flex">
+                  <span className="font-bold w-[120px]">운영진</span>
+                  <div className="flex">
+                    {managers.length > 0 ? (
+                      managers.map((m, ind) => (
+                        <span
+                          key={m.memberId}
+                          className={`px-4 ${ind === 0 ? 'pl-0' : ''} ${ind < managers.length - 1 ? 'border-r border-neutral-400' : ''}`}
+                        >
+                          {m.data.user.nickname}
+                        </span>
+                      ))
+                    ) : (
+                      <span className="text-neutral-500">없음</span>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
@@ -240,6 +305,7 @@ const [guildInfo, setGuildInfo] = useState<{
       )}
 
       <PlayOnRollingBanner direction="left" duration={20} />
+
       <Accordion type="multiple" className="w-[67%] self-center">
         <AccordionItem value="item-1">
           <AccordionTrigger className="">
@@ -250,11 +316,19 @@ const [guildInfo, setGuildInfo] = useState<{
               <div className="flex flex-col gap-6">
                 <div className="flex border border-neutral-400 rounded-lg gap-4 py-4 px-5">
                   <Button className="">길드 정보 변경하기</Button>
-                  <Button variant={'outline'} className="border-0 shadow-none hover:bg-cherry-main hover:text-white">
-                    길드 삭제
-                  </Button>
+                  {isLeader && (
+                    <Button
+                      variant={'outline'}
+                      className="border-0 shadow-none hover:bg-cherry-main hover:text-white"
+                      onClick={deleteGuild}
+                    >
+                      길드 삭제
+                    </Button>
+                  )}
                 </div>
-                <Button className="h-16">파티 생성</Button>
+                <Button className="h-16" onClick={() => router.push(PATH.party_create)}>
+                  파티 생성
+                </Button>
               </div>
               <div className="flex flex-col flex-auto border border-neutral-400 rounded-2xl px-6 py-8">
                 <p className="text-2xl font-bold mb-3">길드 초대하기</p>
@@ -280,19 +354,22 @@ const [guildInfo, setGuildInfo] = useState<{
             <p className="text-3xl text-neutral-900 font-bold">승인 대기 중</p>
           </AccordionTrigger>
           <AccordionContent>
-            <div className="grid grid-cols-3 grid-rows-2 gap-x-6 gap-y-6">
-              <div className="border border-neutral-400 rounded-lg p-5">
-                <UserApprove data={dummyUserSimple} onApprove={() => {}} onReject={() => {}} />
-              </div>
-              <div className="border border-neutral-400 rounded-lg p-5">
-                <UserApprove data={dummyUserSimple} onApprove={() => {}} onReject={() => {}} />
-              </div>
-              <div className="border border-neutral-400 rounded-lg p-5">
-                <UserApprove data={dummyUserSimple} onApprove={() => {}} onReject={() => {}} />
-              </div>
-              <div className="border border-neutral-400 rounded-lg p-5">
-                <UserApprove data={dummyUserSimple} onApprove={() => {}} onReject={() => {}} />
-              </div>
+            <div className="grid grid-cols-3 gap-x-6 gap-y-6">
+              {pendingList.length > 0 ? (
+                pendingList.map((user) => {
+                  return (
+                    <div key={user.memberId} className="border border-neutral-400 rounded-lg p-5 min-w-[288px]">
+                      <UserApprove
+                        data={user}
+                        onApprove={() => approveRequest(user.requestId)}
+                        onReject={() => rejectRequest(user.requestId)}
+                      />
+                    </div>
+                  );
+                })
+              ) : (
+                <p className="text-lg text-neutral-500">요청이 없습니다.</p>
+              )}
             </div>
           </AccordionContent>
         </AccordionItem>
@@ -305,6 +382,7 @@ const [guildInfo, setGuildInfo] = useState<{
               return (
                 <GuildUser
                   key={`${member.memberId}-${index}`}
+                  membetId={member.memberId}
                   data={member.data}
                   index={index}
                   total={members.length}

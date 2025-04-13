@@ -24,13 +24,13 @@ export default function GuildUser(props: guildUserProps) {
     : '정보 없음';
   const isList = useMemo(() => index === total - 1, [index, total]);
 
-  console.log('GuildUser 렌더링 확인:', data);
+  // console.log('GuildUser 렌더링 확인:', data);
 
   return (
     <>
       <div className="flex gap-6 py-8">
         <Avatar className="bg-neutral-400 w-16 h-16">
-          <AvatarImage src={data.user.img_src || 'https://avatars.githubusercontent.com/u/124599?v=4'} />
+          <AvatarImage src={data.user.img_src || '/img/dummy_profile.jpg'} />
         </Avatar>
 
         <div className="w-full">

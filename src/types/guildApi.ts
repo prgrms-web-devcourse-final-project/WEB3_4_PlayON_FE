@@ -74,8 +74,8 @@ export interface GuildDetailMember {
 }
 
 export interface GuildJoinRequest {
-  approvalState: 'PENDING' | 'APPROVED' | 'REJECTED';
-  memberId: number;
+  approvalState: string;
+  memberId: string;
   nickname: string;
   profileImg: string | null;
   requestId: number;
@@ -136,7 +136,7 @@ export interface GuildJoinRequestsResponse {
 }
 
 export type AdditionalInfo = userSimple & {
-  memberId: number;
+  memberId: string;
   requestId: number;
   requestedAt: Date;
   approvalState: string;

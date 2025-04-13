@@ -1,18 +1,83 @@
 'use client';
 
+import { useGuild } from '@/api/guild';
+import { useGuildJoin } from '@/api/guildJoin';
 import RetroButton from '@/components/common/RetroButton';
 import Tag from '@/components/common/Tag';
 import { Button } from '@/components/ui/button';
 import { PATH } from '@/constants/routes';
+import { useToast } from '@/hooks/use-toast';
 import { guild } from '@/types/guild';
+import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { ClipboardPenIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useCallback } from 'react';
+import styles from './guildInfo.module.css';
 
-export default function GuildInfoSection({ guildData }: { guildData: guild }) {
+export default function GuildInfoSection({ guildId }: { guildId: string }) {
   const router = useRouter();
+  const Guild = useGuild();
+  const guildJoin = useGuildJoin();
+  const Toast = useToast();
   const getTagList = (data: guild) => {
     return [...data.friendly, ...data.gender, ...data.play_style, ...data.skill_level];
   };
+  const queryClient = useQueryClient();
+
+  const { data: guildData } = useSuspenseQuery({
+    queryKey: ['GuildDetailInside', guildId],
+    queryFn: () => Guild.GetGuild(guildId),
+  });
+
+  const requestGuildJoin = useCallback(async () => {
+    const response = await guildJoin.RequestGuildJoin(Number(guildId));
+    if (response) {
+      Toast.toast({
+        title: '길드 가입 요청을 보냈습니다.',
+        variant: 'primary',
+      });
+    } else {
+      Toast.toast({
+        title: '길드 가입 요청에 실패했습니다.',
+      });
+    }
+    queryClient.refetchQueries({ queryKey: ['GuildDetailInside', guildId], exact: true });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const GuildActionButton = () => {
+    if (guildData === false) return;
+    if (guildData.max_members > guildData.num_members) {
+      if (guildData?.myRole === 'GUEST') {
+        return (
+          <RetroButton type="purple" className="w-60" callback={requestGuildJoin}>
+            길드 참여
+          </RetroButton>
+        );
+      } else if (guildData.myRole === 'APPLICANT') {
+        return (
+          <RetroButton type="purple" className="w-60">
+            <div className="flex items-center gap-1">
+              <div className={`${styles.spinner}`}></div>승인 대기
+            </div>
+          </RetroButton>
+        );
+      } else {
+        return (
+          <RetroButton type="purple" className="w-60" callback={() => {}}>
+            길드 탈퇴
+          </RetroButton>
+        );
+      }
+    } else {
+      return (
+        <RetroButton type="grey" className="w-60">
+          인원 마감
+        </RetroButton>
+      );
+    }
+  };
+
   return (
     <>
       {guildData && (
@@ -61,15 +126,7 @@ export default function GuildInfoSection({ guildData }: { guildData: guild }) {
                 </p>
               </div>
             </div>
-            {guildData.myRole === 'GUEST' ? (
-              <RetroButton type="purple" className="w-60">
-                길드 참여
-              </RetroButton>
-            ) : (
-              <RetroButton type="purple" className="w-60">
-                길드 탈퇴
-              </RetroButton>
-            )}
+            <GuildActionButton />
           </div>
         </div>
       )}

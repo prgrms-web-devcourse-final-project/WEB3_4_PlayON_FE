@@ -18,7 +18,7 @@ export const useGuild = () => {
   async function GetGuild(guildId: string) {
     const response = await axios.TypedGet<GuildDetailResponse>(GUILD.detail(guildId), {}, true);
     const data = response?.data;
-    console.log(data);
+    // console.log(data);
     if (data) {
       const tags = categorizeTags(data?.tags);
       const guildDetail: guild = {
@@ -42,7 +42,7 @@ export const useGuild = () => {
         gender: tags.gender,
         friendly: tags.friendly,
       };
-      console.log(guildDetail);
+      // console.log(guildDetail);
       return guildDetail;
     }
     return false;

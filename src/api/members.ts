@@ -33,22 +33,33 @@ export const useMembers = () => {
   }
   async function PutMe(
     nickname: string,
-    profileImg: string | null,
+    updateProfileImg: boolean,
+    newFileType: string,
     playStyle: string,
     skillLevel: string,
     gender: string
   ) {
     const response = await axios.Put(
       MEMBER.me,
-      { nickname, profileImg, playStyle, skillLevel, gender },
+      { nickname, updateProfileImg, newFileType, playStyle, skillLevel, gender },
+      {},
+      true
+    );
+    if (!response || response.status !== 200) {
+      return { success: false, error: response?.status };
+    }
+    return {
+      success: true,
+      presignedUrl: response.data.data.presignedUrl,
+    };
+  }
+  async function profileImg(url: string) {
+    const response = await axios.Post(
+      MEMBER.profileImg,
+      { url },
       { headers: { 'Content-Type': 'application/json' } },
       true
     );
-    if (!response || response.status !== 200) return false;
-    return true;
-  }
-  async function profileImg(url: string) {
-    const response = await axios.Post(MEMBER.me, { url }, { headers: { 'Content-Type': 'application/json' } }, true);
     if (response && response.status === 200 && user) {
       setUser({ ...user, img_src: url });
       return true;
