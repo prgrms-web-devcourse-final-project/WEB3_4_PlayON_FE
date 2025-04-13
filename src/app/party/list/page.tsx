@@ -50,7 +50,6 @@ export default function PartyList() {
   }
 
   const fetchData = useCallback(async (params: URLSearchParams) => {
-    console.log(params);
     const partyStyle = splitTag(params, 'partyStyle', 'PARTY_STYLE');
     const skillLevel = splitTag(params, 'skillLevel', 'GAME_SKILL');
     const gender = splitTag(params, 'gender', 'GENDER');
