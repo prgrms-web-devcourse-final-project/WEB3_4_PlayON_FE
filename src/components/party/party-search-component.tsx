@@ -190,11 +190,13 @@ export default function PartySearchComponent(props: PartySearchComponentProps) {
           </div>
           <div className="flex flex-col w-[60%] gap-2">
             <p>게임 이름</p>
-            <GameSearch
-              onSelect={(e) => {
-                handleSearchByName(e.appid);
-              }}
-            />
+            <div className="bg-white">
+              <GameSearch
+                onSelect={(e) => {
+                  handleSearchByName(e.name);
+                }}
+              />
+            </div>
           </div>
         </div>
         <div>
@@ -236,8 +238,8 @@ export default function PartySearchComponent(props: PartySearchComponentProps) {
           <PixelCharacter char="mage" motion="run" />
         </div>
         <p className="p-5 border border-neutral-400 rounded-2xl">
-          {charText && <span className="font-dgm text-neutral-900 text-center">{charText}</span>}
-          <span className="font-dgm text-neutral-900 text-center">{`${user ? '게이머 ' + user : '익명의 게이머'}님을 위한 파티를 찾아왔어요.`}</span>
+          {charText.length > 0 && <span className="font-dgm text-neutral-900 text-center">{charText}</span>}
+          <span className="font-dgm text-neutral-900 text-center">{`${user ? '게이머 ' + user.nickname : '익명의 게이머'}님을 위한 파티를 찾아왔어요.`}</span>
         </p>
       </div>
     </div>

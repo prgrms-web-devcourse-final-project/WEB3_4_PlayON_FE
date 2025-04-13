@@ -54,12 +54,7 @@ export const useMembers = () => {
     };
   }
   async function profileImg(url: string) {
-    const response = await axios.Post(
-      MEMBER.profileImg,
-      { url },
-      { headers: { 'Content-Type': 'application/json' } },
-      true
-    );
+    const response = await axios.PostText(MEMBER.profileImg, url, {}, true);
     if (response && response.status === 200 && user) {
       setUser({ ...user, img_src: url });
       return true;

@@ -8,6 +8,8 @@ import { useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { CoolerCategoryMenu } from '@/app/signup/userdata/component/cooler-category-menu';
 import TiltToggle from '../common/tilt-toggle';
+import GameSearch from '../common/GameSearch';
+import { useAuthStore } from '@/stores/authStore';
 
 type GuildSearchComponentProps = {
   className: string;
@@ -24,6 +26,7 @@ export default function GuildSearchComponent(props: GuildSearchComponentProps) {
   const friendly = useState([true, ...new Array(guildTags.friendly.items.length).fill(false)]);
   const selectedArr = [partyStyle, skillLevel, gender, friendly];
   const [charText, setCharText] = useState('');
+  const { user } = useAuthStore();
 
   const handleSearchByName = useCallback((value: string) => {
     setSearchByName(value);
@@ -164,17 +167,28 @@ export default function GuildSearchComponent(props: GuildSearchComponentProps) {
         <div className="flex gap-4">
           <div className="flex flex-col w-full gap-2">
             <p>길드 이름</p>
-            <SearchBar onChange={() => {}} onSearch={handleSearchByName} placeholder={searchByName} />
+            <SearchBar
+              className={`py-2`}
+              onChange={() => {}}
+              onSearch={handleSearchByName}
+              placeholder={searchByName}
+            />
           </div>
           <div className="flex flex-col w-full gap-2">
             <p>길드 메인 게임</p>
-            <SearchBar onChange={() => {}} onSearch={handleChipAdded} />
-            <div className="flex gap-2 h-6">
-              {selectedGames.map((e, ind) => (
-                <Chip content={e} onClickDelete={(content) => handleChipDelete(content)} key={ind} />
-              ))}
+            <div className="bg-white">
+              <GameSearch
+                onSelect={(e) => {
+                  handleChipAdded(e.name);
+                }}
+              />
             </div>
           </div>
+        </div>
+        <div className="flex gap-2 flex-wrap min-h-10" style={{ scrollbarWidth: 'none' }}>
+          {selectedGames.map((e, ind) => (
+            <Chip content={e} onClickDelete={(content) => handleChipDelete(content)} key={ind} />
+          ))}
         </div>
         <div className="flex flex-col gap-2">
           {Object.values(guildTags).map((category, cat_ind) => (
@@ -204,8 +218,8 @@ export default function GuildSearchComponent(props: GuildSearchComponentProps) {
           <PixelCharacter char="mage" motion="run" />
         </div>
         <p className="p-5 border border-neutral-400 rounded-2xl">
-          {charText && <span className="font-dgm text-neutral-900 text-center">{charText}</span>}
-          <span className="font-dgm text-neutral-900 text-center">게이머 홍길동님을 위한 길드를 찾아왔어요.</span>
+          {charText.length > 0 && <span className="font-dgm text-neutral-900 text-center">{charText}</span>}
+          <span className="font-dgm text-neutral-900 text-center">{`${user ? '게이머 ' + user.nickname : '익명의 게이머'}님을 위한 파티를 찾아왔어요.`}</span>
         </p>
       </div>
     </div>
