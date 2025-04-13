@@ -9,16 +9,17 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { formatISO } from 'date-fns';
 import { Input } from '@/components/ui/input';
 import { FormControl, FormField, FormItem, Form } from '@/components/ui/form';
-import { SearchIcon } from 'lucide-react';
 import { DateTimePicker } from '@/components/ui/date-time-picker';
 import SelectedGameCard from '@/components/game/SelectedGameCard';
 import { dummyGameSimple } from '@/utils/dummyData';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useParty } from '@/api/party';
 import GameSearch from '@/components/common/GameSearch';
+import { gameSimple } from '@/types/games';
+import { getSteamImage } from '@/api/steamImg';
 type ToastError = {
   message: string;
   ref: { name: string };
@@ -64,6 +65,18 @@ export default function PartyCreate() {
   const dateInputRef = useRef<HTMLInputElement>(null);
   const Toast = useToast();
   const party = useParty();
+  const [selectedGame, setSelectedGame] = useState<gameSimple>();
+  const handleSelectedGame = async (data: { appid: string; name: string }) => {
+    const imgsrc = await getSteamImage(data.appid, 'header');
+    const bgsrc = await getSteamImage(data.appid, 'background');
+
+    setSelectedGame({
+      title: data.name,
+      genre: [''],
+      img_src: imgsrc,
+      background_src: bgsrc,
+    });
+  };
   const form = useForm<z.infer<typeof createPartyFormSchema>>({
     defaultValues: {
       public: true,
@@ -119,7 +132,7 @@ export default function PartyCreate() {
           <div className="flex justify-center gap-6">
             <div className="min-w-[411px] flex flex-col items-end">
               <div className="w-full h-[180px] rounded-2xl border border-neutral-300">
-                <SelectedGameCard data={dummyGameSimple} />
+                {selectedGame && <SelectedGameCard data={selectedGame} />}
               </div>
               <div className="flex items-center gap-2 mt-[25px]">
                 <FormField //공개설정
@@ -173,7 +186,7 @@ export default function PartyCreate() {
                           />
                           <GameSearch
                             onSelect={(game) => {
-                              console.log(game);
+                              handleSelectedGame(game);
                               field.onChange(game);
                             }}
                           />
