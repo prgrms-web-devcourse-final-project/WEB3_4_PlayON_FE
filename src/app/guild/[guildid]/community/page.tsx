@@ -87,9 +87,9 @@ export default function GuildCommunity() {
           </div>
         )}
         {totalItems > 0 && (
-          <section className="space-y-10 pt-8">
+          <section className="w-full space-y-10 pt-8">
             <SortRadioGroup options={sortOptions} />
-            <div className="divide-y divide-neutral-200">
+            <div className="w-full divide-y divide-neutral-200">
               {postList.map((post) => {
                 if (post.img_src) {
                   return (
