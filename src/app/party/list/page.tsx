@@ -50,19 +50,20 @@ export default function PartyList() {
   }
 
   const fetchData = useCallback(async (params: URLSearchParams) => {
+    console.log(params);
     const partyStyle = splitTag(params, 'partyStyle', 'PARTY_STYLE');
     const skillLevel = splitTag(params, 'skillLevel', 'GAME_SKILL');
     const gender = splitTag(params, 'gender', 'GENDER');
     const friendly = splitTag(params, 'friendly', 'SOCIALIZING');
     const genres = params.get('genres')?.split(',');
     const partyDate = params.get('partyDate');
+    const appId = params.get('appId');
     const orderBy = params.get('sort');
     const page = Number(params.get('page'));
     const partyAt = (partyDate && new Date(partyDate)) || new Date();
-    console.log('page', page);
     const res = await party.GetParties(
       {
-        gameId: '',
+        appId: appId ?? undefined,
         genres: genres || [],
         tags: [...partyStyle, ...skillLevel, ...gender, ...friendly],
       },
@@ -129,11 +130,7 @@ export default function PartyList() {
         </div>
         <div className="grid grid-cols-3 gap-6">
           {parties.length > 0 ? (
-            parties.map((party, idx) => (
-              <Link key={party.party_name + idx} href={PATH.party_detail(party.partyId)}>
-                <PartyCard key={idx} data={party} />
-              </Link>
-            ))
+            parties.map((party) => <PartyCard data={party} key={party.partyId} />)
           ) : (
             <PartyCardSkeleton />
           )}

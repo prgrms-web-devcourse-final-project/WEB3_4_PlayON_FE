@@ -11,6 +11,7 @@ import TiltToggle from '../common/tilt-toggle';
 import { useSearchParams } from 'next/navigation';
 import { formatISO } from 'date-fns';
 import { useAuthStore } from '@/stores/authStore';
+import GameSearch from '../common/GameSearch';
 
 type PartySearchComponentProps = {
   className: string;
@@ -114,13 +115,13 @@ export default function PartySearchComponent(props: PartySearchComponentProps) {
   }, [selectedGenres]);
   useEffect(() => {
     const newUrl = new URL(window.location.href);
-    if (searchName.length > 0) {
-      newUrl.searchParams.set('name', searchName);
+    if (searchName.toString().length > 0) {
+      newUrl.searchParams.set('appId', searchName);
       // router.replace(newUrl.toString(), { scroll: false });
       window.history.pushState({}, '', newUrl);
     }
-    if (searchName.length === 0) {
-      newUrl.searchParams.delete('name');
+    if (searchName.toString().length === 0) {
+      newUrl.searchParams.delete('appId');
       window.history.pushState({}, '', newUrl);
     }
   }, [searchName]);
@@ -173,7 +174,7 @@ export default function PartySearchComponent(props: PartySearchComponentProps) {
       setSelectedGenres(temp);
     }
 
-    const SearchName = searchParam.get('name');
+    const SearchName = searchParam.get('appId');
     if (SearchName) {
       setSearchName(SearchName);
     }
@@ -189,7 +190,11 @@ export default function PartySearchComponent(props: PartySearchComponentProps) {
           </div>
           <div className="flex flex-col w-[60%] gap-2">
             <p>게임 이름</p>
-            <SearchBar placeholder={searchName} onChange={() => {}} onSearch={handleSearchByName} />
+            <GameSearch
+              onSelect={(e) => {
+                handleSearchByName(e.appid);
+              }}
+            />
           </div>
         </div>
         <div>
