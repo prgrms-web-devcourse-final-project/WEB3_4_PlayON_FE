@@ -63,6 +63,14 @@ export const useAxios = () => {
       errorHandler(err, toast);
     }
   }
+  async function Patch(path: string, data: object, config: AxiosRequestConfig, toast: boolean) {
+    try {
+      const response = await apiInstance.put(path, { ...data }, config);
+      return response;
+    } catch (err) {
+      errorHandler(err, toast);
+    }
+  }
 
   async function TypedGet<T>(path: string, config: AxiosRequestConfig, toast: boolean) {
     try {
@@ -89,5 +97,6 @@ export const useAxios = () => {
     Put,
     TypedGet,
     PostText,
+    Patch,
   };
 };

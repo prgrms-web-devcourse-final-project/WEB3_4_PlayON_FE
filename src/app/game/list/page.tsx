@@ -7,17 +7,17 @@ import { dummyGameDetail2 } from '@/utils/dummyData';
 import PickCard from '@/components/game/PickCard';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useGame, game } from '@/api/game';
-import { Suspense, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import typeConverter from '@/utils/typeConverter';
 import { CoolerCategoryMenu } from '@/app/signup/userdata/component/cooler-category-menu';
 import TiltToggle from '@/components/common/tilt-toggle';
-import SearchBar from '@/components/common/SearchBar';
 import { gameDetail } from '@/types/games';
 import CustomPagination from '@/components/common/CustomPagination';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { GAME_ROUTE } from '@/constants/routes/game';
 import { Skeleton } from '@/components/ui/skeleton';
+import GameSearch from '@/components/common/GameSearch';
 
 export default function GameList() {
   const imageList = [
@@ -155,18 +155,30 @@ export default function GameList() {
     window.history.pushState({}, '', newUrl);
   }, [genre, playerType, releaseStatus, mac, releaseDate, keyword, playerTypes, releaseStatuses, genres]);
   useEffect(() => {
-    console.log(window.location.href);
     refetch();
   }, [refetch, searchParams]);
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    const Genre = url.searchParams.get('genre')?.split(',');
+    const PlayerType = url.searchParams.get('playerType');
+    const ReleaseStatus = url.searchParams.get('releaseStatus');
+    const Mac = url.searchParams.get('mac');
+    const Keyword = url.searchParams.get('keyword');
+    const ReleaseDate = url.searchParams.get('releaseDate');
+    if (Genre) setGenre(genres.map((e) => Genre.includes(e)));
+    if (PlayerType) setPlayerType(PlayerType === '멀티플레이' ? [true, false] : [false, true]);
+    if (ReleaseStatus) setReleaseStatus(ReleaseStatus === '발매' ? [true, false] : [false, true]);
+    if (Mac) setMac(Mac === 'true' ? true : false);
+    if (Keyword) setKeyword(keyword);
+    if (ReleaseDate) setReleaseDate(new Date(ReleaseDate));
 
-  // const queryClient = useQueryClient();
-  // useEffect(() => {
-  //   return {
-  //     onUnmount: () => {
-  //       queryClient.cancelQueries({ queryKey: ['GameList'] });
-  //     },
-  //   };
-  // }, []);
+    console.log(Genre);
+    console.log(PlayerType);
+    console.log(ReleaseStatus);
+    console.log(Mac);
+    console.log(Keyword);
+    console.log(ReleaseDate);
+  }, []);
 
   return (
     <div className="flex flex-col items-center">
@@ -184,13 +196,8 @@ export default function GameList() {
           <div className="flex flex-col flex-auto gap-2 ">
             <p className="font-bold">게임 이름</p>
             <div className="flex gap-10">
-              <div className="flex flex-auto items-center border border-neutral-300 rounded gap-2">
-                <SearchBar
-                  onChange={() => {}}
-                  onSearch={(value) => setKeyword(value)}
-                  className="bg-white border-none"
-                  placeholder={`${keyword}`}
-                />
+              <div className="flex flex-auto items-center rounded-lg bg-white gap-2">
+                <GameSearch onSelect={(e) => setKeyword(e.name)} />
               </div>
               <div className="flex items-center gap-2">
                 <Switch checked={mac} onCheckedChange={(e) => setMac(e)} />

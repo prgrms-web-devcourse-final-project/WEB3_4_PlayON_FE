@@ -1,0 +1,87 @@
+import { useGame, game } from '@/api/game';
+import SectionTitle from '@/components/common/SectionTitle';
+import PickCard from '@/components/game/PickCard';
+import { GAME_ROUTE } from '@/constants/routes/game';
+import { useAuthStore } from '@/stores/authStore';
+import { gameDetail } from '@/types/games';
+import { dummyGameDetail } from '@/utils/dummyData';
+import { useSuspenseQuery } from '@tanstack/react-query';
+import Link from 'next/link';
+
+export default function GenreRecommendation() {
+  const { user } = useAuthStore();
+  const game = useGame();
+
+  function convertToClientGame(data: game): gameDetail {
+    return {
+      about: data.aboutTheGame,
+      detail_desc: data.aboutTheGame,
+      developer: [data.developers],
+      genre: data.genres,
+      homepage_url: data.website,
+      img_src: data.headerImage,
+      movie_src: data.movies,
+      screenshot_src: data.screenshots,
+      os: {
+        linux: data.isLinuxSupported,
+        mac: data.isMacSupported,
+        windows: data.isWindowsSupported,
+      },
+      publisher: [data.publishers],
+      release_date: data.releaseDate,
+      short_desc: data.shortDescription,
+      title: data.name,
+    };
+  }
+  const { data: personalGames, isSuccess: personalGamesIsSuccess } = useSuspenseQuery({
+    queryKey: ['PersonalGames'],
+    queryFn: async () => {
+      try {
+        const appIds = (await game.GameRecommendGenre()).map((e) => e.appid);
+        const gameData = await Promise.all(
+          appIds.map(async (appid) => {
+            const data = await game.GameDetailWithPartyLog(appid);
+            if (data === undefined) return undefined;
+            return { ...convertToClientGame(data.game), appid: appid };
+          })
+        );
+        return gameData.slice(0, 4).filter((e) => e !== undefined);
+      } catch (e) {
+        console.log(e);
+        return [
+          { ...dummyGameDetail, appid: 1 },
+          { ...dummyGameDetail, appid: 1 },
+          { ...dummyGameDetail, appid: 1 },
+          { ...dummyGameDetail, appid: 1 },
+        ];
+      }
+    },
+    staleTime: Infinity,
+  });
+
+  return (
+    <div className="space-y-8">
+      <SectionTitle
+        title={`${user ? user.nickname + '님 맞춤 추천' : '이런 게임은 어떠세요?'}`}
+        subtitle="내가 좋아하는 장르 위주로"
+        icon_src="/img/icons/pixel_present.svg"
+      />
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        {personalGamesIsSuccess && personalGames.length > 0 ? (
+          personalGames.map((e, ind) => (
+            <Link href={GAME_ROUTE.game_detail(e.appid)} key={`personal_${ind}`}>
+              <PickCard data={e} />
+            </Link>
+          ))
+        ) : (
+          <>
+            <PickCard data={dummyGameDetail} />
+            <PickCard data={dummyGameDetail} />
+            <PickCard data={dummyGameDetail} />
+            <PickCard data={dummyGameDetail} />
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
