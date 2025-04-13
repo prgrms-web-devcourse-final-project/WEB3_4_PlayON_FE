@@ -17,6 +17,11 @@ type Props = {
 };
 
 export default function PostInfo({ partyLog }: Props) {
+  // 기본 이미지
+  const defaultImg =
+  'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/489830/header.jpg?t=1721923149';
+  
+  console.log('스크린샷 배열:', partyLog?.screenshot);
   return (
     <section className="flex flex-col gap-12 mt-12">
       <div>
@@ -34,11 +39,11 @@ export default function PostInfo({ partyLog }: Props) {
             <SwiperSlide key={idx}>
               <div className="flex gap-6 items-start">
                 <Image
-                  src={screenshot.img_src}
+                  src={screenshot.img_src || defaultImg}
                   alt={`${screenshot.author.nickname}의 스크린샷`}
                   width={736}
                   height={414}
-                  className="screen object-contain"
+                  className="screen object-contain max-h-[420px]"
                 ></Image>
                 <div>
                   <UserInfoHorizontal data={screenshot.author} />
