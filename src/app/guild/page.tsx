@@ -32,6 +32,7 @@ export default function Guild() {
   const { data: popularGuildList } = useSuspenseQuery({
     queryKey: ['PopularGuilds'],
     queryFn: () => Guild.GetGuildPopular(),
+    staleTime: 1000 * 60,
   });
 
   const handleSearch = (value: string) => {

@@ -19,7 +19,7 @@ const sortOptions: SortOption[] = [
   { id: 'POPULAR', label: '인기순' },
 ];
 
-export default function Community() {
+export default function GuildCommunity() {
   const [postList, setPostList] = useState<postSimple[]>([]);
   const [totalItems, setTotalItems] = useState(0);
 

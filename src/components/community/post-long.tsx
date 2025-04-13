@@ -38,13 +38,13 @@ export default function CommunityPostLong(props: CommunityPostImageLongProps) {
   // console.log('content: ', content);
   return (
     <div
-      className={`flex flex-col py-7 justify-between cursor-pointer ` + props.className}
+      className={`flex flex-col py-7 justify-between cursor-pointer w-full ` + props.className}
       onClick={props.onClick ? props.onClick : () => router.push(PATH.community_detail(String(props.data.postId)))}
     >
       <AvatarName userName={props.data.author_nickname} avatar={props.data.author_img} />
       <div>
         <p className="text-xl font-suit font-bold">{props.data.title}</p>
-        <p style={{ wordBreak: 'break-all' }} className="text-sm font-suit text-ellipsis line-clamp-2">
+        <p style={{ wordBreak: 'break-all' }} className="text-sm font-suit text-ellipsis line-clamp-2 w-full block">
           {content}
         </p>
       </div>

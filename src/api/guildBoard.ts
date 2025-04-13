@@ -1,18 +1,18 @@
 import { GUILD_BOARD_ENDPOINTS } from '@/constants/endpoints/guild-board';
 import { useAxios } from '@/hooks/useAxios';
-import { postSimple } from '@/types/community';
+import { postSimple, comment, post } from '@/types/community';
 import { uploadToS3 } from '@/utils/uploadToS3';
 // import { guildCommunityTags } from '@/types/Tags/communityTags';
 
 export const useGuildBoard = () => {
   const axios = useAxios();
-  // type comment = {
-  //   id: number;
-  //   authorNickname: string;
-  //   authorProfileImg: string;
-  //   content: string;
-  //   createdAt: Date;
-  // };
+  type comment = {
+    id: number;
+    authorNickname: string;
+    authorProfileImg: string;
+    content: string;
+    createdAt: Date;
+  };
   type guild = {
     id: number;
     name: string;
@@ -20,7 +20,7 @@ export const useGuildBoard = () => {
     guildImg: string;
     memberCount: number;
   };
-  type post = {
+  type postType = {
     id: number;
     title: string;
     content: string;
@@ -29,6 +29,7 @@ export const useGuildBoard = () => {
     likeCount: number;
     imageUrl: string;
     authorNickname: string;
+    comments: comment[];
     commentCount: number;
     guild: guild;
     createdAt: string;
@@ -44,14 +45,51 @@ export const useGuildBoard = () => {
     imageUrl: string;
     tag: string;
   };
+  type postDetailResponse = { data: postType; msg: string; resultCode: string };
   type createRequest = { title: string; content: string; tag: string; fileType: string };
   type updateRequest = { title: string; content: string; tag: string; newFileType: string };
 
   async function GuildPostDetail(guildId: number, boardId: number) {
-    const response = await axios.Get(GUILD_BOARD_ENDPOINTS.guildPostDetail(guildId, boardId), {}, true);
-    if (response && response.status === 200) {
-      const postData = response.data.data as post;
-      return postData;
+    const response = await axios.TypedGet<postDetailResponse>(
+      GUILD_BOARD_ENDPOINTS.guildPostDetail(guildId, boardId),
+      {},
+      true
+    );
+    // console.log('GuildPostDetail', response);
+    if (response && response.msg === 'OK') {
+      const postData = response.data;
+      // console.log('postData', postData);
+      const postDetail: post = {
+        user: {
+          username: postData.authorNickname,
+          nickname: postData.authorNickname,
+          user_title: 'title',
+          img_src: '/img/dummy_profile.jpg',
+          memberId: '',
+        },
+        title: postData.title,
+        content: postData.content,
+        img_src: postData.imageUrl,
+        created_at: new Date(postData.createdAt),
+        num_likes: postData.likeCount,
+        comments: postData.comments.map((comment: comment) => ({
+          user: {
+            username: comment.authorNickname,
+            nickname: comment.authorNickname,
+            user_title: 'title',
+            img_src: comment.authorProfileImg || '/img/dummy_profile.jpg',
+            memberId: '',
+          },
+          content: comment.content,
+          createdAt: comment.createdAt,
+        })),
+        num_comments: postData.commentCount,
+        hits: postData.hit,
+        channel: '길드',
+        tag: postData.tag,
+      };
+      // console.log('postDetail', postDetail);
+      return postDetail;
     }
     return false;
   }
@@ -133,10 +171,10 @@ export const useGuildBoard = () => {
       pageSize?: number;
     }
   ) {
-    console.log(data);
+    // console.log(data);
     const response = await axios.Get(GUILD_BOARD_ENDPOINTS.guildPostList(guildId), { params: { ...data } }, true);
     if (response && response.status === 200) {
-      const postList = response.data.data.content.map((post: post) => {
+      const postList = response.data.data.content.map((post: postType) => {
         return {
           postId: post.id,
           author_nickname: post.authorNickname,
@@ -149,7 +187,7 @@ export const useGuildBoard = () => {
           tag: post.tag,
         };
       });
-      console.log('postList', postList);
+      // console.log('postList', postList);
       return {
         totalElements: response.data.data.totalElements as number,
         totalPages: response.data.data.totalPages as number,

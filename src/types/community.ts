@@ -7,7 +7,7 @@ interface freePost {
 }
 interface guildPost {
   channel: '길드';
-  tag: (typeof guildCommunityTags)[number];
+  tag: string;
 }
 interface postCore {
   user: userSimple;

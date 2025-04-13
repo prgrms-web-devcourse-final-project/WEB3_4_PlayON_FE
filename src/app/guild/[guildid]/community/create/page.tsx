@@ -27,7 +27,7 @@ const createCommunityFormSchema = z.object({
 });
 type createCommunityFormType = z.infer<typeof createCommunityFormSchema>;
 
-export default function CommunityCreate() {
+export default function GuildCommunityCreate() {
   const router = useRouter();
   const guild = useGuild();
   const guildBoard = useGuildBoard();
