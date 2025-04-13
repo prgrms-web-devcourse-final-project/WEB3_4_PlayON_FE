@@ -1,3 +1,5 @@
+'use client';
+
 import { postSimple } from '@/types/community';
 import { ThumbsUpIcon, SubtitlesIcon } from 'lucide-react';
 import AvatarName, { AvatarNameSkeleton } from './common/avatar-name';
