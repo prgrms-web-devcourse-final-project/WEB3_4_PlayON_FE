@@ -14,11 +14,26 @@ export type partyLog = {
   memberCount: number;
 };
 export type party = {
-  id: number;
-  partyId: string;
+  partyId: number;
   name: string;
-  memberCount: number;
-  tags: string[];
+  description: string;
+  appId: number;
+  gameName: string;
+  partyAt: Date;
+  minimum: number;
+  maximum: number;
+  total: number;
+  members: [
+    {
+      memberId: number;
+      profileImage: string;
+    },
+  ];
+  partyTags: [
+    {
+      tagValue: string;
+    },
+  ];
 };
 export type game = {
   appid: number;

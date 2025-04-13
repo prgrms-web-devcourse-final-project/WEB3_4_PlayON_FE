@@ -11,14 +11,15 @@ import PartyCard from '@/components/party/PartyCard';
 import 'swiper/css';
 import PartyLogCard from '@/components/party/PartyLogCard';
 import { PlayIcon } from 'lucide-react';
-import { Suspense, useEffect, useState } from 'react';
-import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { Suspense, useState } from 'react';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { game, useGame, party as ServerParty, partyLog as ServerPartyLog } from '@/api/game';
 import { GAME_ROUTE } from '@/constants/routes/game';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { gameDetail } from '@/types/games';
 import { party, partyLog } from '@/types/party';
-import { Server } from 'http';
+import Link from 'next/link';
+import { PARTY_ROUTE } from '@/constants/routes/party';
 
 export default function GameDetail({ params }: { params: { gameid: string } }) {
   const [selectedSlide, setSelectedSlide] = useState(0);
@@ -49,6 +50,29 @@ export default function GameDetail({ params }: { params: { gameid: string } }) {
       title: data.name,
     };
   }
+  function convertToClientParty(data: ServerParty, game_img: string, game_name: string): party {
+    return {
+      partyId: data.partyId.toString(),
+      description: data.description,
+      num_maximum: data.maximum,
+      num_minimum: data.minimum,
+      participation: data.members.map((_) => ({
+        img_src: _.profileImage,
+        nickname: '',
+        user_title: '',
+        username: '',
+      })),
+      party_name: data.name,
+      selected_game: {
+        background_src: '',
+        genre: [],
+        img_src: game_img,
+        title: game_name,
+      },
+      start_time: new Date(data.partyAt),
+      tags: data.partyTags.map((_) => _.tagValue),
+    };
+  }
 
   const { data: gameDetails } = useSuspenseQuery({
     queryKey: ['gameDetail', params.gameid],
@@ -58,11 +82,14 @@ export default function GameDetail({ params }: { params: { gameid: string } }) {
         router.push(GAME_ROUTE.game_list);
       }
       const data = await gamehook.GameDetailWithPartyLog(gameId);
+      const convGame = convertToClientGame(data.game);
+      const convParties = data.partyList.map((_) => convertToClientParty(_, convGame.img_src, convGame.title));
+
       if (data) {
         return {
-          game: convertToClientGame(data.game),
+          game: convGame,
           partyLogs: data.partyLogList,
-          parties: data.partyList,
+          parties: convParties,
         };
       }
       return {
@@ -302,7 +329,7 @@ export default function GameDetail({ params }: { params: { gameid: string } }) {
           </Accordion>
         </div>
       </div>
-      {/* <Accordion type="multiple" className="w-[67%] min-w-[1280px] self-center mt-24 mb-36">
+      <Accordion type="multiple" className="w-[67%] min-w-[1280px] self-center mt-24 mb-36">
         <AccordionItem value="item-1">
           <AccordionTrigger>
             <p className="text-xl font-bold">이 게임의 파티리스트</p>
@@ -311,13 +338,15 @@ export default function GameDetail({ params }: { params: { gameid: string } }) {
             <Swiper spaceBetween={10} slidesPerView={3} direction="horizontal">
               {gameDetails.parties?.map((_, ind) => (
                 <SwiperSlide key={ind} className="w-[410px]">
-                  <PartyCard data={_} />
+                  <Link href={PARTY_ROUTE.party_detail(_.partyId)}>
+                    <PartyCard data={_} />
+                  </Link>
                 </SwiperSlide>
               ))}
             </Swiper>
           </AccordionContent>
         </AccordionItem>
-        <AccordionItem value="item-2">
+        {/* <AccordionItem value="item-2">
           <AccordionTrigger>
             <p className="text-xl font-bold">이 게임의 파티로그</p>
           </AccordionTrigger>
@@ -330,8 +359,8 @@ export default function GameDetail({ params }: { params: { gameid: string } }) {
               ))}
             </Swiper>
           </AccordionContent>
-        </AccordionItem>
-      </Accordion> */}
+        </AccordionItem> */}
+      </Accordion>
     </div>
   );
 }
