@@ -20,6 +20,9 @@ import { useParty } from '@/api/party';
 import GameSearch from '@/components/common/GameSearch';
 import { gameSimple } from '@/types/games';
 import { getSteamImage } from '@/api/steamImg';
+import { guildTags } from '@/types/Tags/guildTags';
+import { CoolerCategoryMenu } from '@/app/signup/userdata/component/cooler-category-menu';
+import TiltToggle from '@/components/common/tilt-toggle';
 type ToastError = {
   message: string;
   ref: { name: string };
@@ -62,10 +65,19 @@ const createPartyFormSchema = z
   });
 
 export default function PartyCreate() {
-  const dateInputRef = useRef<HTMLInputElement>(null);
   const Toast = useToast();
   const party = useParty();
   const [selectedGame, setSelectedGame] = useState<gameSimple>();
+  const dateInputRef = useRef<HTMLInputElement>(null);
+
+  //필터 State
+  const partyStyle = useState([true, ...new Array(guildTags.partyStyle.items.length).fill(false)]);
+  const skillLevel = useState([true, ...new Array(guildTags.skillLevel.items.length).fill(false)]);
+  const gender = useState([true, ...new Array(guildTags.gender.items.length).fill(false)]);
+  const friendly = useState([true, ...new Array(guildTags.friendly.items.length).fill(false)]);
+  const selectedArr = [partyStyle, skillLevel, gender, friendly];
+
+  //핸들러
   const handleSelectedGame = async (data: { appid: string; name: string }) => {
     const imgsrc = await getSteamImage(data.appid, 'header');
     const bgsrc = await getSteamImage(data.appid, 'background');
@@ -79,6 +91,7 @@ export default function PartyCreate() {
   };
   const form = useForm<z.infer<typeof createPartyFormSchema>>({
     defaultValues: {
+      name: '',
       public: true,
       min_part: 2,
       max_part: 50,
@@ -92,14 +105,27 @@ export default function PartyCreate() {
   });
 
   async function onSubmit(data: z.infer<typeof createPartyFormSchema>) {
+    type GuildTagValue = (typeof guildTags)[keyof typeof guildTags]['items'][number];
+
+    const selectedTagsFlat: { type: string; value: GuildTagValue }[] = Object.entries(guildTags).flatMap(
+      ([key, category], index) => {
+        const selected = selectedArr[index][0]; // boolean[]
+        return selected
+          .map((isSelected, i) => {
+            if (i === 0 || !isSelected) return null;
+            return {
+              type: category.name,
+              value: category.items[i - 1] as GuildTagValue,
+            };
+          })
+          .filter((v): v is { type: string; value: GuildTagValue } => v !== null);
+      }
+    );
     const reqData = {
       name: data.name,
       description: data.description || '',
       partyAt: new Date(data.date),
-      tags: [
-        { type: '성별', value: '남자만' },
-        { type: '성별', value: '여자만' },
-      ],
+      tags: selectedTagsFlat,
       appId: data.game.appid,
       minimum: data.min_part,
       maximum: data.max_part,
@@ -275,7 +301,27 @@ export default function PartyCreate() {
                 </div>
                 <p className="h2 mt-8">참가 제한 조건</p>
                 <div className="flex flex-col bg-neutral-50 rounded-xl mt-5 gap-5 py-10 px-10">
-                  {/* @kylekim95 이곳입니다... */}
+                  {Object.values(guildTags).map((category, cat_ind) => (
+                    <div className="flex items-center gap-5" key={`${category.name}`}>
+                      <p className="w-[118px] font-dgm text-neutral-900">{category.name}</p>
+                      <CoolerCategoryMenu
+                        state={selectedArr[cat_ind][0]}
+                        setState={selectedArr[cat_ind][1]}
+                        className="flex gap-2"
+                        type="multiple"
+                        enableAll
+                        notNull
+                      >
+                        {['전체', ...category.items].map((item, item_ind) => (
+                          <TiltToggle
+                            label={item}
+                            toggle={selectedArr[cat_ind][0][item_ind]}
+                            key={`${category.name}_${item}`}
+                          />
+                        ))}
+                      </CoolerCategoryMenu>
+                    </div>
+                  ))}
                 </div>
                 <p className="h2 mt-8 mb-3">파티 룸 소개</p>
                 <FormField
