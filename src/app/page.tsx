@@ -13,7 +13,7 @@ export default function Home() {
   const [modelObject, setModelObject] = useState<Object3D | null>(null);
   return (
     <main className="w-full overflow-x-hidden relative bg-purple-600">
-      <div className="w-[1280px] left-1/2 top-0 -translate-x-1/2 border fixed">
+      <div className="w-[1280px] left-1/2 top-0 -translate-x-1/2 fixed">
         <ThreeController setModelObject={setModelObject} />
       </div>
       <HeroSection modelObject={modelObject} />

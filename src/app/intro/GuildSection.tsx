@@ -33,7 +33,7 @@ function GuildSection({ modelObject }: Props) {
         trigger: container.current,
         start: 'top top',
         end: 'top -100%',
-        markers: true,
+        // markers: true,
         scrub: 1,
         pin: true,
         onLeave: () => setCharWalking(false),

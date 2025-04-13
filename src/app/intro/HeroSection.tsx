@@ -40,7 +40,7 @@ function HeroSection({ modelObject }: Props) {
         trigger: container.current,
         start: 'top top',
         end: 'bottom top',
-        markers: true,
+        // markers: true,
         scrub: 2,
         pin: true,
       },

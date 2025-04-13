@@ -46,7 +46,7 @@ function PartySection({ modelObject }: Props) {
         trigger: container.current,
         start: 'top top',
         end: '+=640',
-        markers: true,
+        // markers: true,
         scrub: 1,
         pin: true,
         pinSpacing: true,
