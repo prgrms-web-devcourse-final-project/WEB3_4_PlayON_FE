@@ -34,6 +34,7 @@ export default function GuildBoardNoticeSection({ guildId }: { guildId: string }
             if (post.img_src) {
               return (
                 <CommunityPostImageLong
+                  key={post.postId}
                   data={post}
                   className="h-44 "
                   onClick={() => {
@@ -44,6 +45,7 @@ export default function GuildBoardNoticeSection({ guildId }: { guildId: string }
             } else {
               return (
                 <CommunityPostLong
+                  key={post.postId}
                   data={post}
                   className="h-44"
                   onClick={() => {

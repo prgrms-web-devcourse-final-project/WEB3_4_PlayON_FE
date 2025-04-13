@@ -47,7 +47,6 @@ export const useGuildBoard = () => {
   type createRequest = { title: string; content: string; tag: string; fileType: string };
   type updateRequest = { title: string; content: string; tag: string; newFileType: string };
 
-  // ⚠️ 동작은 하는데, createdAt 정보 없음
   async function GuildPostDetail(guildId: number, boardId: number) {
     const response = await axios.Get(GUILD_BOARD_ENDPOINTS.guildPostDetail(guildId, boardId), {}, true);
     if (response && response.status === 200) {

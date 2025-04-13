@@ -28,7 +28,7 @@ export default function Community() {
   const searchParams = useSearchParams();
   const params = useParams();
   const router = useRouter();
-  const guildId = params.guildid[0];
+  const guildId = params.guildid as string;
 
   const { data: guildData } = useQuery({
     queryKey: ['GuildDetail', guildId],

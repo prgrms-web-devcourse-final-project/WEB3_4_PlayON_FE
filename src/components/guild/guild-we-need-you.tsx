@@ -20,7 +20,7 @@ type WeNeedYouProps = {
 export default function WeNeedYou(props: WeNeedYouProps) {
   const [query, setQuery] = useState('');
   const params = useParams();
-  const guildId = params.guildid[0] ?? null;
+  const guildId = (params.guildid as string) ?? null;
   const router = useRouter();
 
   const HandleSearchClick = useCallback(
