@@ -6,22 +6,21 @@ import GuildSection from './intro/GuildSection';
 import TotalSection from './intro/TotalSection';
 import LastSection from './intro/LastSection';
 import ThreeController from './intro/ThreeController';
+import { useState } from 'react';
+import { Object3D } from 'three';
 
 export default function Home() {
+  const [modelObject, setModelObject] = useState<Object3D | null>(null);
   return (
-    <main className="w-full overflow-x-hidden relative">
-      <div className="fixed w-[1280px] left-1/2 top-8 -translate-x-1/2  z-50 border border-red-600">
-        <ThreeController />
+    <main className="w-full overflow-x-hidden relative bg-purple-600">
+      <div className="w-[1280px] left-1/2 top-0 -translate-x-1/2 border fixed">
+        <ThreeController setModelObject={setModelObject} />
       </div>
-      <HeroSection />
-      <PartySection />
-      <GuildSection />
+      <HeroSection modelObject={modelObject} />
+      <PartySection modelObject={modelObject} />
+      <GuildSection modelObject={modelObject} />
       <TotalSection />
       <LastSection />
-      <div
-        className="
-      "
-      ></div>
     </main>
   );
 }

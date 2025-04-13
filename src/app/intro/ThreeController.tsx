@@ -1,16 +1,16 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { MutableRefObject, useEffect, useRef } from 'react';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-import { Scene, PerspectiveCamera, WebGLRenderer, AmbientLight, Object3D } from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { Scene, PerspectiveCamera, WebGLRenderer, AmbientLight, Object3D, MathUtils } from 'three';
+import { ThreeObjects } from '@/types/main';
 
-export const model: { current: Object3D | null } = { current: null };
-
-const ThreeController = () => {
+type Props = {
+  setModelObject?: (model: Object3D) => void;
+};
+const ThreeController = ({ setModelObject }: Props) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const modelRef = useRef<Object3D | null>(null);
-  const controllerRef = useRef<OrbitControls | null>(null);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -22,53 +22,63 @@ const ThreeController = () => {
 
     //렌더러
     const renderer = new WebGLRenderer({ alpha: true });
-    renderer.setSize(1280, 914);
+    const renderSize = 1280;
+    renderer.setSize(renderSize, renderSize / 1.4);
     renderer.setPixelRatio(window.devicePixelRatio);
     containerRef.current.appendChild(renderer.domElement);
 
     // 컨트롤러
-    const controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.25;
-    controllerRef.current = controls;
-    controls.target.set(0, 0, 0);
+    // const controls = new OrbitControls(camera, renderer.domElement);
+    // controls.enableZoom = false;
+    // controls.enableDamping = true;
+    // controls.dampingFactor = 0.1;
+    // controllerRef.current = controls;
+    // controls.target.set(0, 0, 0);
 
-    // 컨트롤러 조작 제한
-    //tilt
-    controls.minPolarAngle = degToRad(30);
-    controls.maxPolarAngle = degToRad(80);
-    //pannig
-    controls.minAzimuthAngle = degToRad(-45);
-    controls.maxAzimuthAngle = degToRad(45);
-    //zoom
-    controls.minDistance = 24;
-    controls.maxDistance = 32;
+    // // 컨트롤러 조작 제한
+    // //tilt
+    // controls.minPolarAngle = degToRad(100);
+    // controls.maxPolarAngle = degToRad(160);
+    // //pannig
+    // controls.minAzimuthAngle = degToRad(-90);
+    // controls.maxAzimuthAngle = degToRad(90);
+    // //zoom
+    // controls.minDistance = 23;
+    // controls.maxDistance = 29;
 
     // 조명
     const light = new AmbientLight(0xffffff, 1.8);
     scene.add(light);
-
     // 모델 로딩
     const loader = new GLTFLoader();
     loader.load('/models/controller.glb', (gltf) => {
-      modelRef.current = gltf.scene; // 모델을 ref에 저장
-      scene.add(gltf.scene);
-      if (modelRef.current) {
-        //기본 각도 세팅
-        modelRef.current.rotateX(-0.4);
-        modelRef.current.position.y = 2.5;
-      }
+      const loadedModel = gltf.scene;
+
+      // 모델 ref에 저장
+      modelRef.current = loadedModel;
+      if (setModelObject) setModelObject(loadedModel); // 콜백 호출
+
+      // 씬에 추가
+      scene.add(loadedModel);
+
+      // 모델 기본 각도 및 위치 조정
+      loadedModel.rotation.x = -0.4;
+      loadedModel.position.y = 3.2;
+
+      // 애니메이션 시작
       animate();
     });
     // 애니메이션 함수
     function animate() {
+      requestAnimationFrame(animate);
+
       if (modelRef.current) {
       }
-
-      requestAnimationFrame(animate);
       // 씬 렌더링
+      // controls.update();
       renderer.render(scene, camera);
     }
+
     // 정리 함수
     return () => {
       containerRef.current?.removeChild(renderer.domElement);
