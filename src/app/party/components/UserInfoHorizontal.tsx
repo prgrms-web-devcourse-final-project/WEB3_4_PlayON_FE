@@ -7,6 +7,9 @@ interface UserInfoHorizontalProps {
 }
 
 export default function UserInfoHorizontal({ size = 'big', data }: UserInfoHorizontalProps) {
+  // 기본 이미지
+  const defaultImg = '/img/dummy_profile.jpg';
+
   return (
     <div
       className={cn('inline-flex items-center gap-2', {
@@ -16,7 +19,7 @@ export default function UserInfoHorizontal({ size = 'big', data }: UserInfoHoriz
     >
       <div
         style={{
-          backgroundImage: `url(${data.img_src})`,
+          backgroundImage: `url(${data.img_src || defaultImg} )`,
         }}
         className={cn('rounded-full bg-center bg-cover', {
           'w-[100px] h-[100px]': size === 'big',
@@ -36,6 +39,7 @@ export default function UserInfoHorizontal({ size = 'big', data }: UserInfoHoriz
           })}
         >
           {data.user_title}
+          {/* {data.user_title || "내가 제일 잘나가"}  */}
         </p>
         <p
           className={cn('font-suit text-neutral-900 font-bold text-base', {
