@@ -100,7 +100,7 @@ export default function PartyCreate() {
         { type: '성별', value: '남자만' },
         { type: '성별', value: '여자만' },
       ],
-      gameId: data.game.appid,
+      appId: data.game.appid,
       minimum: data.min_part,
       maximum: data.max_part,
       isPublic: data.public,
