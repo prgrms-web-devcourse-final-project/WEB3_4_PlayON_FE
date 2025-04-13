@@ -6,12 +6,29 @@ export type paging = {
   size: number;
   sort: string[];
 };
+export type partyMembers = {
+  memberId: number;
+  partyMemberId: number;
+  username: string;
+  title: string;
+  nickname: string;
+  profileImg: string;
+};
 export type partyLog = {
-  id: number;
+  partyId: number;
   name: string;
+  gameName: string;
+  mvpName: string;
+  mvpPoint: number;
+  mvpProfileImage: string;
   partyAt: Date;
-  tags: string[];
-  memberCount: number;
+  playTime: {
+    hour: number;
+    minute: number;
+    second: number;
+  };
+  partyMembers: partyMembers[];
+  partyTags: { tagValue: string }[];
 };
 export type party = {
   partyId: number;
@@ -89,7 +106,7 @@ export const useGame = () => {
       return {
         game: response.data.data.game as game,
         partyList: response.data.data.partyList as party[],
-        partyLogList: response.data.data.partyLogList as partyLog[],
+        partyLogList: response.data.data.completedPartyList as partyLog[],
       };
     }
     throw new Error('Failed to fetch');
