@@ -37,7 +37,7 @@ const popularGames: gameSimple[] = [
     background_src: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/440/header.jpg',
   },
   {
-    title: 'APEX lEGENDS',
+    title: 'APEX LEGENDS',
     genre: ['몰라요'],
     img_src: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1172470/header.jpg',
     background_src: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1172470/header.jpg',
