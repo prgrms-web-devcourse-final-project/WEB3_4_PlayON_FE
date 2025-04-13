@@ -1,0 +1,13 @@
+export const FREECOMMUNITY_ENDPOINTS = Object.freeze({
+  postDetail: (boardId: number) => `/boards/${boardId}`,
+  postUpdate: (boardId: number) => `/boards/${boardId}`,
+  postDelete: (boardId: number) => `/boards/${boardId}`,
+  postCreate: `/boards`,
+  postImg: (boardId: number) => `/boards/${boardId}/img`,
+  postLike: `/boards/list`,
+  postUnlike: (boardId: number) => `/boards/${boardId}/like`,
+  commentUpdate: (boardId: number, commentId: number) => `/boards/${boardId}/comments/${commentId}`,
+  commentDelete: (boardId: number, commentId: number) => `/boards/${boardId}/comments/${commentId}`,
+  commentGet: (boardId: number, commentId: number) => `/boards/${boardId}/comments`,
+  commentCreate: (boardId: number, commentId: number) => `/boards/${boardId}/comments`,
+});
