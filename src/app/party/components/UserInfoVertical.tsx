@@ -14,6 +14,9 @@ interface UserInfoProps {
 export default function UserInfoVertical({ isRadioBtn = false, data, name, onSelected }: UserInfoProps) {
   const radioRef = useRef<HTMLInputElement | null>(null);
 
+  // 기본 이미지
+  const defaultImg = '/img/dummy_profile.jpg';
+
   const handleChange = () => {
     if (!radioRef.current) return;
     else {
@@ -24,14 +27,14 @@ export default function UserInfoVertical({ isRadioBtn = false, data, name, onSel
   };
   return (
     <div className="inline-flex items-center flex-col gap-2">
-      <label htmlFor={data.nickname} className="relative">
+      <label htmlFor={data.partyMemberId} className="relative">
         {isRadioBtn && (
           <input
             ref={radioRef}
             type="radio"
-            id={data.nickname}
+            id={data.partyMemberId}
             name={name}
-            value={data.nickname}
+            value={data.partyMemberId}
             onChange={handleChange}
             className="hidden peer"
           />
@@ -44,7 +47,7 @@ export default function UserInfoVertical({ isRadioBtn = false, data, name, onSel
         ></div>
         <div
           style={{
-            backgroundImage: `url(${data.img_src})`,
+            backgroundImage: `url(${data.img_src || defaultImg} )`,
           }}
           className="rounded-full bg-center bg-cover size-[100px] peer-checked:shadow-[inset_0px_0px_12px_3px_rgba(0,0,0,0.32)] place-self-center"
         />
