@@ -1,6 +1,7 @@
 'use client';
 
 import { useParty } from '@/api/party';
+import BounceButton from '@/components/common/BounceButton';
 import CustomPagination from '@/components/common/CustomPagination';
 import HeroSwiperBanner from '@/components/common/HeroSwiperBanner';
 import SortRadioGroup, { SortOption } from '@/components/common/SortRadioGroup';
@@ -11,7 +12,6 @@ import { Switch } from '@/components/ui/switch';
 import { PATH } from '@/constants/routes';
 import { useAuthStore } from '@/stores/authStore';
 import { party } from '@/types/party';
-import styles from '@/app/party/[partyid]/partyDetail.module.css';
 
 import { ChevronDown } from 'lucide-react';
 import Link from 'next/link';
@@ -135,30 +135,8 @@ export default function PartyList() {
           )}
         </div>
         {totalItems > 9 && <CustomPagination totalItems={totalItems} pageSize={9} />}
-        <CreateButton />
+        <BounceButton path={PATH.party_create} type="party" tootip="파티 만들기" />
       </section>
     </div>
   );
 }
-
-const CreateButton = () => {
-  return (
-    <div className="fixed right-8 bottom-8 z-50 animate-bounce delay-150">
-      <Link href={PATH.party_create} className="relative group">
-        <p
-          className={`${styles.chatBubble} opacity-0 translate-y-12 transition-all duration-300 
-    text-white text-center font-dgm bg-purple-500 py-2 px-3 shadow-md rounded-lg
-    group-hover:opacity-100 group-hover:translate-y-0 group-hover:rotate-6 mb-2 -translate-x-3
-  `}
-        >
-          파티 만들기
-        </p>
-        <img
-          className="group-hover:scale-[120%] group-hover:-rotate-12 transition-all w-[98px]"
-          src="/img/3d_object/game_pad.png"
-          alt="game pad"
-        />
-      </Link>
-    </div>
-  );
-};

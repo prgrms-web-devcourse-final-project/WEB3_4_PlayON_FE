@@ -9,6 +9,8 @@ import PopularCard from '@/components/game/PopularCard';
 import SteamCard from '@/components/game/SteamCard';
 import { dummyGameDetail, dummyGameSimple, dummyUserSimple } from '@/utils/dummyData';
 import styles from './game.module.css';
+import BounceButton from '@/components/common/BounceButton';
+import { PATH } from '@/constants/routes';
 
 export default function Game() {
   const imageList = [
@@ -123,6 +125,7 @@ export default function Game() {
             <PopularCard data={dummyGameSimple} />
           </div>
         </div>
+        <BounceButton path={PATH.game_list} type="game" tootip="게임 찾기" />
       </section>
     </main>
   );

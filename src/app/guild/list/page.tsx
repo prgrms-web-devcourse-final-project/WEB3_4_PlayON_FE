@@ -10,8 +10,7 @@ import { useGuild } from '@/api/guild';
 import { useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { PATH } from '@/constants/routes';
-import Link from 'next/link';
-import styles from '@/app/party/[partyid]/partyDetail.module.css';
+import BounceButton from '@/components/common/BounceButton';
 const sortOptions: SortOption[] = [
   { id: 'latest', label: '최신순' },
   { id: 'activity', label: '활동순' },
@@ -99,30 +98,8 @@ export default function GuildList() {
             : [...Array(3)].map((_, idx) => <GuildHorizonSkeleton key={idx} className="" />)}
         </div>
         <CustomPagination totalItems={totalItems} pageSize={9} />
-        <CreateButton />
+        <BounceButton path={PATH.guild_create} type="guild" tootip="길드 만들기" />
       </section>
     </div>
   );
 }
-
-const CreateButton = () => {
-  return (
-    <div className="fixed right-8 bottom-8 z-50 animate-bounce delay-150">
-      <Link href={PATH.guild_create} className="relative group">
-        <p
-          className={`${styles.chatBubble} opacity-0 translate-y-12 transition-all duration-300 
-    text-white text-center font-dgm bg-purple-500 py-2 px-3 shadow-md rounded-lg
-    group-hover:opacity-100 group-hover:translate-y-0 group-hover:rotate-6 mb-5 -translate-x-3
-  `}
-        >
-          길드 만들기
-        </p>
-        <img
-          className="group-hover:scale-[120%] group-hover:-rotate-12 transition-all w-[60px]"
-          src="/img/3d_object/balloon.svg"
-          alt="balloon"
-        />
-      </Link>
-    </div>
-  );
-};
