@@ -12,12 +12,13 @@ import { FormControl, FormField, FormItem, Form } from '@/components/ui/form';
 import { SearchIcon } from 'lucide-react';
 import { DateTimePicker } from '@/components/ui/date-time-picker';
 import SelectedGameCard from '@/components/game/SelectedGameCard';
-import { dummyGameSimple, dummyUserSimple } from '@/utils/dummyData';
+import { dummyGameSimple } from '@/utils/dummyData';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { useRef } from 'react';
 import { useParty } from '@/api/party';
+import GameSearch from '@/components/common/GameSearch';
 type ToastError = {
   message: string;
   ref: { name: string };
@@ -30,7 +31,10 @@ const createPartyFormSchema = z
       .string()
       .min(1, { message: '파티 이름은 1글자 이상이어야 합니다.' })
       .max(50, { message: '파티 이름은 50글자 이하여야 합니다.' }),
-    game: z.string().min(1),
+    game: z.object({
+      appid: z.number().min(1),
+      name: z.string().min(1),
+    }),
     date: z
       .string()
       .datetime({ offset: true })
@@ -83,7 +87,7 @@ export default function PartyCreate() {
         { type: '성별', value: '남자만' },
         { type: '성별', value: '여자만' },
       ],
-      gameId: data.game,
+      gameId: data.game.appid,
       minimum: data.min_part,
       maximum: data.max_part,
       isPublic: data.public,
@@ -92,8 +96,9 @@ export default function PartyCreate() {
   }
 
   function errorHandler(err: object) {
+    console.log('error handler catched', err);
     const firstError: ToastError = Object.values(err)[0];
-    if (firstError.ref.name == 'date') dateInputRef.current?.focus();
+    if (firstError.ref?.name == 'date') dateInputRef.current?.focus();
     if (firstError.message == 'Required') return;
     Toast.toast({
       className: cn('border-cherry-main text-cherry-main'),
@@ -160,18 +165,19 @@ export default function PartyCreate() {
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <div className="flex items-center gap-2 px-4 py-2 border border-neutral-300 rounded-lg h-10   group focus-within:ring-1 focus-within:ring-purple-600">
-                          <SearchIcon className={`text-neutral-400 w-4 h-4`} />
+                        <>
                           <Input
-                            className={`border-none shadow-none focus-visible:ring-0`}
+                            className={`border-none shadow-none focus-visible:ring-0 opacity-0 absolute sr-only`}
                             {...field}
-                            onChange={() => {
-                              field.onChange('1');
-                              //검색 컴포넌트 호출 후 gameId 값 받아오기
-                            }}
-                            placeholder="제목으로 게임을 검색하세요"
+                            value={typeof field.value === 'object' && field.value?.appid ? field.value.appid : ''}
                           />
-                        </div>
+                          <GameSearch
+                            onSelect={(game) => {
+                              console.log(game);
+                              field.onChange(game);
+                            }}
+                          />
+                        </>
                       </FormControl>
                     </FormItem>
                   )}
