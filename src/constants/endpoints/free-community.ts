@@ -8,6 +8,6 @@ export const FREECOMMUNITY_ENDPOINTS = Object.freeze({
   postUnlike: (boardId: number) => `/boards/${boardId}/like`,
   commentUpdate: (boardId: number, commentId: number) => `/boards/${boardId}/comments/${commentId}`,
   commentDelete: (boardId: number, commentId: number) => `/boards/${boardId}/comments/${commentId}`,
-  commentGet: (boardId: number, commentId: number) => `/boards/${boardId}/comments`,
-  commentCreate: (boardId: number, commentId: number) => `/boards/${boardId}/comments`,
+  commentGet: (boardId: number) => `/boards/${boardId}/comments`,
+  commentCreate: (boardId: number) => `/boards/${boardId}/comments`,
 });
