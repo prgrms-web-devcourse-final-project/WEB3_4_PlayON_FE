@@ -5,7 +5,6 @@ export default function GuildInfoSectionSkeleton() {
     <div className="flex gap-6 w-[67%] self-center">
       <div className="flex flex-col gap-4 min-w-[628px] aspect-[16/7]">
         <Skeleton className="size-full rounded-3xl" />
-        <Skeleton className="w-28 h-9 rounded-sm" />
       </div>
       <div className="flex flex-col gap-5">
         <Skeleton className="w-60 h-12 rounded-md" />

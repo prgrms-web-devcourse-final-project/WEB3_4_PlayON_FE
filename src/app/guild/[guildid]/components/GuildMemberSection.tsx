@@ -1,11 +1,11 @@
 import { useGuild } from '@/api/guild';
 import GuildUserCard from '@/components/guildUser/GuildUserCard';
-import { useQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 
 export default function GuildMemberSection({ guildId }: { guildId: string }) {
   const Guild = useGuild();
 
-  const { data: guildMemberData } = useQuery({
+  const { data: guildMemberData } = useSuspenseQuery({
     queryKey: ['GuildMember', guildId],
     queryFn: () => Guild.GetGuildMembers(guildId),
   });

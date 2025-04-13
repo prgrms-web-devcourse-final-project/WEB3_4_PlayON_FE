@@ -8,10 +8,11 @@ import { Button } from '@/components/ui/button';
 import { PATH } from '@/constants/routes';
 import { useToast } from '@/hooks/use-toast';
 import { guild } from '@/types/guild';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { ClipboardPenIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useCallback } from 'react';
+import styles from './guildInfo.module.css';
 
 export default function GuildInfoSection({ guildId }: { guildId: string }) {
   const router = useRouter();
@@ -21,9 +22,10 @@ export default function GuildInfoSection({ guildId }: { guildId: string }) {
   const getTagList = (data: guild) => {
     return [...data.friendly, ...data.gender, ...data.play_style, ...data.skill_level];
   };
+  const queryClient = useQueryClient();
 
   const { data: guildData } = useSuspenseQuery({
-    queryKey: ['GuildDetail', guildId],
+    queryKey: ['GuildDetailInside', guildId],
     queryFn: () => Guild.GetGuild(guildId),
   });
 
@@ -39,7 +41,7 @@ export default function GuildInfoSection({ guildId }: { guildId: string }) {
         title: '길드 가입 요청에 실패했습니다.',
       });
     }
-    router.refresh();
+    queryClient.refetchQueries({ queryKey: ['GuildDetailInside', guildId], exact: true });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -52,16 +54,20 @@ export default function GuildInfoSection({ guildId }: { guildId: string }) {
             길드 참여
           </RetroButton>
         );
-      } else if (guildData.myRole === 'PENDING') {
+      } else if (guildData.myRole === 'APPLICANT') {
         return (
-          <RetroButton type="grey" className="w-60">
-            승인 대기
+          <RetroButton type="purple" className="w-60">
+            <div className="flex items-center gap-1">
+              <div className={`${styles.spinner}`}></div>승인 대기
+            </div>
           </RetroButton>
         );
       } else {
-        <RetroButton type="purple" className="w-60" callback={() => {}}>
-          길드 탈퇴
-        </RetroButton>;
+        return (
+          <RetroButton type="purple" className="w-60" callback={() => {}}>
+            길드 탈퇴
+          </RetroButton>
+        );
       }
     } else {
       return (

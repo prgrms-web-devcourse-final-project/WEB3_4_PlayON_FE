@@ -1,20 +1,21 @@
 'use client';
 
+import { useGuildBoard } from '@/api/guildBoard';
 import CommunityPostImageShort from '@/components/community/post-image-short';
 import CommunityPostShort from '@/components/community/post-short';
 import { PATH } from '@/constants/routes';
-import { postSimple } from '@/types/community';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { ChevronRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
-export default function GuildBoardLatestSection({
-  guildId,
-  guildBoardLatest,
-}: {
-  guildId: string;
-  guildBoardLatest: postSimple[];
-}) {
+export default function GuildBoardLatestSection({ guildId }: { guildId: string }) {
   const router = useRouter();
+  const GuildBoard = useGuildBoard();
+
+  const { data: guildBoardLatest } = useSuspenseQuery({
+    queryKey: ['GuildBoardLatest', guildId],
+    queryFn: () => GuildBoard.GuildLatestPost(Number(guildId)),
+  });
 
   return (
     <div className="flex flex-col gap-6 w-[67%] self-center">

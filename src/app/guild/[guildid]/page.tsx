@@ -8,15 +8,17 @@ import GuildInfoSectionSkeleton from './components/GuildInfoSectionSkeleton';
 import GuildBoardLatestSection from './components/GuildBoardLatestSection';
 import GuildMemberSection from './components/GuildMemberSection';
 import GuildBoardNoticeSection from './components/GuildBoardNoticeSection';
-import { useGuildBoard } from '@/api/guildBoard';
 import { useQuery } from '@tanstack/react-query';
 import { useGuild } from '@/api/guild';
 import SectionBanner from '@/components/common/SectionBanner';
+import GuildBoardNoticeSectionSkeleton from './components/GuildBoardNoticeSectionSkeleton';
+import GuildBoardLatestSectionSkeleton from './components/GuildBoardLatestSectionSkeleton';
+import GuildMemberSectionSkeleton from './components/GuildMemberSectionSkeleton';
 // import { useAuthStore } from '@/stores/authStore';
 // import { PATH } from '@/constants/routes';
 
 export default function GuildDetails() {
-  const router = useRouter();
+  // const router = useRouter();
   // const { user } = useAuthStore();
 
   // if (user === undefined) {
@@ -25,33 +27,21 @@ export default function GuildDetails() {
 
   const params = useParams();
   const guildId = params.guildid as string;
-  console.log(guildId);
 
   const Guild = useGuild();
-  const GuildBoard = useGuildBoard();
 
   const [isNotGuest, setIsNotGuest] = useState<boolean>(false);
 
   const { data: guildData } = useQuery({
     queryKey: ['GuildDetail', guildId],
     queryFn: () => Guild.GetGuild(guildId),
-  });
-
-  const { data: guildBoardNotice } = useQuery({
-    queryKey: ['GuildBoardNotice', guildId],
-    queryFn: () => GuildBoard.GuildNoticesPost(Number(guildId)),
-    enabled: isNotGuest,
-  });
-
-  const { data: guildBoardLatest } = useQuery({
-    queryKey: ['GuildBoardLatest', guildId],
-    queryFn: () => GuildBoard.GuildLatestPost(Number(guildId)),
-    enabled: isNotGuest,
+    staleTime: 1000 * 60,
   });
 
   useEffect(() => {
     if (guildData) {
-      setIsNotGuest(guildData.myRole !== 'GUEST');
+      setIsNotGuest(!['GUEST', 'APPLICANT'].includes(guildData.myRole));
+      console.log(guildData);
     }
   }, [guildData]);
   return (
@@ -59,15 +49,23 @@ export default function GuildDetails() {
       <Suspense fallback={<GuildInfoSectionSkeleton />}>{guildData && <GuildInfoSection guildId={guildId} />}</Suspense>
 
       <PlayOnRollingBanner direction="right" duration={20} />
-      <Suspense fallback={<div>데이터 불러오는 중...</div>}>
-        {guildBoardNotice && <GuildBoardNoticeSection guildId={guildId} guildBoardNotice={guildBoardNotice} />}
-      </Suspense>
-      <Suspense fallback={<div>데이터 불러오는 중...</div>}>
+
+      {isNotGuest && (
+        <Suspense fallback={<GuildBoardNoticeSectionSkeleton />}>
+          <GuildBoardNoticeSection guildId={guildId} />
+        </Suspense>
+      )}
+
+      <Suspense fallback={<GuildMemberSectionSkeleton />}>
         <GuildMemberSection guildId={guildId} />
       </Suspense>
-      <Suspense fallback={<div>데이터 불러오는 중...</div>}>
-        {guildBoardLatest && <GuildBoardLatestSection guildId={guildId} guildBoardLatest={guildBoardLatest} />}
-      </Suspense>
+
+      {isNotGuest && (
+        <Suspense fallback={<GuildBoardLatestSectionSkeleton />}>
+          <GuildBoardLatestSection guildId={guildId} />
+        </Suspense>
+      )}
+
       {guildData && !isNotGuest && (
         <div className="w-[67%] self-center">
           <SectionBanner
