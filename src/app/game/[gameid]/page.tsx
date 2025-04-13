@@ -57,7 +57,7 @@ export default function GameDetail({ params }: { params: { gameid: string } }) {
       num_maximum: data.maximum,
       num_minimum: data.minimum,
       participation: data.members.map((_) => ({
-        img_src: _.profileImage,
+        img_src: _.profileImage ?? '/img/dummy_profile.jpg',
         nickname: '',
         user_title: '',
         username: '',
@@ -73,6 +73,35 @@ export default function GameDetail({ params }: { params: { gameid: string } }) {
       tags: data.partyTags.map((_) => _.tagValue),
     };
   }
+  function convertToClientPartyLog(data: ServerPartyLog, game_img: string, game_name: string): partyLog {
+    return {
+      party_info: {
+        selected_game: {
+          img_src: game_img,
+          background_src: '',
+          genre: [],
+          title: game_name,
+        },
+        description: '',
+        num_maximum: 0,
+        participation: data.partyMembers.map((e) => ({
+          img_src: e.profileImg,
+          nickname: e.nickname,
+          user_title: e.title,
+          username: e.username,
+        })),
+        party_name: data.name,
+        partyId: data.partyId.toString(),
+        start_time: new Date(),
+        tags: data.partyTags.map((e) => e.tagValue),
+        end_time: new Date(),
+        num_minimum: 0,
+      },
+      player_recommend: [],
+      review: [],
+      screenshot: [],
+    };
+  }
 
   const { data: gameDetails } = useSuspenseQuery({
     queryKey: ['gameDetail', params.gameid],
@@ -84,11 +113,12 @@ export default function GameDetail({ params }: { params: { gameid: string } }) {
       const data = await gamehook.GameDetailWithPartyLog(gameId);
       const convGame = convertToClientGame(data.game);
       const convParties = data.partyList.map((_) => convertToClientParty(_, convGame.img_src, convGame.title));
+      const convPartyLogs = data.partyLogList.map((_) => convertToClientPartyLog(_, convGame.img_src, convGame.title));
 
       if (data) {
         return {
           game: convGame,
-          partyLogs: data.partyLogList,
+          partyLogs: convPartyLogs,
           parties: convParties,
         };
       }
@@ -346,7 +376,7 @@ export default function GameDetail({ params }: { params: { gameid: string } }) {
             </Swiper>
           </AccordionContent>
         </AccordionItem>
-        {/* <AccordionItem value="item-2">
+        <AccordionItem value="item-2">
           <AccordionTrigger>
             <p className="text-xl font-bold">이 게임의 파티로그</p>
           </AccordionTrigger>
@@ -354,12 +384,14 @@ export default function GameDetail({ params }: { params: { gameid: string } }) {
             <Swiper spaceBetween={10} slidesPerView={3} direction="horizontal">
               {gameDetails.partyLogs?.map((_, ind) => (
                 <SwiperSlide key={ind} className="w-[410px]">
-                  <PartyLogCard data={_} />
+                  <Link href={PARTY_ROUTE.party_log(_.party_info.partyId)}>
+                    <PartyLogCard data={_} />
+                  </Link>
                 </SwiperSlide>
               ))}
             </Swiper>
           </AccordionContent>
-        </AccordionItem> */}
+        </AccordionItem>
       </Accordion>
     </div>
   );

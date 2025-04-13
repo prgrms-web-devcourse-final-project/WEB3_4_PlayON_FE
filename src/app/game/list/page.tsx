@@ -17,6 +17,7 @@ import CustomPagination from '@/components/common/CustomPagination';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { GAME_ROUTE } from '@/constants/routes/game';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function GameList() {
   const imageList = [
@@ -66,7 +67,7 @@ export default function GameList() {
     };
   }
   const game = useGame();
-  const { data, refetch } = useSuspenseQuery({
+  const { data, refetch, isFetched } = useSuspenseQuery({
     queryKey: ['GameList'],
     queryFn: async () => {
       const playerTypeInd = playerType.findIndex((e) => e === true);
@@ -183,11 +184,11 @@ export default function GameList() {
           <div className="flex flex-col flex-auto gap-2 ">
             <p className="font-bold">게임 이름</p>
             <div className="flex gap-10">
-              <div className="flex flex-auto items-center border border-neutral-300 rounded px-2 gap-2">
+              <div className="flex flex-auto items-center border border-neutral-300 rounded gap-2">
                 <SearchBar
                   onChange={() => {}}
                   onSearch={(value) => setKeyword(value)}
-                  className="bg-transparent border-none "
+                  className="bg-white border-none"
                   placeholder={`${keyword}`}
                 />
               </div>
@@ -244,13 +245,21 @@ export default function GameList() {
         </div>
       </div>
       <div className="lg:w-[1280px] grid grid-cols-4 grid-rows-3 gap-x-6 gap-y-12 mt-[100px]">
-        <Suspense fallback={<div className="col-span-4">Loading...</div>}>
-          {data.map((e, ind) => (
+        {isFetched &&
+          data.map((e, ind) => (
             <Link href={GAME_ROUTE.game_detail(e.appid)} key={ind}>
               <PickCard data={e} />
             </Link>
           ))}
-        </Suspense>
+        {isFetched &&
+          data.length < 12 &&
+          Array.from({ length: 12 - data.length }).map((_, ind) => (
+            <Skeleton className="w-full aspect-square rounded-full" key={`Skeleton_Games_Placeholders_${ind}`} />
+          ))}
+        {!isFetched &&
+          data.map((_, ind) => (
+            <Skeleton className="w-full aspect-square rounded-full" key={`Skeleton_Games_${ind}`} />
+          ))}
       </div>
       <div className="mt-[100px] mb-[100px]">
         <CustomPagination pageSize={12} totalItems={totalItems.current} />
