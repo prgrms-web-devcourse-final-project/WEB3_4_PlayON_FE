@@ -152,10 +152,10 @@ export default function GameList() {
     } else {
       newUrl.searchParams.delete('releaseDate');
     }
-
     window.history.pushState({}, '', newUrl);
-  }, [genre, playerType, releaseStatus, mac, releaseDate, keyword]);
+  }, [genre, playerType, releaseStatus, mac, releaseDate, keyword, playerTypes, releaseStatuses, genres]);
   useEffect(() => {
+    console.log(window.location.href);
     refetch();
   }, [refetch, searchParams]);
 

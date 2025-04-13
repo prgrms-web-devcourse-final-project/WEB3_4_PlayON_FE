@@ -17,6 +17,8 @@ import { GAME_ROUTE } from '@/constants/routes/game';
 import { useAuthStore } from '@/stores/authStore';
 import { gameDetail } from '@/types/games';
 import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import GameSearch from '@/components/common/GameSearch';
 
 export default function Game() {
   const imageList = [
@@ -154,12 +156,9 @@ export default function Game() {
               <HeroSwiperBanner data={imageList} />
             </div>
             <div className="w-[1280px] absolute left-1/2 -translate-x-1/2 top-48 z-10 space-y-7">
-              <SearchBar
-                className="w-[640px] place-self-center mb-20"
-                placeholder="게임 이름으로 검색하세요"
-                onChange={() => console.log('change')}
-                onSearch={(value) => router.push(GAME_ROUTE.game_list + `?name=${value}`)}
-              />
+              <div className="w-[640px] place-self-center mb-20 bg-white rounded-lg">
+                <GameSearch onSelect={(value) => router.push(GAME_ROUTE.game_list + `?name=${value.name}`)} />
+              </div>
               <div className={`box-content w-[340px] bg-white rounded-xl place-self-center ${styles.chatBubble}`}>
                 <div className="py-3 space-y-2 ">
                   <p className="font-suit text-base font-medium leading-5 text-center">플레이온 유저들의 선택</p>
@@ -170,7 +169,9 @@ export default function Game() {
               <div className="grid grid-cols-3 md:grid-cols-3 gap-6 pt-4">
                 <Suspense>
                   {popularGames.map((e) => (
-                    <PopularCard data={e} />
+                    <Link href={GAME_ROUTE.game_detail(e.appid)} key={e.appid}>
+                      <PopularCard data={e} />
+                    </Link>
                   ))}
                 </Suspense>
               </div>
