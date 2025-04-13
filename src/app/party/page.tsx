@@ -21,14 +21,26 @@ const popularGames: gameSimple[] = [
   {
     title: 'Counter Strike 2',
     genre: ['몰라요'],
-    img_src: 'hero1.png',
-    background_src: 'hero1.png',
+    img_src: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/730/header.jpg',
+    background_src: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/730/header.jpg',
   },
   {
     title: 'BATTLEGROUNDS',
     genre: ['몰라요'],
-    img_src: './img/hero/bg_guild_2.webp',
-    background_src: 'hero1.png',
+    img_src: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/578080/header.jpg',
+    background_src: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/578080/header.jpg',
+  },
+  {
+    title: 'Team Fortress 2',
+    genre: ['몰라요'],
+    img_src: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/440/header.jpg',
+    background_src: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/440/header.jpg',
+  },
+  {
+    title: 'APEX lEGENDS',
+    genre: ['몰라요'],
+    img_src: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1172470/header.jpg',
+    background_src: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1172470/header.jpg',
   },
 ];
 
