@@ -71,7 +71,6 @@ export default function PartyLogForm({ partyLog }): Props {
       console.log('create', response);
       const { logId, partyId, presignedUrl } = response?.data?.data ?? {};
       if (!logId || !presignedUrl) {
-        alert('파티 로그는 작성되었지만 업로드 URL이 없습니다.');
         return;
       }
 
@@ -83,14 +82,11 @@ export default function PartyLogForm({ partyLog }): Props {
           const screenshotres = await partyLogApi.SaveScreenshot(String(logId), String(partyId), uploadResult.url);
           console.log('screenshotres', screenshotres);
         } else {
-          alert('이미지 업로드 실패');
           return;
         }
       }
-      alert('파티 로그가 성공적으로 작성되었습니다!');
     } catch (error) {
       console.error('파티 로그 작성 중 오류 발생:', error);
-      alert('오류가 발생했습니다.');
     }
   };
 
