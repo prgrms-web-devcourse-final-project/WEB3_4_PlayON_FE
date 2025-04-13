@@ -34,3 +34,14 @@
   margin-top: 1rem; /* my-4 */
   margin-bottom: 1rem;
 }
+
+.ql li[data-list='ordered'] {
+  list-style-type: decimal;
+  margin-left: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+.ql li[data-list='bullet'] {
+  list-style-type: disc;
+  margin-left: 1.5rem;
+  margin-bottom: 0.5rem;
+}

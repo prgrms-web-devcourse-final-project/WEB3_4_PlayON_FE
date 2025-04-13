@@ -12,7 +12,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Toggle } from '@/components/ui/toggle';
 import { PATH } from '@/constants/routes';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Eye, SquarePen, ThumbsUp, Trash2 } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
@@ -37,6 +37,7 @@ export default function GuildCommunityDetail() {
   const guildBoard = useGuildBoard();
   const param = useParams();
   const router = useRouter();
+  const queryClient = useQueryClient();
   const guildId = param.guildid as string;
   const boardId = param.postid as string;
 
@@ -49,6 +50,12 @@ export default function GuildCommunityDetail() {
     queryKey: ['PostDetailData', guildId, boardId],
     queryFn: () => guildBoard.GuildPostDetail(parseInt(guildId), parseInt(boardId)),
   });
+
+  const handleClickLike = async () => {
+    const response = await guildBoard.GuildPostLike(parseInt(guildId), parseInt(boardId));
+    console.log(response);
+    queryClient.refetchQueries({ queryKey: ['PostDetailData', guildId, boardId], exact: true });
+  };
 
   return (
     <div className="wrapper relative mb-12 mt-28">
@@ -69,21 +76,29 @@ export default function GuildCommunityDetail() {
             <div className="space-y-4">
               <p className="text-[40px] font-semibold">{postData.title}</p>
               <div className="flex gap-4 items-center">
-                <UserInfoHorizontal size="small" data={postData.user} />
-                <p className="text-base text-neutral-500">{postData.created_at.toLocaleDateString()}</p>
-                <Tag background="medium">#{postData.tag}</Tag>
+                <div className="flex gap-4 items-center">
+                  <UserInfoHorizontal size="small" data={postData.user} />
+                  <p className="text-base text-neutral-500">{postData.created_at.toLocaleDateString()}</p>
+                  <Tag background="medium">#{postData.tag}</Tag>
+                </div>
+                <div className="flex text-neutral-400 space-x-1 items-center">
+                  <Eye className="size-5" /> <span>{postData.hits}</span>
+                </div>
               </div>
             </div>
-            <div className="flex justify-between">
-              <div className="flex gap-2">
-                <Button size="sm" className=" bg-neutral-200 hover:bg-neutral-100 text-neutral-500 text-sm">
-                  <SquarePen strokeWidth={1.4} /> 수정
-                </Button>
-                <Button size="sm" className=" bg-neutral-200 hover:bg-neutral-100 text-neutral-500 text-sm">
-                  <Trash2 strokeWidth={1.4} /> 삭제
-                </Button>
-              </div>
-              <div className="flex gap-2">
+            <div className={`flex  ${postData.isAuthor ? 'justify-between' : 'justify-end'}`}>
+              {postData.isAuthor && (
+                <div className="flex gap-2">
+                  <Button size="sm" className=" bg-neutral-200 hover:bg-neutral-100 text-neutral-500 text-sm">
+                    <SquarePen strokeWidth={1.4} /> 수정
+                  </Button>
+
+                  <Button size="sm" className=" bg-neutral-200 hover:bg-neutral-100 text-neutral-500 text-sm">
+                    <Trash2 strokeWidth={1.4} /> 삭제
+                  </Button>
+                </div>
+              )}
+              <div>
                 <Button
                   size="sm"
                   className=" bg-neutral-200 hover:bg-neutral-100 text-neutral-500 text-sm"
@@ -97,22 +112,18 @@ export default function GuildCommunityDetail() {
               <div>
                 <div
                   style={{ backgroundImage: `url(${postData.img_src})` }}
-                  className=" rounded-xl w-full h-[440px] bg-cover bg-center border"
+                  className=" rounded-xl w-full h-[440px] bg-cover bg-center"
                 />
               </div>
             )}
-            {/* <div className="text-xl">{postData.content}</div> */}
             <div className={`${styles.ql}`} dangerouslySetInnerHTML={{ __html: postData.content }} />
             <div className="flex justify-end gap-2">
               <Toggle
-                disabled
                 variant="outline"
                 size="lg"
-                className="rounded-full disabled:text-neutral-400 disabled:border-neutral-300 disabled:opacity-100 text-xl"
+                className="rounded-full text-neutral-400 border-neutral-300 text-xl"
+                onClick={handleClickLike}
               >
-                <Eye className="size-10" /> {postData.hits}
-              </Toggle>
-              <Toggle variant="outline" size="lg" className="rounded-full text-neutral-400 border-neutral-300 text-xl">
                 <ThumbsUp /> {postData.num_likes}
               </Toggle>
             </div>

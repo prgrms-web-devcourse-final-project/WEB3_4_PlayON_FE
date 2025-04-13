@@ -44,7 +44,7 @@ export default function CommunityPostLong(props: CommunityPostImageLongProps) {
       <AvatarName userName={props.data.author_nickname} avatar={props.data.author_img} />
       <div>
         <p className="text-xl font-suit font-bold">{props.data.title}</p>
-        <p style={{ wordBreak: 'break-all' }} className="text-sm font-suit text-ellipsis line-clamp-2 w-full block">
+        <p style={{ wordBreak: 'break-all' }} className="text-sm font-suit text-ellipsis line-clamp-2 w-full">
           {content}
         </p>
       </div>

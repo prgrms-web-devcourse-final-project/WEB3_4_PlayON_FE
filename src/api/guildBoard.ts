@@ -33,6 +33,7 @@ export const useGuildBoard = () => {
     commentCount: number;
     guild: guild;
     createdAt: string;
+    isAuthor: boolean;
   };
   type noticesPost = {
     id: number;
@@ -59,7 +60,7 @@ export const useGuildBoard = () => {
     if (response && response.msg === 'OK') {
       const postData = response.data;
       // console.log('postData', postData);
-      const postDetail: post = {
+      const postDetail: post & { isAuthor: boolean } = {
         user: {
           username: postData.authorNickname,
           nickname: postData.authorNickname,
@@ -87,6 +88,7 @@ export const useGuildBoard = () => {
         hits: postData.hit,
         channel: '길드',
         tag: postData.tag,
+        isAuthor: postData.isAuthor,
       };
       // console.log('postDetail', postDetail);
       return postDetail;
