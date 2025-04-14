@@ -4,7 +4,7 @@ import RetroButton from '@/components/common/RetroButton';
 import Tag from '@/components/common/Tag';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Doughnut } from 'react-chartjs-2';
-import { dummyGameDetail, dummyParty, dummyPartyLog } from '@/utils/dummyData';
+import { dummyGameDetail } from '@/utils/dummyData';
 import { ArcElement, Chart, ChartData } from 'chart.js';
 import { SwiperSlide, Swiper } from 'swiper/react';
 import PartyCard from '@/components/party/PartyCard';
@@ -17,7 +17,7 @@ import { game, useGame, party as ServerParty, partyLog as ServerPartyLog } from 
 import { GAME_ROUTE } from '@/constants/routes/game';
 import { useRouter } from 'next/navigation';
 import { gameDetail } from '@/types/games';
-import { party, partyLog } from '@/types/party';
+import { getPartyRes } from '@/types/party';
 import Link from 'next/link';
 import { PARTY_ROUTE } from '@/constants/routes/party';
 
@@ -26,8 +26,53 @@ export default function GameDetail({ params }: { params: { gameid: string } }) {
   Chart.register(ArcElement);
   const router = useRouter();
   const gamehook = useGame();
-  const dummyParties = [dummyParty, dummyParty, dummyParty, dummyParty, dummyParty, dummyParty];
-  const dummyPartyLogs = [dummyPartyLog, dummyPartyLog, dummyPartyLog, dummyPartyLog, dummyPartyLog, dummyPartyLog];
+  const partyResFallback: getPartyRes[] = [
+    {
+      appId: 730,
+      description: '',
+      gameName: 'Counter Strike 2',
+      maximum: 10,
+      members: [
+        { img_src: '/img/dummy_profile.jpg', memberId: '0', nickname: '이름', user_title: '', username: '유저네임' },
+      ],
+      minimum: 2,
+      name: '파티이름',
+      partyAt: new Date(),
+      partyId: 0,
+      partyTags: [{ tagValue: '파티태그' }, { tagValue: '파티태그' }],
+      total: 0,
+    },
+    {
+      appId: 730,
+      description: '',
+      gameName: 'Counter Strike 2',
+      maximum: 10,
+      members: [
+        { img_src: '/img/dummy_profile.jpg', memberId: '0', nickname: '이름', user_title: '', username: '유저네임' },
+      ],
+      minimum: 2,
+      name: '파티이름',
+      partyAt: new Date(),
+      partyId: 0,
+      partyTags: [{ tagValue: '파티태그' }, { tagValue: '파티태그' }],
+      total: 0,
+    },
+    {
+      appId: 730,
+      description: '',
+      gameName: 'Counter Strike 2',
+      maximum: 10,
+      members: [
+        { img_src: '/img/dummy_profile.jpg', memberId: '0', nickname: '이름', user_title: '', username: '유저네임' },
+      ],
+      minimum: 2,
+      name: '파티이름',
+      partyAt: new Date(),
+      partyId: 0,
+      partyTags: [{ tagValue: '파티태그' }, { tagValue: '파티태그' }],
+      total: 0,
+    },
+  ];
 
   function convertToClientGame(data: game): gameDetail {
     return {
@@ -50,56 +95,46 @@ export default function GameDetail({ params }: { params: { gameid: string } }) {
       title: data.name,
     };
   }
-  function convertToClientParty(data: ServerParty, game_img: string, game_name: string): party {
+  function convertToClientParty(data: ServerParty, appId: number): getPartyRes {
     return {
-      partyId: data.partyId.toString(),
+      appId: appId,
       description: data.description,
-      num_maximum: data.maximum,
-      num_minimum: data.minimum,
-      participation: data.members.map((_) => ({
-        img_src: _.profileImage ?? '/img/dummy_profile.jpg',
+      gameName: data.gameName,
+      maximum: data.maximum,
+      members: data.members.map((e) => ({
+        img_src: e.profileImage,
+        memberId: e.memberId.toString(),
         nickname: '',
         user_title: '',
         username: '',
       })),
-      party_name: data.name,
-      selected_game: {
-        background_src: '',
-        genre: [],
-        img_src: game_img,
-        title: game_name,
-      },
-      start_time: new Date(data.partyAt),
-      tags: data.partyTags.map((_) => _.tagValue),
+      minimum: data.minimum,
+      name: data.name,
+      partyAt: data.partyAt,
+      partyId: data.partyId,
+      partyTags: data.partyTags.map((e) => ({ tagValue: e.tagValue })),
+      total: 0,
     };
   }
-  function convertToClientPartyLog(data: ServerPartyLog, game_img: string, game_name: string): partyLog {
+  function convertToClientPartyLog(data: ServerPartyLog, appId: number): getPartyRes {
     return {
-      party_info: {
-        selected_game: {
-          img_src: game_img,
-          background_src: '',
-          genre: [],
-          title: game_name,
-        },
-        description: '',
-        num_maximum: 0,
-        participation: data.partyMembers.map((e) => ({
-          img_src: e.profileImg,
-          nickname: e.nickname,
-          user_title: e.title,
-          username: e.username,
-        })),
-        party_name: data.name,
-        partyId: data.partyId.toString(),
-        start_time: new Date(),
-        tags: data.partyTags.map((e) => e.tagValue),
-        end_time: new Date(),
-        num_minimum: 0,
-      },
-      player_recommend: [],
-      review: [],
-      screenshot: [],
+      appId: appId,
+      description: '',
+      gameName: data.gameName,
+      maximum: 10,
+      members: data.partyMembers.map((e) => ({
+        img_src: e.profileImg,
+        memberId: e.memberId.toString(),
+        nickname: e.nickname,
+        user_title: e.title,
+        username: e.username,
+      })),
+      minimum: 2,
+      name: data.name,
+      partyAt: data.partyAt,
+      partyId: data.partyId,
+      partyTags: data.partyTags.map((e) => ({ tagValue: e.tagValue })),
+      total: data.partyMembers.length,
     };
   }
 
@@ -112,8 +147,8 @@ export default function GameDetail({ params }: { params: { gameid: string } }) {
       }
       const data = await gamehook.GameDetailWithPartyLog(gameId);
       const convGame = convertToClientGame(data.game);
-      const convParties = data.partyList.map((_) => convertToClientParty(_, convGame.img_src, convGame.title));
-      const convPartyLogs = data.partyLogList.map((_) => convertToClientPartyLog(_, convGame.img_src, convGame.title));
+      const convParties = data.partyList.map((_) => convertToClientParty(_, data.game.appid));
+      const convPartyLogs = data.partyLogList.map((_) => convertToClientPartyLog(_, data.game.appid));
 
       if (data) {
         return {
@@ -124,12 +159,11 @@ export default function GameDetail({ params }: { params: { gameid: string } }) {
       }
       return {
         game: dummyGameDetail,
-        parties: dummyParties,
-        partyLogs: dummyPartyLogs,
+        parties: partyResFallback,
+        partyLogs: partyResFallback,
       };
     },
   });
-
   const dummyReviewData = {
     query_summary: {
       num_reviews: 3,
@@ -384,7 +418,7 @@ export default function GameDetail({ params }: { params: { gameid: string } }) {
             <Swiper spaceBetween={10} slidesPerView={3} direction="horizontal">
               {gameDetails.partyLogs?.map((_, ind) => (
                 <SwiperSlide key={ind} className="w-[410px]">
-                  <Link href={PARTY_ROUTE.party_log(_.party_info.partyId)}>
+                  <Link href={PARTY_ROUTE.party_log(_.partyId)}>
                     <PartyLogCard data={_} />
                   </Link>
                 </SwiperSlide>
