@@ -62,7 +62,7 @@ export default function GuildCommunity() {
       // console.log('data:', data);
 
       const posts = await guildBoard.GuildPostList(parseInt(guildId), data);
-      console.log(posts);
+      // console.log(posts);
       if (posts) {
         setPostList(posts.content);
         setTotalItems(posts.totalElements);
@@ -82,9 +82,9 @@ export default function GuildCommunity() {
       </section>
       <section className="flex gap-12">
         {guildData && (
-          <div className="w-1/3 relative -top-16">
+          <button className="w-1/3 relative -top-16">
             <WeNeedYou guildData={guildData} className="sticky top-10 bg-white" />
-          </div>
+          </button>
         )}
         {totalItems > 0 && (
           <section className="w-full space-y-10 pt-8">

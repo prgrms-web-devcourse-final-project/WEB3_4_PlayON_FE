@@ -3,14 +3,16 @@
 import { guild } from '@/types/guild';
 import RetroButton from '../common/RetroButton';
 import CapsuleCategoryMenu from '@/components/common/capsule-category-menu';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import UserInfoHorizontal from '@/app/party/components/UserInfoHorizontal';
 import Tag from '../common/Tag';
-import { communityTags, guildCommunityTags } from '@/types/Tags/communityTags';
+import { guildCommunityTags } from '@/types/Tags/communityTags';
 import SearchBar from '../common/SearchBar';
 import Link from 'next/link';
 import { GUILD_ROUTE } from '@/constants/routes/guild';
-import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
+import { PATH } from '@/constants/routes';
+import { Home } from 'lucide-react';
 
 type WeNeedYouProps = {
   guildData: guild;
@@ -18,7 +20,6 @@ type WeNeedYouProps = {
 };
 
 export default function WeNeedYou(props: WeNeedYouProps) {
-  const [query, setQuery] = useState('');
   const params = useParams();
   const guildId = (params.guildid as string) ?? null;
   const router = useRouter();
@@ -52,9 +53,14 @@ export default function WeNeedYou(props: WeNeedYouProps) {
   return (
     <div className={`flex flex-col p-8 gap-9 rounded-xl border border-neutral-200 bg-white ${props.className} `}>
       <div className="flex flex-col gap-5 ">
-        <Tag size="small" style="default" background="medium" className="w-12 font-suit font-bold">
-          길드장
-        </Tag>
+        <div className="flex justify-between items-center">
+          <Tag size="small" style="default" background="medium" className="w-12 font-suit font-bold">
+            길드장
+          </Tag>
+          <div onClick={() => router.push(PATH.guild_detail(guildId))}>
+            <Home className="size-5 hover:text-purple-500 text-neutral-400 cursor-pointer" />
+          </div>
+        </div>
         <UserInfoHorizontal size="small" data={props.guildData.owner} />
         <p className="font-dgm line-clamp-1 text-ellipsis overflow-hidden text-neutral-900 text-4xl">
           {props.guildData.guild_name}
