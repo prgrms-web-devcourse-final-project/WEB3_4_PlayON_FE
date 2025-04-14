@@ -16,6 +16,7 @@ import SectionTitle from '@/components/common/SectionTitle';
 import PartyCard, { PartyCardSkeleton } from '@/components/party/PartyCard';
 import PartyLogCard, { PartyLogCardSkeleton } from '@/components/party/PartyLogCard';
 import PixelCharacter from '@/components/PixelCharacter/PixelCharacter';
+import GameSearch from '@/components/common/GameSearch';
 
 const popularGames: gameSimple[] = [
   {
@@ -50,11 +51,8 @@ export default function Party() {
   const [query, setQuery] = useState<string>('');
   const [pendingParties, setPendingParties] = useState<getPartyRes[]>([]);
   const [loggedParties, setLoggedParties] = useState<getPartyRes[]>([]);
-  const handleChange = (value: string) => {
-    setQuery(value);
-  };
-  const handleSearch = () => {
-    router.push(`${PATH.party_list}?name=${query}`);
+  const handleSearch = (appId: number | string) => {
+    router.push(`${PATH.party_list}?appId=${appId}`);
   };
 
   useEffect(() => {
@@ -83,7 +81,14 @@ export default function Party() {
     >
       <section className="w-full h-[400px]">
         <HeroTypingBanner data={popularGames}>
-          <SearchBar onChange={handleChange} onSearch={handleSearch} className="w-[640px]" />
+          <div className="w-[640px] bg-white rounded-lg">
+            <GameSearch
+              className="py-2 h-12"
+              onSelect={(game) => {
+                handleSearch(game.appid);
+              }}
+            ></GameSearch>
+          </div>
         </HeroTypingBanner>
       </section>
 
