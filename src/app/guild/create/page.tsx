@@ -37,10 +37,12 @@ const createGuildFormSchema = z.object({
     .number()
     .min(2, { message: '길드 최대 인원은 2명 이상부터 가능합니다.' })
     .max(50, { message: '길드 최대 인원은 50명까지 가능합니다.' }),
-  game: z.object({
-    appid: z.number().min(1),
-    name: z.string().min(1),
-  }),
+  game: z
+    .object({
+      appid: z.number().min(1),
+      name: z.string().min(1),
+    })
+    .nullish(),
   partyStyle: z.array(z.string()),
   skillLevel: z.array(z.string()),
   gender: z.array(z.string()),
@@ -205,8 +207,8 @@ export default function GuildCreate() {
       name: data.name,
       description: data.desc,
       maxMembers: data.limit_people,
-      // appid: data.game?.appid ? data.game?.appid : null,
-      appid: data.game.appid || null,
+      appid: data.game?.appid ? data.game?.appid : null,
+      // appid: data.game.appid || null,
       isPublic: data.public,
       fileType: data.fileType as FileType,
       tags: tagList,
