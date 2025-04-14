@@ -4,8 +4,6 @@ import { forwardRef, useRef } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/all';
-import { ThreeObjects } from '@/types/main';
-import { model } from './ThreeController';
 import { Object3D } from 'three';
 
 const serviceList = [
@@ -17,9 +15,10 @@ const serviceList = [
 
 type Props = {
   modelObject: Object3D | null;
+  containerRef: React.RefObject<HTMLDivElement | null>;
 };
 
-function HeroSection({ modelObject }: Props) {
+function HeroSection({ modelObject, containerRef }: Props) {
   gsap.registerPlugin(useGSAP);
   gsap.registerPlugin(ScrollTrigger);
 
@@ -52,15 +51,11 @@ function HeroSection({ modelObject }: Props) {
       .fromTo(text5.current, { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 1, ease: 'sine.in' }, 3)
       .fromTo(text6.current, { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 1, ease: 'sine.in' }, 3.4)
       .fromTo(buttonBox.current, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 1, ease: 'sine.in' }, 2)
+      .fromTo(containerRef.current, { opacity: 0 }, { opacity: 1, duration: 0.2 }, 0)
       .from(modelObject.position, { y: 3.2, x: 0 }, 0)
       .fromTo(modelObject.rotation, { y: -1.5 }, { y: 0.2, duration: 2, ease: 'sine.in' }, 0)
       .fromTo(modelObject.rotation, { y: 0.2 }, { y: 1, duration: 4, ease: 'sine.in' }, 2)
       .fromTo(modelObject.position, { y: 3.2, x: 0 }, { y: 30, x: 0, duration: 1, ease: 'sine.in' }, 5);
-
-    // if (threeRefs.current.camera) {
-
-    // }
-    // }, []);
   }, [modelObject]);
 
   return (

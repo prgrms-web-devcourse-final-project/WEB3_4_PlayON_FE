@@ -5,6 +5,7 @@ const nextConfig = {
   images: {
     domains: ['shared.fastly.steamstatic.com', 'devcouse4-team14-bucket.s3.ap-northeast-2.amazonaws.com'],
   },
+  reactStrictMode: false,
   typescript: {
     ignoreBuildErrors: true,
   },

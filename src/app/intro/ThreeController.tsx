@@ -1,92 +1,74 @@
 'use client';
 
-import { MutableRefObject, useEffect, useRef } from 'react';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-import { Scene, PerspectiveCamera, WebGLRenderer, AmbientLight, Object3D, MathUtils } from 'three';
-import { ThreeObjects } from '@/types/main';
+import { forwardRef, useEffect, useRef } from 'react';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { Scene, PerspectiveCamera, WebGLRenderer, AmbientLight, Object3D } from 'three';
 
 type Props = {
-  setModelObject?: (model: Object3D) => void;
+  modelObject: React.MutableRefObject<Object3D | null>;
+  containerRef: React.RefObject<HTMLDivElement>;
+  setModelLoaded: (loaded: boolean) => void;
 };
-const ThreeController = ({ setModelObject }: Props) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const modelRef = useRef<Object3D | null>(null);
+const ThreeController = forwardRef<HTMLDivElement, Props>(({ modelObject, containerRef, setModelLoaded }, ref) => {
+  const sceneRef = useRef<Scene | null>(null);
+  const cameraRef = useRef<PerspectiveCamera | null>(null);
+  const rendererRef = useRef<WebGLRenderer | null>(null);
 
   useEffect(() => {
-    if (!containerRef.current) return;
+    console.log('모델 로딩 시작');
+    // 씬, 카메라, 렌더러 세팅
+    sceneRef.current = new Scene();
+    cameraRef.current = new PerspectiveCamera(45, 1.4, 1, 1000);
+    rendererRef.current = new WebGLRenderer({ alpha: true });
 
-    // 기본 설정
-    const scene = new Scene();
-    const camera = new PerspectiveCamera(45, 1.4, 1, 1000);
-    camera.position.z = 26;
-
-    //렌더러
-    const renderer = new WebGLRenderer({ alpha: true });
+    cameraRef.current.position.z = 26;
     const renderSize = 1280;
-    renderer.setSize(renderSize, renderSize / 1.4);
-    renderer.setPixelRatio(window.devicePixelRatio);
-    containerRef.current.appendChild(renderer.domElement);
+    rendererRef.current.setSize(renderSize, renderSize / 1.4);
+    rendererRef.current.setPixelRatio(window.devicePixelRatio);
 
-    // 컨트롤러
-    // const controls = new OrbitControls(camera, renderer.domElement);
-    // controls.enableZoom = false;
-    // controls.enableDamping = true;
-    // controls.dampingFactor = 0.1;
-    // controllerRef.current = controls;
-    // controls.target.set(0, 0, 0);
-
-    // // 컨트롤러 조작 제한
-    // //tilt
-    // controls.minPolarAngle = degToRad(100);
-    // controls.maxPolarAngle = degToRad(160);
-    // //pannig
-    // controls.minAzimuthAngle = degToRad(-90);
-    // controls.maxAzimuthAngle = degToRad(90);
-    // //zoom
-    // controls.minDistance = 23;
-    // controls.maxDistance = 29;
+    //렌더러 할당
+    if (containerRef.current && rendererRef.current) {
+      console.log('렌더러 할당');
+      containerRef.current.appendChild(rendererRef.current.domElement);
+    }
 
     // 조명
     const light = new AmbientLight(0xffffff, 1.8);
-    scene.add(light);
+    sceneRef.current.add(light);
+
     // 모델 로딩
     const loader = new GLTFLoader();
     loader.load('/models/controller.glb', (gltf) => {
       const loadedModel = gltf.scene;
 
       // 모델 ref에 저장
-      modelRef.current = loadedModel;
-      if (setModelObject) setModelObject(loadedModel); // 콜백 호출
+      modelObject.current = loadedModel;
 
       // 씬에 추가
-      scene.add(loadedModel);
-
+      sceneRef.current?.add(modelObject.current);
       // 모델 기본 각도 및 위치 조정
-      loadedModel.rotation.x = -0.4;
-      loadedModel.position.y = 3.2;
+      modelObject.current.rotation.x = -0.4;
+      modelObject.current.position.y = 3.2;
 
+      setModelLoaded(true);
       // 애니메이션 시작
       animate();
     });
-    // 애니메이션 함수
+
     function animate() {
       requestAnimationFrame(animate);
-
-      if (modelRef.current) {
-      }
-      // 씬 렌더링
-      // controls.update();
-      renderer.render(scene, camera);
+      rendererRef.current?.render(sceneRef.current as Scene, cameraRef.current as PerspectiveCamera);
     }
 
-    // 정리 함수
     return () => {
-      containerRef.current?.removeChild(renderer.domElement);
+      if (rendererRef.current) {
+        rendererRef.current.dispose();
+      }
     };
-  }, []);
+  }, [setModelLoaded, modelObject]);
 
-  return <div ref={containerRef} className="rounded-xl overflow-hidden" />;
-};
+  return <div ref={ref ?? containerRef} className="overflow-hidden opacity-0" />;
+});
 
 export default ThreeController;
 
