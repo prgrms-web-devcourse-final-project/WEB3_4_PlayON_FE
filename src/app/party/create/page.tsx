@@ -11,7 +11,6 @@ import { Input } from '@/components/ui/input';
 import { FormControl, FormField, FormItem, Form } from '@/components/ui/form';
 import { DateTimePicker } from '@/components/ui/date-time-picker';
 import SelectedGameCard from '@/components/game/SelectedGameCard';
-import { dummyGameSimple } from '@/utils/dummyData';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
@@ -23,6 +22,7 @@ import { getSteamImage } from '@/api/steamImg';
 import { guildTags } from '@/types/Tags/guildTags';
 import { CoolerCategoryMenu } from '@/app/signup/userdata/component/cooler-category-menu';
 import TiltToggle from '@/components/common/tilt-toggle';
+import Image from 'next/image';
 type ToastError = {
   message: string;
   ref: { name: string };
@@ -157,8 +157,18 @@ export default function PartyCreate() {
         >
           <div className="flex justify-center gap-6">
             <div className="min-w-[411px] flex flex-col items-end">
-              <div className="w-full h-[180px] rounded-2xl border border-neutral-300">
-                {selectedGame && <SelectedGameCard data={selectedGame} />}
+              <div className="w-full h-[180px] rounded-2xl overflow-hidden border border-neutral-300">
+                {selectedGame ? (
+                  <SelectedGameCard data={selectedGame} />
+                ) : (
+                  <Image
+                    src="/img/dummy_header.jpg"
+                    alt="더미 게임 이미지"
+                    width={410}
+                    height={180}
+                    className="aspect-[410/180] max-w-[410px]"
+                  ></Image>
+                )}
               </div>
               <div className="flex items-center gap-2 mt-[25px]">
                 <FormField //공개설정
