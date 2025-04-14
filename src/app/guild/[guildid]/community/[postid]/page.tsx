@@ -18,7 +18,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import styles from './guildCommunityDetail.module.css';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 
 const commentSchema = z.object({
@@ -43,6 +43,7 @@ export default function GuildCommunityDetail() {
   const Toast = useToast();
   const guildId = param.guildid as string;
   const boardId = param.postid as string;
+  const [isLiked, setIsLiked] = useState(false);
 
   const { data: guildData } = useQuery({
     queryKey: ['GuildDetail', guildId],
@@ -53,12 +54,14 @@ export default function GuildCommunityDetail() {
     queryKey: ['PostDetailData', guildId, boardId],
     queryFn: () => guildBoard.GuildPostDetail(parseInt(guildId), parseInt(boardId)),
   });
+  // console.log('postData', postData);
 
   const handleClickLike = useCallback(async () => {
     const response = await guildBoard.GuildPostLike(parseInt(guildId), parseInt(boardId));
     console.log(response);
     queryClient.refetchQueries({ queryKey: ['PostDetailData', guildId, boardId], exact: true });
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [boardId, guildId]);
 
   const deletePost = useCallback(async () => {
     const response = await guildBoard.GuildPostDelete(parseInt(guildId), parseInt(boardId));
@@ -69,13 +72,19 @@ export default function GuildCommunityDetail() {
       });
     }
     router.push(PATH.guild_community(guildId));
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [boardId, guildId]);
 
   async function onSubmit(data: CommentType) {
     const response = await guildBoard.GuildPostCommentCreate(Number(guildId), Number(boardId), data.comment);
     if (response) form.setValue('comment', '');
     queryClient.refetchQueries({ queryKey: ['PostDetailData', guildId, boardId], exact: true });
   }
+  useEffect(() => {
+    if (postData) {
+      setIsLiked(postData.isLiked);
+    }
+  }, [postData]);
 
   return (
     <div className="wrapper relative mb-12 mt-28">
@@ -145,6 +154,7 @@ export default function GuildCommunityDetail() {
               <Toggle
                 variant="outline"
                 size="lg"
+                pressed={isLiked}
                 className="rounded-full text-neutral-400 border-neutral-300 text-xl min-w-[60px] hover:text-purple-500 hover:bg-purple-50 focus-visible:text-purple-500 data-[state=on]:bg-purple-50 data-[state=on]:text-purple-500"
                 onClick={handleClickLike}
               >

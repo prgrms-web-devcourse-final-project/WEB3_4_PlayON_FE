@@ -1,6 +1,6 @@
 import { GUILD_BOARD_ENDPOINTS } from '@/constants/endpoints/guild-board';
 import { useAxios } from '@/hooks/useAxios';
-import { postSimple, comment, post } from '@/types/community';
+import { postSimple, post } from '@/types/community';
 import { uploadToS3 } from '@/utils/uploadToS3';
 // import { guildCommunityTags } from '@/types/Tags/communityTags';
 
@@ -35,6 +35,7 @@ export const useGuildBoard = () => {
     guild: guild;
     createdAt: string;
     isAuthor: boolean;
+    isLiked: boolean;
   };
   type noticesPost = {
     id: number;
@@ -61,7 +62,7 @@ export const useGuildBoard = () => {
     if (response && response.msg === 'OK') {
       const postData = response.data;
       // console.log('postData', postData);
-      const postDetail: post & { isAuthor: boolean } = {
+      const postDetail: post & { isAuthor: boolean; isLiked: boolean } = {
         user: {
           username: postData.authorNickname,
           nickname: postData.authorNickname,
@@ -92,6 +93,7 @@ export const useGuildBoard = () => {
         channel: '길드',
         tag: postData.tag,
         isAuthor: postData.isAuthor,
+        isLiked: postData.isLiked,
       };
       // console.log('postDetail', postDetail);
       return postDetail;
