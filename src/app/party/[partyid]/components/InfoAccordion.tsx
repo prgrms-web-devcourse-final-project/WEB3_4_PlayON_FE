@@ -16,6 +16,7 @@ import { useRouter } from 'next/navigation';
 import { PATH } from '@/constants/routes';
 import { usePartyContext } from './PartyContext';
 import { useParty } from '@/api/party';
+import { useAlertStore } from '@/stores/alertStore';
 
 export default function InfoAccordion() {
   const router = useRouter();
@@ -144,13 +145,14 @@ function PartyHostInfo({ partyHost }: { partyHost: userSimple }) {
 }
 
 function PartyManageButtons() {
-  const router = useRouter();
+  const { showAlert } = useAlertStore();
   const { partyInfo } = usePartyContext();
   const party = useParty();
+  const router = useRouter();
   if (!partyInfo) return <></>;
   return (
     <div className="flex items-center gap-2 justify-end absolute -top-8 right-0 text-sm">
-      <button className="flex items-center">
+      {/* <button className="flex items-center">
         <Send className="h-3" /> 초대장 보내기
       </button>
       <button
@@ -160,11 +162,14 @@ function PartyManageButtons() {
         }}
       >
         <SquarePen className="h-3" /> 파티 수정
-      </button>
+      </button> */}
       <button
         className="flex items-center"
         onClick={() => {
-          party.DeleteParty(partyInfo.partyId);
+          showAlert('파티를 삭제하시겠습니까?', '삭제 후에는 복구할 수 없습니다.', () => {
+            party.DeleteParty(partyInfo.partyId);
+            router.push(PATH.party_list);
+          });
         }}
       >
         <Trash2 className="h-3" /> 파티 삭제

@@ -54,7 +54,8 @@ export const useParty = () => {
     filter: getPartiesReq,
     partyAt?: Date,
     page?: number,
-    orderBy?: string
+    orderBy?: string,
+    isMacSupported?: boolean
   ): Promise<{
     parties: party[];
     totalPages: number;
@@ -69,6 +70,7 @@ export const useParty = () => {
           page,
           orderBy,
           pageSize: 9,
+          isMacSupported,
         },
       },
       true
