@@ -52,7 +52,7 @@ export default function GuildCommunity() {
       const keyword = searchParams.get('search');
       const page = searchParams.get('page');
       const pageSize = 10;
-      const sort = searchParams.get('sort');
+      const sort = searchParams.get('sort') || 'LATEST';
 
       if (tag && tag !== '전체') Object.assign(data, { tag: convertTag(tag) });
       if (keyword) Object.assign(data, { keyword });

@@ -1,25 +1,43 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import RetroButton from '../common/RetroButton';
-import { ChevronRight, SearchIcon } from 'lucide-react';
-import { Input } from '@/components/ui/input';
+import { ChevronRight } from 'lucide-react';
 import { communityTags } from '@/types/Tags/communityTags';
+import { PATH } from '@/constants/routes';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import SearchBar from '../common/SearchBar';
 
 type CommunityMenuBarProps = {
   className: string;
 };
 
 export default function CommunityMenuBar(props: CommunityMenuBarProps) {
-  const [query, setQuery] = useState('');
+  const router = useRouter();
 
-  function HandleSearchClick() {
-    console.log(query);
-    setQuery('');
-  }
-  function onSelectChanged(select: boolean[]) {
-    console.log(select);
-  }
+  const HandleSearchClick = useCallback(
+    (value: string) => {
+      const newUrl = new URL(window.location.href);
+      newUrl.searchParams.set('keyword', value);
+      router.replace(newUrl.toString());
+    },
+    [router]
+  );
+  const HandleSelectChange = useCallback(
+    (newSelected: boolean[]) => {
+      const newUrl = new URL(window.location.href);
+      // console.log(newSelected);
+      if (!newSelected.includes(true)) return;
+      else {
+        const tag = newSelected.map((e, ind) => (e ? communityTags[ind] : null)).filter((e) => e);
+        // console.log(tag);
+        newUrl.searchParams.set('category', tag[0]!);
+      }
+      router.replace(newUrl.toString());
+    },
+    [router]
+  );
   function TagSelectGridItem(props: { label: string; selected: boolean }) {
     return (
       <div
@@ -51,25 +69,21 @@ export default function CommunityMenuBar(props: CommunityMenuBarProps) {
   return (
     <div className={`flex flex-col rounded-xl shadow-md p-8 gap-9 ${props.className}`}>
       <p className="font-dgm text-4xl ">커뮤니티</p>
-      <TagSelectGridMenu onSelectChanged={onSelectChanged} />
+      <TagSelectGridMenu onSelectChanged={HandleSelectChange} />
       <svg xmlns="http://www.w3.org/2000/svg" width="347" height="2" viewBox="0 0 347 2" fill="none">
         <path d="M0 1H347" stroke="#E5E5E5" />
       </svg>
       <div className="flex flex-col gap-3">
-        <div className="flex rounded-lg gap-2 text-neutral-400 border border-neutral-300 items-center p-2">
-          <Input
-            placeholder="게시글 제목으로 검색하세요"
-            className="border-none text-sm h-5 focus-visible:ring-transparent shadow-none"
-          />
-          <SearchIcon className="text-neutral-400 cursor-pointer" onClick={HandleSearchClick} />
-        </div>
-        <RetroButton
-          type="purple"
-          callback={() => console.log('!')}
-          className="font-suit text-lg text-white font-semibold w-full h-11"
-        >
-          글쓰기
-        </RetroButton>
+        <SearchBar onChange={() => {}} onSearch={(value) => HandleSearchClick(value)} />
+        <Link href={PATH.community_create}>
+          <RetroButton
+            type="purple"
+            callback={() => {}}
+            className="font-suit text-lg text-white font-semibold w-full h-11"
+          >
+            글쓰기
+          </RetroButton>
+        </Link>
       </div>
     </div>
   );

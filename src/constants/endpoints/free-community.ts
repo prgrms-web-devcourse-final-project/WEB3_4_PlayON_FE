@@ -4,7 +4,7 @@ export const FREECOMMUNITY_ENDPOINTS = Object.freeze({
   postDelete: (boardId: number) => `/boards/${boardId}`,
   postCreate: `/boards`,
   postImg: (boardId: number) => `/boards/${boardId}/img`,
-  postList: `/board/list`,
+  postList: `/boards/list`,
   postLike: (boardId: number) => `/boards/${boardId}/like`,
   postUnlike: (boardId: number) => `/boards/${boardId}/like`,
 

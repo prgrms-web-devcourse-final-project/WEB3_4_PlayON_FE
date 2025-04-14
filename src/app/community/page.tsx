@@ -1,25 +1,73 @@
+'use client';
+import { useFreeCommunity } from '@/api/free-community';
+import CustomPagination from '@/components/common/CustomPagination';
 import SortRadioGroup, { SortOption } from '@/components/common/SortRadioGroup';
 import CommunityMenuBar from '@/components/community/community-menu-bar';
 import CommunityPostImageLong from '@/components/community/post-image-long';
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from '@/components/ui/pagination';
-import { post } from '@/types/community';
-import { dummyPost } from '@/utils/dummyData';
+import CommunityPostLong from '@/components/community/post-long';
+import GhostSVG from '@/components/svg/ghost_fill';
+import { PATH } from '@/constants/routes';
+import { postSimple } from '@/types/community';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 const sortOptions: SortOption[] = [
-  { id: 'latest', label: '최신순' },
-  { id: 'popularity', label: '인기순' },
+  { id: 'LATEST', label: '최신순' },
+  { id: 'POPULAR', label: '인기순' },
 ];
 
+const categoryList = {
+  일상: 'DAILY',
+  유머: 'HUMOR',
+  게임추천: 'GAME_RECOMMEND',
+  게임소식: 'GAME_NEWS',
+  질문: 'QUESTION',
+  파티모집: 'PARTY_RECRUIT',
+};
+
+function convertTag(tag: string) {
+  return categoryList[tag as keyof typeof categoryList];
+}
+
 export default function Community() {
-  const postList: post[] = Array(10).fill(dummyPost);
+  const [postList, setPostList] = useState<postSimple[]>([]);
+  const [totalItems, setTotalItems] = useState(0);
+
+  const freeBoard = useFreeCommunity();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const handlePostClick = (postId: string) => {
+    router.push(PATH.community_detail(postId));
+  };
+
+  useEffect(() => {
+    async function fetchPosts() {
+      const data = {};
+      const category = searchParams.get('category');
+      const keyword = searchParams.get('keyword');
+      const page = searchParams.get('page');
+      const pageSize = 10;
+      const sort = searchParams.get('sort') || 'LATEST';
+
+      if (category) Object.assign(data, { category: convertTag(category) });
+      if (keyword) Object.assign(data, { keyword });
+      if (page !== null) Object.assign(data, { page: Number(page) });
+      if (pageSize) Object.assign(data, { pageSize });
+      if (sort) Object.assign(data, { sort });
+      console.log('data:', data);
+
+      const posts = await freeBoard.PostList(data);
+      console.log(posts);
+      if (posts) {
+        setPostList(posts.items);
+        setTotalItems(posts.totalItems);
+      }
+    }
+    fetchPosts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
+
   return (
     <div className="wrapper relative mb-12 mt-28">
       <section>
@@ -29,35 +77,41 @@ export default function Community() {
         <div className="w-1/3 relative -top-16">
           <CommunityMenuBar className="sticky top-10 bg-white" />
         </div>
-        <section className="space-y-10 pt-8">
-          <SortRadioGroup options={sortOptions} />
-          <div className="divide-y divide-neutral-200">
-            {postList.map((post) => (
-              <CommunityPostImageLong key={post.title} data={post} className="w-full h-[180px]" />
-            ))}
+        {totalItems > 0 && (
+          <section className="w-full space-y-10 pt-8">
+            <SortRadioGroup options={sortOptions} />
+            <div className="w-full divide-y divide-neutral-200">
+              {postList.map((post) => {
+                if (post.img_src) {
+                  return (
+                    <CommunityPostImageLong
+                      key={post.postId}
+                      data={post}
+                      onClick={() => handlePostClick(String(post.postId))}
+                      className="w-full h-[180px]"
+                    />
+                  );
+                } else {
+                  return (
+                    <CommunityPostLong
+                      key={post.postId}
+                      data={post}
+                      onClick={() => handlePostClick(String(post.postId))}
+                      className="w-full h-[180px]"
+                    />
+                  );
+                }
+              })}
+            </div>
+            <CustomPagination totalItems={totalItems} pageSize={10} />
+          </section>
+        )}
+        {/* {totalItems <= 0 && (
+          <div className="flex self-start pt-20 gap-4">
+            <GhostSVG width={32} fill="#9884F0" stroke="" />
+            <p className="font-dgm text-2xl text-neutral-800">게시글이 없습니다.</p>
           </div>
-          <Pagination>
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious href="#" className="text-base" />
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationLink href="#" isActive>
-                  1
-                </PaginationLink>
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationLink href="#">2</PaginationLink>
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationEllipsis />
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationNext href="#" className="text-base" />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
-        </section>
+        )} */}
       </section>
     </div>
   );

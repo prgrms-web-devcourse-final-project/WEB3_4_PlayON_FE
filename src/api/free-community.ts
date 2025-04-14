@@ -153,6 +153,7 @@ export const useFreeCommunity = () => {
     const response = await axios.Get(FREECOMMUNITY_ENDPOINTS.postList, { params: { ...input } }, true);
     if (response && response.status === 200) {
       const data = response.data.data;
+      console.log('PostList', data);
       return {
         currentPageNumber: data.currentPageNumber,
         pageSize: data.pageSize,
@@ -162,12 +163,12 @@ export const useFreeCommunity = () => {
           postId: e.boardId as number,
           author_nickname: e.authorNickname as string,
           author_img: e.profileImg as string,
-          title: e.title as string,
+          title: e.boardTitle as string,
           content: e.boardContent as string,
           img_src: e.imageUrl as string,
           num_likes: e.likeCount as number,
           comments_num: e.commentCount as number,
-          tag: typeConverter('FreeCommunityCategories', 'EnToKo', e.boardCategory),
+          tag: e.boardCategory as string,
         })),
       };
     }
