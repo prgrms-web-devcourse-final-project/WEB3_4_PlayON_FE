@@ -62,10 +62,10 @@ export default function WeNeedYou(props: WeNeedYouProps) {
           </div>
         </div>
         <UserInfoHorizontal size="small" data={props.guildData.owner} />
-        <p className="font-dgm line-clamp-1 text-ellipsis overflow-hidden text-neutral-900 text-4xl">
+        <p className=" text-start font-dgm line-clamp-1 text-ellipsis overflow-hidden text-neutral-900 text-4xl break-words">
           {props.guildData.guild_name}
         </p>
-        <p className="font-suit line-clamp-2 text-ellipsis overflow-hidden text-neutral-900">
+        <p className="text-start font-suit line-clamp-2 text-ellipsis overflow-hidden text-neutral-900 break-words">
           {props.guildData.description}
         </p>
         <div className="flex gap-3">
