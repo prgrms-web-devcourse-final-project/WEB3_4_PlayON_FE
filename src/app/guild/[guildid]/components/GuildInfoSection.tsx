@@ -116,7 +116,7 @@ export default function GuildInfoSection({ guildId }: { guildId: string }) {
                 <img
                   src={guildData.owner.img_src || '/img/dummy_profile.jpg'}
                   alt=""
-                  className="w-12 rounded-full object-cover"
+                  className="size-12 rounded-full object-cover"
                 />
                 <p>{guildData.owner.nickname}</p>
               </div>

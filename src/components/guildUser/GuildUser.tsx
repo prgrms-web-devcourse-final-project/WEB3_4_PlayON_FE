@@ -6,7 +6,7 @@ import { useMemo } from 'react';
 
 interface guildUserProps {
   data: guildUser;
-  membetId: string;
+  memberId: string;
   index: number;
   total: number;
   onToggleManager: (userId: string, guild_role: string) => void;
@@ -15,7 +15,7 @@ interface guildUserProps {
 
 export default function GuildUser(props: guildUserProps) {
   const { data, index, total, onToggleManager, onKickMember } = props;
-  const joindDate = data.joined_at
+  const joinedDate = data.joined_at
     ? new Date(data.joined_at).toLocaleDateString('ko-kr', { year: 'numeric', month: 'long', day: 'numeric' })
     : '정보 없음';
 
@@ -30,7 +30,7 @@ export default function GuildUser(props: guildUserProps) {
     <>
       <div className="flex gap-6 py-8">
         <Avatar className="bg-neutral-400 w-16 h-16">
-          <AvatarImage src={data.user.img_src || '/img/dummy_profile.jpg'} />
+          <AvatarImage src={data.user.img_src || '/img/dummy_profile.jpg'} className="object-cover" />
         </Avatar>
 
         <div className="w-full">
@@ -39,7 +39,7 @@ export default function GuildUser(props: guildUserProps) {
           <div className="flex gap-5">
             <div className="flex">
               <p className="font-suit text-base font-medium">길드 가입일 : </p> &nbsp;
-              <p className="font-suit text-base font-medium text-neutral-500">{joindDate}</p>
+              <p className="font-suit text-base font-medium text-neutral-500">{joinedDate}</p>
             </div>
 
             <div className="flex">

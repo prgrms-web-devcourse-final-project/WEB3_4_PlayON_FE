@@ -382,7 +382,7 @@ export default function GuildAdmin() {
               return (
                 <GuildUser
                   key={`${member.memberId}-${index}`}
-                  membetId={member.memberId}
+                  memberId={member.memberId}
                   data={member.data}
                   index={index}
                   total={members.length}
