@@ -36,7 +36,7 @@ export default function GameList() {
   const [playerType, setPlayerType] = useState<boolean[]>([...playerTypes.map(() => false)]);
   const [releaseStatus, setReleaseStatus] = useState<boolean[]>([...releaseStatuses.map(() => false)]);
 
-  const [keyword, setKeyword] = useState('');
+  const [keyword, setKeyword] = useState<string>('');
   const [mac, setMac] = useState(false);
   const [releaseDate, setReleaseDate] = useState<Date | undefined>(undefined);
 
@@ -67,7 +67,7 @@ export default function GameList() {
     };
   }
   const game = useGame();
-  const { data, refetch, isFetched } = useSuspenseQuery({
+  const { data, refetch, isFetched, isLoading } = useSuspenseQuery({
     queryKey: ['GameList'],
     queryFn: async () => {
       const playerTypeInd = playerType.findIndex((e) => e === true);
@@ -88,7 +88,7 @@ export default function GameList() {
           releaseStatus: typeConverter('GameReleaseStatusTags', 'KoToEn', releaseStatuses[releaseStatusInd]),
         },
         {
-          page: Number(searchParams.get('page')) || 0,
+          page: Number(searchParams.get('page')) || 1,
           size: 12,
           sort: [],
         }
@@ -111,6 +111,23 @@ export default function GameList() {
     staleTime: 1000 * 60 * 5,
   });
 
+  useEffect(() => {
+    const Genre = searchParams.get('genre')?.split(',');
+    const PlayerType = searchParams.get('playerType');
+    const ReleaseStatus = searchParams.get('releaseStatus');
+    const Mac = searchParams.get('mac');
+    const Keyword = searchParams.get('name');
+    const ReleaseDate = searchParams.get('releaseDate');
+
+    if (Genre) {
+      setGenre([false, ...genres.map((e) => Genre.includes(e))]);
+    }
+    if (PlayerType) setPlayerType(PlayerType === '멀티플레이' ? [true, false] : [false, true]);
+    if (ReleaseStatus) setReleaseStatus(ReleaseStatus === '발매' ? [true, false] : [false, true]);
+    if (Mac) setMac(Mac === 'true' ? true : false);
+    if (Keyword) setKeyword(Keyword);
+    if (ReleaseDate) setReleaseDate(new Date(ReleaseDate));
+  }, []);
   useEffect(() => {
     const newUrl = new URL(window.location.href);
     if (!genre[0]) {
@@ -136,16 +153,15 @@ export default function GameList() {
     } else {
       newUrl.searchParams.delete('releaseStatus');
     }
-
     if (mac) {
       newUrl.searchParams.set('mac', String(mac));
     } else {
       newUrl.searchParams.delete('mac');
     }
-    if (keyword.length > 0) {
-      newUrl.searchParams.set('keyword', keyword);
+    if (keyword) {
+      newUrl.searchParams.set('name', keyword);
     } else {
-      newUrl.searchParams.delete('keyword');
+      newUrl.searchParams.delete('name');
     }
     if (releaseDate) {
       newUrl.searchParams.set('releaseDate', String(releaseDate));
@@ -153,32 +169,11 @@ export default function GameList() {
       newUrl.searchParams.delete('releaseDate');
     }
     window.history.pushState({}, '', newUrl);
-  }, [genre, playerType, releaseStatus, mac, releaseDate, keyword, playerTypes, releaseStatuses, genres]);
+  }, [genre, playerType, releaseStatus, mac, releaseDate, keyword]);
+
   useEffect(() => {
     refetch();
   }, [refetch, searchParams]);
-  useEffect(() => {
-    const url = new URL(window.location.href);
-    const Genre = url.searchParams.get('genre')?.split(',');
-    const PlayerType = url.searchParams.get('playerType');
-    const ReleaseStatus = url.searchParams.get('releaseStatus');
-    const Mac = url.searchParams.get('mac');
-    const Keyword = url.searchParams.get('keyword');
-    const ReleaseDate = url.searchParams.get('releaseDate');
-    if (Genre) setGenre(genres.map((e) => Genre.includes(e)));
-    if (PlayerType) setPlayerType(PlayerType === '멀티플레이' ? [true, false] : [false, true]);
-    if (ReleaseStatus) setReleaseStatus(ReleaseStatus === '발매' ? [true, false] : [false, true]);
-    if (Mac) setMac(Mac === 'true' ? true : false);
-    if (Keyword) setKeyword(keyword);
-    if (ReleaseDate) setReleaseDate(new Date(ReleaseDate));
-
-    console.log(Genre);
-    console.log(PlayerType);
-    console.log(ReleaseStatus);
-    console.log(Mac);
-    console.log(Keyword);
-    console.log(ReleaseDate);
-  }, []);
 
   return (
     <div className="flex flex-col items-center">
@@ -263,7 +258,7 @@ export default function GameList() {
           Array.from({ length: 12 - data.length }).map((_, ind) => (
             <Skeleton className="w-full aspect-square rounded-full" key={`Skeleton_Games_Placeholders_${ind}`} />
           ))}
-        {!isFetched &&
+        {(!isFetched || isLoading) &&
           data.map((_, ind) => (
             <Skeleton className="w-full aspect-square rounded-full" key={`Skeleton_Games_${ind}`} />
           ))}

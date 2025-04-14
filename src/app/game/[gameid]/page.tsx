@@ -310,7 +310,9 @@ export default function GameDetail({ params }: { params: { gameid: string } }) {
               <p>{gameDetails.game.os.mac ? ', mac' : ''}</p>
             </div>
           </div>
-          <RetroButton type="purple">파티 생성</RetroButton>
+          <Link href={PARTY_ROUTE.party_create}>
+            <RetroButton type="purple">파티 생성</RetroButton>
+          </Link>
         </div>
         <div className="flex flex-col w-[67%] gap-2">
           <div className="w-full aspect-video">
