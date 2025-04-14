@@ -1,6 +1,5 @@
 'use client';
 
-import { guild } from '@/types/guild';
 import GuildFullImage, { GuildFullImageSkeleton } from '../../guild/guild-fullimage';
 import './style.css';
 import { ReactNode, Suspense, useEffect, useState } from 'react';
@@ -16,13 +15,15 @@ import { useAuthStore } from '@/stores/authStore';
 import { useGuild } from '@/api/guild';
 import { GUILD_ROUTE } from '@/constants/routes/guild';
 import { Skeleton } from '@/components/ui/skeleton';
+import { guild } from '@/types/guild';
 
 type SearchGuildWithGameProps = {
   leftCarouselTitle: ReactNode;
   className?: string;
   theme: 'light' | 'dark';
   forMain: boolean;
-  dummyGames?: { gameData: gameSimple; appid: number }[];
+  dummyGames?: gameSimple[];
+  dummyGuilds?: guild[][];
 };
 
 export default function SearchGuildWithGame(props: SearchGuildWithGameProps) {
@@ -36,9 +37,6 @@ export default function SearchGuildWithGame(props: SearchGuildWithGameProps) {
   const { data: MyGames, isFetched } = useQuery({
     queryKey: ['MyGames'],
     queryFn: async () => {
-      if (user === undefined) {
-        return props.dummyGames;
-      }
       return await member.GetMeGames();
     },
     staleTime: Infinity,
@@ -108,7 +106,7 @@ export default function SearchGuildWithGame(props: SearchGuildWithGameProps) {
                   props.dummyGames.map((_, ind) => {
                     return (
                       <CarouselItem key={ind} onClick={() => setSelectedGame(ind)} className={`basis-1/3`}>
-                        <SteamCard data={_.gameData} theme={props.theme} selected={selectedGame === ind} />
+                        <SteamCard data={_} theme={props.theme} selected={selectedGame === ind} />
                       </CarouselItem>
                     );
                   })}
@@ -156,7 +154,7 @@ export default function SearchGuildWithGame(props: SearchGuildWithGameProps) {
           className="w-full"
         >
           <CarouselContent className={`h-[572px]`}>
-            {!isGuildFetched && (
+            {!isGuildFetched && !props.forMain && (
               <>
                 <CarouselItem className="basis-1/2">
                   <GuildFullImageSkeleton className="" />
@@ -171,6 +169,7 @@ export default function SearchGuildWithGame(props: SearchGuildWithGameProps) {
             )}
             {isGuildFetched &&
               GuildSearch &&
+              !props.forMain &&
               GuildSearch.map((e) => (
                 <CarouselItem key={`${e.guild_id}`} className="basis-1/2">
                   <Link href={GUILD_ROUTE.guild_detail(e.guild_id as unknown as string)}>
@@ -178,6 +177,28 @@ export default function SearchGuildWithGame(props: SearchGuildWithGameProps) {
                   </Link>
                 </CarouselItem>
               ))}
+            {props.forMain &&
+              props.dummyGuilds &&
+              props.dummyGuilds[selectedGame].map((e) => (
+                <CarouselItem key={`${e.guild_id}`} className="basis-1/2">
+                  <Link href={GUILD_ROUTE.guild_detail(e.guild_id as unknown as string)}>
+                    <GuildFullImage data={e} className="" />
+                  </Link>
+                </CarouselItem>
+              ))}
+            {props.forMain && !props.dummyGuilds && (
+              <>
+                <CarouselItem className="basis-1/2">
+                  <GuildFullImageSkeleton className="" />
+                </CarouselItem>
+                <CarouselItem className="basis-1/2">
+                  <GuildFullImageSkeleton className="" />
+                </CarouselItem>
+                <CarouselItem className="basis-1/2">
+                  <GuildFullImageSkeleton className="" />
+                </CarouselItem>
+              </>
+            )}
           </CarouselContent>
         </Carousel>
         <div

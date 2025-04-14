@@ -7,7 +7,7 @@ import SectionBanner from '@/components/common/SectionBanner';
 import SectionTitle from '@/components/common/SectionTitle';
 import PixelCharacter from '@/components/PixelCharacter/PixelCharacter';
 import { gameSimple } from '@/types/games';
-import { dummyGameSimple } from '@/utils/dummyData';
+import { dummyGameSimple, dummyGuild } from '@/utils/dummyData';
 import PopularGameList from './components/PopularGameList';
 import SearchGuildWithGame from '@/components/common/search-guild-with-game';
 import { useRouter } from 'next/navigation';
@@ -23,6 +23,12 @@ const banner = [
     title: 'Together!',
     img_src: '/img/hero/bg_guild_main.webp',
   },
+];
+const dummyGames = [dummyGameSimple, dummyGameSimple, dummyGameSimple];
+const dummyGuilds = [
+  [dummyGuild, dummyGuild, dummyGuild],
+  [dummyGuild, dummyGuild, dummyGuild],
+  [dummyGuild, dummyGuild, dummyGuild],
 ];
 
 export default function Guild() {
@@ -71,7 +77,9 @@ export default function Guild() {
         <SearchGuildWithGame
           leftCarouselTitle={<p className="text-5xl font-bold text-purple-50 mb-9">보유 게임으로 길드 탐색</p>}
           theme="dark"
-          forMain={false}
+          forMain={true}
+          dummyGames={dummyGames}
+          dummyGuilds={dummyGuilds}
         />
         <PlayOnRollingBanner duration={20} direction="right" />
       </section>
