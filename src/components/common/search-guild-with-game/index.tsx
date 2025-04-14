@@ -1,5 +1,6 @@
 'use client';
 
+import { guild } from '@/types/guild';
 import GuildFullImage, { GuildFullImageSkeleton } from '../../guild/guild-fullimage';
 import './style.css';
 import { ReactNode, Suspense, useEffect, useState } from 'react';
@@ -21,7 +22,7 @@ type SearchGuildWithGameProps = {
   className?: string;
   theme: 'light' | 'dark';
   forMain: boolean;
-  dummyGames?: gameSimple[];
+  dummyGames?: { gameData: gameSimple; appid: number }[];
 };
 
 export default function SearchGuildWithGame(props: SearchGuildWithGameProps) {
@@ -34,7 +35,12 @@ export default function SearchGuildWithGame(props: SearchGuildWithGameProps) {
   const guild = useGuild();
   const { data: MyGames, isFetched } = useQuery({
     queryKey: ['MyGames'],
-    queryFn: () => member.GetMeGames(),
+    queryFn: async () => {
+      if (user === undefined) {
+        return props.dummyGames;
+      }
+      return await member.GetMeGames();
+    },
     staleTime: Infinity,
     enabled: user !== undefined && !props.forMain,
   });
@@ -79,6 +85,7 @@ export default function SearchGuildWithGame(props: SearchGuildWithGameProps) {
             <CarouselContent className="select-none">
               <Suspense>
                 {!MyGames &&
+                  !props.forMain &&
                   Array.from({ length: 8 }).map((_, ind) => {
                     return (
                       <CarouselItem key={ind} onClick={() => setSelectedGame(ind)} className={`basis-1/3`}>
@@ -88,10 +95,29 @@ export default function SearchGuildWithGame(props: SearchGuildWithGameProps) {
                   })}
                 {isFetched &&
                   MyGames &&
+                  !props.forMain &&
                   MyGames.map((_, ind) => {
                     return (
                       <CarouselItem key={ind} onClick={() => setSelectedGame(ind)} className={`basis-1/3`}>
                         <SteamCard data={_.gameData} theme={props.theme} selected={selectedGame === ind} />
+                      </CarouselItem>
+                    );
+                  })}
+                {props.forMain &&
+                  props.dummyGames &&
+                  props.dummyGames.map((_, ind) => {
+                    return (
+                      <CarouselItem key={ind} onClick={() => setSelectedGame(ind)} className={`basis-1/3`}>
+                        <SteamCard data={_.gameData} theme={props.theme} selected={selectedGame === ind} />
+                      </CarouselItem>
+                    );
+                  })}
+                {props.forMain &&
+                  !props.dummyGames &&
+                  Array.from({ length: 8 }).map((_, ind) => {
+                    return (
+                      <CarouselItem key={ind} onClick={() => setSelectedGame(ind)} className={`basis-1/3`}>
+                        <Skeleton />
                       </CarouselItem>
                     );
                   })}

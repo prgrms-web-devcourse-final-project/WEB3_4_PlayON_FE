@@ -20,11 +20,13 @@ export default function SteamCard(props: SteamCardProps) {
           <img src={data.img_src} className={`w-full aspect-square rounded-xl object-cover`} />
         </div>
         <div className="p-2">
-          <p className={`${props.theme === 'light' ? 'text-black' : 'text-white'} font-suit text-xl font-semibold`}>
+          <p
+            className={`${props.theme === 'light' ? 'text-black' : 'text-white'} line-clamp-1 font-suit text-xl font-semibold`}
+          >
             {' '}
             {data.title}
           </p>
-          <p className={`text-sm text-neutral-400 font-medium`}> {genreStr}</p>
+          <p className={`text-sm text-neutral-400 font-medium line-clamp-2`}> {genreStr}</p>
         </div>
       </div>
     </>
