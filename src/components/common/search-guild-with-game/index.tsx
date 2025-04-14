@@ -1,30 +1,64 @@
 'use client';
 
-import { guild } from '@/types/guild';
 import GuildFullImage, { GuildFullImageSkeleton } from '../../guild/guild-fullimage';
 import './style.css';
-import { ReactNode, useState } from 'react';
+import { ReactNode, Suspense, useEffect, useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Carousel, CarouselItem, CarouselContent, CarouselApi } from '../../ui/carousel';
 import SteamCard from '@/components/game/SteamCard';
 import Link from 'next/link';
 
-import { dummyGameSimple, dummyGuild } from '@/utils/dummyData';
 import { gameSimple } from '@/types/games';
+import { useQuery } from '@tanstack/react-query';
+import { useMembers } from '@/api/members';
+import { useAuthStore } from '@/stores/authStore';
+import { useGuild } from '@/api/guild';
+import { GUILD_ROUTE } from '@/constants/routes/guild';
+import { Skeleton } from '@/components/ui/skeleton';
 
 type SearchGuildWithGameProps = {
   leftCarouselTitle: ReactNode;
   className?: string;
   theme: 'light' | 'dark';
+  forMain: boolean;
+  dummyGames?: gameSimple[];
 };
-
-const guildDummyData: guild[] = [dummyGuild, dummyGuild, dummyGuild];
 
 export default function SearchGuildWithGame(props: SearchGuildWithGameProps) {
   const [api, setApi] = useState<CarouselApi>();
 
-  const dummyGameArr = new Array<gameSimple>(8).fill(dummyGameSimple);
-  const [selectedGame, setSelectedGame] = useState<number>(0);
+  const [selectedGame, setSelectedGame] = useState<number>(-1);
+
+  const { user } = useAuthStore();
+  const member = useMembers();
+  const guild = useGuild();
+  const { data: MyGames, isFetched } = useQuery({
+    queryKey: ['MyGames'],
+    queryFn: () => member.GetMeGames(),
+    staleTime: Infinity,
+    enabled: user !== undefined && !props.forMain,
+  });
+  const {
+    data: GuildSearch,
+    isFetched: isGuildFetched,
+    refetch: guildRefetch,
+  } = useQuery({
+    queryKey: ['GuildsByGame'],
+    queryFn: async () => {
+      if (MyGames) {
+        const ret = await guild.GetGuildRecommend(MyGames[selectedGame].appid);
+        while (ret && ret.length < 3) {
+          ret.push(ret[0]);
+        }
+        return ret;
+      }
+      return null;
+    },
+    enabled: isFetched,
+  });
+  useEffect(() => {
+    guildRefetch();
+  }, [selectedGame, guildRefetch]);
 
   return (
     <div
@@ -43,13 +77,25 @@ export default function SearchGuildWithGame(props: SearchGuildWithGameProps) {
             setApi={setApi}
           >
             <CarouselContent className="select-none">
-              {dummyGameArr.map((_, ind) => {
-                return (
-                  <CarouselItem key={ind} onClick={() => setSelectedGame(ind)} className={`basis-1/3`}>
-                    <SteamCard data={dummyGameSimple} theme={props.theme} selected={selectedGame === ind} />
-                  </CarouselItem>
-                );
-              })}
+              <Suspense>
+                {!MyGames &&
+                  Array.from({ length: 8 }).map((_, ind) => {
+                    return (
+                      <CarouselItem key={ind} onClick={() => setSelectedGame(ind)} className={`basis-1/3`}>
+                        <Skeleton />
+                      </CarouselItem>
+                    );
+                  })}
+                {isFetched &&
+                  MyGames &&
+                  MyGames.map((_, ind) => {
+                    return (
+                      <CarouselItem key={ind} onClick={() => setSelectedGame(ind)} className={`basis-1/3`}>
+                        <SteamCard data={_.gameData} theme={props.theme} selected={selectedGame === ind} />
+                      </CarouselItem>
+                    );
+                  })}
+              </Suspense>
             </CarouselContent>
           </Carousel>
         </div>
@@ -83,14 +129,29 @@ export default function SearchGuildWithGame(props: SearchGuildWithGameProps) {
           orientation="vertical"
           className="w-full"
         >
-          <CarouselContent className="h-[572px]">
-            {guildDummyData.map((e, ind) => (
-              <CarouselItem key={`${e.guild_name}_${ind}`} className="basis-1/2">
-                <Link href={'#'}>
-                  <GuildFullImage data={e} className="" />
-                </Link>
-              </CarouselItem>
-            ))}
+          <CarouselContent className={`h-[572px]`}>
+            {!isGuildFetched && (
+              <>
+                <CarouselItem className="basis-1/2">
+                  <GuildFullImageSkeleton className="" />
+                </CarouselItem>
+                <CarouselItem className="basis-1/2">
+                  <GuildFullImageSkeleton className="" />
+                </CarouselItem>
+                <CarouselItem className="basis-1/2">
+                  <GuildFullImageSkeleton className="" />
+                </CarouselItem>
+              </>
+            )}
+            {isGuildFetched &&
+              GuildSearch &&
+              GuildSearch.map((e) => (
+                <CarouselItem key={`${e.guild_id}`} className="basis-1/2">
+                  <Link href={GUILD_ROUTE.guild_detail(e.guild_id as unknown as string)}>
+                    <GuildFullImage data={e} className="" />
+                  </Link>
+                </CarouselItem>
+              ))}
           </CarouselContent>
         </Carousel>
         <div

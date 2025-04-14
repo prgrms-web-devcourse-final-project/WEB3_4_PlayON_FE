@@ -6,6 +6,7 @@ import { STEAM_AUTH_ENDPOINTS } from '@/constants/endpoints/steam-auth';
 import { useAuthStore } from '@/stores/authStore';
 import { useToast } from '@/hooks/use-toast';
 import { getSteamImage } from './steamImg';
+import { gameSimple } from '@/types/games';
 
 export const useMembers = () => {
   const axios = useAxios();
@@ -29,6 +30,23 @@ export const useMembers = () => {
       user_title: '',
       username: data.memberDetail.username,
     };
+    return ret;
+  }
+  async function GetMeGames() {
+    const response = await axios.Get(MEMBER.me, {}, false);
+    if (!response) return undefined;
+    const data = response.data.data;
+    console.log(data);
+
+    const ret: { gameData: gameSimple; appid: number }[] = data.ownedGames.map((e) => ({
+      gameData: {
+        title: e.name,
+        genre: e.genres,
+        img_src: e.headerImage,
+        background_src: '',
+      },
+      appid: e.appid,
+    }));
     return ret;
   }
   async function PutMe(
@@ -220,19 +238,30 @@ export const useMembers = () => {
     const response = await axios.Get(MEMBER.myPartyLogs, {}, true);
     if (response && response.status === 200) {
       const data = response.data.data;
-      return {};
+      return data;
     }
     return false;
   }
 
-  async function MyGames(count?: number) {
+  async function MyGames(count?: number): Promise<{ gameData: gameSimple[]; appid: number }> {
     const response = await axios.Get(
       MEMBER.games,
       { params: { count }, headers: { 'Content-Type': 'application/json' } },
       true
     );
-    console.log(response);
-    return response;
+    if (response && response.status === 200) {
+      const data = response.data.data;
+      return data.map((e) => ({
+        gameData: {
+          title: e.name as string,
+          genre: e.genres as string[],
+          img_src: e.headerImage as string,
+          background_src: '',
+        },
+        appid: e.appid as number,
+      }));
+    }
+    throw new Error('Failed to fetch myGames');
   }
   async function steamAuthSignup() {
     const response = await axios.Get(STEAM_AUTH_ENDPOINTS.signup, {}, true);
@@ -295,5 +324,6 @@ export const useMembers = () => {
     GetMyPartyLogs,
     GetUserParties,
     GetUserPartyLogs,
+    GetMeGames,
   };
 };
