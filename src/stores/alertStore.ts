@@ -5,22 +5,23 @@ type AlertState = {
   title: string;
   description?: string;
   onConfirm?: () => void;
-  showAlert: (title: string, description: string, onConfirm?: () => void) => void;
+  onCancle?: () => void;
+  showAlert: (title: string, description: string, onConfirm?: () => void, onCancle?: () => void) => void;
   closeAlert: () => void;
 };
 
-export const useAlertStore = create<AlertState>((set, get) => ({
+export const useAlertStore = create<AlertState>((set) => ({
   isOpen: false,
   title: '',
   description: '',
   onConfirm: undefined,
-  showAlert: (title, description, onConfirm) => {
-    set({ isOpen: true, title, description, onConfirm });
-    const current = get();
-    console.log(current.isOpen);
-    console.log(title);
-    console.log(description);
-    console.log(onConfirm);
+  onCancle: undefined,
+
+  showAlert: (title, description, onConfirm, onCancle) => {
+    set({ isOpen: true, title, description, onConfirm, onCancle });
   },
-  closeAlert: () => set({ isOpen: false }),
+
+  closeAlert: () => {
+    set({ isOpen: false });
+  },
 }));

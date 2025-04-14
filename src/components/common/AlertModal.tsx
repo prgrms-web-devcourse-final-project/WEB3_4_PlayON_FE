@@ -13,7 +13,7 @@ import {
 import { useAlertStore } from '@/stores/alertStore';
 
 export function AlertModal() {
-  const { isOpen, title, description, onConfirm, closeAlert } = useAlertStore();
+  const { isOpen, title, description, onConfirm, onCancle, closeAlert } = useAlertStore();
 
   return (
     <AlertDialog
@@ -28,7 +28,14 @@ export function AlertModal() {
           <AlertDialogDescription>{description}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={closeAlert}>취소</AlertDialogCancel>
+          <AlertDialogCancel
+            onClick={() => {
+              onCancle?.();
+              closeAlert();
+            }}
+          >
+            취소
+          </AlertDialogCancel>
           <AlertDialogAction
             onClick={() => {
               onConfirm?.();
