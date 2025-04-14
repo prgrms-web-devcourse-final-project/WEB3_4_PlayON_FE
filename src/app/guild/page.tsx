@@ -36,7 +36,7 @@ export default function Guild() {
   });
 
   const handleSearch = (value: string) => {
-    router.push(`${PATH.guild_list}?keyword=${value}`);
+    router.push(`${PATH.guild_list}?name=${value}`);
   };
 
   const dummyGameList: gameSimple[] = Array(4).fill(dummyGameSimple);
