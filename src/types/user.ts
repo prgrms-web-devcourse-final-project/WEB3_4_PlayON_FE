@@ -6,6 +6,7 @@ export interface userSimple {
   user_title: string;
   img_src: string;
   memberId: string;
+  partyMemberId?: string
 }
 
 export interface userDetail {
@@ -14,6 +15,7 @@ export interface userDetail {
   user_title: string;
   img_src: string | null;
   last_login_at: Date;
+  memberId?: string;
   steam_id: string;
   gender: (typeof userCategories.gender.items)[number];
   party_style: (typeof userCategories.playStyle.items)[number];

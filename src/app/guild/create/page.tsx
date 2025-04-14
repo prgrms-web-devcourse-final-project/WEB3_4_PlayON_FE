@@ -8,10 +8,9 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Input } from '@/components/ui/input';
 import { FormControl, FormField, FormItem, Form, FormMessage } from '@/components/ui/form';
-import { EditIcon, ImageIcon, SearchIcon } from 'lucide-react';
+import { EditIcon, ImageIcon } from 'lucide-react';
 import { guildTags } from '@/types/Tags/guildTags';
 import SelectedGameCard from '@/components/game/SelectedGameCard';
-import { dummyGameSimple } from '@/utils/dummyData';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { gameSimple } from '@/types/games';
@@ -20,6 +19,9 @@ import { useRouter } from 'next/navigation';
 import { PATH } from '@/constants/routes';
 import { CoolerCategoryMenu } from '@/app/signup/userdata/component/cooler-category-menu';
 import TiltToggle from '@/components/common/tilt-toggle';
+import { getSteamImage } from '@/api/steamImg';
+import GameSearch from '@/components/common/GameSearch';
+import { useToast } from '@/hooks/use-toast';
 
 const validFileTypes = ['png', 'jpg', 'jpeg', 'webp', ''];
 type FileType = 'png' | 'jpg' | 'jpeg' | 'webp' | '';
@@ -35,7 +37,10 @@ const createGuildFormSchema = z.object({
     .number()
     .min(2, { message: '길드 최대 인원은 2명 이상부터 가능합니다.' })
     .max(50, { message: '길드 최대 인원은 50명까지 가능합니다.' }),
-  game: z.string(),
+  game: z.object({
+    appid: z.number().min(1),
+    name: z.string().min(1),
+  }),
   partyStyle: z.array(z.string()),
   skillLevel: z.array(z.string()),
   gender: z.array(z.string()),
@@ -48,13 +53,13 @@ const createGuildFormSchema = z.object({
 
 export default function GuildCreate() {
   const Guild = useGuild();
+  const Toast = useToast();
   const form = useForm<z.infer<typeof createGuildFormSchema>>({
     defaultValues: {
       public: true,
       fileType: '',
       name: '',
       limit_people: 10,
-      game: '',
       partyStyle: [],
       skillLevel: [],
       gender: [],
@@ -98,6 +103,18 @@ export default function GuildCreate() {
         </div>
       </div>
     );
+  };
+
+  const handleSelectedGame = async (data: { appid: string; name: string }) => {
+    const imgsrc = await getSteamImage(data.appid, 'header');
+    const bgsrc = await getSteamImage(data.appid, 'background');
+
+    setSelectedGame({
+      title: data.name,
+      genre: [''],
+      img_src: imgsrc,
+      background_src: bgsrc,
+    });
   };
 
   const onChangeImage = (e: ChangeEvent<HTMLInputElement>) => {
@@ -188,18 +205,25 @@ export default function GuildCreate() {
       name: data.name,
       description: data.desc,
       maxMembers: data.limit_people,
-      appid: Number(data.game),
+      // appid: data.game?.appid ? data.game?.appid : null,
+      appid: data.game.appid || null,
       isPublic: data.public,
       fileType: data.fileType as FileType,
       tags: tagList,
     };
-    console.log(newData);
+    // console.log(newData);
     const response = await Guild.CreateGuildWithImg(newData, imageFile);
     console.log(response);
+    Toast.toast({
+      title: '길드가 생성되었습니다.',
+      variant: 'primary',
+    });
     router.push(PATH.guild_list);
   }
+
   useEffect(() => {
     beforeSubmit();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [partyStyle, skillLevel, gender, friendly]);
 
   return (
@@ -209,7 +233,7 @@ export default function GuildCreate() {
           <div className="flex justify-center gap-6">
             <div className="min-w-[411px] flex flex-col items-end">
               <div className="w-full h-[180px] rounded-2xl border border-neutral-300">
-                {selectedGame ? <SelectedGameCard data={dummyGameSimple} /> : <SelectedGameCard />}
+                {selectedGame ? <SelectedGameCard data={selectedGame} /> : <SelectedGameCard />}
               </div>
               <div className="flex items-center gap-2 mt-[25px]">
                 <FormField
@@ -301,30 +325,31 @@ export default function GuildCreate() {
                     <p className="text-xs text-neutral-400">최대 인원</p>
                   </div>
                 </div>
-                <div className="flex flex-col gap-4 w-[30rem]">
+                <div className="flex flex-col gap-2 w-[30rem]">
                   <p className="h2">
                     <span className="text-neutral-400">게임 제한</span>
                     <span className="text-xs text-neutral-400">(선택)</span>
                   </p>
                   <div className="flex flex-col gap-2">
-                    <FormField
+                    <FormField //게임 제목
                       control={form.control}
                       name="game"
                       render={({ field }) => (
                         <FormItem>
                           <FormControl>
-                            <div className="flex items-center gap-2 border border-neutral-300 rounded-lg h-10 p-2 group focus-within:ring-1 focus-within:ring-purple-600">
+                            <>
                               <Input
-                                className={`border-none focus-visible:ring-0 shadow-none`}
+                                className={`border-none shadow-none focus-visible:ring-0 opacity-0 absolute sr-only`}
                                 {...field}
-                                placeholder="게임 이름으로 검색하세요"
-                                onChange={() => {
-                                  field.onChange('1');
-                                  //검색 컴포넌트 호출 후 gameId 값 받아오기
+                                value={typeof field.value === 'object' && field.value?.appid ? field.value.appid : ''}
+                              />
+                              <GameSearch
+                                onSelect={(game) => {
+                                  handleSelectedGame(game);
+                                  field.onChange(game);
                                 }}
                               />
-                              <SearchIcon className={`text-neutral-400 size-5`} />
-                            </div>
+                            </>
                           </FormControl>
                         </FormItem>
                       )}
@@ -386,7 +411,7 @@ export default function GuildCreate() {
             </button>
             <button type="submit" onClick={() => console.log(form.formState.errors)}>
               <RetroButton type="purple" className="w-60 h-12">
-                파티 생성
+                길드 생성
               </RetroButton>
             </button>
           </div>

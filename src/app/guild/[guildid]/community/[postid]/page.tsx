@@ -7,7 +7,7 @@ import Tag from '@/components/common/Tag';
 import CommentCard from '@/components/community/comment-card';
 import WeNeedYou from '@/components/guild/guild-we-need-you';
 import { Button } from '@/components/ui/button';
-import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
 import { Toggle } from '@/components/ui/toggle';
 import { PATH } from '@/constants/routes';
@@ -18,26 +18,29 @@ import { useParams, useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import styles from './guildCommunityDetail.module.css';
+import { useCallback } from 'react';
+import { useToast } from '@/hooks/use-toast';
 
 const commentSchema = z.object({
-  content: z.string().min(1, { message: '댓글을 입력해주세요' }),
+  comment: z.string().min(1, { message: '댓글을 입력해주세요' }),
 });
 
 type CommentType = z.infer<typeof commentSchema>;
 
 export default function GuildCommunityDetail() {
   const form = useForm<z.infer<typeof commentSchema>>({
+    defaultValues: {
+      comment: '',
+    },
     resolver: zodResolver(commentSchema),
   });
-  function onSubmit(data: CommentType) {
-    console.log(data);
-  }
 
   const guild = useGuild();
   const guildBoard = useGuildBoard();
   const param = useParams();
   const router = useRouter();
   const queryClient = useQueryClient();
+  const Toast = useToast();
   const guildId = param.guildid as string;
   const boardId = param.postid as string;
 
@@ -51,11 +54,28 @@ export default function GuildCommunityDetail() {
     queryFn: () => guildBoard.GuildPostDetail(parseInt(guildId), parseInt(boardId)),
   });
 
-  const handleClickLike = async () => {
+  const handleClickLike = useCallback(async () => {
     const response = await guildBoard.GuildPostLike(parseInt(guildId), parseInt(boardId));
     console.log(response);
     queryClient.refetchQueries({ queryKey: ['PostDetailData', guildId, boardId], exact: true });
-  };
+  }, []);
+
+  const deletePost = useCallback(async () => {
+    const response = await guildBoard.GuildPostDelete(parseInt(guildId), parseInt(boardId));
+    if (response) {
+      Toast.toast({
+        title: '게시물이 삭제되었습니다.',
+        variant: 'primary',
+      });
+    }
+    router.push(PATH.guild_community(guildId));
+  }, []);
+
+  async function onSubmit(data: CommentType) {
+    const response = await guildBoard.GuildPostCommentCreate(Number(guildId), Number(boardId), data.comment);
+    if (response) form.setValue('comment', '');
+    queryClient.refetchQueries({ queryKey: ['PostDetailData', guildId, boardId], exact: true });
+  }
 
   return (
     <div className="wrapper relative mb-12 mt-28">
@@ -93,7 +113,11 @@ export default function GuildCommunityDetail() {
                     <SquarePen strokeWidth={1.4} /> 수정
                   </Button>
 
-                  <Button size="sm" className=" bg-neutral-200 hover:bg-neutral-100 text-neutral-500 text-sm">
+                  <Button
+                    size="sm"
+                    className=" bg-neutral-200 hover:bg-neutral-100 text-neutral-500 text-sm"
+                    onClick={deletePost}
+                  >
                     <Trash2 strokeWidth={1.4} /> 삭제
                   </Button>
                 </div>
@@ -121,7 +145,7 @@ export default function GuildCommunityDetail() {
               <Toggle
                 variant="outline"
                 size="lg"
-                className="rounded-full text-neutral-400 border-neutral-300 text-xl"
+                className="rounded-full text-neutral-400 border-neutral-300 text-xl min-w-[60px] hover:text-purple-500 hover:bg-purple-50 focus-visible:text-purple-500 data-[state=on]:bg-purple-50 data-[state=on]:text-purple-500"
                 onClick={handleClickLike}
               >
                 <ThumbsUp /> {postData.num_likes}
@@ -129,7 +153,7 @@ export default function GuildCommunityDetail() {
             </div>
             <div className="divide-y divide-neutral-300">
               {postData.comments.map((comment, idx) => (
-                <CommentCard key={idx} data={comment} />
+                <CommentCard key={idx} data={comment} guildId={guildId} boardId={boardId} />
               ))}
             </div>
             <div className="space-y-5">
@@ -140,7 +164,7 @@ export default function GuildCommunityDetail() {
                 <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-5">
                   <FormField
                     control={form.control}
-                    name="content"
+                    name="comment"
                     render={({ field }) => (
                       <FormItem>
                         <FormControl>
@@ -151,7 +175,7 @@ export default function GuildCommunityDetail() {
                             className="h-24 resize-none focus-visible:ring-purple-400 placeholder:text-neutral-400"
                           />
                         </FormControl>
-                        {/* <FormMessage /> */}
+                        <FormMessage className="text-purple-400" />
                       </FormItem>
                     )}
                   />

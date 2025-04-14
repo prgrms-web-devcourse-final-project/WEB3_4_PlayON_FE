@@ -8,6 +8,7 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from '@/component
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { PATH } from '@/constants/routes';
+import { useToast } from '@/hooks/use-toast';
 import { guildCommunityTags } from '@/types/Tags/communityTags';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQuery } from '@tanstack/react-query';
@@ -31,6 +32,7 @@ export default function GuildCommunityCreate() {
   const router = useRouter();
   const guild = useGuild();
   const guildBoard = useGuildBoard();
+  const Toast = useToast();
   const params = useParams();
   const guildId = params.guildid as string;
 
@@ -78,6 +80,12 @@ export default function GuildCommunityCreate() {
   async function onSubmit(data: createCommunityFormType) {
     const response = await guildBoard.GuildPostCreateWithImg(Number(guildId), data, imageFile);
     console.log(response);
+    if (response) {
+      Toast.toast({
+        title: '게시물이 생성되었습니다.',
+        variant: 'primary',
+      });
+    }
     router.push(PATH.guild_community(guildId));
   }
 

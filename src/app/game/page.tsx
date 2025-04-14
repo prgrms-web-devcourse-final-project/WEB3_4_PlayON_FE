@@ -19,6 +19,7 @@ export default function Game() {
       <section className="wrapper space-y-20">
         <GenreRecommendation />
         <PlaytimeRecommendation />
+        <BounceButton path={PATH.game_list} type="game" tootip="게임 찾기" />
       </section>
     </main>
   );

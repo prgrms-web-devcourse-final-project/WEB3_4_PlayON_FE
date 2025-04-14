@@ -109,22 +109,23 @@ export const useParty = () => {
   }
 
   async function CreateParty(data: createPartyReq) {
+    console.log(data);
     const res = await axios.Post(PARTY_ENDPOINTS.create, { ...data }, {}, true);
     if (res && res.status == 201) {
       router.push(PATH.party_detail(res.data.data.id));
     }
   }
-  async function ModifyParty(data: party & { public: boolean; partyId: string }) {
+  async function ModifyParty(data: party & { isPublic: boolean; partyId: string }) {
     const res = axios.Put(
       PARTY_ENDPOINTS.modify(data.partyId),
       {
         name: data.party_name,
         description: data.description,
         partyAt: data.start_time,
-        isPublic: true,
+        isPublic: data.isPublic,
         minimum: data.num_minimum && 2,
         maximum: data.num_maximum,
-        gameId: data.selected_game,
+        appId: data.selected_game,
         tags: data.tags,
       },
       {},
@@ -147,6 +148,8 @@ export const useParty = () => {
   async function PartyResult(partyId: string) {
     const res = await axios.Get(PARTY_ENDPOINTS.result(partyId), {}, false);
     console.log(res);
+    console.log(res?.data);
+    return res;
   }
   async function GetPendingList(partyId: string) {
     const res = await axios.Get(PARTY_ENDPOINTS.pending(partyId), {}, false);

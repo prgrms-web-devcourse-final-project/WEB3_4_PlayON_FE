@@ -48,12 +48,12 @@ export type createPartyReq = {
   isPublic: boolean;
   minimum: number;
   maximum: number;
-  gameId: number | string;
+  appId: number | string;
   tags: tag[];
 };
 
 export type getPartiesReq = {
-  gameId?: string | number;
+  appId?: string | number;
   genres?: string[];
   tags?: tag[];
 };

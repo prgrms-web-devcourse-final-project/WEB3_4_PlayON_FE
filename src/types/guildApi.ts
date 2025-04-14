@@ -15,7 +15,7 @@ export interface GuildCreateRequest {
   name: string;
   description: string;
   maxMembers: number;
-  appid: number;
+  appid: number | null;
   isPublic: boolean;
   fileType: FileType;
   tags: GuildTag[];

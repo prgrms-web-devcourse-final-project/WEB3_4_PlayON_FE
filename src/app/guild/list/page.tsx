@@ -10,8 +10,8 @@ import { useGuild } from '@/api/guild';
 import { useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { PATH } from '@/constants/routes';
-import Link from 'next/link';
-import styles from '@/app/party/[partyid]/partyDetail.module.css';
+import BounceButton from '@/components/common/BounceButton';
+import GhostSVG from '@/components/svg/ghost_fill';
 const sortOptions: SortOption[] = [
   { id: 'latest', label: '최신순' },
   { id: 'activity', label: '활동순' },
@@ -29,6 +29,7 @@ export default function GuildList() {
   const params = useSearchParams();
 
   const [guildList, setGuildList] = useState<guild[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [totalItems, setTotalItems] = useState(0);
 
   function splitTag(params: URLSearchParams, paramName: string, type: string): { type: string; value: string }[] {
@@ -47,20 +48,33 @@ export default function GuildList() {
     const name = params.get('name') ?? '';
     const orderBy = params.get('sort') ?? 'latest';
     const page = Number(params.get('page'));
-    // const appids = params.get('genres')?.split(',');
-    const response = await guild.GetGuildList(
-      {
-        name: name,
-        appids: [],
-        tags: [...partyStyle, ...skillLevel, ...gender, ...friendly],
-      },
-      page == 0 ? 1 : page,
-      9,
-      orderBy
-    );
-    if (!response) return;
-    setGuildList(response.guildList);
-    setTotalItems(response.totalItems);
+    const appId = Number(params.get('appId'));
+    try {
+      setIsLoading(true);
+      const response = await guild.GetGuildList(
+        {
+          name: name,
+          appids: appId ? [appId] : [],
+          tags: [...partyStyle, ...skillLevel, ...gender, ...friendly],
+        },
+        page == 0 ? 1 : page,
+        9,
+        orderBy
+      );
+
+      if (!response) {
+        setGuildList([]);
+        setTotalItems(0);
+        return;
+      }
+
+      setGuildList(response.guildList);
+      setTotalItems(response.totalItems);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setIsLoading(false);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -94,35 +108,23 @@ export default function GuildList() {
       <section className="wrapper space-y-10">
         <SortRadioGroup options={sortOptions} />
         <div className="grid grid-cols-3 gap-6">
-          {guildList.length > 0
+          {isLoading ? (
+            [...Array(3)].map((_, idx) => <GuildHorizonSkeleton key={idx} className="" />)
+          ) : guildList.length > 0 && totalItems ? (
+            guildList.map((guild) => <GuildHorizon key={guild.guild_id} data={guild} />)
+          ) : (
+            <div className="flex self-start pt-20 gap-4">
+              <GhostSVG width={32} fill="#9884F0" stroke="" />
+              <p className="font-dgm text-2xl text-neutral-800">게시글이 없습니다.</p>
+            </div>
+          )}
+          {/* {guildList.length > 0
             ? guildList.map((guild) => <GuildHorizon key={guild.guild_id} data={guild} />)
-            : [...Array(3)].map((_, idx) => <GuildHorizonSkeleton key={idx} className="" />)}
+            : [...Array(3)].map((_, idx) => <GuildHorizonSkeleton key={idx} className="" />)} */}
         </div>
         <CustomPagination totalItems={totalItems} pageSize={9} />
-        <CreateButton />
+        <BounceButton path={PATH.guild_create} type="guild" tootip="길드 만들기" />
       </section>
     </div>
   );
 }
-
-const CreateButton = () => {
-  return (
-    <div className="fixed right-8 bottom-8 z-50 animate-bounce delay-150">
-      <Link href={PATH.guild_create} className="relative group">
-        <p
-          className={`${styles.chatBubble} opacity-0 translate-y-12 transition-all duration-300 
-    text-white text-center font-dgm bg-purple-500 py-2 px-3 shadow-md rounded-lg
-    group-hover:opacity-100 group-hover:translate-y-0 group-hover:rotate-6 mb-5 -translate-x-3
-  `}
-        >
-          길드 만들기
-        </p>
-        <img
-          className="group-hover:scale-[120%] group-hover:-rotate-12 transition-all w-[60px]"
-          src="/img/3d_object/balloon.svg"
-          alt="balloon"
-        />
-      </Link>
-    </div>
-  );
-};

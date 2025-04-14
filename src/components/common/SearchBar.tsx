@@ -8,9 +8,10 @@ interface SearchBarProps {
   placeholder?: string;
   onChange: (value: string) => void;
   onSearch: (value: string) => void;
+  iconStyle?: string;
 }
 
-export default function SearchBar({ className, placeholder, onChange, onSearch }: SearchBarProps) {
+export default function SearchBar({ className, placeholder, onChange, onSearch, iconStyle }: SearchBarProps) {
   const valueRef = useRef<HTMLInputElement | null>(null);
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -45,7 +46,7 @@ export default function SearchBar({ className, placeholder, onChange, onSearch }
           }
         }}
       >
-        <SearchIcon className="text-neutral-400" />
+        <SearchIcon className={`text-neutral-400 ` + iconStyle} />
       </button>
     </div>
   );
