@@ -86,7 +86,7 @@ export default function Community() {
           <CommunityMenuBar className="sticky top-10 bg-white" />
         </div>
         {totalItems > 0 && (
-          <section className="w-full space-y-10 pt-8">
+          <section className="w-full space-y-4 pt-16">
             <SortRadioGroup options={sortOptions} />
             <div className="w-full divide-y divide-neutral-200">
               {postList.map((post) => {
