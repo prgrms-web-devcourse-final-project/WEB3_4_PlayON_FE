@@ -14,7 +14,7 @@ import SelectedGameCard from '@/components/game/SelectedGameCard';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useParty } from '@/api/party';
 import GameSearch from '@/components/common/GameSearch';
 import { gameSimple } from '@/types/games';
@@ -23,6 +23,8 @@ import { guildTags } from '@/types/Tags/guildTags';
 import { CoolerCategoryMenu } from '@/app/signup/userdata/component/cooler-category-menu';
 import TiltToggle from '@/components/common/tilt-toggle';
 import Image from 'next/image';
+import { useAlertStore } from '@/stores/alertStore';
+import { useRouter } from 'next/navigation';
 type ToastError = {
   message: string;
   ref: { name: string };
@@ -67,8 +69,10 @@ const createPartyFormSchema = z
 export default function PartyCreate() {
   const Toast = useToast();
   const party = useParty();
+  const router = useRouter();
   const [selectedGame, setSelectedGame] = useState<gameSimple>();
   const dateInputRef = useRef<HTMLInputElement>(null);
+  const { showAlert } = useAlertStore();
 
   //필터 State
   const partyStyle = useState([true, ...new Array(guildTags.partyStyle.items.length).fill(false)]);
@@ -77,7 +81,6 @@ export default function PartyCreate() {
   const friendly = useState([true, ...new Array(guildTags.friendly.items.length).fill(false)]);
   const selectedArr = [partyStyle, skillLevel, gender, friendly];
 
-  //핸들러
   const handleSelectedGame = async (data: { appid: string; name: string }) => {
     const imgsrc = await getSteamImage(data.appid, 'header');
     const bgsrc = await getSteamImage(data.appid, 'background');
@@ -87,6 +90,12 @@ export default function PartyCreate() {
       genre: [''],
       img_src: imgsrc,
       background_src: bgsrc,
+    });
+  };
+
+  const handleCancle = () => {
+    showAlert('파티 생성을 취소하시겠습니까?', '', () => {
+      router.back();
     });
   };
   const form = useForm<z.infer<typeof createPartyFormSchema>>({
@@ -352,7 +361,11 @@ export default function PartyCreate() {
                 />
               </div>
               <div className="flex justify-end mt-11 gap-3">
-                <button className="bg-neutral-400 text-white rounded-full w-32 mt-2 h-12 hover:bg-neutral-600 transition-colors">
+                <button
+                  type="button"
+                  onClick={handleCancle}
+                  className="bg-neutral-400 text-white rounded-full w-32 mt-2 h-12 hover:bg-neutral-600 transition-colors"
+                >
                   취소
                 </button>
                 <button type="submit">
