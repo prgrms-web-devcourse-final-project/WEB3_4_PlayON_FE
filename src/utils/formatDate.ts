@@ -1,5 +1,8 @@
 // 날짜 포맷팅 함수
-export default function formatDate(targetDate: Date, fullDate?: boolean) {
+export default function formatDate(targetDate: Date | string, fullDate?: boolean) {
+  if (typeof targetDate === 'string') {
+    targetDate = new Date(targetDate);
+  }
   if (fullDate) {
     return targetDate.toLocaleString('ko-KR', {
       year: 'numeric',
