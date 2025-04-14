@@ -48,7 +48,7 @@ export default function PartyLogCard({ data }: PartyCardProps) {
     fetchBg();
   }, []);
   return (
-    <div className="flex flex-col gap-4 p-5 rounded-xl bg-white border-[1px] border-neutral-300 cursor-pointer w-full aspect-[113/100]">
+    <div className="flex flex-col gap-4 p-5 rounded-xl bg-white border-[1px] border-neutral-300 w-full aspect-[113/100]">
       <div
         style={{
           backgroundImage: `url(${bg})`,
@@ -71,7 +71,7 @@ export default function PartyLogCard({ data }: PartyCardProps) {
           ))}
         </div>
       </div>
-      <Button className="text-lg h-10" onClick={handleClick}>
+      <Button className="text-lg h-10 cursor-pointer hover:bg-purple-700" onClick={handleClick}>
         파티 로그 확인
       </Button>
     </div>
