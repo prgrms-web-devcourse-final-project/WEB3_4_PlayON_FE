@@ -40,8 +40,9 @@ export default function typeConverter<T extends ConvertingType, D extends Direct
 //멤버 아이디 부족, 유저 아이디 없음
 export const useFreeCommunity = () => {
   const axios = useAxios();
-  async function PostDetail(boardId: number): Promise<post> {
+  async function PostDetail(boardId: number): Promise<post & { isAuthor: boolean; isLiked: boolean }> {
     const response = await axios.Get(FREECOMMUNITY_ENDPOINTS.postDetail(boardId), {}, true);
+    // console.log('PostDetail', response);
     if (response && response.status === 200) {
       const data = response.data.data;
       return {
@@ -49,12 +50,12 @@ export const useFreeCommunity = () => {
         comments: [],
         num_comments: 0,
         content: data.content as string,
-        created_at: data.createAt as Date,
+        created_at: new Date(data.createAt),
         hits: data.hit as number,
         img_src: data.imgUrl as string,
         num_likes: data.like as number,
-        tag: typeConverter('FreeCommunityCategories', 'EnToKo', data.boardCategory),
-        title: data.title as string,
+        tag: data.boardCategory,
+        title: data.boardTitle as string,
         user: {
           img_src: data.profileImage as string,
           memberId: '0',
@@ -62,6 +63,8 @@ export const useFreeCommunity = () => {
           user_title: data.title as string,
           username: '',
         },
+        isAuthor: data.isAuthor,
+        isLiked: data.isLiked,
       };
     }
     throw new Error('Failed to fetch');
@@ -153,7 +156,7 @@ export const useFreeCommunity = () => {
     const response = await axios.Get(FREECOMMUNITY_ENDPOINTS.postList, { params: { ...input } }, true);
     if (response && response.status === 200) {
       const data = response.data.data;
-      console.log('PostList', data);
+      // console.log('PostList', data);
       return {
         currentPageNumber: data.currentPageNumber,
         pageSize: data.pageSize,
@@ -217,36 +220,38 @@ export const useFreeCommunity = () => {
     pageSize: number;
     totalPages: number;
     totalItems: number;
-    items: { comment: comment; created_at: Date }[];
+    items: comment[];
   }> {
     const response = await axios.Get(FREECOMMUNITY_ENDPOINTS.commentGet(boardId), { params: { ...input } }, true);
     if (response && response.status === 200) {
       const data = response.data.data;
+      // console.log('CommentGet', data);
       return {
         currentPageNumber: data.currentPageNumber,
         pageSize: data.pageSize,
         totalPages: data.totalPages,
         totalItems: data.totalItems,
         items: data.items.map((e) => ({
-          comment: {
-            user: {
-              username: '',
-              nickname: e.nickname,
-              user_title: '',
-              img_src: e.profileImg,
-              memberId: '',
-            },
-            content: e.comment,
+          user: {
+            username: '',
+            nickname: e.nickname,
+            user_title: '',
+            img_src: e.profileImg,
+            memberId: '',
           },
-          created_at: e.createAt,
+          content: e.comment,
+          createdAt: new Date(e.createAt),
+          commentId: e.commentId,
+          isAuthor: e.isAuthor,
         })),
       };
     }
     throw new Error('Failed to fetch comments');
   }
   async function CommentCreate(boardId: number, input: { comment: string }) {
-    const response = await axios.Post(FREECOMMUNITY_ENDPOINTS.commentCreate(boardId), { ...input }, {}, true);
-    if (response && response.status === 200) {
+    const response = await axios.Post(FREECOMMUNITY_ENDPOINTS.commentCreate(boardId), input, {}, true);
+    console.log(response);
+    if (response && response.status === 201) {
       const data = response.data.data;
       return {
         commentId: data.commentId,

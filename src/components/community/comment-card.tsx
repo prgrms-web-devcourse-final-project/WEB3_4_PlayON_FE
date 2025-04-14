@@ -1,3 +1,4 @@
+import { useFreeCommunity } from '@/api/free-community';
 import { useGuildBoard } from '@/api/guildBoard';
 import { useToast } from '@/hooks/use-toast';
 import { comment } from '@/types/community';
@@ -6,25 +7,37 @@ import { useCallback } from 'react';
 
 interface CommentCardProps {
   data: comment;
-  guildId: string;
+  guildId?: string;
   boardId: string;
 }
 export default function CommentCard({ data, guildId, boardId }: CommentCardProps) {
   const guildBoard = useGuildBoard();
+  const freeBoard = useFreeCommunity();
   const queryClient = useQueryClient();
   const Toast = useToast();
 
   const deleteComment = useCallback(async () => {
-    const response = await guildBoard.GuildPostCommentDelete(parseInt(guildId), parseInt(boardId), data.commentId);
-    if (response) {
-      Toast.toast({
-        title: '댓글이 삭제되었습니다.',
-        variant: 'primary',
-      });
+    if (guildId) {
+      const response = await guildBoard.GuildPostCommentDelete(parseInt(guildId), parseInt(boardId), data.commentId);
+      if (response) {
+        Toast.toast({
+          title: '댓글이 삭제되었습니다.',
+          variant: 'primary',
+        });
+      }
+      queryClient.refetchQueries({ queryKey: ['PostDetailData', guildId, boardId], exact: true });
+    } else {
+      const response = await freeBoard.CommentDelete(parseInt(boardId), data.commentId);
+      if (response) {
+        Toast.toast({
+          title: '댓글이 삭제되었습니다.',
+          variant: 'primary',
+        });
+      }
+      queryClient.refetchQueries({ queryKey: ['FreePostComments', boardId], exact: true });
     }
-    queryClient.refetchQueries({ queryKey: ['PostDetailData', guildId, boardId], exact: true });
   }, []);
-  console.log(data);
+  // console.log(data);
 
   return (
     <div className="flex gap-4 py-5 w-full">

@@ -55,10 +55,10 @@ export default function Community() {
       if (page !== null) Object.assign(data, { page: Number(page) });
       if (pageSize) Object.assign(data, { pageSize });
       if (sort) Object.assign(data, { sort });
-      console.log('data:', data);
+      // console.log('data:', data);
 
       const posts = await freeBoard.PostList(data);
-      console.log(posts);
+      // console.log(posts);
       if (posts) {
         setPostList(posts.items);
         setTotalItems(posts.totalItems);
