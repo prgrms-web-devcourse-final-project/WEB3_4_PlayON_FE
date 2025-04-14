@@ -101,7 +101,7 @@ export default function Header() {
           <Link className={linkStyle} href={PATH.game}>
             게임 추천
           </Link>
-          <Link className={linkStyle} href={PATH.guild}>
+          <Link className={linkStyle} href={PATH.community}>
             커뮤니티
           </Link>
         </div>
