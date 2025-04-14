@@ -343,8 +343,8 @@ export const ChattingContextProvider = ({ children }: { children: React.ReactNod
       };
       try {
         client.current.publish({
-          destination: CHAT_ENDPOINTS.subscribe_message(parseInt(partyInfo.partyId)),
-          body: JSON.stringify(_message),
+          destination: CHAT_ENDPOINTS.send_message(parseInt(partyInfo.partyId)),
+          body: _message.message,
           skipContentLengthHeader: true,
         });
       } catch (error) {
