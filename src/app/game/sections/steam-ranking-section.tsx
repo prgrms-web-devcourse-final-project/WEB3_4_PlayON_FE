@@ -29,17 +29,13 @@ export default function SteamRankingSection() {
     <section className="w-full">
       <div className="bg-[url('/img/hero/bg_gameList_5.webp')] bg-cover bg-center size-full">
         <div className="bg-purple-800/60 size-full backdrop-blur-md">
-          <div className="wrapper py-12 space-y-8">
-            <p className="text-5xl font-suit font-bold text-white">STEAM RANKING</p>
-
-            <div className="flex gap-6 justify-center">
+          <div className="wrapper py-12 space-y-8 flex flex-col">
+            <p className="text-5xl font-suit font-bold text-white w-full">STEAM RANKING</p>
+            <div className="flex gap-6">
               <Link href={GAME_ROUTE.game_detail(steamRanking ? steamRanking[0].appid : 1)}>
-                <div className="w-[700px] space-y-8">
+                <div className="w-[800px] space-y-8 ">
                   <div className="relative pt-3">
-                    <img
-                      src={steamRanking ? steamRanking[0].img_src : ''}
-                      className="w-full rounded-xl bg-neutral-400 object-cover"
-                    />
+                    <img src={steamRanking ? steamRanking[0].img_src : ''} className="w-full rounded-xl object-cover" />
                     <div className="absolute top-0 left-0 pt-6 pl-3 w-32">
                       <img src="/img/laurel/laurel_1st.png" />
                     </div>
@@ -54,7 +50,6 @@ export default function SteamRankingSection() {
                   </div>
                 </div>
               </Link>
-
               <div className="grid grid-cols-2 gap-6 w-[411px]">
                 {steamRanking && steamRanking.length > 0 ? (
                   steamRanking.slice(1, 5).map((e, ind) => (
