@@ -3,11 +3,12 @@
 import { guildTags } from '@/types/Tags/guildTags';
 import SearchBar from '../common/SearchBar';
 import PixelCharacter from '../PixelCharacter/PixelCharacter';
-import Chip from '@/components/common/chip';
+// import Chip from '@/components/common/chip';
 import { useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { CoolerCategoryMenu } from '@/app/signup/userdata/component/cooler-category-menu';
 import TiltToggle from '../common/tilt-toggle';
+import GameSearch from '../common/GameSearch';
 
 type GuildSearchComponentProps = {
   className: string;
@@ -16,7 +17,8 @@ type GuildSearchComponentProps = {
 export default function GuildSearchComponent(props: GuildSearchComponentProps) {
   const searchParam = useSearchParams();
 
-  const [selectedGames, setSelectedGames] = useState<string[]>([]);
+  // const [searchName, setSearchName] = useState('');
+  const [selectedGames, setSelectedGames] = useState('');
   const [searchByName, setSearchByName] = useState<string>('');
   const partyStyle = useState([true, ...new Array(guildTags.partyStyle.items.length).fill(false)]);
   const skillLevel = useState([true, ...new Array(guildTags.skillLevel.items.length).fill(false)]);
@@ -28,21 +30,24 @@ export default function GuildSearchComponent(props: GuildSearchComponentProps) {
   const handleSearchByName = useCallback((value: string) => {
     setSearchByName(value);
   }, []);
-  const handleChipAdded = useCallback(
-    (value: string) => {
-      if (selectedGames.findIndex((e) => e === value) === -1) setSelectedGames([...selectedGames, value]);
-    },
-    [selectedGames]
-  );
-  const handleChipDelete = useCallback(
-    (content: string) => {
-      const index = selectedGames.findIndex((e) => e === content);
-      const temp = [...selectedGames];
-      temp.splice(index, 1);
-      setSelectedGames(temp);
-    },
-    [selectedGames]
-  );
+  const handleSearchName = useCallback((value: string) => {
+    setSelectedGames(value);
+  }, []);
+  // const handleChipAdded = useCallback(
+  //   (value: string) => {
+  //     if (selectedGames.findIndex((e) => e === value) === -1) setSelectedGames([...selectedGames, value]);
+  //   },
+  //   [selectedGames]
+  // );
+  // const handleChipDelete = useCallback(
+  //   (content: string) => {
+  //     const index = selectedGames.findIndex((e) => e === content);
+  //     const temp = [...selectedGames];
+  //     temp.splice(index, 1);
+  //     setSelectedGames(temp);
+  //   },
+  //   [selectedGames]
+  // );
 
   useEffect(() => {
     const newUrl = new URL(window.location.href);
@@ -86,17 +91,31 @@ export default function GuildSearchComponent(props: GuildSearchComponentProps) {
     // router.replace(newUrl.toString(), { scroll: false });
     window.history.pushState({}, '', newUrl);
   }, [partyStyle, skillLevel, gender, friendly]);
+  // useEffect(() => {
+  //   const newUrl = new URL(window.location.href);
+  //   const newGenres = selectedGames.join(',');
+  //   if (newGenres.length > 0) {
+  //     newUrl.searchParams.set('genres', newGenres);
+  //     // router.replace(newUrl.toString(), { scroll: false });
+  //   } else {
+  //     newUrl.searchParams.delete('genres');
+  //   }
+  //   window.history.pushState({}, '', newUrl);
+  // }, [selectedGames]);
+
   useEffect(() => {
     const newUrl = new URL(window.location.href);
-    const newGenres = selectedGames.join(',');
-    if (newGenres.length > 0) {
-      newUrl.searchParams.set('genres', newGenres);
+    if (selectedGames.toString().length > 0) {
+      newUrl.searchParams.set('appId', selectedGames);
       // router.replace(newUrl.toString(), { scroll: false });
-    } else {
-      newUrl.searchParams.delete('genres');
+      window.history.pushState({}, '', newUrl);
     }
-    window.history.pushState({}, '', newUrl);
+    if (selectedGames.toString().length === 0) {
+      newUrl.searchParams.delete('appId');
+      window.history.pushState({}, '', newUrl);
+    }
   }, [selectedGames]);
+
   useEffect(() => {
     const newUrl = new URL(window.location.href);
     if (searchByName.length > 0) {
@@ -146,34 +165,45 @@ export default function GuildSearchComponent(props: GuildSearchComponentProps) {
       friendly[1]([false, ...guildTags.friendly.items.map((e) => temp.includes(e))]);
     }
 
-    const Genres = searchParam.get('genres');
-    if (Genres) {
-      const temp = Genres.split(',');
-      setSelectedGames(temp);
-    }
+    // const Genres = searchParam.get('genres');
+    // if (Genres) {
+    //   const temp = Genres.split(',');
+    //   setSelectedGames(temp);
+    // }
 
     const searchByName = searchParam.get('name');
     if (searchByName) {
       setSearchByName(searchByName);
     }
+
+    const SearchName = searchParam.get('appId');
+    if (SearchName) {
+      setSelectedGames(SearchName);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <div className={`flex rounded-xl py-8 px-9 bg-neutral-50 gap-14 ${props.className}`}>
-      <div className="flex flex-col w-[774px] gap-6">
+      <div className="flex flex-col w-[774px] gap-12">
         <div className="flex gap-4">
           <div className="flex flex-col w-full gap-2">
             <p>길드 이름</p>
-            <SearchBar onChange={() => {}} onSearch={handleSearchByName} placeholder={searchByName} />
+            <SearchBar
+              onChange={() => {}}
+              onSearch={handleSearchByName}
+              placeholder={searchByName}
+              className="h-10"
+              iconStyle="size-4"
+            />
           </div>
           <div className="flex flex-col w-full gap-2">
             <p>길드 메인 게임</p>
-            <SearchBar onChange={() => {}} onSearch={handleChipAdded} />
-            <div className="flex gap-2 h-6">
-              {selectedGames.map((e, ind) => (
-                <Chip content={e} onClickDelete={(content) => handleChipDelete(content)} key={ind} />
-              ))}
-            </div>
+            <GameSearch
+              onSelect={(e) => {
+                handleSearchName(e.appid);
+              }}
+            />
           </div>
         </div>
         <div className="flex flex-col gap-2">

@@ -205,6 +205,7 @@ export default function GuildCreate() {
       name: data.name,
       description: data.desc,
       maxMembers: data.limit_people,
+      // appid: data.game?.appid ? data.game?.appid : null,
       appid: data.game.appid || null,
       isPublic: data.public,
       fileType: data.fileType as FileType,

@@ -11,6 +11,7 @@ import { useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { PATH } from '@/constants/routes';
 import BounceButton from '@/components/common/BounceButton';
+import GhostSVG from '@/components/svg/ghost_fill';
 const sortOptions: SortOption[] = [
   { id: 'latest', label: '최신순' },
   { id: 'activity', label: '활동순' },
@@ -28,6 +29,7 @@ export default function GuildList() {
   const params = useSearchParams();
 
   const [guildList, setGuildList] = useState<guild[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [totalItems, setTotalItems] = useState(0);
 
   function splitTag(params: URLSearchParams, paramName: string, type: string): { type: string; value: string }[] {
@@ -46,20 +48,30 @@ export default function GuildList() {
     const name = params.get('name') ?? '';
     const orderBy = params.get('sort') ?? 'latest';
     const page = Number(params.get('page'));
-    // const appids = params.get('genres')?.split(',');
-    const response = await guild.GetGuildList(
-      {
-        name: name,
-        appids: [],
-        tags: [...partyStyle, ...skillLevel, ...gender, ...friendly],
-      },
-      page == 0 ? 1 : page,
-      9,
-      orderBy
-    );
-    if (!response) return;
-    setGuildList(response.guildList);
-    setTotalItems(response.totalItems);
+    const appId = Number(params.get('appId'));
+    try {
+      setIsLoading(true);
+      const response = await guild.GetGuildList(
+        {
+          name: name,
+          appids: appId ? [appId] : [],
+          tags: [...partyStyle, ...skillLevel, ...gender, ...friendly],
+        },
+        page == 0 ? 1 : page,
+        9,
+        orderBy
+      );
+      if (!response) return;
+      // if (response.guildList.length <=0) {
+
+      // }
+      setGuildList(response.guildList);
+      setTotalItems(response.totalItems);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setIsLoading(false);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -93,9 +105,19 @@ export default function GuildList() {
       <section className="wrapper space-y-10">
         <SortRadioGroup options={sortOptions} />
         <div className="grid grid-cols-3 gap-6">
-          {guildList.length > 0
+          {isLoading ? (
+            [...Array(3)].map((_, idx) => <GuildHorizonSkeleton key={idx} className="" />)
+          ) : guildList.length > 0 && totalItems ? (
+            guildList.map((guild) => <GuildHorizon key={guild.guild_id} data={guild} />)
+          ) : (
+            <div className="flex self-start pt-20 gap-4">
+              <GhostSVG width={32} fill="#9884F0" stroke="" />
+              <p className="font-dgm text-2xl text-neutral-800">게시글이 없습니다.</p>
+            </div>
+          )}
+          {/* {guildList.length > 0
             ? guildList.map((guild) => <GuildHorizon key={guild.guild_id} data={guild} />)
-            : [...Array(3)].map((_, idx) => <GuildHorizonSkeleton key={idx} className="" />)}
+            : [...Array(3)].map((_, idx) => <GuildHorizonSkeleton key={idx} className="" />)} */}
         </div>
         <CustomPagination totalItems={totalItems} pageSize={9} />
         <BounceButton path={PATH.guild_create} type="guild" tootip="길드 만들기" />
