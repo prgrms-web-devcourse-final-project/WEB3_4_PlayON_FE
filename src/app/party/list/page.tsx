@@ -15,7 +15,7 @@ import { party } from '@/types/party';
 
 import { ChevronDown } from 'lucide-react';
 import Link from 'next/link';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 
 const sortOptions: SortOption[] = [
@@ -63,6 +63,8 @@ export default function PartyList() {
   };
 
   const fetchData = useCallback(async (params: URLSearchParams) => {
+    console.log('fecthData callback', params);
+
     const partyStyle = splitTag(params, 'partyStyle', 'PARTY_STYLE');
     const skillLevel = splitTag(params, 'skillLevel', 'GAME_SKILL');
     const gender = splitTag(params, 'gender', 'GENDER');
@@ -91,6 +93,8 @@ export default function PartyList() {
   }, []);
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+
     const handlePopState = () => {
       fetchData(new URLSearchParams(window.location.search));
     };
@@ -101,6 +105,11 @@ export default function PartyList() {
       window.removeEventListener('popstate', handlePopState);
     };
   }, [params]);
+
+  // useEffect(() => {
+  //   fetchData(params);
+  // }, []);
+
   return (
     <div className="relative space-y-16 mb-24">
       <section className="w-full h-[520px] mt-16">
