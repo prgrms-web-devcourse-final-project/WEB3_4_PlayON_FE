@@ -3,7 +3,7 @@ import { useFreeCommunity } from '@/api/free-community';
 import RetroButton from '@/components/common/RetroButton';
 import InputImage from '@/components/community/input-image';
 import TextEditor from '@/components/community/TextEditor';
-import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { PATH } from '@/constants/routes';
@@ -48,6 +48,7 @@ export default function CommunityCreate() {
       content: '',
     },
     resolver: zodResolver(createCommunityFormSchema),
+    shouldFocusError: true,
   });
 
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -101,23 +102,28 @@ export default function CommunityCreate() {
                 control={form.control}
                 name="category"
                 render={({ field }) => (
-                  <Select value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger className="w-52 h-12 text-xl px-4 bg-white focus-visible:ring-purple-600 focus:ring-purple-600">
-                      <SelectValue
-                        placeholder="태그"
-                        className="placeholder:!text-neutral-400 focus-visible:ring-purple-600 focus:ring-purple-600"
-                      />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        {communityTags.map((tag) => (
-                          <SelectItem key={tag} value={tag} className="text-xl text-neutral-900">
-                            {tag}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
+                  <FormItem>
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <FormControl>
+                        <SelectTrigger className="w-52 h-12 text-xl px-4 bg-white focus-visible:ring-purple-600 focus:ring-purple-600">
+                          <SelectValue
+                            placeholder="태그"
+                            className="placeholder:!text-neutral-400 focus-visible:ring-purple-600 focus:ring-purple-600"
+                          />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectGroup>
+                          {communityTags.map((tag) => (
+                            <SelectItem key={tag} value={tag} className="text-xl text-neutral-900">
+                              {tag}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage className="text-purple-400" />
+                  </FormItem>
                 )}
               />
               <FormField
@@ -133,6 +139,7 @@ export default function CommunityCreate() {
                         className="!text-xl w-full h-12 bg-white px-4 placeholder:text-neutral-400 focus-visible:ring-purple-600"
                       />
                     </FormControl>
+                    <FormMessage className="text-purple-400" />
                   </FormItem>
                 )}
               />
@@ -155,6 +162,7 @@ export default function CommunityCreate() {
                   <FormControl>
                     <InputImage onChange={(e) => handleImageChange(e)} previewUrl={previewUrl} />
                   </FormControl>
+                  <FormMessage className="text-purple-400" />
                 </FormItem>
               )}
             />
@@ -167,6 +175,7 @@ export default function CommunityCreate() {
                 <FormControl>
                   <TextEditor value={field.value} onChange={field.onChange} />
                 </FormControl>
+                <FormMessage className="text-purple-400" />
               </FormItem>
             )}
           />

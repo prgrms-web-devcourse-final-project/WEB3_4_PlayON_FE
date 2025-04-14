@@ -272,7 +272,7 @@ export default function GuildCreate() {
                       <FormControl>
                         <Input type="file" id="fileType" accept="image/*" onChange={onChangeImage} />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-purple-400" />
                     </FormItem>
                   )}
                 />
@@ -293,7 +293,7 @@ export default function GuildCreate() {
                           />
                         </div>
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-purple-400" />
                     </FormItem>
                   )}
                 />
@@ -320,7 +320,7 @@ export default function GuildCreate() {
                               />
                             </div>
                           </FormControl>
-                          <FormMessage />
+                          <FormMessage className="text-purple-400" />
                         </FormItem>
                       )}
                     />
@@ -400,7 +400,7 @@ export default function GuildCreate() {
                           value={field.value}
                         />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-purple-400" />
                     </FormItem>
                   )}
                 />

@@ -26,7 +26,7 @@ export default function InputImage({ onChange, previewUrl }: InputImageProps) {
             type="file"
             id="image"
             onChange={onChange}
-            className="text-neutral-500 font-normal file:text-neutral-700 w-[400px] bg-white"
+            className="text-neutral-500 font-normal file:text-neutral-700 w-[400px] bg-white h-8"
           />
           <p className="text-sm text-neutral-400 px-2">지원하는 파일 타입: png, jpg, jpeg, webp</p>
         </div>

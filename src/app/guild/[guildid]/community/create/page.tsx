@@ -54,6 +54,7 @@ export default function GuildCommunityCreate() {
       content: '',
     },
     resolver: zodResolver(createCommunityFormSchema),
+    shouldFocusError: true,
   });
 
   async function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -127,7 +128,7 @@ export default function GuildCommunityCreate() {
                         </SelectGroup>
                       </SelectContent>
                     </Select>
-                    <FormMessage />
+                    <FormMessage className="text-purple-400" />
                   </FormItem>
                 )}
               />
@@ -144,7 +145,7 @@ export default function GuildCommunityCreate() {
                         className="!text-xl w-full h-12 bg-white px-4 placeholder:text-neutral-400 focus-visible:ring-purple-600"
                       />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-purple-400" />
                   </FormItem>
                 )}
               />
@@ -164,7 +165,7 @@ export default function GuildCommunityCreate() {
                   <FormControl>
                     <InputImage onChange={(e) => handleImageChange(e)} previewUrl={previewUrl} />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-purple-400" />
                 </FormItem>
               )}
             />
@@ -178,7 +179,7 @@ export default function GuildCommunityCreate() {
                 <FormControl>
                   <TextEditor value={field.value} onChange={field.onChange} />
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="text-purple-400" />
               </FormItem>
             )}
           />

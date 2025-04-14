@@ -118,9 +118,9 @@ export default function GuildCommunityDetail() {
             <div className={`flex  ${postData.isAuthor ? 'justify-between' : 'justify-end'}`}>
               {postData.isAuthor && (
                 <div className="flex gap-2">
-                  <Button size="sm" className=" bg-neutral-200 hover:bg-neutral-100 text-neutral-500 text-sm">
+                  {/* <Button size="sm" className=" bg-neutral-200 hover:bg-neutral-100 text-neutral-500 text-sm">
                     <SquarePen strokeWidth={1.4} /> 수정
-                  </Button>
+                  </Button> */}
 
                   <Button
                     size="sm"
