@@ -17,6 +17,7 @@ import PartyCard, { PartyCardSkeleton } from '@/components/party/PartyCard';
 import PartyLogCard, { PartyLogCardSkeleton } from '@/components/party/PartyLogCard';
 import PixelCharacter from '@/components/PixelCharacter/PixelCharacter';
 import GameSearch from '@/components/common/GameSearch';
+import EmptyLottie from '@/components/common/EmptyLottie';
 
 const popularGames: gameSimple[] = [
   {
@@ -140,11 +141,28 @@ export default function Party() {
           title="최신 파티 로그 살펴보기"
           subtitle="최근 플레이한 유저들의 플레이 기록을 보고 싶다면?"
         ></SectionTitle>
-        <div className="grid grid-cols-3 gap-6">
-          {loggedParties.length > 0
-            ? loggedParties.map((party, idx) => <PartyLogCard key={party.partyId + idx} data={party} />)
-            : Array.from({ length: 3 }).map((_, idx) => <PartyLogCardSkeleton key={'logged_skeleton' + idx} />)}
-        </div>
+        {loggedParties.length > 0 && (
+          <div className="grid grid-cols-3 gap-6">
+            {loggedParties.map((party, idx) => (
+              <PartyLogCard key={party.partyId + idx} data={party} />
+            ))}
+          </div>
+        )}
+        {loggedParties.length === 0 && (
+          <div className="text-center">
+            <EmptyLottie className="w-[400px]">
+              <RetroButton
+                type="purple"
+                className="mt-8"
+                callback={() => {
+                  router.push(PATH.party_list);
+                }}
+              >
+                파티 하러 가기!
+              </RetroButton>
+            </EmptyLottie>
+          </div>
+        )}
       </section>
     </div>
   );
