@@ -13,8 +13,8 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body>
-        <Header />
         <ReactQueryProviders>
+          <Header />
           <Suspense>{children}</Suspense>
         </ReactQueryProviders>
         <Toaster />

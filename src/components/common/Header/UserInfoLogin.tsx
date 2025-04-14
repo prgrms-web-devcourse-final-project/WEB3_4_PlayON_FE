@@ -18,6 +18,11 @@ import { useAuthStore } from '@/stores/authStore';
 import { useMembers } from '@/api/members';
 import GhostSVG from '@/components/svg/ghost_fill';
 import { PATH } from '@/constants/routes';
+import NotificationItem from './notification-item';
+import { Notification, useNotification } from '@/api/notification';
+import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { Skeleton } from '@/components/ui/skeleton';
 
 type Props = {
   userInfo: userDetail;
@@ -34,9 +39,25 @@ export default function UserInfoLogin({ userInfo }: Props) {
     window.location.reload();
     // router.refresh();
   };
+
+  const [getNoti, setGetNoti] = useState(false);
+  const notification = useNotification();
+  const { data: notifications, isFetched } = useQuery({
+    queryKey: ['Notifications'],
+    queryFn: async () => {
+      setGetNoti(false);
+      return await notification.GetNotifications();
+    },
+    enabled: getNoti,
+    staleTime: 1000 * 60 * 5,
+    select: (e) => {
+      return e.slice(0, 5);
+    },
+  });
+
   return (
     <DropdownMenu modal={false}>
-      <DropdownMenuTrigger asChild className="cursor-pointer">
+      <DropdownMenuTrigger asChild className="cursor-pointer" onClick={() => setGetNoti(true)}>
         <div className="flex items-center gap-3">
           <div className="text-right">
             <p className="text-neutral-500 text-xs">{userInfo.user_title}</p>
@@ -66,9 +87,12 @@ export default function UserInfoLogin({ userInfo }: Props) {
         <DropdownMenuGroup className="w-80">
           <DropdownMenuLabel>알림 목록</DropdownMenuLabel>
           <DropdownMenuItem>
-            <p className="text-sm">
+            {/* <p className="text-sm">
               알림이 생긴다면 이쪽에 렌더링하면 됩니다... flex로 왼쪽은 알림 내용 오른쪽은 확인 버튼이나 지우기
-            </p>
+            </p> */}
+            {isFetched &&
+              notifications &&
+              notifications.map((e) => <NotificationItem data={e} key={`noti_${e.id}_${e.createdAt}`} />)}
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />

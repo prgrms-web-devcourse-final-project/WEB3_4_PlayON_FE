@@ -22,6 +22,8 @@ import TiltToggle from '@/components/common/tilt-toggle';
 import { getSteamImage } from '@/api/steamImg';
 import GameSearch from '@/components/common/GameSearch';
 import { useToast } from '@/hooks/use-toast';
+import { useAuthStore } from '@/stores/authStore';
+import { useAlertStore } from '@/stores/alertStore';
 
 const validFileTypes = ['png', 'jpg', 'jpeg', 'webp', ''];
 type FileType = 'png' | 'jpg' | 'jpeg' | 'webp' | '';
@@ -54,6 +56,8 @@ const createGuildFormSchema = z.object({
 });
 
 export default function GuildCreate() {
+  const { user } = useAuthStore();
+  const { showAlert } = useAlertStore();
   const Guild = useGuild();
   const Toast = useToast();
   const form = useForm<z.infer<typeof createGuildFormSchema>>({
@@ -227,6 +231,20 @@ export default function GuildCreate() {
     beforeSubmit();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [partyStyle, skillLevel, gender, friendly]);
+
+  useEffect(() => {
+    if (user) return;
+    showAlert(
+      '로그인 후 길드를 생성할 수 있습니다.',
+      '로그인 페이지로 갈까요?',
+      () => {
+        router.push(PATH.login);
+      },
+      () => {
+        router.back();
+      }
+    );
+  }, []);
 
   return (
     <div className="pt-28 mb-32 flex justify-center">

@@ -8,11 +8,13 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { PATH } from '@/constants/routes';
 import { useToast } from '@/hooks/use-toast';
+import { useAlertStore } from '@/stores/alertStore';
+import { useAuthStore } from '@/stores/authStore';
 import { communityTags } from '@/types/Tags/communityTags';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ChevronDown } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -39,6 +41,8 @@ export default function CommunityCreate() {
   const board = useFreeCommunity();
   const router = useRouter();
   const Toast = useToast();
+  const { user } = useAuthStore();
+  const { showAlert } = useAlertStore();
 
   const form = useForm<createCommunityFormType>({
     defaultValues: {
@@ -89,6 +93,20 @@ export default function CommunityCreate() {
     }
     router.push(PATH.community);
   }
+
+  useEffect(() => {
+    if (user) return;
+    showAlert(
+      '로그인 후 게시글을 작성할 수 있습니다.',
+      '로그인 페이지로 갈까요?',
+      () => {
+        router.push(PATH.login);
+      },
+      () => {
+        router.back();
+      }
+    );
+  }, []);
 
   return (
     <div className="wrapper mb-12 mt-28 space-y-10">

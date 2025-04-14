@@ -6,7 +6,6 @@ import SortRadioGroup, { SortOption } from '@/components/common/SortRadioGroup';
 import CommunityMenuBar from '@/components/community/community-menu-bar';
 import CommunityPostImageLong from '@/components/community/post-image-long';
 import CommunityPostLong from '@/components/community/post-long';
-import GhostSVG from '@/components/svg/ghost_fill';
 import { PATH } from '@/constants/routes';
 import { postSimple } from '@/types/community';
 import { useRouter, useSearchParams } from 'next/navigation';
