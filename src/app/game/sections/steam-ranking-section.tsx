@@ -8,11 +8,57 @@ import Link from 'next/link';
 export default function SteamRankingSection() {
   const game = useGame();
 
+  const dataFallback: {
+    background_src: string;
+    appid: number;
+    genre: string[];
+    img_src: string;
+    title: string;
+  }[] = [
+    {
+      appid: 730,
+      title: 'Counter Strike 2',
+      img_src: 'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/730/header.jpg',
+      genre: ['Action', 'Free To Play'],
+      background_src: '',
+    },
+    {
+      appid: 3241660,
+      title: 'R.E.P.O.',
+      img_src:
+        'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3241660/1ea445e044a2d5b09cfa8291350b63ebed6e5741/header.jpg',
+      genre: ['Action', 'Early Access'],
+      background_src: '',
+    },
+    {
+      appid: 578080,
+      title: 'PUBG: BATTLEGROUNDS',
+      img_src:
+        'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/578080/841ea38bc58cabb70aef65365cf50bc2d79329d9/header.jpg',
+      genre: ['Action', 'Free To Play'],
+      background_src: '',
+    },
+    {
+      appid: 1086940,
+      title: "Baldur's Gate 3",
+      img_src: 'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1086940/header.jpg',
+      genre: ['Adventure', 'RPG', 'Strategy'],
+      background_src: '',
+    },
+    {
+      appid: 1174180,
+      title: 'Red Dead Redemption 2',
+      img_src: 'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1174180/header.jpg?t=1720558643',
+      genre: ['Action', 'Adventure'],
+      background_src: '',
+    },
+  ];
+
   const { data: steamRanking } = useSuspenseQuery({
     queryKey: ['SteamRanking'],
     queryFn: async () => {
       const data = await game.GameRanking();
-      if (!data) return undefined;
+      if (!data) return dataFallback;
       return data.map((e) => {
         return {
           background_src: '',

@@ -15,16 +15,13 @@ import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import { ScrollArea } from '../ui/scroll-area';
 import { useCallback, useState } from 'react';
-import { sendFormat, useNotification } from '@/api/notification';
 import { useMembers } from '@/api/members';
 import { Avatar, AvatarImage } from '../ui/avatar';
-import { Snowflake } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 export function InviteModal() {
   const { isOpen, closeAction, onAction, actionName } = useInviteStore();
   const member = useMembers();
-  const notification = useNotification();
   const [selectedUser, setSelectedUser] = useState<number | undefined>();
   const { toast } = useToast();
 
@@ -87,17 +84,14 @@ export function InviteModal() {
           {searchResult.map((e) => (
             <div
               className="rounded-xl overflow-hidden"
+              key={e.memberId}
               onClick={() => {
                 if (e.memberId === selectedUser) {
                   setSelectedUser(undefined);
                 } else setSelectedUser(e.memberId);
               }}
             >
-              <SelectComponent
-                key={e.memberId}
-                data={e}
-                className={`p-2  ${e.memberId === selectedUser ? 'bg-neutral-50' : ''}`}
-              />
+              <SelectComponent data={e} className={`p-2  ${e.memberId === selectedUser ? 'bg-neutral-50' : ''}`} />
             </div>
           ))}
         </ScrollArea>
