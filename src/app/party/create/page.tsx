@@ -25,6 +25,8 @@ import TiltToggle from '@/components/common/tilt-toggle';
 import Image from 'next/image';
 import { useAlertStore } from '@/stores/alertStore';
 import { useRouter } from 'next/navigation';
+import { useAuthStore } from '@/stores/authStore';
+import { PATH } from '@/constants/routes';
 type ToastError = {
   message: string;
   ref: { name: string };
@@ -67,6 +69,7 @@ const createPartyFormSchema = z
   });
 
 export default function PartyCreate() {
+  const { user } = useAuthStore();
   const Toast = useToast();
   const party = useParty();
   const router = useRouter();
@@ -154,6 +157,20 @@ export default function PartyCreate() {
       description: firstError.message,
     });
   }
+
+  useEffect(() => {
+    if (user) return;
+    showAlert(
+      '로그인 후 파티를 생성할 수 있습니다.',
+      '로그인 페이지로 갈까요?',
+      () => {
+        router.push(PATH.login);
+      },
+      () => {
+        router.back();
+      }
+    );
+  }, []);
 
   return (
     <div className="pt-28 mb-32">
