@@ -35,8 +35,6 @@ export default function PartyList() {
   const { user } = useAuthStore();
   const party = useParty();
   const params = useSearchParams();
-  const router = useRouter();
-  const pathname = usePathname();
 
   const [parties, setParties] = useState<party[]>([]);
   const [totalItems, setTotalItem] = useState(0);
@@ -102,7 +100,7 @@ export default function PartyList() {
     return () => {
       window.removeEventListener('popstate', handlePopState);
     };
-  }, [window.location.search]);
+  }, [params]);
   return (
     <div className="relative space-y-16 mb-24">
       <section className="w-full h-[520px] mt-16">
