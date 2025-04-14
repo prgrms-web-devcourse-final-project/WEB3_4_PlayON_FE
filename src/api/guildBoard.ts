@@ -66,7 +66,7 @@ export const useGuildBoard = () => {
         user: {
           username: postData.authorNickname,
           nickname: postData.authorNickname,
-          user_title: 'title',
+          user_title: '',
           img_src: '/img/dummy_profile.jpg',
           memberId: '',
         },
@@ -79,7 +79,7 @@ export const useGuildBoard = () => {
           user: {
             username: comment.authorNickname,
             nickname: comment.authorNickname,
-            user_title: 'title',
+            user_title: '',
             img_src: comment.authorProfileImg || '/img/dummy_profile.jpg',
             memberId: '',
           },
