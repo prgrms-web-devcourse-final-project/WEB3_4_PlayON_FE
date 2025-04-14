@@ -402,9 +402,7 @@ export default function GameDetail({ params }: { params: { gameid: string } }) {
             <Swiper spaceBetween={10} slidesPerView={3} direction="horizontal">
               {gameDetails.parties?.map((_, ind) => (
                 <SwiperSlide key={ind} className="w-[410px]">
-                  <Link href={PARTY_ROUTE.party_detail(_.partyId)}>
-                    <PartyCard data={_} />
-                  </Link>
+                  <PartyCard data={_} />
                 </SwiperSlide>
               ))}
             </Swiper>
