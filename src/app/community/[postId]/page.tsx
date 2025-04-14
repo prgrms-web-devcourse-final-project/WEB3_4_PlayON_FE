@@ -19,6 +19,9 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import styles from './freeCommunityDetail.module.css';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
+import { useAuthStore } from '@/stores/authStore';
+import { div } from 'three/src/nodes/TSL.js';
+import Link from 'next/link';
 
 const commentSchema = z.object({
   comment: z.string().min(1, { message: '댓글을 입력해주세요' }),
@@ -27,6 +30,8 @@ const commentSchema = z.object({
 type CommentType = z.infer<typeof commentSchema>;
 
 export default function Community() {
+  const { user } = useAuthStore();
+
   const form = useForm<z.infer<typeof commentSchema>>({
     defaultValues: {
       comment: '',
@@ -151,8 +156,9 @@ export default function Community() {
                 <Toggle
                   variant="outline"
                   size="lg"
+                  disabled={!user}
                   pressed={isLiked}
-                  className="rounded-full text-neutral-400 border-neutral-300 text-xl min-w-[60px] hover:text-purple-500 hover:bg-purple-50 focus-visible:text-purple-500 data-[state=on]:bg-purple-50 data-[state=on]:text-purple-500"
+                  className="rounded-full text-neutral-400 border-neutral-300 text-xl min-w-[60px] hover:text-purple-500 hover:bg-purple-50 focus-visible:text-purple-500 data-[state=on]:bg-purple-50 data-[state=on]:text-purple-500 disabled:opacity-100"
                   onClick={handleClickLike}
                 >
                   <ThumbsUp /> {postData.num_likes}
@@ -171,34 +177,43 @@ export default function Community() {
                 <p className="text-neutral-900 text-2xl font-semibold">
                   댓글 <span className="text-purple-600">{commentsData.totalItems}</span>개
                 </p>
-                <Form {...form}>
-                  <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-5">
-                    <FormField
-                      control={form.control}
-                      name="comment"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormControl>
-                            <Textarea
-                              value={field.value}
-                              onChange={field.onChange}
-                              placeholder="댓글을 남겨주세요."
-                              className="h-24 resize-none focus-visible:ring-purple-400 placeholder:text-neutral-400"
-                            />
-                          </FormControl>
-                          <FormMessage className="text-purple-400" />
-                        </FormItem>
-                      )}
-                    />
-                    <Button
-                      type="submit"
-                      size="lg"
-                      className="px-4 py-2 text-sm bg-purple-600 hover:bg-purple-700 self-end"
-                    >
-                      댓글 작성
-                    </Button>
-                  </form>
-                </Form>
+                {user ? (
+                  <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-5">
+                      <FormField
+                        control={form.control}
+                        name="comment"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Textarea
+                                value={field.value}
+                                onChange={field.onChange}
+                                placeholder="댓글을 남겨주세요."
+                                className="h-24 resize-none focus-visible:ring-purple-400 placeholder:text-neutral-400"
+                              />
+                            </FormControl>
+                            <FormMessage className="text-purple-400" />
+                          </FormItem>
+                        )}
+                      />
+                      <Button
+                        type="submit"
+                        size="lg"
+                        className="px-4 py-2 text-sm bg-purple-600 hover:bg-purple-700 self-end"
+                      >
+                        댓글 작성
+                      </Button>
+                    </form>
+                  </Form>
+                ) : (
+                  <div className="w-full border border-neutral-300 h-24 rounded-lg px-4 py-3 text-base text-neutral-500">
+                    <Link href={PATH.login} className="hover:text-purple-500 hover:font-bold">
+                      로그인
+                    </Link>{' '}
+                    후 댓글을 남겨 보세요
+                  </div>
+                )}
               </div>
             </section>
           )}

@@ -61,7 +61,7 @@ export default function CommunityMenuBar(props: CommunityMenuBarProps) {
 }
 
 function TagSelectGridItem(props: { label: string; selected: boolean }) {
-  console.log('label: ', props.label, 'selected: ', props.selected);
+  // console.log('label: ', props.label, 'selected: ', props.selected);
   return (
     <div
       className={`flex rounded-lg p-2 cursor-pointer transition-all overflow-hidden ${props.selected ? 'bg-neutral-100 -translate-x-4' : '-translate-x-8'}`}
@@ -77,7 +77,7 @@ function TagSelectGridMenu(props: { onSelectChanged: (select: boolean[]) => void
   function HandleSelected(index: number) {
     const newSelected = new Array(communityTags.length).fill(false);
     newSelected[index] = !selected[index];
-    console.log('newSelected', newSelected);
+    // console.log('newSelected', newSelected);
     setSelected(newSelected);
     props.onSelectChanged(newSelected);
   }
