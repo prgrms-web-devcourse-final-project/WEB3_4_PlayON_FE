@@ -4,13 +4,13 @@ import { NOTIFICATION_ENDPOINTS } from '@/constants/endpoints/notification';
 import { useAxios } from '@/hooks/useAxios';
 
 const NotificationTypes = ['PARTY_INVITE'] as const;
-type Notification = {
+export type Notification = {
   id: number;
-  senderNickname: number;
+  senderNickname: string;
   content: string;
   type: (typeof NotificationTypes)[number];
   isRead: boolean;
-  redurectUrl: string;
+  redirectUrl: string;
   createdAt: string;
 };
 
