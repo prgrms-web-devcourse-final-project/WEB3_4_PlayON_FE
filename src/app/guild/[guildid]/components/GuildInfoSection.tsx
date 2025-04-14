@@ -13,11 +13,13 @@ import { ClipboardPenIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useCallback } from 'react';
 import styles from './guildInfo.module.css';
+import { useGuildsMembers } from '@/api/guild-member';
 
 export default function GuildInfoSection({ guildId }: { guildId: string }) {
   const router = useRouter();
   const Guild = useGuild();
   const guildJoin = useGuildJoin();
+  const guildMembers = useGuildsMembers();
   const Toast = useToast();
   const getTagList = (data: guild) => {
     return [...data.friendly, ...data.gender, ...data.play_style, ...data.skill_level];
@@ -45,10 +47,25 @@ export default function GuildInfoSection({ guildId }: { guildId: string }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const leaveGuild = useCallback(async () => {
+    if (guildData && guildData.myRole === 'LEADER') {
+      console.log('리더는 탈퇴 못해요');
+      return;
+    }
+    const response = await guildMembers.LeaveMembers(guildId);
+    console.log(response);
+    Toast.toast({
+      title: '길드를 탈퇴했습니다.',
+      variant: 'primary',
+    });
+    queryClient.refetchQueries({ queryKey: ['GuildDetail', guildId], exact: true });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const GuildActionButton = () => {
     if (guildData === false) return;
     if (guildData.max_members > guildData.num_members) {
-      if (guildData?.myRole === 'GUEST') {
+      if (guildData.myRole === 'GUEST') {
         return (
           <RetroButton type="purple" className="w-60" callback={requestGuildJoin}>
             길드 참여
@@ -64,17 +81,25 @@ export default function GuildInfoSection({ guildId }: { guildId: string }) {
         );
       } else {
         return (
-          <RetroButton type="purple" className="w-60" callback={() => {}}>
+          <RetroButton type="purple" className="w-60" callback={leaveGuild}>
             길드 탈퇴
           </RetroButton>
         );
       }
     } else {
-      return (
-        <RetroButton type="grey" className="w-60">
-          인원 마감
-        </RetroButton>
-      );
+      if (guildData.myRole === 'GUEST' || guildData.myRole === 'APPLICANT') {
+        return (
+          <RetroButton type="grey" className="w-60">
+            인원 마감
+          </RetroButton>
+        );
+      } else {
+        return (
+          <RetroButton type="purple" className="w-60" callback={leaveGuild}>
+            길드 탈퇴
+          </RetroButton>
+        );
+      }
     }
   };
 

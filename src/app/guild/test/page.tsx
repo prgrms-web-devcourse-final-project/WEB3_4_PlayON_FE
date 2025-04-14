@@ -1,16 +1,18 @@
 'use client';
 
 import { useGuild } from '@/api/guild';
+import { useGuildsMembers } from '@/api/guild-member';
 import { useGuildBoard } from '@/api/guildBoard';
 import { useGuildJoin } from '@/api/guildJoin';
 import UserApprove from '@/app/party/components/UserApprove';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { AdditionalInfo, GuildCreateRequest, GuildLIstRequest, GuildUpdateRequest } from '@/types/guildApi';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useCallback, useState } from 'react';
 
 export default function Test() {
   const Guild = useGuild();
+  const guildMembers = useGuildsMembers();
   const [image, setImage] = useState<File | null>(null);
   const [data, setData] = useState<AdditionalInfo[]>();
 
@@ -167,6 +169,12 @@ export default function Test() {
     console.log(response);
   };
 
+  const leaveGuild = useCallback(async () => {
+    const response = await guildMembers.LeaveMembers('16');
+    console.log(response);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <div className="wrapper mt-32 mb-32">
       <Input type="file" onChange={handleChange} className="w-[500px]" />
@@ -207,6 +215,7 @@ export default function Test() {
             <Button onClick={createComment}> 40번 게시글 댓글 작성</Button>
             <Button onClick={updateComment}> 40번 게시글 36번 댓글 수정</Button>
             <Button onClick={deleteComment}> 40번 게시글 36번 댓글 삭제</Button>
+            <Button onClick={leaveGuild}> 16번 길드 탈퇴</Button>
           </div>
         </div>
       </div>

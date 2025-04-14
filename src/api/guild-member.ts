@@ -85,11 +85,10 @@ export const useGuildsMembers = () => {
   }
 
   // 길드 탈퇴
-  async function LeaveMembers(guildId: string, newLeaderId: string) {
+  async function LeaveMembers(guildId: string, newLeaderId?: string) {
     const response = await axios.Delete(
       guildMember.leave(guildId),
       {
-        params: { guildId: guildId },
         data: { newLeaderId: newLeaderId },
       },
       true
