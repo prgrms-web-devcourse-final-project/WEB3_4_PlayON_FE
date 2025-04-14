@@ -4,6 +4,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { Suspense } from 'react';
 import ReactQueryProviders from '@/hooks/useReactQuery';
 import { AlertModal } from '@/components/common/AlertModal';
+import { InviteModal } from '@/components/common/invite-modal';
 
 export default function RootLayout({
   children,
@@ -19,6 +20,7 @@ export default function RootLayout({
         </ReactQueryProviders>
         <Toaster />
         <AlertModal />
+        <InviteModal />
       </body>
     </html>
   );

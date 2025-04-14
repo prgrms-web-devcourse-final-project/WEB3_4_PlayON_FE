@@ -1,7 +1,7 @@
 'use client';
 
 import { ChevronUp, Loader2, Send, SquarePen, Trash2 } from 'lucide-react';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import UserApprove from '../../components/UserApprove';
 import { userSimple } from '@/types/user';
 import RetroButton from '@/components/common/RetroButton';
@@ -17,6 +17,9 @@ import { PATH } from '@/constants/routes';
 import { usePartyContext } from './PartyContext';
 import { useParty } from '@/api/party';
 import { useAlertStore } from '@/stores/alertStore';
+import { useInviteStore } from '@/stores/inviteStore';
+import { useNotification } from '@/api/notification';
+import { PARTY_ROUTE } from '@/constants/routes/party';
 
 export default function InfoAccordion() {
   const router = useRouter();
@@ -149,13 +152,29 @@ function PartyManageButtons() {
   const { partyInfo } = usePartyContext();
   const party = useParty();
   const router = useRouter();
+  const { showAction } = useInviteStore();
+  const notification = useNotification();
+  const inviteCallback = useCallback(async () => {}, []);
+
   if (!partyInfo) return <></>;
   return (
     <div className="flex items-center gap-2 justify-end absolute -top-8 right-0 text-sm">
-      {/* <button className="flex items-center">
+      <button
+        className="flex items-center"
+        onClick={() => {
+          showAction(async (memberid: number) => {
+            const response = notification.SendNotification({
+              content: '님의 파티에 초대되셨습니다.',
+              receiverId: memberid.toString(),
+              redirectUrl: PARTY_ROUTE.party_detail(partyInfo.partyId),
+              type: 'PARTY_INVITE',
+            });
+          }, '초대하기');
+        }}
+      >
         <Send className="h-3" /> 초대장 보내기
       </button>
-      <button
+      {/* <button
         className="flex items-center"
         onClick={() => {
           router.push(PATH.party_modify(partyInfo.partyId));
@@ -204,4 +223,7 @@ function ParticipationInfo() {
       </div>
     </>
   );
+}
+function useInviteModal() {
+  throw new Error('Function not implemented.');
 }

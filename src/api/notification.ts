@@ -13,16 +13,17 @@ type Notification = {
   redurectUrl: string;
   createdAt: string;
 };
+export type sendFormat = {
+  receiverId: string;
+  type: (typeof NotificationTypes)[number];
+  content: string;
+  redirectUrl: string;
+};
 
 export const useNotification = () => {
   const axios = useAxios();
 
-  async function SendNotification(input: {
-    receiverId: string;
-    type: (typeof NotificationTypes)[number];
-    content: string;
-    redirectUrl: string;
-  }) {
+  async function SendNotification(input: sendFormat) {
     const res = await axios.Post(NOTIFICATION_ENDPOINTS.send, { ...input }, {}, true);
     if (res && res.status == 200) {
       return true;
