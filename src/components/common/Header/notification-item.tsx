@@ -12,6 +12,10 @@ export default function NotificationItem(props: NotificationItemProps) {
   return (
     <div className="flex gap-2 w-full place-content-between items-center">
       <img src="/img/dummy_profile.jpg" alt="" className="rounded-full w-10 h-10" />
+      {!props.data.isRead && <div className="absolute w-2 h-2 rounded-full bg-cherry-main top-2 left-2"></div>}
+      {!props.data.isRead && (
+        <div className="absolute w-2 h-2 rounded-full bg-cherry-main top-2 left-2 blur-sm animate-pulse"></div>
+      )}
       <div className="flex flex-col flex-auto">
         <p>{props.data.senderNickname}</p>
         <p>{props.data.content}</p>

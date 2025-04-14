@@ -65,7 +65,7 @@ export const useAxios = () => {
   }
   async function Patch(path: string, data: object, config: AxiosRequestConfig, toast: boolean) {
     try {
-      const response = await apiInstance.put(path, { ...data }, config);
+      const response = await apiInstance.patch(path, { ...data }, config);
       return response;
     } catch (err) {
       errorHandler(err, toast);

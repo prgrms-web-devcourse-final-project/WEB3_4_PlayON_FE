@@ -40,7 +40,8 @@ export const useNotification = () => {
   async function GetNotifications() {
     const res = await axios.Get(NOTIFICATION_ENDPOINTS.list, {}, true);
     if (res && res.status == 200) {
-      return res.data as Notification[];
+      console.log(res);
+      return res.data.data as Notification[];
     }
     throw new Error('Failed to fetch notifications');
   }
@@ -48,7 +49,7 @@ export const useNotification = () => {
     const res = await axios.Get(NOTIFICATION_ENDPOINTS.summary, {}, true);
     if (res && res.status == 200) {
       return {
-        notification: res.data.data as Notification[],
+        notification: res.data.data.notifications as Notification[],
         unreadCount: res.data.data.unreadCount as number,
       };
     }
