@@ -13,13 +13,14 @@ import { Toggle } from '@/components/ui/toggle';
 import { PATH } from '@/constants/routes';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Eye, SquarePen, ThumbsUp, Trash2 } from 'lucide-react';
+import { Eye, ThumbsUp, Trash2 } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import styles from './guildCommunityDetail.module.css';
 import { useCallback, useEffect, useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import SafeHtml from '@/components/common/SafeHtml';
 
 const commentSchema = z.object({
   comment: z.string().min(1, { message: '댓글을 입력해주세요' }),
@@ -149,7 +150,8 @@ export default function GuildCommunityDetail() {
                 />
               </div>
             )}
-            <div className={`${styles.ql}`} dangerouslySetInnerHTML={{ __html: postData.content }} />
+            {/* <div className={`${styles.ql}`} dangerouslySetInnerHTML={{ __html: postData.content }} /> */}
+            <SafeHtml html={postData.content} className={`${styles.ql}`} />
             <div className="flex justify-end gap-2">
               <Toggle
                 variant="outline"
