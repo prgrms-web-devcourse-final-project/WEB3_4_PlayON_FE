@@ -3,6 +3,7 @@ import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { Suspense } from 'react';
 import ReactQueryProviders from '@/hooks/useReactQuery';
+import { AlertModal } from '@/components/common/AlertModal';
 
 export default function RootLayout({
   children,
@@ -17,6 +18,7 @@ export default function RootLayout({
           <Suspense>{children}</Suspense>
         </ReactQueryProviders>
         <Toaster />
+        <AlertModal />
       </body>
     </html>
   );
