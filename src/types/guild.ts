@@ -28,6 +28,7 @@ export interface guildUser {
 
 export interface guildUserSimple {
   username: string;
+  nickname: string;
   title: string | null;
   role: string;
   img_src: string;

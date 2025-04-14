@@ -71,6 +71,7 @@ export interface GuildDetailMember {
   title: string;
   role: string;
   joinedAt: string;
+  nickname: string;
 }
 
 export interface GuildJoinRequest {

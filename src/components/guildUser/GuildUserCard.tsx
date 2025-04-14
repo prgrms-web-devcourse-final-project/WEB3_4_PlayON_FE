@@ -52,7 +52,7 @@ export default function GuildUserCard(props: guildUserCardProps2) {
           </div>
           <div>
             {data.title && <p className="font-suit text-sm font-normal text-neutral-500">{data.title}</p>}
-            <p className="font-suit text-xl font-medium">{data.username}</p>
+            <p className="font-suit text-xl font-medium">{data.nickname}</p>
             {data.joined_at && <p className="font-suit text-sm font-normal text-neutral-500">가입일 : {joinedDate}</p>}
           </div>
         </div>

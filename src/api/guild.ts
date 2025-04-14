@@ -210,6 +210,7 @@ export const useGuild = () => {
       const guildMemberList = data.map((member) => {
         return {
           username: member.username,
+          nickname: member.nickname,
           title: member.title,
           role: member.role,
           img_src: member.profileImg || '/img/dummy_profile.jpg',
@@ -217,6 +218,7 @@ export const useGuild = () => {
           joined_at: new Date(member.joinedAt),
         };
       });
+      console.log(guildMemberList);
       return guildMemberList;
     }
     return false;
