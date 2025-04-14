@@ -3,10 +3,11 @@
 import { useParty } from '@/api/party';
 import BounceButton from '@/components/common/BounceButton';
 import CustomPagination from '@/components/common/CustomPagination';
+import EmptyLottie from '@/components/common/EmptyLottie';
 import HeroSwiperBanner from '@/components/common/HeroSwiperBanner';
 import SortRadioGroup, { SortOption } from '@/components/common/SortRadioGroup';
 import PartySearchComponent from '@/components/party/party-search-component';
-import PartyCard, { PartyCardSkeleton } from '@/components/party/PartyCard';
+import PartyCard from '@/components/party/PartyCard';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { PATH } from '@/constants/routes';
@@ -14,8 +15,7 @@ import { useAuthStore } from '@/stores/authStore';
 import { party } from '@/types/party';
 
 import { ChevronDown } from 'lucide-react';
-import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 
 const sortOptions: SortOption[] = [
@@ -161,12 +161,13 @@ export default function PartyList() {
           </div>
         </div>
         <div className="grid grid-cols-3 gap-6">
-          {parties.length > 0 ? (
-            parties.map((party) => <PartyCard data={party} key={party.partyId} />)
-          ) : (
-            <PartyCardSkeleton />
-          )}
+          {parties.length > 0 && parties.map((party) => <PartyCard data={party} key={party.partyId} />)}
         </div>
+        {parties.length <= 0 && (
+          <div className="w-full text-center justify-self-center place-self-center">
+            <EmptyLottie className="w-[400px]"></EmptyLottie>
+          </div>
+        )}
         {totalItems > 9 && <CustomPagination totalItems={totalItems} pageSize={9} />}
         <BounceButton path={PATH.party_create} type="party" tootip="파티 만들기" />
       </section>

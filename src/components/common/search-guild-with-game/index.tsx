@@ -179,6 +179,7 @@ export default function SearchGuildWithGame(props: SearchGuildWithGameProps) {
               ))}
             {props.forMain &&
               props.dummyGuilds &&
+              selectedGame >= 0 &&
               props.dummyGuilds[selectedGame].map((e) => (
                 <CarouselItem key={`${e.guild_id}`} className="basis-1/2">
                   <Link href={GUILD_ROUTE.guild_detail(e.guild_id as unknown as string)}>

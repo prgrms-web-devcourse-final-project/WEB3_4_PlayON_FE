@@ -126,6 +126,20 @@ export const dummyGuild: guild = {
   main_game: dummyGameSimple,
   myRole: '',
 };
+export const dummyGuild2: guild = {
+  created_at: new Date(),
+  description: loremIpsum,
+  friendly: ['게임 전용'],
+  gender: ['남자만', '여자만'],
+  guild_name: '참신한 길드 이름 2',
+  img_src: '',
+  num_members: 24,
+  owner: dummyUserSimple,
+  play_style: ['노멀', '도전과제'],
+  skill_level: ['뉴비', '마스터'],
+  main_game: dummyGameSimple,
+  myRole: '',
+};
 
 export const dummyGuildUser: guildUser = {
   user: dummyUserDetail,

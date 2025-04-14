@@ -11,7 +11,7 @@ import { useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { PATH } from '@/constants/routes';
 import BounceButton from '@/components/common/BounceButton';
-import GhostSVG from '@/components/svg/ghost_fill';
+import EmptyLottie from '@/components/common/EmptyLottie';
 const sortOptions: SortOption[] = [
   { id: 'latest', label: '최신순' },
   { id: 'activity', label: '활동순' },
@@ -106,20 +106,20 @@ export default function GuildList() {
       <section className="wrapper space-y-10">
         <SortRadioGroup options={sortOptions} />
         <div className="grid grid-cols-3 gap-6">
-          {isLoading ? (
-            [...Array(3)].map((_, idx) => <GuildHorizonSkeleton key={idx} className="" />)
-          ) : guildList.length > 0 && totalItems ? (
-            guildList.map((guild) => <GuildHorizon key={guild.guild_id} data={guild} />)
-          ) : (
-            <div className="flex self-start pt-20 gap-4">
-              <GhostSVG width={32} fill="#9884F0" stroke="" />
-              <p className="font-dgm text-2xl text-neutral-800">게시글이 없습니다.</p>
-            </div>
-          )}
+          {isLoading
+            ? [...Array(3)].map((_, idx) => <GuildHorizonSkeleton key={idx} className="" />)
+            : guildList.length > 0 &&
+              totalItems &&
+              guildList.map((guild) => <GuildHorizon key={guild.guild_id} data={guild} />)}
           {/* {guildList.length > 0
             ? guildList.map((guild) => <GuildHorizon key={guild.guild_id} data={guild} />)
             : [...Array(3)].map((_, idx) => <GuildHorizonSkeleton key={idx} className="" />)} */}
         </div>
+        {!isLoading && guildList.length <= 0 && (
+          <div className="w-full text-center justify-self-center place-self-center">
+            <EmptyLottie className="w-[400px]"></EmptyLottie>
+          </div>
+        )}
         <CustomPagination totalItems={totalItems} pageSize={9} />
         <BounceButton path={PATH.guild_create} type="guild" tootip="길드 만들기" />
       </section>

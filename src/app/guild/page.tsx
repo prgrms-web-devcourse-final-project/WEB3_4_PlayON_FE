@@ -7,7 +7,7 @@ import SectionBanner from '@/components/common/SectionBanner';
 import SectionTitle from '@/components/common/SectionTitle';
 import PixelCharacter from '@/components/PixelCharacter/PixelCharacter';
 import { gameSimple } from '@/types/games';
-import { dummyGameSimple, dummyGuild } from '@/utils/dummyData';
+import { dummyGameSimple, dummyGuild, dummyGuild2 } from '@/utils/dummyData';
 import PopularGameList from './components/PopularGameList';
 import SearchGuildWithGame from '@/components/common/search-guild-with-game';
 import { useRouter } from 'next/navigation';
@@ -17,6 +17,7 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { Suspense } from 'react';
 import PopularGuildListSkeleton from './components/PopularGuildListSkeleton';
 import PopularGuildList from './components/PopularGuildList';
+import { guild } from '@/types/guild';
 
 const banner = [
   {
@@ -27,7 +28,7 @@ const banner = [
 const dummyGames = [dummyGameSimple, dummyGameSimple, dummyGameSimple];
 const dummyGuilds = [
   [dummyGuild, dummyGuild, dummyGuild],
-  [dummyGuild, dummyGuild, dummyGuild],
+  [dummyGuild2, dummyGuild2, dummyGuild2],
   [dummyGuild, dummyGuild, dummyGuild],
 ];
 

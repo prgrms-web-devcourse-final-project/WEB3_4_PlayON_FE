@@ -7,7 +7,7 @@ import { dummyGameDetail2 } from '@/utils/dummyData';
 import PickCard from '@/components/game/PickCard';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useGame, game } from '@/api/game';
-import { useEffect, useRef, useState } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import typeConverter from '@/utils/typeConverter';
 import { CoolerCategoryMenu } from '@/app/signup/userdata/component/cooler-category-menu';
 import TiltToggle from '@/components/common/tilt-toggle';
@@ -18,6 +18,7 @@ import Link from 'next/link';
 import { GAME_ROUTE } from '@/constants/routes/game';
 import { Skeleton } from '@/components/ui/skeleton';
 import GameSearch from '@/components/common/GameSearch';
+import EmptyLottie from '@/components/common/EmptyLottie';
 
 export default function GameList() {
   const imageList = [
@@ -244,22 +245,25 @@ export default function GameList() {
         </div>
       </div>
       <div className="lg:w-[1280px] grid grid-cols-4 grid-rows-3 gap-x-6 gap-y-12 mt-[100px]">
-        {isFetched &&
-          data.map((e, ind) => (
-            <Link href={GAME_ROUTE.game_detail(e.appid)} key={ind}>
-              <PickCard data={e} />
-            </Link>
-          ))}
-        {isFetched &&
-          data.length < 12 &&
-          Array.from({ length: 12 - data.length }).map((_, ind) => (
-            <Skeleton className="w-full aspect-square rounded-full" key={`Skeleton_Games_Placeholders_${ind}`} />
-          ))}
+        <Suspense>
+          {isFetched &&
+            data.length > 0 &&
+            data.map((e, ind) => (
+              <Link href={GAME_ROUTE.game_detail(e.appid)} key={ind}>
+                <PickCard data={e} />
+              </Link>
+            ))}
+        </Suspense>
         {(!isFetched || isLoading) &&
           data.map((_, ind) => (
             <Skeleton className="w-full aspect-square rounded-full" key={`Skeleton_Games_${ind}`} />
           ))}
       </div>
+      {isFetched && data.length <= 0 && (
+        <div className="w-full text-center justify-self-center place-self-center">
+          <EmptyLottie className="w-[400px]"></EmptyLottie>
+        </div>
+      )}
       <div className="mt-[100px] mb-[100px]">
         <CustomPagination pageSize={12} totalItems={totalItems.current} />
       </div>
