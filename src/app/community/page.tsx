@@ -1,6 +1,7 @@
 'use client';
 import { useFreeCommunity } from '@/api/free-community';
 import CustomPagination from '@/components/common/CustomPagination';
+import EmptyLottie from '@/components/common/EmptyLottie';
 import SortRadioGroup, { SortOption } from '@/components/common/SortRadioGroup';
 import CommunityMenuBar from '@/components/community/community-menu-bar';
 import CommunityPostImageLong from '@/components/community/post-image-long';
@@ -32,6 +33,7 @@ function convertTag(tag: string) {
 export default function Community() {
   const [postList, setPostList] = useState<postSimple[]>([]);
   const [totalItems, setTotalItems] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
 
   const freeBoard = useFreeCommunity();
   const router = useRouter();
@@ -56,12 +58,18 @@ export default function Community() {
       if (pageSize) Object.assign(data, { pageSize });
       if (sort) Object.assign(data, { sort });
       // console.log('data:', data);
-
-      const posts = await freeBoard.PostList(data);
-      // console.log(posts);
-      if (posts) {
-        setPostList(posts.items);
-        setTotalItems(posts.totalItems);
+      try {
+        setIsLoading(true);
+        const posts = await freeBoard.PostList(data);
+        // console.log(posts);
+        if (posts) {
+          setPostList(posts.items);
+          setTotalItems(posts.totalItems);
+        }
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setIsLoading(false);
       }
     }
     fetchPosts();
@@ -106,12 +114,11 @@ export default function Community() {
             <CustomPagination totalItems={totalItems} pageSize={10} />
           </section>
         )}
-        {/* {totalItems <= 0 && (
-          <div className="flex self-start pt-20 gap-4">
-            <GhostSVG width={32} fill="#9884F0" stroke="" />
-            <p className="font-dgm text-2xl text-neutral-800">게시글이 없습니다.</p>
+        {!isLoading && postList.length <= 0 && (
+          <div className="w-full text-center justify-self-center place-self-center pt-16">
+            <EmptyLottie className="w-[360px]" text="해당하는 게시글이 없어요"></EmptyLottie>
           </div>
-        )} */}
+        )}
       </section>
     </div>
   );
