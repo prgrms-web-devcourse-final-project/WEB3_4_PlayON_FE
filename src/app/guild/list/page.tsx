@@ -61,10 +61,13 @@ export default function GuildList() {
         9,
         orderBy
       );
-      if (!response) return;
-      // if (response.guildList.length <=0) {
 
-      // }
+      if (!response) {
+        setGuildList([]);
+        setTotalItems(0);
+        return;
+      }
+
       setGuildList(response.guildList);
       setTotalItems(response.totalItems);
     } catch (err) {
