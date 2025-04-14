@@ -12,6 +12,9 @@ import { useCallback, useEffect, useState } from 'react';
 import { PATH } from '@/constants/routes';
 import BounceButton from '@/components/common/BounceButton';
 import EmptyLottie from '@/components/common/EmptyLottie';
+import Link from 'next/link';
+import RetroButton from '@/components/common/RetroButton';
+import { GUILD_ROUTE } from '@/constants/routes/guild';
 const sortOptions: SortOption[] = [
   { id: 'latest', label: '최신순' },
   { id: 'activity', label: '활동순' },
@@ -117,10 +120,16 @@ export default function GuildList() {
         </div>
         {!isLoading && guildList.length <= 0 && (
           <div className="w-full text-center justify-self-center place-self-center">
-            <EmptyLottie className="w-[400px]"></EmptyLottie>
+            <EmptyLottie className="w-[400px]" text="원하는 길드가 없으신가요?">
+              <Link href={GUILD_ROUTE.guild_create}>
+                <RetroButton type="purple" className="mt-10 font-bold">
+                  길드 만들기
+                </RetroButton>
+              </Link>
+            </EmptyLottie>
           </div>
         )}
-        <CustomPagination totalItems={totalItems} pageSize={9} />
+        {guildList.length > 0 && <CustomPagination totalItems={totalItems} pageSize={9} />}
         <BounceButton path={PATH.guild_create} type="guild" tootip="길드 만들기" />
       </section>
     </div>

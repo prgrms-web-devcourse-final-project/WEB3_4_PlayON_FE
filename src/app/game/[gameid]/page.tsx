@@ -3,9 +3,9 @@
 import RetroButton from '@/components/common/RetroButton';
 import Tag from '@/components/common/Tag';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Doughnut } from 'react-chartjs-2';
+// import { Doughnut } from 'react-chartjs-2';
 import { dummyGameDetail } from '@/utils/dummyData';
-import { ArcElement, Chart, ChartData } from 'chart.js';
+// import { ArcElement, Chart, ChartData } from 'chart.js';
 import { SwiperSlide, Swiper } from 'swiper/react';
 import PartyCard from '@/components/party/PartyCard';
 import 'swiper/css';
@@ -23,7 +23,7 @@ import { PARTY_ROUTE } from '@/constants/routes/party';
 
 export default function GameDetail({ params }: { params: { gameid: string } }) {
   const [selectedSlide, setSelectedSlide] = useState(0);
-  Chart.register(ArcElement);
+  // Chart.register(ArcElement);
   const router = useRouter();
   const gamehook = useGame();
   const partyResFallback: getPartyRes[] = [
@@ -164,79 +164,79 @@ export default function GameDetail({ params }: { params: { gameid: string } }) {
       };
     },
   });
-  const dummyReviewData = {
-    query_summary: {
-      num_reviews: 3,
-      review_score: 6,
-      review_score_desc: '대체로 긍정적',
-      total_positive: 5173,
-      total_negative: 1296,
-      total_reviews: 6469,
-    },
-    reviews: [
-      {
-        recommendationid: '189310818',
-        author: {
-          steamid: '76561198005261723',
-          num_games_owned: 0,
-          num_reviews: 17,
-          playtime_forever: 4073,
-          playtime_last_two_weeks: 0,
-          playtime_at_review: 372,
-          last_played: 1742732993,
-        },
-        language: 'koreana',
-        review:
-          '[h1] 게임성은 역대 최고. 그것을 뛰어넘는 엉터리 최적화[/h1] \n\n개인적으로 생각하는 오픈월드게임의 중요한 부분은 가장 처음 게임속 세상과 풍경을 접했을때 유저에게 강렬한 인상을 주는것임.\n이번 와일즈는 "하드웨어 스펙"이 받쳐준다면 강렬한 인상을 느낄수 있지만 대다수의 유저들은 몬헌 와일즈 기준으로 최소~중급사양이 현실인데.. 더 많은 유저가 몬헌이 본래 보여주려 했던 세상을 못보는것같아 아쉬울따름.\n\n만약 캡콤의 자사엔진이 아닌 범용성과 최적화를 생각해 타사 엔진으로 와일즈를 만들었다면 더욱 큰 성공을 이루지 않았을까?\n게임성에서는 이견이 없을정도로 호평인데 엉터리 최적화라는 벽으로 인해 많은 사람이 몬헌시리즈에 입문을 포기한건 아닐까?\n\n미래에 모든 유저의 하드 스펙의 상향평준화가 된다면 와일즈가 가진 본래의 아름다움을 느낄수야 있겠지만\n그때에 다시 와일즈를 할 사람이 얼마나 있겠는가...',
-        timestamp_created: 1741051684,
-        timestamp_updated: 1741051710,
-        voted_up: false,
-        votes_up: 178,
-        votes_funny: 6,
-        weighted_vote_score: '0.762522101402282715',
-        comment_count: 0,
-        steam_purchase: true,
-        received_for_free: false,
-        written_during_early_access: false,
-        primarily_steam_deck: false,
-      },
-      {
-        recommendationid: '191159417',
-        author: {
-          steamid: '76561198850092929',
-          num_games_owned: 0,
-          num_reviews: 4,
-          playtime_forever: 7949,
-          playtime_last_two_weeks: 750,
-          playtime_at_review: 7302,
-          last_played: 1743860441,
-        },
-        language: 'koreana',
-        review:
-          '몬헌 신작이라 하긴 하는데 게임은 미완성이고 최적화는 거지같고 컨텐츠는 없다시피하고 원래 본편으로 나왔어야 하는 집회소 같은 걸 이제야 업뎃이라고 추가해주는척 하는거 괘씸해서 못참겠음 분노의 비추 달게 받아라',
-        timestamp_created: 1742918412,
-        timestamp_updated: 1742918412,
-        voted_up: false,
-        votes_up: 62,
-        votes_funny: 4,
-        weighted_vote_score: '0.702287912368774414',
-        comment_count: 0,
-        steam_purchase: true,
-        received_for_free: false,
-        written_during_early_access: false,
-        primarily_steam_deck: false,
-      },
-    ],
-  };
-  const data: ChartData<'doughnut'> = {
-    labels: ['👍', '👎'],
-    datasets: [
-      {
-        data: [dummyReviewData.query_summary.total_negative, dummyReviewData.query_summary.total_positive],
-        backgroundColor: ['#a3a3a3', '#6738f6'],
-      },
-    ],
-  };
+  // const dummyReviewData = {
+  //   query_summary: {
+  //     num_reviews: 3,
+  //     review_score: 6,
+  //     review_score_desc: '대체로 긍정적',
+  //     total_positive: 5173,
+  //     total_negative: 1296,
+  //     total_reviews: 6469,
+  //   },
+  //   reviews: [
+  //     {
+  //       recommendationid: '189310818',
+  //       author: {
+  //         steamid: '76561198005261723',
+  //         num_games_owned: 0,
+  //         num_reviews: 17,
+  //         playtime_forever: 4073,
+  //         playtime_last_two_weeks: 0,
+  //         playtime_at_review: 372,
+  //         last_played: 1742732993,
+  //       },
+  //       language: 'koreana',
+  //       review:
+  //         '[h1] 게임성은 역대 최고. 그것을 뛰어넘는 엉터리 최적화[/h1] \n\n개인적으로 생각하는 오픈월드게임의 중요한 부분은 가장 처음 게임속 세상과 풍경을 접했을때 유저에게 강렬한 인상을 주는것임.\n이번 와일즈는 "하드웨어 스펙"이 받쳐준다면 강렬한 인상을 느낄수 있지만 대다수의 유저들은 몬헌 와일즈 기준으로 최소~중급사양이 현실인데.. 더 많은 유저가 몬헌이 본래 보여주려 했던 세상을 못보는것같아 아쉬울따름.\n\n만약 캡콤의 자사엔진이 아닌 범용성과 최적화를 생각해 타사 엔진으로 와일즈를 만들었다면 더욱 큰 성공을 이루지 않았을까?\n게임성에서는 이견이 없을정도로 호평인데 엉터리 최적화라는 벽으로 인해 많은 사람이 몬헌시리즈에 입문을 포기한건 아닐까?\n\n미래에 모든 유저의 하드 스펙의 상향평준화가 된다면 와일즈가 가진 본래의 아름다움을 느낄수야 있겠지만\n그때에 다시 와일즈를 할 사람이 얼마나 있겠는가...',
+  //       timestamp_created: 1741051684,
+  //       timestamp_updated: 1741051710,
+  //       voted_up: false,
+  //       votes_up: 178,
+  //       votes_funny: 6,
+  //       weighted_vote_score: '0.762522101402282715',
+  //       comment_count: 0,
+  //       steam_purchase: true,
+  //       received_for_free: false,
+  //       written_during_early_access: false,
+  //       primarily_steam_deck: false,
+  //     },
+  //     {
+  //       recommendationid: '191159417',
+  //       author: {
+  //         steamid: '76561198850092929',
+  //         num_games_owned: 0,
+  //         num_reviews: 4,
+  //         playtime_forever: 7949,
+  //         playtime_last_two_weeks: 750,
+  //         playtime_at_review: 7302,
+  //         last_played: 1743860441,
+  //       },
+  //       language: 'koreana',
+  //       review:
+  //         '몬헌 신작이라 하긴 하는데 게임은 미완성이고 최적화는 거지같고 컨텐츠는 없다시피하고 원래 본편으로 나왔어야 하는 집회소 같은 걸 이제야 업뎃이라고 추가해주는척 하는거 괘씸해서 못참겠음 분노의 비추 달게 받아라',
+  //       timestamp_created: 1742918412,
+  //       timestamp_updated: 1742918412,
+  //       voted_up: false,
+  //       votes_up: 62,
+  //       votes_funny: 4,
+  //       weighted_vote_score: '0.702287912368774414',
+  //       comment_count: 0,
+  //       steam_purchase: true,
+  //       received_for_free: false,
+  //       written_during_early_access: false,
+  //       primarily_steam_deck: false,
+  //     },
+  //   ],
+  // };
+  // const data: ChartData<'doughnut'> = {
+  //   labels: ['👍', '👎'],
+  //   datasets: [
+  //     {
+  //       data: [dummyReviewData.query_summary.total_negative, dummyReviewData.query_summary.total_positive],
+  //       backgroundColor: ['#a3a3a3', '#6738f6'],
+  //     },
+  //   ],
+  // };
 
   type slide = {
     contentType: 'movie' | 'screenshot';
@@ -359,7 +359,7 @@ export default function GameDetail({ params }: { params: { gameid: string } }) {
                 <div dangerouslySetInnerHTML={{ __html: gameDetails ? gameDetails.game.detail_desc : '' }}></div>
               </AccordionContent>
             </AccordionItem>
-            <AccordionItem value="item-3">
+            {/* <AccordionItem value="item-3">
               <AccordionTrigger>
                 <p className="text-xl font-bold">스팀 평가</p>
               </AccordionTrigger>
@@ -391,7 +391,7 @@ export default function GameDetail({ params }: { params: { gameid: string } }) {
                   </div>
                 </div>
               </AccordionContent>
-            </AccordionItem>
+            </AccordionItem> */}
           </Accordion>
         </div>
       </div>

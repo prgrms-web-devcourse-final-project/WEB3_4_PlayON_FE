@@ -49,7 +49,15 @@ export default function Guild() {
   const dummyGameList: gameSimple[] = Array(4).fill(dummyGameSimple);
 
   return (
-    <div className="space-y-20 pb-20 pt-[68px]">
+    <div
+      className="space-y-20 pb-20 pt-[68px]"
+      style={{
+        backgroundImage: 'linear-gradient(to top, #f3e8ff 0%, rgba(255,255,255,0) 100%)',
+        backgroundSize: '100% 40%',
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'bottom',
+      }}
+    >
       <section className="w-full h-[400px]">
         <HeroTypingBanner data={banner} isStatic>
           <SearchBar onChange={() => {}} onSearch={handleSearch} className="w-[640px]" />

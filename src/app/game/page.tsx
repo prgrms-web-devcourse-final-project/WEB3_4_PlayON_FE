@@ -11,7 +11,15 @@ import { GAME_ROUTE } from '@/constants/routes/game';
 
 export default function Game() {
   return (
-    <main className="mb-20 space-y-20">
+    <main
+      className="pb-20 space-y-20"
+      style={{
+        backgroundImage: 'linear-gradient(to top, #f3e8ff 0%, rgba(255,255,255,0) 100%)',
+        backgroundSize: '100% 40%',
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'bottom',
+      }}
+    >
       <section>
         <HeroSection />
         <PlayOnRollingBanner duration={20} direction="left" />

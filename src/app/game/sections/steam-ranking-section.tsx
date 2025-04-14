@@ -32,9 +32,9 @@ export default function SteamRankingSection() {
           <div className="wrapper py-12 space-y-8">
             <p className="text-5xl font-suit font-bold text-white">STEAM RANKING</p>
 
-            <div className="flex gap-6">
+            <div className="flex gap-6 justify-center">
               <Link href={GAME_ROUTE.game_detail(steamRanking ? steamRanking[0].appid : 1)}>
-                <div className="w-[845px] h-[394px] space-y-8">
+                <div className="w-[700px] space-y-8">
                   <div className="relative pt-3">
                     <img
                       src={steamRanking ? steamRanking[0].img_src : ''}
@@ -46,11 +46,9 @@ export default function SteamRankingSection() {
                   </div>
                   <div className="space-y-4">
                     <p className="font-suit text-5xl font-bold text-white">
-                      {' '}
                       {steamRanking ? steamRanking[0].title : ''}
                     </p>
                     <p className="text-lg text-white font-medium">
-                      {' '}
                       {steamRanking ? steamRanking[0].genre.join(', ') : []}
                     </p>
                   </div>

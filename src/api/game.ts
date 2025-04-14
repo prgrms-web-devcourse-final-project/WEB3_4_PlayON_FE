@@ -4,7 +4,7 @@ import { useAxios } from '@/hooks/useAxios';
 export type paging = {
   page: number;
   size: number;
-  sort: string[];
+  sort?: string[];
 };
 export type partyMembers = {
   memberId: number;

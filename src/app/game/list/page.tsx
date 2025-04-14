@@ -13,12 +13,14 @@ import { CoolerCategoryMenu } from '@/app/signup/userdata/component/cooler-categ
 import TiltToggle from '@/components/common/tilt-toggle';
 import { gameDetail } from '@/types/games';
 import CustomPagination from '@/components/common/CustomPagination';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { GAME_ROUTE } from '@/constants/routes/game';
 import { Skeleton } from '@/components/ui/skeleton';
 import GameSearch from '@/components/common/GameSearch';
 import EmptyLottie from '@/components/common/EmptyLottie';
+import RetroButton from '@/components/common/RetroButton';
+import { useToast } from '@/hooks/use-toast';
 
 export default function GameList() {
   const imageList = [
@@ -94,7 +96,6 @@ export default function GameList() {
       );
       if (data) {
         totalItems.current = data.totalItems;
-        console.log(totalItems.current);
         const appIds = data.items.map((e) => e.appid);
         const gameData = await Promise.all(
           appIds.map(async (appid) => {
@@ -110,6 +111,9 @@ export default function GameList() {
     staleTime: 1000 * 60 * 5,
   });
 
+  const { toast } = useToast();
+  const router = useRouter();
+
   useEffect(() => {
     const Genre = searchParams.get('genre')?.split(',');
     const PlayerType = searchParams.get('playerType');
@@ -123,6 +127,7 @@ export default function GameList() {
     }
     if (PlayerType) setPlayerType(PlayerType === '멀티플레이' ? [true, false] : [false, true]);
     if (ReleaseStatus) setReleaseStatus(ReleaseStatus === '발매' ? [true, false] : [false, true]);
+    console.log(releaseStatus);
     if (Mac) setMac(Mac === 'true' ? true : false);
     if (Keyword) setKeyword(Keyword);
     if (ReleaseDate) setReleaseDate(new Date(ReleaseDate));
@@ -146,6 +151,7 @@ export default function GameList() {
       newUrl.searchParams.delete('playerType');
     }
     const releaseStatusInd = releaseStatus.findIndex((e) => e === true);
+    console.log(releaseStatusInd);
     const releaseStatusValue = releaseStatuses[releaseStatusInd];
     if (releaseStatusInd !== -1) {
       newUrl.searchParams.set('releaseStatus', releaseStatusValue);
@@ -168,10 +174,31 @@ export default function GameList() {
       newUrl.searchParams.delete('releaseDate');
     }
     window.history.pushState({}, '', newUrl);
-  }, [genre, playerType, releaseStatus, mac, releaseDate, keyword]);
+  }, [genre, playerType, releaseStatus, mac, releaseDate, keyword, playerTypes, releaseStatuses, genres]);
   useEffect(() => {
     refetch();
-  }, [refetch, searchParams]);
+  }, [refetch, genre, playerType, releaseStatus, mac, releaseDate, keyword]);
+
+  const ImFeelingLucky = async () => {
+    try {
+      const response = await game.GameSearch({});
+      if (response && response.totalItems) {
+        const totalItems = response.totalItems;
+        const randomNumber = Math.floor(Math.random() * totalItems);
+        const q = Math.trunc(randomNumber / 12) + 1;
+        const r = randomNumber % 12;
+        const response2 = await game.GameSearch({}, { page: q, size: r });
+        if (response2 && response2.items && response2.items.length > r) {
+          const location = response2.items[r];
+          router.push(GAME_ROUTE.game_detail(location.appid));
+          return;
+        }
+      }
+      throw new Error('Failed to feel lucky');
+    } catch {
+      toast({ title: '도전 과제 달성?', description: '오늘은 운이 좀 없네?', variant: 'destructive' });
+    }
+  };
 
   return (
     <div className="flex flex-col items-center">
@@ -244,29 +271,38 @@ export default function GameList() {
           </div>
         </div>
       </div>
-      <div className="lg:w-[1280px] grid grid-cols-4 grid-rows-3 gap-x-6 gap-y-12 mt-[100px]">
-        <Suspense>
-          {isFetched &&
-            data.length > 0 &&
-            data.map((e, ind) => (
+      <Suspense>
+        {isFetched && data.length > 0 && (
+          <div className="lg:w-[1280px] grid grid-cols-4 grid-rows-3 gap-x-6 gap-y-12 mt-[100px]">
+            {data.map((e, ind) => (
               <Link href={GAME_ROUTE.game_detail(e.appid)} key={ind}>
                 <PickCard data={e} />
               </Link>
             ))}
-        </Suspense>
-        {(!isFetched || isLoading) &&
-          data.map((_, ind) => (
+          </div>
+        )}
+      </Suspense>
+      {(!isFetched || isLoading) && (
+        <div className="lg:w-[1280px] grid grid-cols-4 grid-rows-3 gap-x-6 gap-y-12 mt-[100px]">
+          {data.map((_, ind) => (
             <Skeleton className="w-full aspect-square rounded-full" key={`Skeleton_Games_${ind}`} />
           ))}
-      </div>
-      {isFetched && data.length <= 0 && (
-        <div className="w-full text-center justify-self-center place-self-center">
-          <EmptyLottie className="w-[400px]"></EmptyLottie>
         </div>
       )}
-      <div className="mt-[100px] mb-[100px]">
-        <CustomPagination pageSize={12} totalItems={totalItems.current} />
-      </div>
+      {isFetched && data.length <= 0 && (
+        <div className="w-full text-center mt-[100px] mb-[100px]">
+          <EmptyLottie className="w-[400px]" text="원하는 게임이 없으신가요?">
+            <RetroButton type="purple" className="mt-10 font-bold" callback={() => ImFeelingLucky()}>
+              {`I'm Feeling Lucky`}
+            </RetroButton>
+          </EmptyLottie>
+        </div>
+      )}
+      {isFetched && data.length > 0 && (
+        <div className="mt-[100px] mb-[100px]">
+          <CustomPagination pageSize={12} totalItems={totalItems.current} />
+        </div>
+      )}
     </div>
   );
 }

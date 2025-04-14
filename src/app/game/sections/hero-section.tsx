@@ -20,7 +20,7 @@ export default function HeroSections() {
           <HeroSwiperBanner data={imageList} />
         </div>
         <div className="w-[1280px] absolute left-1/2 -translate-x-1/2 top-48 z-10 space-y-7">
-          <div className="w-[640px] place-self-center mb-20 bg-white rounded-lg">
+          <div className="w-[640px] place-self-center mb-10 bg-white rounded-lg">
             <GameSearch onSelect={(value) => router.push(GAME_ROUTE.game_list + `?name=${value.name}`)} />
           </div>
           <div className={`box-content w-[340px] bg-white rounded-xl place-self-center ${styles.chatBubble}`}>

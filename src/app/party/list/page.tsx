@@ -5,16 +5,19 @@ import BounceButton from '@/components/common/BounceButton';
 import CustomPagination from '@/components/common/CustomPagination';
 import EmptyLottie from '@/components/common/EmptyLottie';
 import HeroSwiperBanner from '@/components/common/HeroSwiperBanner';
+import RetroButton from '@/components/common/RetroButton';
 import SortRadioGroup, { SortOption } from '@/components/common/SortRadioGroup';
 import PartySearchComponent from '@/components/party/party-search-component';
 import PartyCard from '@/components/party/PartyCard';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { PATH } from '@/constants/routes';
+import { PARTY_ROUTE } from '@/constants/routes/party';
 import { useAuthStore } from '@/stores/authStore';
 import { party } from '@/types/party';
 
 import { ChevronDown } from 'lucide-react';
+import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 
@@ -165,7 +168,13 @@ export default function PartyList() {
         </div>
         {parties.length <= 0 && (
           <div className="w-full text-center justify-self-center place-self-center">
-            <EmptyLottie className="w-[400px]"></EmptyLottie>
+            <EmptyLottie className="w-[400px]" text="원하는 파티가 없으신가요?">
+              <Link href={PARTY_ROUTE.party_create}>
+                <RetroButton type="purple" className="mt-10 font-bold">
+                  파티 만들기
+                </RetroButton>
+              </Link>
+            </EmptyLottie>
           </div>
         )}
         {totalItems > 9 && <CustomPagination totalItems={totalItems} pageSize={9} />}

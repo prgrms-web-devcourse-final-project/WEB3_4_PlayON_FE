@@ -10,11 +10,10 @@ import { getPartyRes } from '@/types/party';
 import HeroTypingBanner from '@/components/common/HeroTypingBanner';
 import PlayOnRollingBanner from '@/components/common/play-on-rolling-banner';
 import RetroButton from '@/components/common/RetroButton';
-import SearchBar from '@/components/common/SearchBar';
 import SectionBanner from '@/components/common/SectionBanner';
 import SectionTitle from '@/components/common/SectionTitle';
 import PartyCard, { PartyCardSkeleton } from '@/components/party/PartyCard';
-import PartyLogCard, { PartyLogCardSkeleton } from '@/components/party/PartyLogCard';
+import PartyLogCard from '@/components/party/PartyLogCard';
 import PixelCharacter from '@/components/PixelCharacter/PixelCharacter';
 import GameSearch from '@/components/common/GameSearch';
 import EmptyLottie from '@/components/common/EmptyLottie';
@@ -49,7 +48,6 @@ const popularGames: gameSimple[] = [
 export default function Party() {
   const party = useParty();
   const router = useRouter();
-  const [query, setQuery] = useState<string>('');
   const [pendingParties, setPendingParties] = useState<getPartyRes[]>([]);
   const [loggedParties, setLoggedParties] = useState<getPartyRes[]>([]);
   const handleSearch = (appId: number | string) => {
