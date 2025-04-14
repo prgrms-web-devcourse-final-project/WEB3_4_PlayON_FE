@@ -20,6 +20,8 @@ import { gameDetail } from '@/types/games';
 import { getPartyRes } from '@/types/party';
 import Link from 'next/link';
 import { PARTY_ROUTE } from '@/constants/routes/party';
+import SafeHtml from '@/components/common/SafeHtml';
+import styles from './gameDetail.module.css';
 
 export default function GameDetail({ params }: { params: { gameid: string } }) {
   const [selectedSlide, setSelectedSlide] = useState(0);
@@ -164,6 +166,7 @@ export default function GameDetail({ params }: { params: { gameid: string } }) {
       };
     },
   });
+  // console.log('gameDetails', gameDetails);
   // const dummyReviewData = {
   //   query_summary: {
   //     num_reviews: 3,
@@ -348,7 +351,7 @@ export default function GameDetail({ params }: { params: { gameid: string } }) {
                 <p className="text-xl font-bold">이 게임에 대해서</p>
               </AccordionTrigger>
               <AccordionContent>
-                <div dangerouslySetInnerHTML={{ __html: gameDetails ? gameDetails.game.about : '' }}></div>
+                <SafeHtml html={gameDetails ? gameDetails.game.about : ''} className={`${styles.ql}`} />
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="item-2">
@@ -356,7 +359,7 @@ export default function GameDetail({ params }: { params: { gameid: string } }) {
                 <p className="text-xl font-bold">상세 정보</p>
               </AccordionTrigger>
               <AccordionContent>
-                <div dangerouslySetInnerHTML={{ __html: gameDetails ? gameDetails.game.detail_desc : '' }}></div>
+                <SafeHtml html={gameDetails ? gameDetails.game.detail_desc : ''} className={`${styles.ql}`} />
               </AccordionContent>
             </AccordionItem>
             {/* <AccordionItem value="item-3">
