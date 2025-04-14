@@ -6,6 +6,8 @@ import SteamRankingSection from './sections/steam-ranking-section';
 import GenreRecommendation from './sections/genre-recommendation';
 import PlaytimeRecommendation from './sections/playtime-recommendation';
 import HeroSection from './sections/hero-section';
+import BounceButton from '@/components/common/BounceButton';
+import { GAME_ROUTE } from '@/constants/routes/game';
 
 export default function Game() {
   return (
@@ -19,7 +21,7 @@ export default function Game() {
       <section className="wrapper space-y-20">
         <GenreRecommendation />
         <PlaytimeRecommendation />
-        <BounceButton path={PATH.game_list} type="game" tootip="게임 찾기" />
+        <BounceButton path={GAME_ROUTE.game_list} type="game" tootip="게임 찾기" />
       </section>
     </main>
   );
