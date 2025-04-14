@@ -1,73 +1,93 @@
 'use client';
+import { useFreeCommunity } from '@/api/free-community';
 import RetroButton from '@/components/common/RetroButton';
 import InputImage from '@/components/community/input-image';
 import TextEditor from '@/components/community/TextEditor';
 import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { PATH } from '@/constants/routes';
+import { useToast } from '@/hooks/use-toast';
 import { communityTags } from '@/types/Tags/communityTags';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ChevronDown } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
+const validFileTypes = ['png', 'jpg', 'jpeg', 'webp', ''];
+
+const categoryList = {
+  일상: 'DAILY',
+  유머: 'HUMOR',
+  게임추천: 'GAME_RECOMMEND',
+  게임소식: 'GAME_NEWS',
+  질문: 'QUESTION',
+  파티모집: 'PARTY_RECRUIT',
+};
+
 const createCommunityFormSchema = z.object({
-  tag: z.string(),
-  title: z.string().min(1),
-  image: z.string(),
-  content: z.string().min(1),
+  category: z.string().min(1, { message: '태그를 선택해주세요' }),
+  title: z.string().min(1, { message: '제목을 입력해주세요' }),
+  fileType: z.string(),
+  content: z.string().min(1, { message: '본문을 작성해주세요' }),
 });
 type createCommunityFormType = z.infer<typeof createCommunityFormSchema>;
 
 export default function CommunityCreate() {
+  const board = useFreeCommunity();
+  const router = useRouter();
+  const Toast = useToast();
+
   const form = useForm<createCommunityFormType>({
     defaultValues: {
-      tag: '',
+      category: '',
       title: '',
-      image: '',
+      fileType: '',
       content: '',
     },
     resolver: zodResolver(createCommunityFormSchema),
   });
 
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
 
-  function onSubmit(data: createCommunityFormType) {
-    console.log('data : ', data);
+  async function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
+    if (!e.target.files) return;
+    const imgFile = e.target.files[0];
+    const imgFileType = imgFile.type.split('/')[1];
+
+    if (validFileTypes.includes(imgFileType)) {
+      if (form.formState.errors.fileType) {
+        form.clearErrors('fileType');
+      }
+      const url = URL.createObjectURL(imgFile);
+      setPreviewUrl(url);
+      setImageFile(imgFile);
+      form.setValue('fileType', imgFileType);
+    } else {
+      setPreviewUrl('');
+      setImageFile(null);
+      form.setError('fileType', {
+        type: 'manual',
+        message: '지원하지 않는 파일 타입입니다.',
+      });
+    }
   }
 
-  async function handleImageChange(e: React.ChangeEvent<HTMLInputElement>, onChange: (value: string) => void) {
-    const file = e.target.files?.[0];
-    if (!file) {
-      onChange('');
-      return;
+  async function onSubmit(data: createCommunityFormType) {
+    Object.assign(data, { category: categoryList[data.category as keyof typeof categoryList] });
+    const response = await board.PostCreateWithImg(data, imageFile);
+    console.log(response);
+    if (response) {
+      Toast.toast({
+        title: '게시물이 생성되었습니다.',
+        variant: 'primary',
+      });
     }
-
-    const url = URL.createObjectURL(file);
-    setPreviewUrl(url);
-
-    try {
-      const uploadedUrl = await uploadImageToS3(file);
-      onChange(uploadedUrl);
-    } catch (error) {
-      console.error('이미지 업로드 실패:', error);
-    }
+    router.push(PATH.community);
   }
-
-  // 모킹된 이미지 업로드 함수 (나주에 유틸 함수로 빼기)
-  const uploadImageToS3 = async (file: File): Promise<string> => {
-    return new Promise((resolve) => {
-      console.log('업로드할 파일:', file);
-
-      // 실제 S3 업로드 대신 딜레이 후 URL 반환
-      setTimeout(() => {
-        const mockUrl = `https://example-s3-bucket.amazonaws.com/${file.name}`;
-        console.log('업로드 성공! URL:', mockUrl);
-        resolve(mockUrl);
-      }, 1000); // 1초 딜레이 (업로드 시뮬레이션)
-    });
-  };
 
   return (
     <div className="wrapper mb-12 mt-28 space-y-10">
@@ -79,11 +99,14 @@ export default function CommunityCreate() {
             <div className="bg-neutral-50 border border-neutral-300 rounded-2xl px-8 py-6 space-y-3">
               <FormField
                 control={form.control}
-                name="tag"
+                name="category"
                 render={({ field }) => (
                   <Select value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger className="w-52 h-12 text-xl px-4 bg-white">
-                      <SelectValue placeholder="태그" className="placeholder:!text-neutral-400" />
+                    <SelectTrigger className="w-52 h-12 text-xl px-4 bg-white focus-visible:ring-purple-600 focus:ring-purple-600">
+                      <SelectValue
+                        placeholder="태그"
+                        className="placeholder:!text-neutral-400 focus-visible:ring-purple-600 focus:ring-purple-600"
+                      />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectGroup>
@@ -107,7 +130,7 @@ export default function CommunityCreate() {
                         value={field.value}
                         onChange={field.onChange}
                         placeholder="제목을 입력해주세요"
-                        className="!text-xl w-full h-12 bg-white px-4 placeholder:text-neutral-400"
+                        className="!text-xl w-full h-12 bg-white px-4 placeholder:text-neutral-400 focus-visible:ring-purple-600"
                       />
                     </FormControl>
                   </FormItem>
@@ -123,11 +146,14 @@ export default function CommunityCreate() {
             </label>
             <FormField
               control={form.control}
-              name="image"
-              render={({ field }) => (
-                <FormItem className="pt-6 group-has-[input:checked]:opacity-0 group-has-[input:checked]:h-0 group-has-[input:checked]:pt-0 transition-all">
+              name="fileType"
+              render={() => (
+                <FormItem
+                  className="pt-6 group-has-[input:checked]:opacity-0 group-has-[input:checked]:h-0 group-has-[input:checked]:pt-0 transition-all
+                focus-visible:ring-purple-600"
+                >
                   <FormControl>
-                    <InputImage onChange={(e) => handleImageChange(e, field.onChange)} previewUrl={previewUrl} />
+                    <InputImage onChange={(e) => handleImageChange(e)} previewUrl={previewUrl} />
                   </FormControl>
                 </FormItem>
               )}
@@ -144,12 +170,16 @@ export default function CommunityCreate() {
               </FormItem>
             )}
           />
-
-          <button type="submit" className="self-end">
-            <RetroButton type="purple" className="w-64">
-              등록
+          <div className="flex gap-8 self-end">
+            <RetroButton type="grey" className="w-32" callback={() => router.push(PATH.community)}>
+              취소
             </RetroButton>
-          </button>
+            <button type="submit" className="self-end" onClick={() => console.log(form.formState.errors)}>
+              <RetroButton type="purple" className="w-64">
+                등록
+              </RetroButton>
+            </button>
+          </div>
         </form>
       </Form>
     </div>

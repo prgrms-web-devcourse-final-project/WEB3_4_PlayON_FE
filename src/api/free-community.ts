@@ -1,6 +1,7 @@
 import { FREECOMMUNITY_ENDPOINTS } from '@/constants/endpoints/free-community';
 import { useAxios } from '@/hooks/useAxios';
 import { comment, post, postSimple } from '@/types/community';
+import { uploadToS3 } from '@/utils/uploadToS3';
 
 const categories = ['DAILY', 'HUMOR', 'GAME_RECOMMEND', 'GAME_NEWS', 'QUESTION', 'PARTY_RECRUIT'] as const;
 const typeMap = {
@@ -26,6 +27,7 @@ const typeMap = {
 type TypeMap = typeof typeMap;
 type ConvertingType = keyof TypeMap;
 type Direction = keyof TypeMap[ConvertingType];
+type createRequest = { title: string; content: string; category: string; fileType: string };
 
 export default function typeConverter<T extends ConvertingType, D extends Direction, I extends keyof TypeMap[T][D]>(
   convertingType: T,
@@ -45,6 +47,7 @@ export const useFreeCommunity = () => {
       return {
         channel: '자유',
         comments: [],
+        num_comments: 0,
         content: data.content as string,
         created_at: data.createAt as Date,
         hits: data.hit as number,
@@ -87,7 +90,8 @@ export const useFreeCommunity = () => {
   }
   async function PostCreate(input: { title: string; content: string; category: string; fileType: string }) {
     const response = await axios.Post(FREECOMMUNITY_ENDPOINTS.postCreate, { ...input }, {}, true);
-    if (response && response.status === 200) {
+    console.log('PostCreate', response);
+    if (response && response.status === 201) {
       const data = response.data.data;
       return {
         boardId: data.boardId as number,
@@ -95,10 +99,40 @@ export const useFreeCommunity = () => {
       };
     }
   }
+
+  async function PostCreateWithImg(input: createRequest, imageFile: File | null) {
+    try {
+      // 1. 게시글 생성
+      const createResponse = await PostCreate(input);
+      // console.log('createResponse', createResponse);
+      if (createResponse && imageFile) {
+        const { boardId, presignedUrl } = createResponse;
+        // 2. S3 presigned URL로 이미지 업로드
+        const s3Response = await uploadToS3(imageFile, presignedUrl);
+        // console.log('s3Response', s3Response);
+        if (s3Response.success) {
+          const imageUrl = s3Response.url;
+          console.log('이미지 업로드 완료: ', imageUrl);
+          // 3. 이미지 URL 서버에 등록
+          const response = await PostImg(boardId, { url: imageUrl });
+          console.log('response', response);
+          console.log('길드 생성 완료(이미지O)');
+          return true;
+        }
+      }
+      console.log('길드 생성 완료(이미지X)');
+      return true;
+    } catch (error) {
+      console.log('길드 생성 중 오류 발생: ', error);
+    }
+  }
+
   async function PostImg(boardId: number, input: { url: string }) {
-    const response = await axios.Post(FREECOMMUNITY_ENDPOINTS.postImg(boardId), { ...input }, {}, true);
-    if (response && response.status === 200) {
-      // const data = response.data.data;
+    const response = await axios.Post(FREECOMMUNITY_ENDPOINTS.postImg(boardId), input, {}, true);
+    // console.log('PostImg', response);
+    if (response && response.status === 204) {
+      const data = response.data;
+      console.log('PostImg', data);
       return true;
     }
     throw new Error('Failed to send image url');
@@ -225,6 +259,7 @@ export const useFreeCommunity = () => {
     PostUpdate,
     PostDelete,
     PostCreate,
+    PostCreateWithImg,
     PostImg,
     PostList,
     PostLike,
