@@ -43,8 +43,6 @@ export default function GameList() {
   const searchParams = useSearchParams();
   const totalItems = useRef(48);
 
-  const [fetchData, setFetchData] = useState(false);
-
   function convertToClientGame(data: game): gameDetail {
     return {
       about: data.aboutTheGame,
@@ -170,7 +168,6 @@ export default function GameList() {
     }
     window.history.pushState({}, '', newUrl);
   }, [genre, playerType, releaseStatus, mac, releaseDate, keyword]);
-
   useEffect(() => {
     refetch();
   }, [refetch, searchParams]);

@@ -21,6 +21,7 @@ export const useParty = () => {
     end_time?: Date;
     tags: string[];
     participation: userSimple[];
+    isMacSupported: boolean;
     selected_game: gameSimple;
     num_maximum: number;
     num_minimum?: number;
@@ -45,6 +46,7 @@ export const useParty = () => {
         },
         num_maximum: party.maximum,
         num_minimum: party.minimum,
+        isMacSupported: party.isMacSupported,
       };
     }
     console.log('로딩 중 문제가 발생했습니다.');

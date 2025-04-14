@@ -39,7 +39,6 @@ export default function GuildList() {
     }
     return raw.split(',').map((value) => ({ type: type, value: value }));
   }
-
   const fetchData = useCallback(async (params: URLSearchParams) => {
     const partyStyle = splitTag(params, 'partyStyle', '파티 스타일');
     const skillLevel = splitTag(params, 'skillLevel', '게임 실력');
@@ -77,7 +76,6 @@ export default function GuildList() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
   useEffect(() => {
     fetchData(params);
   }, [params, fetchData]);

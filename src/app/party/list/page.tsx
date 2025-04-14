@@ -38,7 +38,7 @@ export default function PartyList() {
 
   const [parties, setParties] = useState<party[]>([]);
   const [totalItems, setTotalItem] = useState(0);
-  const [isMacSupported, setIsMacSupported] = useState(false);
+  // const [isMacSupported, setIsMacSupported] = useState(false);
   const userName = user?.nickname ?? '플레이어';
 
   function splitTag(params: URLSearchParams, paramName: string, type: string): { type: string; value: string }[] {
@@ -48,67 +48,63 @@ export default function PartyList() {
     }
     return raw.split(',').map((value) => ({ type: type, value: value }));
   }
-
   const handleMacToggle = (checked: boolean) => {
     const macParams = new URLSearchParams(window.location.search);
-
     if (checked) {
       macParams.set('isMacSupported', 'true');
     } else {
       macParams.delete('isMacSupported');
     }
-
     const newUrl = `${window.location.pathname}?${macParams.toString()}`;
-    window.history.pushState({}, '', newUrl);
+    if (window.location.href !== newUrl.toString()) window.history.pushState({}, '', newUrl);
   };
+  const fetchData = useCallback(
+    async (params: URLSearchParams) => {
+      console.log('fecthData callback', params);
 
-  const fetchData = useCallback(async (params: URLSearchParams) => {
-    console.log('fecthData callback', params);
-
-    const partyStyle = splitTag(params, 'partyStyle', 'PARTY_STYLE');
-    const skillLevel = splitTag(params, 'skillLevel', 'GAME_SKILL');
-    const gender = splitTag(params, 'gender', 'GENDER');
-    const friendly = splitTag(params, 'friendly', 'SOCIALIZING');
-    const genres = params.get('genres')?.split(',');
-    const partyDate = params.get('partyDate');
-    const appId = params.get('appId');
-    const orderBy = params.get('sort');
-    const page = Number(params.get('page'));
-    const isMacSupported = params.get('isMacSupported');
-    const partyAt = (partyDate && new Date(partyDate)) || new Date();
-    const res = await party.GetParties(
-      {
-        appId: appId ?? undefined,
-        genres: genres || [],
-        tags: [...partyStyle, ...skillLevel, ...gender, ...friendly],
-      },
-      partyAt,
-      page == 0 ? 1 : page,
-      orderBy ?? '',
-      isMacSupported
-    );
-    if (!res) return;
-    setParties(res.parties);
-    setTotalItem(res.totalItems);
-  }, []);
-
+      const partyStyle = splitTag(params, 'partyStyle', 'PARTY_STYLE');
+      const skillLevel = splitTag(params, 'skillLevel', 'GAME_SKILL');
+      const gender = splitTag(params, 'gender', 'GENDER');
+      const friendly = splitTag(params, 'friendly', 'SOCIALIZING');
+      const genres = params.get('genres')?.split(',');
+      const partyDate = params.get('partyDate');
+      const appId = parseInt(params.get('appId') as string);
+      const orderBy = params.get('sort');
+      const page = Number(params.get('page'));
+      const isMacSupported = params.get('isMacSupported') === 'true' ? true : false;
+      const partyAt = (partyDate && new Date(partyDate)) || new Date();
+      const res = await party.GetParties(
+        {
+          appId: appId ?? undefined,
+          genres: genres || [],
+          tags: [...partyStyle, ...skillLevel, ...gender, ...friendly],
+        },
+        partyAt,
+        page == 0 ? 1 : page,
+        orderBy ?? '',
+        isMacSupported
+      );
+      if (!res) return;
+      setParties(res.parties);
+      setTotalItem(res.totalItems);
+    },
+    [params]
+  );
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-
-    const handlePopState = () => {
-      fetchData(new URLSearchParams(window.location.search));
-    };
-
-    handlePopState();
-    window.addEventListener('popstate', handlePopState);
-    return () => {
-      window.removeEventListener('popstate', handlePopState);
-    };
-  }, [params]);
-
+    console.log(params);
+    fetchData(params);
+  }, [params, fetchData]);
   // useEffect(() => {
-  //   fetchData(params);
-  // }, []);
+  //   if (typeof window === 'undefined') return;
+  //   const handlePopState = () => {
+  //     fetchData(new URLSearchParams(window.location.search));
+  //   };
+  //   handlePopState();
+  //   window.addEventListener('popstate', handlePopState);
+  //   return () => {
+  //     window.removeEventListener('popstate', handlePopState);
+  //   };
+  // }, [params, fetchData]);
 
   return (
     <div className="relative space-y-16 mb-24">
@@ -155,7 +151,7 @@ export default function PartyList() {
             <Switch
               id="os"
               onCheckedChange={(checked) => {
-                setIsMacSupported(checked);
+                // setIsMacSupported(checked);
                 handleMacToggle(checked);
               }}
             />

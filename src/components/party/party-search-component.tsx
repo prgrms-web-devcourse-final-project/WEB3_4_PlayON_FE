@@ -81,7 +81,6 @@ export default function PartySearchComponent(props: PartySearchComponentProps) {
     } else {
       newUrl.searchParams.delete('gender');
     }
-
     if (!friendly[0][0]) {
       const Friendly = friendly[0]
         .slice(1, friendly[0].length)
@@ -92,14 +91,14 @@ export default function PartySearchComponent(props: PartySearchComponentProps) {
       newUrl.searchParams.delete('friendly');
     }
     // router.replace(newUrl.toString(), { scroll: false });
-    window.history.pushState({}, '', newUrl);
+    if (window.location.href !== newUrl.toString()) window.history.pushState({}, '', newUrl);
   }, [partyStyle, skillLevel, gender, friendly]);
   useEffect(() => {
     if (partyDate) {
       const newUrl = new URL(window.location.href);
       newUrl.searchParams.set('partyDate', formatISO(partyDate.toString()));
       // router.replace(newUrl.toString(), { scroll: false });
-      window.history.pushState({}, '', newUrl);
+      if (window.location.href !== newUrl.toString()) window.history.pushState({}, '', newUrl);
     }
   }, [partyDate]);
   useEffect(() => {
@@ -111,7 +110,7 @@ export default function PartySearchComponent(props: PartySearchComponentProps) {
     } else {
       newUrl.searchParams.delete('genres');
     }
-    window.history.pushState({}, '', newUrl);
+    if (window.location.href !== newUrl.toString()) window.history.pushState({}, '', newUrl);
   }, [selectedGenres]);
   useEffect(() => {
     const newUrl = new URL(window.location.href);
@@ -122,10 +121,9 @@ export default function PartySearchComponent(props: PartySearchComponentProps) {
     }
     if (searchName.toString().length === 0) {
       newUrl.searchParams.delete('appId');
-      window.history.pushState({}, '', newUrl);
+      if (window.location.href !== newUrl.toString()) window.history.pushState({}, '', newUrl);
     }
   }, [searchName]);
-
   useEffect(() => {
     const newCharText: string[] = [];
     const PartyStyle = searchParam.get('partyStyle');
@@ -136,17 +134,14 @@ export default function PartySearchComponent(props: PartySearchComponentProps) {
     if (PartyStyle) newCharText.push(PartyStyle + ' 스타일의');
     if (Friendly) newCharText.push(Friendly + ' ');
     if (SkillLevel) newCharText.push(SkillLevel + ' ');
-
     setCharText(newCharText.join(' ') + ' ');
   }, [friendly, partyStyle, skillLevel, searchParam]);
-
   useEffect(() => {
     const PartyDate = searchParam.get('partyDate');
     if (PartyDate) {
       console.log(new Date(PartyDate));
       setPartyDate(new Date(PartyDate));
     }
-
     const PartyStyle = searchParam.get('partyStyle');
     if (PartyStyle && PartyStyle !== '전체') {
       const temp = PartyStyle.split(',');
@@ -167,13 +162,11 @@ export default function PartySearchComponent(props: PartySearchComponentProps) {
       const temp = Friendly.split(',');
       friendly[1]([false, ...partyTags.friendly.items.map((e) => temp.includes(e))]);
     }
-
     const Genres = searchParam.get('genres');
     if (Genres) {
       const temp = Genres.split(',');
       setSelectedGenres(temp);
     }
-
     const SearchName = searchParam.get('appId');
     if (SearchName) {
       setSearchName(SearchName);
@@ -237,7 +230,7 @@ export default function PartySearchComponent(props: PartySearchComponentProps) {
         </div>
         <p className="p-5 border border-neutral-400 rounded-2xl">
           {charText && <span className="font-dgm text-neutral-900 text-center">{charText}</span>}
-          <span className="font-dgm text-neutral-900 text-center">{`${user ? '게이머 ' + user : '익명의 게이머'}님을 위한 파티를 찾아왔어요.`}</span>
+          <span className="font-dgm text-neutral-900 text-center">{`${user ? '게이머 ' + user.nickname : '익명의 게이머'}님을 위한 파티를 찾아왔어요.`}</span>
         </p>
       </div>
     </div>

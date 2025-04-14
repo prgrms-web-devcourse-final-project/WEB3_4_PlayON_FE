@@ -3,12 +3,12 @@
 import { guildTags } from '@/types/Tags/guildTags';
 import SearchBar from '../common/SearchBar';
 import PixelCharacter from '../PixelCharacter/PixelCharacter';
-// import Chip from '@/components/common/chip';
 import { useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { CoolerCategoryMenu } from '@/app/signup/userdata/component/cooler-category-menu';
 import TiltToggle from '../common/tilt-toggle';
 import GameSearch from '../common/GameSearch';
+import { useAuthStore } from '@/stores/authStore';
 
 type GuildSearchComponentProps = {
   className: string;
@@ -26,6 +26,7 @@ export default function GuildSearchComponent(props: GuildSearchComponentProps) {
   const friendly = useState([true, ...new Array(guildTags.friendly.items.length).fill(false)]);
   const selectedArr = [partyStyle, skillLevel, gender, friendly];
   const [charText, setCharText] = useState('');
+  const { user } = useAuthStore();
 
   const handleSearchByName = useCallback((value: string) => {
     setSearchByName(value);
@@ -33,22 +34,6 @@ export default function GuildSearchComponent(props: GuildSearchComponentProps) {
   const handleSearchName = useCallback((value: string) => {
     setSelectedGames(value);
   }, []);
-  // const handleChipAdded = useCallback(
-  //   (value: string) => {
-  //     if (selectedGames.findIndex((e) => e === value) === -1) setSelectedGames([...selectedGames, value]);
-  //   },
-  //   [selectedGames]
-  // );
-  // const handleChipDelete = useCallback(
-  //   (content: string) => {
-  //     const index = selectedGames.findIndex((e) => e === content);
-  //     const temp = [...selectedGames];
-  //     temp.splice(index, 1);
-  //     setSelectedGames(temp);
-  //   },
-  //   [selectedGames]
-  // );
-
   useEffect(() => {
     const newUrl = new URL(window.location.href);
     if (!partyStyle[0][0]) {
@@ -78,7 +63,6 @@ export default function GuildSearchComponent(props: GuildSearchComponentProps) {
     } else {
       newUrl.searchParams.delete('gender');
     }
-
     if (!friendly[0][0]) {
       const Friendly = friendly[0]
         .slice(1, friendly[0].length)
@@ -89,46 +73,32 @@ export default function GuildSearchComponent(props: GuildSearchComponentProps) {
       newUrl.searchParams.delete('friendly');
     }
     // router.replace(newUrl.toString(), { scroll: false });
-    window.history.pushState({}, '', newUrl);
+    if (window.location.href !== newUrl.toString()) window.history.pushState({}, '', newUrl);
   }, [partyStyle, skillLevel, gender, friendly]);
-  // useEffect(() => {
-  //   const newUrl = new URL(window.location.href);
-  //   const newGenres = selectedGames.join(',');
-  //   if (newGenres.length > 0) {
-  //     newUrl.searchParams.set('genres', newGenres);
-  //     // router.replace(newUrl.toString(), { scroll: false });
-  //   } else {
-  //     newUrl.searchParams.delete('genres');
-  //   }
-  //   window.history.pushState({}, '', newUrl);
-  // }, [selectedGames]);
-
   useEffect(() => {
     const newUrl = new URL(window.location.href);
     if (selectedGames.toString().length > 0) {
       newUrl.searchParams.set('appId', selectedGames);
       // router.replace(newUrl.toString(), { scroll: false });
-      window.history.pushState({}, '', newUrl);
+      if (window.location.href !== newUrl.toString()) window.history.pushState({}, '', newUrl);
     }
     if (selectedGames.toString().length === 0) {
       newUrl.searchParams.delete('appId');
-      window.history.pushState({}, '', newUrl);
+      if (window.location.href !== newUrl.toString()) window.history.pushState({}, '', newUrl);
     }
   }, [selectedGames]);
-
   useEffect(() => {
     const newUrl = new URL(window.location.href);
     if (searchByName.length > 0) {
       newUrl.searchParams.set('name', searchByName);
       // router.replace(newUrl.toString(), { scroll: false });
-      window.history.pushState({}, '', newUrl);
+      if (window.location.href !== newUrl.toString()) window.history.pushState({}, '', newUrl);
     }
     if (searchByName.length === 0) {
       newUrl.searchParams.delete('name');
-      window.history.pushState({}, '', newUrl);
+      if (window.location.href !== newUrl.toString()) window.history.pushState({}, '', newUrl);
     }
   }, [searchByName]);
-
   useEffect(() => {
     const newCharText: string[] = [];
     const PartyStyle = searchParam.get('partyStyle');
@@ -164,23 +134,14 @@ export default function GuildSearchComponent(props: GuildSearchComponentProps) {
       const temp = Friendly.split(',');
       friendly[1]([false, ...guildTags.friendly.items.map((e) => temp.includes(e))]);
     }
-
-    // const Genres = searchParam.get('genres');
-    // if (Genres) {
-    //   const temp = Genres.split(',');
-    //   setSelectedGames(temp);
-    // }
-
     const searchByName = searchParam.get('name');
     if (searchByName) {
       setSearchByName(searchByName);
     }
-
     const SearchName = searchParam.get('appId');
     if (SearchName) {
       setSelectedGames(SearchName);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -235,7 +196,7 @@ export default function GuildSearchComponent(props: GuildSearchComponentProps) {
         </div>
         <p className="p-5 border border-neutral-400 rounded-2xl">
           {charText && <span className="font-dgm text-neutral-900 text-center">{charText}</span>}
-          <span className="font-dgm text-neutral-900 text-center">게이머 홍길동님을 위한 길드를 찾아왔어요.</span>
+          <span className="font-dgm text-neutral-900 text-center">{`${user ? '게이머 ' + user.nickname : '익명의 게이머'}님을 위한 파티를 찾아왔어요.`}</span>
         </p>
       </div>
     </div>
