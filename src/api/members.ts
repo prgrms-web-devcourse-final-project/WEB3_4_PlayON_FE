@@ -185,7 +185,11 @@ export const useMembers = () => {
 
   async function SearchByNickname(nickname: string) {
     const response = await axios.Get(MEMBER.nickname, { params: { nickname } }, true);
-    return response;
+    if (response && response.status === 200) {
+      const data = response.data.data;
+      return data;
+    }
+    throw new Error('Failed to search users with nickname');
   }
   async function GetUserDetail(userId: number) {
     const response = await axios.Get(MEMBER.otherMember(userId), {}, true);
