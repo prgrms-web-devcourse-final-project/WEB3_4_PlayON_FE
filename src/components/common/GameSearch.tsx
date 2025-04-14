@@ -1,11 +1,16 @@
 import { useGame } from '@/api/game';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
-import { Search } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import { useEffect, useRef, useState } from 'react';
 
 type searchedGame = { appid: string; name: string };
 
-const GameSearch = ({ onSelect }: { onSelect: (game: searchedGame) => void }) => {
+type Props = {
+  onSelect: (game: searchedGame) => void;
+  className?: string;
+};
+
+const GameSearch = ({ onSelect, className }: Props) => {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const game = useGame();
   const [query, setQuery] = useState<string>('');
@@ -42,13 +47,16 @@ const GameSearch = ({ onSelect }: { onSelect: (game: searchedGame) => void }) =>
 
   return (
     <Command
-      className="relative w-full h-10 px-4 py-2 ring-0  border border-neutral-300 rounded-lg group focus-within:ring-1 focus-within:ring-purple-600 outline-none"
+      className={cn(
+        'relative w-full h-10 px-4 py-2 ring-0  border border-neutral-300 rounded-lg group focus-within:ring-1 focus-within:ring-purple-600 outline-none',
+        className
+      )}
       ref={wrapperRef}
       shouldFilter={false}
     >
       <CommandInput
         className=""
-        placeholder="Type a command or search..."
+        placeholder="게임 이름을 검색하세요"
         value={query ?? ''}
         onValueChange={setQuery}
         onFocus={() => {
@@ -56,7 +64,7 @@ const GameSearch = ({ onSelect }: { onSelect: (game: searchedGame) => void }) =>
         }}
       />
       {isFocused && query.length > 0 && (
-        <CommandList className="border absolute top-10 left-0 w-full bg-white z-10">
+        <CommandList className="border absolute top-full left-0 w-full bg-white z-10">
           {!loading && searchedList.length === 0 ? (
             <CommandEmpty>No results found.</CommandEmpty>
           ) : (
