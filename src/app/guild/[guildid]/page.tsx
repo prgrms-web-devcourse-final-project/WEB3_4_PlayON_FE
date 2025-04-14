@@ -1,7 +1,7 @@
 'use client';
 
 import PlayOnRollingBanner from '@/components/common/play-on-rolling-banner';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { Suspense, useEffect, useState } from 'react';
 import GuildInfoSection from './components/GuildInfoSection';
 import GuildInfoSectionSkeleton from './components/GuildInfoSectionSkeleton';

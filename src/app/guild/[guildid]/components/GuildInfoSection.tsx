@@ -101,11 +101,13 @@ export default function GuildInfoSection({ guildId }: { guildId: string }) {
           <div className="flex flex-col gap-5">
             <p className="font-bold text-5xl text-neutral-900">{guildData.guild_name}</p>
             <div className="flex gap-2">
-              {getTagList(guildData).map((e, ind) => (
-                <Tag style="retro" size="small" background="dark" className="" key={ind}>
-                  {e}
-                </Tag>
-              ))}
+              {getTagList(guildData)
+                .slice(0, 8)
+                .map((e, ind) => (
+                  <Tag style="retro" size="small" background="dark" className="" key={ind}>
+                    {e}
+                  </Tag>
+                ))}
             </div>
             <p className="text-sm text-neutral-900 font-medium line-clamp-4 text-ellipsis">{guildData.description}</p>
             <div className="flex gap-6">
