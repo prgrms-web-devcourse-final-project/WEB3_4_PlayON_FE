@@ -9,7 +9,6 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { PATH } from '@/constants/routes';
 import { useToast } from '@/hooks/use-toast';
-import { guildCommunityTags } from '@/types/Tags/communityTags';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQuery } from '@tanstack/react-query';
 import { ChevronDown } from 'lucide-react';
@@ -43,6 +42,9 @@ export default function GuildCommunityCreate() {
     queryKey: ['guildDetail', params.guildId],
     queryFn: () => guild.GetGuild(guildId),
   });
+  console.log(guildData);
+  const guildCommunityTagsByRole =
+    guildData && guildData.myRole === 'MEMBER' ? ['자유', '게임관련'] : ['공지', '자유', '게임관련'];
 
   const form = useForm<createCommunityFormType>({
     defaultValues: {
@@ -117,7 +119,7 @@ export default function GuildCommunityCreate() {
                       </FormControl>
                       <SelectContent>
                         <SelectGroup>
-                          {guildCommunityTags.map((tag) => (
+                          {guildCommunityTagsByRole.map((tag) => (
                             <SelectItem key={tag} value={tag} className="text-xl text-neutral-900">
                               {tag}
                             </SelectItem>
