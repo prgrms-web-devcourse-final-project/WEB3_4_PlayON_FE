@@ -113,22 +113,22 @@ export default function GameList() {
   const router = useRouter();
 
   const fetchData = useCallback(async (params: URLSearchParams) => {
-    const Genre = params.get('genre')?.split(',');
-    const PlayerType = params.get('playerType');
-    const ReleaseStatus = params.get('releaseStatus');
-    const Mac = params.get('mac');
-    const Keyword = params.get('name');
-    const ReleaseDate = params.get('releaseDate');
+    const Genre = searchParams.get('genre')?.split(',');
+    const PlayerType = searchParams.get('playerType');
+    const ReleaseStatus = searchParams.get('releaseStatus');
+    const Mac = searchParams.get('mac');
+    const Keyword = searchParams.get('name');
+    const ReleaseDate = searchParams.get('releaseDate');
 
     if (Genre) {
       setGenre([false, ...genres.map((e) => Genre.includes(e))]);
     }
     if (PlayerType) setPlayerType(PlayerType === '멀티플레이' ? [true, false] : [false, true]);
     if (ReleaseStatus) setReleaseStatus(ReleaseStatus === '발매' ? [true, false] : [false, true]);
+    console.log(releaseStatus);
     if (Mac) setMac(Mac === 'true' ? true : false);
     if (Keyword) setKeyword(Keyword);
     if (ReleaseDate) setReleaseDate(new Date(ReleaseDate));
-
     refetch();
   }, []);
   useEffect(() => {
@@ -150,6 +150,7 @@ export default function GameList() {
       newUrl.searchParams.delete('playerType');
     }
     const releaseStatusInd = releaseStatus.findIndex((e) => e === true);
+    console.log(releaseStatusInd);
     const releaseStatusValue = releaseStatuses[releaseStatusInd];
     if (releaseStatusInd !== -1) {
       newUrl.searchParams.set('releaseStatus', releaseStatusValue);
@@ -171,11 +172,11 @@ export default function GameList() {
     } else {
       newUrl.searchParams.delete('releaseDate');
     }
-    if (window.location.href !== newUrl.toString()) window.history.pushState({}, '', newUrl);
-  }, [genre, playerType, releaseStatus, mac, releaseDate, keyword]);
+    window.history.pushState({}, '', newUrl);
+  }, [genre, playerType, releaseStatus, mac, releaseDate, keyword, playerTypes, releaseStatuses, genres]);
   useEffect(() => {
     fetchData(searchParams);
-  }, [searchParams, fetchData]);
+  }, [fetchData, searchParams]);
 
   const ImFeelingLucky = async () => {
     try {
