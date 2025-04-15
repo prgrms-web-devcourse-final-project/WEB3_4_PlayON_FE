@@ -2,7 +2,7 @@
 
 import { userSchema } from '../userSchema';
 import { z } from 'zod';
-import './style.css';
+import '../style.css';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
@@ -16,7 +16,6 @@ import { useAuthStore } from '@/stores/authStore';
 import { useToast } from '@/hooks/use-toast';
 import typeConverter from '@/utils/typeConverter';
 import { uploadToS3 } from '@/utils/uploadToS3';
-import { set } from 'date-fns';
 
 const userDataSchema = userSchema.pick({
   nickname: true,
