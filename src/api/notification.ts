@@ -46,14 +46,19 @@ export const useNotification = () => {
     throw new Error('Failed to fetch notifications');
   }
   async function GetNotificationsSummary() {
-    const res = await axios.Get(NOTIFICATION_ENDPOINTS.summary, {}, true);
-    if (res && res.status == 200) {
-      return {
-        notification: res.data.data.notifications as Notification[],
-        unreadCount: res.data.data.unreadCount as number,
-      };
+    try {
+      const res = await axios.Get(NOTIFICATION_ENDPOINTS.summary, {}, true);
+      if (res && res.status == 200) {
+        return {
+          notification: res.data.data.notifications as Notification[],
+          unreadCount: res.data.data.unreadCount as number,
+        };
+      }
+      throw new Error('Failed to fetch notifications');
+    } catch (e) {
+      console.log('notierror-----------------------');
+      console.log(e);
     }
-    throw new Error('Failed to fetch notifications');
   }
   async function SubscribeNotification() {
     const res = await axios.Get(NOTIFICATION_ENDPOINTS.subscribe, {}, true);

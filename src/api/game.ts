@@ -148,10 +148,22 @@ export const useGame = () => {
   }
   async function GamePopular() {
     const response = await axios.Get(GAME_ENDPOINTS.popular, {}, false);
+    console.log(response);
     if (response && response.status === 200) {
-      return response.data.data as { appid: number; name: string; headerImage: string; genres: string[] }[];
+      const list = response.data.data as { appid: number; name: string; headerImage: string; genres: string[] }[];
+      const formatted = list.map((e) => {
+        return {
+          title: e.name,
+          genre: e.genres,
+          img_src: e.headerImage,
+          background_src: '',
+          appid: e.appid,
+        };
+      });
+      console.log(list);
+      return formatted;
     }
-    throw new Error('Failed to fetch');
+    return [];
   }
   async function GameSearch(
     condition?: {
