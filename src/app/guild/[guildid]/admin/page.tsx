@@ -17,6 +17,7 @@ import { useGuild } from '@/api/guild';
 import { useAuthStore } from '@/stores/authStore';
 import { useGuildJoin } from '@/api/guildJoin';
 import { AdditionalInfo } from '@/types/guildApi';
+import { useToast } from '@/hooks/use-toast';
 
 interface guildUserProps {
   memberId: string;
@@ -59,6 +60,7 @@ export default function GuildAdmin() {
   const guildJoin = useGuildJoin();
   const { user } = useAuthStore();
   const { PutManager, DeleteManager, GetMembers, InviteMembers, DeleteMembers, GetAdmin } = useGuildsMembers();
+  const Toast = useToast();
 
   const [guildInfo, setGuildInfo] = useState<{
     name: string;
@@ -185,7 +187,13 @@ export default function GuildAdmin() {
   const deleteGuild = useCallback(
     async () => {
       const response = await guild.DeleteGuild(guildid);
-      console.log(response);
+      // console.log(response);
+      if (response) {
+        Toast.toast({
+          title: '길드가 삭제되었습니다.',
+          variant: 'primary',
+        });
+      }
       router.push(PATH.guild_list);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps

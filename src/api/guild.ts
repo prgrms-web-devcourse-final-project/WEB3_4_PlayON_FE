@@ -63,7 +63,7 @@ export const useGuild = () => {
     const response = await axios.Delete(GUILD.delete(guildId), {}, true);
     const data = response?.data;
     if (data.msg === 'OK') {
-      alert('삭제되었습니다!');
+      // alert('삭제되었습니다!');
     }
     console.log(data);
     return data;
