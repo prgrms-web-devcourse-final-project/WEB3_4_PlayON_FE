@@ -61,7 +61,7 @@ export default function UserInfoLogin({ userInfo }: Props) {
         asChild
         className="cursor-pointer"
         onClick={async () => {
-          if (opened) {
+          if (!opened) {
             const response = await refetch();
             if (response && response.status === 'success') {
               response.data.notification.forEach((e) => {
