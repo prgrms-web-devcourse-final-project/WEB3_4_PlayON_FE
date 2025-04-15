@@ -31,13 +31,13 @@
   }
 }
 .archer {
-  background: url(/img/sprite_sheet/char_sheet_a.svg);
+  background: url(/img/sprite_sheet/char_sheet_a.webp);
 }
 .warrior {
-  background: url(/img/sprite_sheet/char_sheet_w.svg);
+  background: url(/img/sprite_sheet/char_sheet_w.webp);
 }
 .mage {
-  background: url(/img/sprite_sheet/char_sheet_m.svg);
+  background: url(/img/sprite_sheet/char_sheet_m.webp);
 }
 .run {
   animation: frame6 1s steps(6) infinite;
