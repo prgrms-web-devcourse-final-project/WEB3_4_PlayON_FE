@@ -17,7 +17,6 @@ import Tag from '@/components/common/Tag';
 import { useMembers } from '@/api/members';
 import { userDetail } from '@/types/user';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { useAuthStore } from '@/stores/authStore';
 import EmptyLottie from '@/components/common/EmptyLottie';
 import RetroButton from '@/components/common/RetroButton';
 import { PATH } from '@/constants/routes';
@@ -248,7 +247,7 @@ export default function UserInfoPage() {
             </div>
             {myGuilds?.length === 0 && (
               <div className="text-center">
-                <EmptyLottie className="w-[280px] mt-6" noText={false}>
+                <EmptyLottie className="w-[280px] mt-6" noText={true}>
                   <RetroButton
                     type="purple"
                     className="mt-4"
@@ -284,7 +283,7 @@ export default function UserInfoPage() {
             </div>
             {myParties?.length === 0 && (
               <div className="text-center">
-                <EmptyLottie className="w-[280px] mt-6" noText={false}>
+                <EmptyLottie className="w-[280px] mt-6" noText={true}>
                   <RetroButton
                     type="purple"
                     className="mt-4"
@@ -313,7 +312,7 @@ export default function UserInfoPage() {
 
             {myPartyLogs?.length === 0 && (
               <div className="text-center">
-                <EmptyLottie className="w-[280px] mt-6" noText={false}>
+                <EmptyLottie className="w-[280px] mt-6" noText={true}>
                   <RetroButton
                     type="purple"
                     className="mt-4"
@@ -334,8 +333,6 @@ export default function UserInfoPage() {
               </div>
             )}
           </div>
-
-
         </div>
       </section>
     </main>
