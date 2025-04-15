@@ -73,7 +73,6 @@ export default function MyPage() {
   const [myParties, setMyParties] = useState<getPartyRes[] | null>([]);
   const [myPartyLogs, setMyPartyLogs] = useState<getPartyRes[] | null>([]);
 
-
   useEffect(() => {
     const GetMe = async () => {
       try {
@@ -152,7 +151,7 @@ export default function MyPage() {
     window.location.href = response;
   }
 
-  const defualt: string = "네가 제일 잘 나가";
+  const defualt: string = '네가 제일 잘 나가';
 
   return (
     <main>
@@ -248,7 +247,7 @@ export default function MyPage() {
                   <CarouselContent className="select-none">
                     {dummyGameArr.map((_, ind) => {
                       return (
-                        <CarouselItem key={ind} onClick={() => setSelectedGame(ind)} className={``}>
+                        <CarouselItem key={ind} className={``}>
                           <div className="grid grid-cols-3 gap-6">
                             {myGuilds?.map((guild) => <GuildHorizon key={guild.guild_name} data={guild} />)}
                           </div>
@@ -306,7 +305,6 @@ export default function MyPage() {
             <div className="flex">
               <div className="grid grid-cols-3 gap-6">
                 {myParties?.map((party) => <PartyCard key={party.partyId} data={party} />)}
-                {dummyPartyList?.map((party) => <PartyCard key={party.partyId} data={party} />)}
               </div>
             </div>
           </div>
