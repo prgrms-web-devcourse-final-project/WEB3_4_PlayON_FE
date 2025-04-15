@@ -1,12 +1,10 @@
 import { game, useGame } from '@/api/game';
 import SectionTitle from '@/components/common/SectionTitle';
 import PickCard from '@/components/game/PickCard';
-import { GAME_ROUTE } from '@/constants/routes/game';
 import { useAuthStore } from '@/stores/authStore';
 import { gameDetail } from '@/types/games';
 import { dummyGameDetail } from '@/utils/dummyData';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import Link from 'next/link';
 
 export default function PartyMemberPicks() {
   const game = useGame();
@@ -67,25 +65,13 @@ export default function PartyMemberPicks() {
       />
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 pt-8">
         {user && friendGamesIsSuccess && friendGames.length > 0 ? (
-          friendGames.map((e, ind) => (
-            <Link href={GAME_ROUTE.game_detail(e.appid)} key={`friendGames_${ind}`}>
-              <PickCard data={e} />
-            </Link>
-          ))
+          friendGames.map((e, ind) => <PickCard data={e} appid={e.appid} key={`friendGames_${ind}`} />)
         ) : (
           <>
-            <Link href={GAME_ROUTE.game_detail(1)}>
-              <PickCard data={dummyGameDetail} />
-            </Link>
-            <Link href={GAME_ROUTE.game_detail(1)}>
-              <PickCard data={dummyGameDetail} />
-            </Link>
-            <Link href={GAME_ROUTE.game_detail(1)}>
-              <PickCard data={dummyGameDetail} />
-            </Link>
-            <Link href={GAME_ROUTE.game_detail(1)}>
-              <PickCard data={dummyGameDetail} />
-            </Link>
+            <PickCard data={dummyGameDetail} appid={730} />
+            <PickCard data={dummyGameDetail} appid={730} />
+            <PickCard data={dummyGameDetail} appid={730} />
+            <PickCard data={dummyGameDetail} appid={730} />
           </>
         )}
       </div>

@@ -1,12 +1,12 @@
 import { useGame, game } from '@/api/game';
 import SectionTitle from '@/components/common/SectionTitle';
-import PickCard from '@/components/game/PickCard';
-import { GAME_ROUTE } from '@/constants/routes/game';
 import { useAuthStore } from '@/stores/authStore';
 import { gameDetail } from '@/types/games';
 import { dummyGameDetail } from '@/utils/dummyData';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import Link from 'next/link';
+import dynamic from 'next/dynamic';
+
+const PickCard = dynamic(() => import('@/components/game/PickCard'), { ssr: false });
 
 export default function GenreRecommendation() {
   const { user } = useAuthStore();
@@ -68,17 +68,13 @@ export default function GenreRecommendation() {
       />
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         {personalGamesIsSuccess && personalGames.length > 0 ? (
-          personalGames.map((e, ind) => (
-            <Link href={GAME_ROUTE.game_detail(e.appid)} key={`personal_${ind}`}>
-              <PickCard data={e} />
-            </Link>
-          ))
+          personalGames.map((e, ind) => <PickCard data={e} key={`personal_${ind}`} appid={e.appid} />)
         ) : (
           <>
-            <PickCard data={dummyGameDetail} />
-            <PickCard data={dummyGameDetail} />
-            <PickCard data={dummyGameDetail} />
-            <PickCard data={dummyGameDetail} />
+            <PickCard data={dummyGameDetail} appid={730} />
+            <PickCard data={dummyGameDetail} appid={730} />
+            <PickCard data={dummyGameDetail} appid={730} />
+            <PickCard data={dummyGameDetail} appid={730} />
           </>
         )}
       </div>
