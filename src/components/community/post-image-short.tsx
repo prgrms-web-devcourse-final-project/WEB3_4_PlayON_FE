@@ -11,6 +11,7 @@ type CommunityPostImageShortProps = {
   data: postSimple;
   className: string;
   guildId?: string;
+  noRoute?: boolean;
 };
 
 export function CommunityPostImageShortSkeleton(props: { className: string }) {
@@ -37,6 +38,7 @@ export default function CommunityPostImageShort(props: CommunityPostImageShortPr
   const router = useRouter();
   const content = removeHtmlTags(props.data.content);
   const handleClick = () => {
+    if (props.noRoute) return;
     if (props.guildId) {
       router.push(PATH.guild_community_detail(props.guildId, String(props.data.postId)));
     } else {

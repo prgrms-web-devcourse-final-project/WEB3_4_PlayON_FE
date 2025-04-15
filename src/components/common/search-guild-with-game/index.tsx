@@ -29,7 +29,7 @@ type SearchGuildWithGameProps = {
 export default function SearchGuildWithGame(props: SearchGuildWithGameProps) {
   const [api, setApi] = useState<CarouselApi>();
 
-  const [selectedGame, setSelectedGame] = useState<number>(-1);
+  const [selectedGame, setSelectedGame] = useState<number>(0);
 
   const { user } = useAuthStore();
   const member = useMembers();
