@@ -2,12 +2,14 @@ import { useParty } from '@/api/party';
 import { CHAT_ENDPOINTS } from '@/constants/endpoints/chat-room';
 import { useAxios } from '@/hooks/useAxios';
 import { useAuthStore } from '@/stores/authStore';
-import { getPartyRes, party, userRes } from '@/types/party';
+import { getPartyRes, userRes } from '@/types/party';
 import { userSimple } from '@/types/user';
 import { Client } from '@stomp/stompjs';
 import { usePathname } from 'next/navigation';
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import SockJS from 'sockjs-client';
+import axios from 'axios';
+import { useToast } from '@/hooks/use-toast';
 
 type JoinStateType = 'owner' | 'joined' | 'pending' | 'notJoined';
 type PartyContextType = {
@@ -198,7 +200,7 @@ type ChatMessageDTO = {
   sendAt: Date;
 };
 type ChatJoinResponse = {
-  partyMembers: { memberId: number; nickname: string; profileImg: string }[];
+  members: { memberId: number; nickname: string; profileImg: string }[];
   messages: string[];
   partyId: number;
   partyRoomId: number;
@@ -210,7 +212,8 @@ export const ChattingContextProvider = ({ children }: { children: React.ReactNod
   const [chatParticipantList, setChatParticipantList] = useState<userSimple[]>([]);
   const [isJoined, setIsJoined] = useState(false);
   const client = useRef<Client | null>(null);
-  const axios = useAxios();
+  const AXIOS = useAxios();
+  const { toast } = useToast();
 
   const toggleJoinChatting = useCallback(
     async (
@@ -219,15 +222,18 @@ export const ChattingContextProvider = ({ children }: { children: React.ReactNod
     ) => {
       if (isJoined) {
         //채팅에 참가중이라면
-        if (joinState !== 'joined' && joinState !== 'owner') return; //권한 확인
+        if (joinState !== 'joined' && joinState !== 'owner') return { joinState: false };
+        //권한 확인
         //이곳에 채팅 참가와 관련된 함수 작성, 혹은 isJoined 값으로 컴포넌트 렌더링
-        if (partyInfo === null || partyInfo.partyId === null) return;
+        if (partyInfo === null || partyInfo.partyId === null) return { joinState: false };
+
         //이곳에 함수 작성할거면 상단주석처리된 두 줄 넣기
-        const response = await axios.Delete(
+        const response = await AXIOS.Delete(
           CHAT_ENDPOINTS.leave(partyInfo.partyId),
           { headers: { 'Content-Type': 'application/json' } },
           true
         );
+        console.log(response);
         if (response && response.status === 204) {
           if (client.current) {
             client.current.deactivate();
@@ -236,17 +242,18 @@ export const ChattingContextProvider = ({ children }: { children: React.ReactNod
           setIsJoined(false);
           return { joinState: false };
         }
+        return { joinState: true };
       } else {
         //채팅에 참가중이지 않다면
-        if (joinState !== 'joined' && joinState !== 'owner') return; //권한 확인
+        if (joinState !== 'joined' && joinState !== 'owner') return { joinState: false }; //권한 확인
         //이곳에 채팅 퇴장와 관련된 함수 작성, 혹은 isJoined 값으로 컴포넌트 렌더링
-        if (partyInfo === null || partyInfo.partyId === null) return;
+        if (partyInfo === null || partyInfo.partyId === null) return { joinState: false };
         //이곳에 함수 작성할거면 상단주석처리된 두 줄 넣기
-        const response = await axios.Post(
+        const response = await AXIOS.Post(
           CHAT_ENDPOINTS.join(partyInfo.partyId),
           {},
           { headers: { 'Content-Type': 'application/json' } },
-          true
+          false
         );
         if (response && response.status === 200) {
           if (client.current === null) {
@@ -302,8 +309,9 @@ export const ChattingContextProvider = ({ children }: { children: React.ReactNod
           }
           client.current.activate();
           const typedResponse = response.data.data as ChatJoinResponse;
+          console.log(response.data.data);
           const data = {
-            partyMembers: typedResponse.partyMembers.map<userSimple>((member) => ({
+            partyMembers: typedResponse.members.map<userSimple>((member) => ({
               nickname: member.nickname,
               img_src: member.profileImg,
               memberId: member.memberId.toString(),
@@ -315,6 +323,13 @@ export const ChattingContextProvider = ({ children }: { children: React.ReactNod
           setChatParticipantList(data.partyMembers);
           setIsJoined(true);
           return { ...data, joinState: true };
+        } else {
+          toast({
+            title: '채팅방 입장에 실패했습니다',
+            description: '채팅방 입장은 시작시간 5분 전부터 가능합니다',
+            variant: 'destructive',
+          });
+          return { joinState: false };
         }
       }
     },
@@ -325,19 +340,19 @@ export const ChattingContextProvider = ({ children }: { children: React.ReactNod
     //이곳에 채팅 참가와 관련된 함수 작성, 혹은 isJoined 값으로 컴포넌트 렌더링
     if (partyInfo === null || partyInfo.partyId === null) return;
     //이곳에 함수 작성할거면 상단주석처리된 두 줄 넣기
-    const response = await axios.Delete(
-      CHAT_ENDPOINTS.leave(partyInfo.partyId),
-      { headers: { 'Content-Type': 'application/json' } },
-      true
-    );
-    if (response && response.status === 204) {
-      if (client.current) {
-        client.current.deactivate();
-      }
-      setChatParticipantList([]);
-      setIsJoined(false);
-      return { joinState: false };
+    // const response = await AXIOS.Delete(
+    //   CHAT_ENDPOINTS.leave(partyInfo.partyId),
+    //   { headers: { 'Content-Type': 'application/json' } },
+    //   true
+    // );
+    // if (response && response.status === 204) {
+    if (client.current) {
+      client.current.deactivate();
     }
+    setChatParticipantList([]);
+    setIsJoined(false);
+    return { joinState: false };
+    // }
   }, []);
   const sendMessage = useCallback(
     (message: string) => {

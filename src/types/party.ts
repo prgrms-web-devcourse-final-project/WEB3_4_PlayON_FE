@@ -45,7 +45,7 @@ type tag = {
 export type createPartyReq = {
   name: string;
   description: string;
-  partyAt: Date;
+  partyAt: string;
   isPublic: boolean;
   minimum: number;
   maximum: number;

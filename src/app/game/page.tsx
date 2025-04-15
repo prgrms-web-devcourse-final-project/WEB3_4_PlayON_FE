@@ -6,7 +6,7 @@ import SectionTitle from '@/components/common/SectionTitle';
 import PickCard from '@/components/game/PickCard';
 import PopularCard from '@/components/game/PopularCard';
 import SteamCard from '@/components/game/SteamCard';
-import { dummyGameDetail, dummyGameSimple } from '@/utils/dummyData';
+import { dummyGameDetail, dummyGameSimple, dummyParty } from '@/utils/dummyData';
 import styles from './game.module.css';
 import { useQuery } from '@tanstack/react-query';
 import { game, useGame } from '@/api/game';
@@ -14,11 +14,15 @@ import { Suspense } from 'react';
 import { useRouter } from 'next/navigation';
 import { GAME_ROUTE } from '@/constants/routes/game';
 import { useAuthStore } from '@/stores/authStore';
-import { gameDetail } from '@/types/games';
+import { gameDetail, gameSimple } from '@/types/games';
 import Link from 'next/link';
 import GameSearch from '@/components/common/GameSearch';
 import { ErrorBoundary } from 'react-error-boundary';
 import BounceButton from '@/components/common/BounceButton';
+import EmptyLottie from '@/components/common/EmptyLottie';
+import RetroButton from '@/components/common/RetroButton';
+import { PARTY_ROUTE } from '@/constants/routes/party';
+import PartyCard from '@/components/party/PartyCard';
 
 export default function Game() {
   const imageList = [
@@ -69,12 +73,7 @@ export default function Game() {
         return gameData.filter((e) => e !== undefined);
       } catch (e) {
         console.log(e);
-        return [
-          { ...dummyGameDetail, appid: 1 },
-          { ...dummyGameDetail, appid: 1 },
-          { ...dummyGameDetail, appid: 1 },
-          { ...dummyGameDetail, appid: 1 },
-        ];
+        return [];
       }
     },
   });
@@ -133,8 +132,71 @@ export default function Game() {
     },
   });
 
+  type gameDetailWithAppId = gameDetail & { appid: number };
+  const PersonalRecommendationSection = (games: gameDetailWithAppId[]) => {
+    return (
+      <>
+        <SectionTitle
+          title={`${user ? user.nickname + '님 맞춤 추천' : '이런 게임은 어떠세요?'}`}
+          subtitle="내가 좋아하는 장르 위주로"
+          icon_src="/img/icons/pixel_present.svg"
+        />
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 pt-8">
+          {games.map((e, ind) => (
+            <PickCard data={e as gameDetail} key={`personal_${ind}`} appid={e.appid} />
+          ))}
+        </div>
+      </>
+    );
+  };
+  const LongPlayTimeSection = (games: gameDetailWithAppId[]) => {
+    return (
+      <>
+        <SectionTitle
+          title="플레이타임 긴 게임들"
+          subtitle="오래해도 떨어지지 않는 재미"
+          icon_src="/img/icons/pixel_box.svg"
+        />
+        <div className="grid grid-cols-3 md:grid-cols-3 gap-6">
+          {games.map((e, ind) => (
+            <Link href={GAME_ROUTE.game_detail(e.appid)} key={`playTimeGames_${ind}`}>
+              <PopularCard
+                data={{ appid: e.appid, background_src: '', genre: e.genre, img_src: e.img_src, title: e.title }}
+              />
+            </Link>
+          ))}
+        </div>
+      </>
+    );
+  };
+  const PartyMemberPicks = (games: gameDetailWithAppId[]) => {
+    return (
+      <div className="text-center">
+        <SectionTitle
+          title="파티원 PICK"
+          subtitle="최근 함께 파티에 참여한 유저들이 플레이했어요"
+          icon_src="/img/icons/pixel_chat_heart.svg"
+        />
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 pt-8">
+          {games.map((e, ind) => (
+            <PickCard data={e} appid={e.appid} key={`friendGames_${ind}`} />
+          ))}
+        </div>
+      </div>
+    );
+  };
+
   return (
-    <main className="mb-20 space-y-20">
+    <main
+      style={{
+        backgroundImage: 'linear-gradient(to top, #f3e8ff 0%, rgba(255,255,255,0) 100%)',
+        backgroundSize: '100% 40%',
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'bottom',
+      }}
+      className="pb-20 space-y-20"
+    >
+      {/* 헤더 & 인기 */}
       <section>
         <div className="bg-purple-400/20 w-full h-[800px]">
           <div className="w-screen relative">
@@ -153,87 +215,85 @@ export default function Game() {
               </div>
 
               <div className="grid grid-cols-3 md:grid-cols-3 gap-6 pt-4">
-                <ErrorBoundary fallback={<div>Something went wrong</div>}>
-                  <Suspense>
-                    {popularGames &&
-                      popularGames.map((e) => (
-                        <Link href={GAME_ROUTE.game_detail(e.appid)} key={e.appid}>
-                          <PopularCard data={e} />
-                        </Link>
-                      ))}
-                  </Suspense>
-                </ErrorBoundary>
+                {popularGames &&
+                  popularGames.map((e) => (
+                    <Link href={GAME_ROUTE.game_detail(e.appid)} key={e.appid}>
+                      <PopularCard data={e} />
+                    </Link>
+                  ))}
               </div>
             </div>
           </div>
         </div>
         <PlayOnRollingBanner duration={20} direction="left" />
       </section>
-
+      {/* 최근에 파티 같이 한 사람 추천 */}
       <section className="wrapper">
-        <SectionTitle
-          title="파티원 PICK"
-          subtitle="최근 함께 파티에 참여한 유저들이 플레이했어요"
-          icon_src="/img/icons/pixel_chat_heart.svg"
-        />
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 pt-8">
-          {user && friendGamesIsSuccess && friendGames.length > 0 ? (
-            friendGames.map((e, ind) => <PickCard data={e} appid={e.appid} key={`friendGames_${ind}`} />)
-          ) : (
+        {friendGames && friendGames.length > 0 && PartyMemberPicks(friendGames)}
+        {!friendGames ||
+          (friendGames.length <= 0 && (
             <>
-              <PickCard data={dummyGameDetail} appid={0} />
-              <PickCard data={dummyGameDetail} appid={0} />
-              <PickCard data={dummyGameDetail} appid={0} />
-              <PickCard data={dummyGameDetail} appid={0} />
+              <SectionTitle
+                title="파티를 모집해보세요!"
+                subtitle="이런...! 아직 파티를 이룬적이 없군요"
+                icon_src="/img/icons/pixel_chat_heart.svg"
+              />
+              <EmptyLottie className="w-[500px]" text="">
+                <RetroButton
+                  type="purple"
+                  className="mt-4 font-bold"
+                  callback={() => {
+                    router.push(PARTY_ROUTE.party);
+                  }}
+                >
+                  파티 하러 가기!
+                </RetroButton>
+              </EmptyLottie>
             </>
-          )}
-        </div>
+          ))}
       </section>
-
+      {/* 스팀 순위 */}
       <section className="w-full">
         <div className="bg-[url('/img/hero/bg_gameList_5.webp')] bg-cover bg-center size-full">
           <div className="bg-purple-800/60 size-full backdrop-blur-md">
             <div className="wrapper py-12 space-y-8">
               <p className="text-5xl font-suit font-bold text-white">STEAM RANKING</p>
-
               <div className="flex gap-6">
                 <Link href={GAME_ROUTE.game_detail(steamRanking ? steamRanking[0].appid : 1)}>
-                  <div className="w-[845px] h-[394px] space-y-8">
+                  <div className="min-w-[845px] space-y-8">
                     <div className="relative pt-3">
                       <img
                         src={steamRanking ? steamRanking[0].img_src : ''}
+                        alt=""
                         className="w-full rounded-xl bg-neutral-400 object-cover"
                       />
                       <div className="absolute top-0 left-0 pt-6 pl-3 w-32">
-                        <img src="/img/laurel/laurel_1st.png" />
+                        <img src="/img/laurel/laurel_1st.png" alt="" />
                       </div>
                     </div>
                     <div className="space-y-4">
                       <p className="font-suit text-5xl font-bold text-white">
-                        {' '}
                         {steamRanking ? steamRanking[0].title : ''}
                       </p>
                       <p className="text-lg text-white font-medium">
-                        {' '}
                         {steamRanking ? steamRanking[0].genre.join(', ') : []}
                       </p>
                     </div>
                   </div>
                 </Link>
-
-                <div className="grid grid-cols-2 gap-6 w-[411px]">
+                <div className="hidden xl:grid grid-cols-2 gap-6 w-[411px]">
                   {steamRanking && steamRanking.length > 0 ? (
                     steamRanking.slice(1, 5).map((e, ind) => (
                       <Link href={GAME_ROUTE.game_detail(e.appid)} key={`steamRanking_${ind + 1}`}>
-                        <SteamCard theme="dark" data={e} />
+                        <SteamCard theme="dark" data={e} className="min-w-24" />
                       </Link>
                     ))
                   ) : (
                     <>
-                      <SteamCard data={dummyGameSimple} className="text-white" theme="dark" />
-                      <SteamCard data={dummyGameSimple} className="text-white" theme="dark" />
-                      <SteamCard data={dummyGameSimple} className="text-white" theme="dark" />
-                      <SteamCard data={dummyGameSimple} className="text-white" theme="dark" />
+                      <SteamCard data={dummyGameSimple} className="text-white min-w-24" theme="dark" />
+                      <SteamCard data={dummyGameSimple} className="text-white min-w-24" theme="dark" />
+                      <SteamCard data={dummyGameSimple} className="text-white min-w-24" theme="dark" />
+                      <SteamCard data={dummyGameSimple} className="text-white min-w-24" theme="dark" />
                     </>
                   )}
                 </div>
@@ -242,50 +302,29 @@ export default function Game() {
           </div>
         </div>
       </section>
-
+      {/* 개인화 추천 & 플레이 타임 긴 게임 */}
       <section className="wrapper space-y-20">
         <div className="space-y-8">
-          <SectionTitle
-            title={`${user ? user.nickname + '님 맞춤 추천' : '이런 게임은 어떠세요?'}`}
-            subtitle="내가 좋아하는 장르 위주로"
-            icon_src="/img/icons/pixel_present.svg"
-          />
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            {personalGamesIsSuccess && personalGames.length > 0 ? (
-              personalGames.map((e, ind) => <PickCard data={e} key={`personal_${ind}`} appid={e.appid} />)
-            ) : (
-              <>
+          {personalGamesIsSuccess && personalGames.length > 0 && PersonalRecommendationSection(personalGames)}
+          {!personalGamesIsSuccess ||
+            (personalGames.length <= 0 && (
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6 pt-8">
                 <PickCard data={dummyGameDetail} appid={730} />
                 <PickCard data={dummyGameDetail} appid={730} />
                 <PickCard data={dummyGameDetail} appid={730} />
                 <PickCard data={dummyGameDetail} appid={730} />
-              </>
-            )}
-          </div>
+              </div>
+            ))}
         </div>
         <div className="space-y-8">
-          <SectionTitle
-            title="플레이타임 긴 게임들"
-            subtitle="오래해도 떨어지지 않는 재미"
-            icon_src="/img/icons/pixel_box.svg"
-          />
-          <Suspense>
+          {playTimeGames && playTimeGames.length > 0 && LongPlayTimeSection(playTimeGames)}
+          {(!playTimeGames || playTimeGames.length <= 0) && (
             <div className="grid grid-cols-3 md:grid-cols-3 gap-6">
-              {playTimeGames && playTimeGames.length > 0 ? (
-                playTimeGames.map((e, ind) => (
-                  <Link href={GAME_ROUTE.game_detail(e.appid)} key={`playTimeGames_${ind}`}>
-                    <PopularCard data={e} />
-                  </Link>
-                ))
-              ) : (
-                <>
-                  <PopularCard data={dummyGameSimple} />
-                  <PopularCard data={dummyGameSimple} />
-                  <PopularCard data={dummyGameSimple} />
-                </>
-              )}
+              <PopularCard data={{ ...dummyGameSimple, appid: 730 }} />
+              <PopularCard data={{ ...dummyGameSimple, appid: 730 }} />
+              <PopularCard data={{ ...dummyGameSimple, appid: 730 }} />
             </div>
-          </Suspense>
+          )}
         </div>
         <BounceButton path={GAME_ROUTE.game_list} type="game" tootip="게임 찾기" />{' '}
       </section>

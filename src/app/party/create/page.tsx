@@ -43,12 +43,9 @@ const createPartyFormSchema = z
       appid: z.number().min(1),
       name: z.string().min(1),
     }),
-    date: z
-      .string()
-      .datetime({ offset: true })
-      .refine((data) => new Date(data) > new Date(Date.now() + 60 * 60 * 1000), {
-        message: '시작 시간은 현재 시각 기준 1시간 이후부터 가능합니다.',
-      }),
+    date: z.string().refine((data) => new Date(data) > new Date(Date.now() + 60 * 60 * 1000), {
+      message: '시작 시간은 현재 시각 기준 1시간 이후부터 가능합니다.',
+    }),
     min_part: z
       .number()
       .min(2, { message: '파티 최소 인원은 2명부터 가능합니다.' })
@@ -136,13 +133,15 @@ export default function PartyCreate() {
     const reqData = {
       name: data.name,
       description: data.description || '',
-      partyAt: new Date(data.date),
+      partyAt: data.date,
       tags: selectedTagsFlat,
       appId: data.game.appid,
       minimum: data.min_part,
       maximum: data.max_part,
       isPublic: data.public,
     };
+    // console.log(reqData);
+    // console.log(reqData.partyAt.toISOString());
     await party.CreateParty(reqData);
   }
 
@@ -274,7 +273,13 @@ export default function PartyCreate() {
                               readOnly
                             />
                             <div className="rounded-md ring-1 ring-transparent peer-focus:ring-1 peer-focus:ring-purple-600 transition">
-                              <DateTimePicker onSelect={(date) => date && form.setValue('date', formatISO(date))} />
+                              <DateTimePicker
+                                onSelect={(date) => {
+                                  if (date) {
+                                    form.setValue('date', formatISO(date).slice(0, -6));
+                                  }
+                                }}
+                              />
                             </div>
                           </div>
                         </FormControl>
