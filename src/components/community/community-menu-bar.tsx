@@ -16,7 +16,7 @@ type CommunityMenuBarProps = {
 export default function CommunityMenuBar(props: CommunityMenuBarProps) {
   const router = useRouter();
   const params = useParams();
-  const [category, setCategory] = useState('');
+  // const [category, setCategory] = useState('');
 
   const HandleSearchClick = useCallback(
     (value: string) => {
@@ -27,7 +27,7 @@ export default function CommunityMenuBar(props: CommunityMenuBarProps) {
       } else {
         const newUrl = new URL(window.location.href);
         newUrl.searchParams.set('keyword', value);
-        router.push(`${PATH.community}?keyword=${value}${category ? `?category=${category}` : ''}`);
+        router.replace(`${PATH.community}?keyword=${value}`);
       }
     },
     [router]
@@ -42,7 +42,7 @@ export default function CommunityMenuBar(props: CommunityMenuBarProps) {
       <div className="grid grid-cols-2">
         {communityTags.map((e, ind) => (
           <div key={ind}>
-            <TagSelectGridItem label={e} onSelect={setCategory} />
+            <TagSelectGridItem label={e} onSelect={(value) => router.replace(`${PATH.community}?category=${value}`)} />
           </div>
         ))}
       </div>
