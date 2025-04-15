@@ -6,6 +6,9 @@ export const MEMBER_ENDPOINTS = Object.freeze({
   login: '/members/login',
   nickname: '/members/nickname',
   games: '/members/me/games',
+  guilds: '/members/me/guilds',
+  userguilds: (memberId: number) => `/members/${memberId}/guilds`,
+
   steamLinks: '/members/steamLink',
   profileImg: '/members/me/image',
 
@@ -18,6 +21,6 @@ export const MEMBER_ENDPOINTS = Object.freeze({
   myParties: '/members/me/parties',
   myPartyLogs: '/members/me/parties/logs',
 
-  userParties: 'members/{memberId}/parties',
-  userPartyLogs: '/members/{memberId}/parties/logs',
+  userParties: (memberId: number) => `/members/${memberId}/parties`,
+  userPartyLogs: (memberId: number) => `/members/${memberId}/parties/logs`,
 });
