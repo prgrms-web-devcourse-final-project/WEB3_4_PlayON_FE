@@ -1,8 +1,17 @@
 import { gameSimple } from '@/types/games';
 import { Skeleton } from '../ui/skeleton';
+import Link from 'next/link';
+import { PATH } from '@/constants/routes';
+import { GAME_ROUTE } from '@/constants/routes/game';
 
 interface PopularCardProps {
-  data: gameSimple;
+  data: {
+    title: string;
+    genre: string[];
+    img_src: string;
+    background_src: string;
+    appid: number;
+  };
 }
 
 export function PopularCardSkeleton() {
@@ -20,11 +29,13 @@ export default function PopularCard(props: PopularCardProps) {
 
   return (
     <>
-      <div>
-        <img src={data.img_src} className="w-full aspect-[16/7] rounded-xl bg-neutral-400 object-cover" />
-        <p className="mt-4 font-suit text-xl font-semibold"> {data.title}</p>
-        <p className="mt-2 text-sm text-neutral-400 font-medium"> {data.genre.join(', ')}</p>
-      </div>
+      <Link href={PATH.game_detail(data.appid)}>
+        <div>
+          <img src={data.img_src} className="w-full aspect-[16/7] rounded-xl bg-neutral-400 object-cover" />
+          <p className="mt-4 font-suit text-xl font-semibold"> {data.title}</p>
+          <p className="mt-2 text-sm text-neutral-400 font-medium"> {data.genre.join(', ')}</p>
+        </div>
+      </Link>
     </>
   );
 }
