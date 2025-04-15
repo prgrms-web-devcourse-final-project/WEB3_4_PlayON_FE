@@ -18,6 +18,7 @@ import { gameDetail } from '@/types/games';
 import Link from 'next/link';
 import GameSearch from '@/components/common/GameSearch';
 import { ErrorBoundary } from 'react-error-boundary';
+import BounceButton from '@/components/common/BounceButton';
 
 export default function Game() {
   const imageList = [
@@ -262,7 +263,6 @@ export default function Game() {
             )}
           </div>
         </div>
-
         <div className="space-y-8">
           <SectionTitle
             title="플레이타임 긴 게임들"
@@ -287,6 +287,7 @@ export default function Game() {
             </div>
           </Suspense>
         </div>
+        <BounceButton path={GAME_ROUTE.game_list} type="game" tootip="게임 찾기" />{' '}
       </section>
     </main>
   );

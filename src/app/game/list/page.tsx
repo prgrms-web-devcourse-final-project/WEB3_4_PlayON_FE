@@ -5,7 +5,7 @@ import { DateTimePicker } from '@/components/ui/date-time-picker';
 import { Switch } from '@/components/ui/switch';
 import { dummyGameDetail2 } from '@/utils/dummyData';
 import PickCard from '@/components/game/PickCard';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useGame, game } from '@/api/game';
 import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import typeConverter from '@/utils/typeConverter';
@@ -67,7 +67,7 @@ export default function GameList() {
     };
   }
   const game = useGame();
-  const { data, refetch, isFetched, isLoading } = useSuspenseQuery({
+  const { data, refetch, isFetched, isLoading } = useQuery({
     queryKey: ['GameList'],
     queryFn: async () => {
       const playerTypeInd = playerType.findIndex((e) => e === true);
@@ -106,7 +106,6 @@ export default function GameList() {
       }
       return dummyGames;
     },
-    staleTime: 1,
   });
 
   const { toast } = useToast();
@@ -271,7 +270,7 @@ export default function GameList() {
         </div>
       </div>
       <Suspense>
-        {isFetched && data.length > 0 && (
+        {isFetched && data && data.length > 0 && (
           <div className="lg:w-[1280px] grid grid-cols-4 grid-rows-3 gap-x-6 gap-y-12 mt-[100px]">
             {data.map((e, ind) => (
               <PickCard data={e} key={ind} appid={e.appid} />
@@ -279,14 +278,14 @@ export default function GameList() {
           </div>
         )}
       </Suspense>
-      {(!isFetched || isLoading) && (
+      {(!isFetched || isLoading) && data && (
         <div className="lg:w-[1280px] grid grid-cols-4 grid-rows-3 gap-x-6 gap-y-12 mt-[100px]">
           {data.map((_, ind) => (
             <Skeleton className="w-full aspect-square rounded-full" key={`Skeleton_Games_${ind}`} />
           ))}
         </div>
       )}
-      {isFetched && data.length <= 0 && (
+      {isFetched && data && data.length <= 0 && (
         <div className="w-full text-center mt-[100px] mb-[100px]">
           <EmptyLottie className="w-[400px]" text="원하는 게임이 없으신가요?">
             <RetroButton type="purple" className="mt-10 font-bold" callback={() => ImFeelingLucky()}>
@@ -295,7 +294,7 @@ export default function GameList() {
           </EmptyLottie>
         </div>
       )}
-      {isFetched && data.length > 0 && (
+      {isFetched && data && data.length > 0 && (
         <div className="mt-[100px] mb-[100px]">
           <CustomPagination pageSize={12} totalItems={totalItems.current} />
         </div>

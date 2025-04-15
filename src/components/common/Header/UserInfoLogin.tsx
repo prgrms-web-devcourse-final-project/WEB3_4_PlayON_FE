@@ -42,14 +42,14 @@ export default function UserInfoLogin({ userInfo }: Props) {
 
   const [opened, setOpened] = useState(false);
   const notification = useNotification();
-  // const {
-  //   data: notifications,
-  //   isFetched,
-  //   refetch,
-  // } = useQuery({
-  //   queryKey: ['Notifications'],
-  //   queryFn: notification.GetNotificationsSummary,
-  // });
+  const {
+    data: notifications,
+    isFetched,
+    refetch,
+  } = useQuery({
+    queryKey: ['Notifications'],
+    queryFn: notification.GetNotificationsSummary,
+  });
 
   return (
     <DropdownMenu modal={false}>
