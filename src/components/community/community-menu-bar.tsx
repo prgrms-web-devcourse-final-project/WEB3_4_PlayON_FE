@@ -6,7 +6,7 @@ import { ChevronRight, RefreshCcw } from 'lucide-react';
 import { communityTags } from '@/types/Tags/communityTags';
 import { PATH } from '@/constants/routes';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import SearchBar from '../common/SearchBar';
 
 type CommunityMenuBarProps = {
@@ -15,28 +15,11 @@ type CommunityMenuBarProps = {
 
 export default function CommunityMenuBar(props: CommunityMenuBarProps) {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const category = useMemo(() => {
-    return searchParams.get('category');
-  }, [searchParams]);
 
   const HandleSearchClick = useCallback(
     (value: string) => {
       const newUrl = new URL(window.location.href);
       newUrl.searchParams.set('keyword', value);
-      router.replace(newUrl.toString());
-    },
-    [router]
-  );
-  const HandleSelectChange = useCallback(
-    (newSelected: boolean[]) => {
-      const newUrl = new URL(window.location.href);
-      if (!newSelected.includes(true)) {
-        newUrl.searchParams.delete('category');
-      } else {
-        const tag = newSelected.map((e, ind) => (e ? communityTags[ind] : null)).filter((e) => e);
-        newUrl.searchParams.set('category', tag[0]!);
-      }
       router.replace(newUrl.toString());
     },
     [router]
@@ -48,7 +31,7 @@ export default function CommunityMenuBar(props: CommunityMenuBarProps) {
   return (
     <div className={`flex flex-col rounded-xl shadow-md p-8 gap-9 w-[360px] ${props.className}`}>
       <p className="font-dgm text-4xl ">커뮤니티</p>
-      <TagSelectGridMenu onSelectChanged={HandleSelectChange} />
+      <TagSelectGridMenu />
       <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="2" viewBox="0 0 347 2" fill="none">
         <path d="M0 1H347" stroke="#E5E5E5" />
       </svg>
@@ -77,38 +60,49 @@ export default function CommunityMenuBar(props: CommunityMenuBarProps) {
   );
 }
 
-function TagSelectGridItem(props: { label: string; selected: boolean }) {
-  // console.log('label: ', props.label, 'selected: ', props.selected);
+function TagSelectGridItem(props: { label: string }) {
+  const params = useParams();
+  console.log('isDetail', params.postId);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [isSelected, setIsSelected] = useState(searchParams.get('category') === props.label || false);
+
+  const handleClick = () => {
+    if (!params.postId) {
+      setIsSelected((prev) => !prev);
+      const newUrl = new URL(window.location.href);
+      if (!isSelected === true) {
+        newUrl.searchParams.set('category', props.label);
+      } else {
+        newUrl.searchParams.delete('category');
+      }
+      router.replace(newUrl.toString());
+    } else {
+      // 여기에 디테일 페이지일 때 처리
+    }
+  };
+
+  useEffect(() => {
+    setIsSelected(searchParams.get('category') === props.label);
+  }, [searchParams]);
+
   return (
     <div
-      className={`flex rounded-lg p-2 cursor-pointer transition-all overflow-hidden ${props.selected ? 'bg-neutral-100 -translate-x-4' : '-translate-x-8'}`}
+      className={`flex rounded-lg p-2 cursor-pointer transition-all overflow-hidden ${isSelected ? 'bg-neutral-100 -translate-x-4' : '-translate-x-8'}`}
+      onClick={handleClick}
     >
-      <ChevronRight className={`transition-opacity ${props.selected ? 'opacity-100' : 'opacity-0'}`} />
+      <ChevronRight className={`transition-opacity ${isSelected ? 'opacity-100' : 'opacity-0'}`} />
       <p className="font-suit font-semibold">{props.label}</p>
     </div>
   );
 }
 
-function TagSelectGridMenu(props: { onSelectChanged: (select: boolean[]) => void }) {
-  const [selected, setSelected] = useState<boolean[]>(new Array(communityTags.length).fill(false));
-
-  // const searchParams = useSearchParams();
-  // const category = useMemo(() => {
-  //   return searchParams.get('category');
-  // }, [searchParams]);
-
-  function HandleSelected(index: number) {
-    const newSelected = new Array(communityTags.length).fill(false);
-    newSelected[index] = !selected[index];
-    // console.log('newSelected', newSelected);
-    setSelected(newSelected);
-    props.onSelectChanged(newSelected);
-  }
+function TagSelectGridMenu() {
   return (
     <div className="grid grid-cols-2">
       {communityTags.map((e, ind) => (
-        <div onClick={() => HandleSelected(ind)} key={e}>
-          <TagSelectGridItem label={e} selected={selected[ind]} />
+        <div key={ind}>
+          <TagSelectGridItem label={e} />
         </div>
       ))}
     </div>
