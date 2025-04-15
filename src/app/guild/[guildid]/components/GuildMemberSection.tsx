@@ -9,7 +9,7 @@ export default function GuildMemberSection({ guildId }: { guildId: string }) {
     queryKey: ['GuildMember', guildId],
     queryFn: () => Guild.GetGuildMembers(guildId),
   });
-  console.log(guildMemberData);
+  // console.log(guildMemberData);
   return (
     <div className="flex flex-col w-[67%] self-center gap-8">
       <p className="text-4xl font-bold text-neutral-900">멤버</p>

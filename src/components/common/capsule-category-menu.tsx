@@ -15,7 +15,7 @@ export default function CapsuleCategoryMenu(props: CapsuleCategoryMenuProps) {
   const handleSelected = (value: string) => {
     if (props.onClick) {
       props.onClick(value);
-      console.log(value);
+      // console.log(value);
     } else return;
   };
 
@@ -42,7 +42,7 @@ function CapsuleCategoryItem({
   const params = useParams();
 
   const handleChange = () => {
-    console.log(radioRef.current?.value);
+    // console.log(radioRef.current?.value);
     if (params.postid && radioRef.current?.checked) {
       onSelected(radioRef.current.value);
       return;
