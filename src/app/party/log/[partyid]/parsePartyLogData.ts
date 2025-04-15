@@ -7,7 +7,7 @@ export interface PartyLogProps {
   screenshot: userScreenShot[];
   review: partyReview[];
   // memberId: string;
-  partyMemberId: string;
+  partyMemberId?: string;
   mvp?: userSimple;
   mvpPoint: number;
 }
