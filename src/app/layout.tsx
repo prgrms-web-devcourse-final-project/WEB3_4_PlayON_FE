@@ -12,7 +12,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <body>
+      <body className="overflow-x-hidden">
         <ReactQueryProviders>
           <Header />
           {children}

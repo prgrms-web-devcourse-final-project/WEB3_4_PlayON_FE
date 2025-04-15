@@ -78,9 +78,7 @@ export default function Guild() {
         <SearchGuildWithGame
           leftCarouselTitle={<p className="text-5xl font-bold text-purple-50 mb-9">보유 게임으로 길드 탐색</p>}
           theme="dark"
-          forMain={true}
-          dummyGames={dummyGames}
-          dummyGuilds={dummyGuilds}
+          forMain={false}
         />
         <PlayOnRollingBanner duration={20} direction="right" />
       </section>

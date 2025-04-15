@@ -60,6 +60,11 @@ export default function LoginInitial() {
       setTimeout(() => {
         router.push('/', { scroll: true });
       }, 500);
+    } else {
+      toast({ title: '로그인에 실패하였습니다', description: '아이디와 비밀번호를 확인해주세요', variant: 'primary' });
+      setTimeout(() => {
+        router.push('/', { scroll: true });
+      }, 500);
     }
   }
   async function steamLogin() {
