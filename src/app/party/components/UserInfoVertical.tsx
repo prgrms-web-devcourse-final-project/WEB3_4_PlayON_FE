@@ -12,9 +12,11 @@ interface UserInfoProps {
   isRadioBtn?: boolean;
   name?: string;
   onSelected?: (value: string) => void;
+  reCommend?: boolean
+
 }
 
-export default function UserInfoVertical({ isRadioBtn = false, data, name, onSelected }: UserInfoProps) {
+export default function UserInfoVertical({ isRadioBtn = false, data, name, reCommend, onSelected }: UserInfoProps) {
   const radioRef = useRef<HTMLInputElement | null>(null);
 
   // 기본 이미지
@@ -48,7 +50,29 @@ export default function UserInfoVertical({ isRadioBtn = false, data, name, onSel
           }}
           className="absolute opacity-0 -z-10 -top-1 -left-[5px] peer-checked:opacity-100 rounded-full bg-amber-300 size-[108px] transition-all ease-linear duration-100"
         ></div>
-        <Link href={PATH.user_page(data.memberId)}>
+        {reCommend ? (
+          <Link href={PATH.user_page(data.memberId)}>
+            <div
+              style={{
+                backgroundImage: `url(${data.img_src || defaultImg} )`,
+              }}
+              className="rounded-full bg-center bg-cover size-[100px] peer-checked:shadow-[inset_0px_0px_12px_3px_rgba(0,0,0,0.32)] place-self-center"
+            />
+            <div className="opacity-0 peer-checked:opacity-20 size-[100px] rounded-full bg-[#D18800] absolute top-0" />
+          </Link>
+        ) : (
+          
+            <>
+            <div
+              style={{
+                backgroundImage: `url(${data.img_src || defaultImg} )`,
+              }}
+              className="rounded-full bg-center bg-cover size-[100px] peer-checked:shadow-[inset_0px_0px_12px_3px_rgba(0,0,0,0.32)] place-self-center"
+            />
+            <div className="opacity-0 peer-checked:opacity-20 size-[100px] rounded-full bg-[#D18800] absolute top-0" />
+            </>
+        )}
+        {/* <Link href={PATH.user_page(data.memberId)}>
           <div
             style={{
               backgroundImage: `url(${data.img_src || defaultImg} )`,
@@ -56,7 +80,7 @@ export default function UserInfoVertical({ isRadioBtn = false, data, name, onSel
             className="rounded-full bg-center bg-cover size-[100px] peer-checked:shadow-[inset_0px_0px_12px_3px_rgba(0,0,0,0.32)] place-self-center"
           />
           <div className="opacity-0 peer-checked:opacity-20 size-[100px] rounded-full bg-[#D18800] absolute top-0" />
-        </Link>
+        </Link> */}
 
         <div className="opacity-0 peer-checked:opacity-100 bg-amber-300 rounded-full p-1 absolute bottom-0 right-0 transition-all ease-linear duration-100">
           <Trophy className="size-5 stroke-[1.6px] text-amber-100" />
