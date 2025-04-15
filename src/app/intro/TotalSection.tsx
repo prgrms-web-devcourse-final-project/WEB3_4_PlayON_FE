@@ -9,6 +9,17 @@ import SearchGuildWithGame from '@/components/common/search-guild-with-game';
 import Image from 'next/image';
 import AnimatedSection from './AnimatedSection';
 import styles from '@/app/intro/GuildSection.module.css';
+import PickCard from '@/components/game/PickCard';
+
+import {
+  mainDummyGames,
+  mainDummyGamesAppId,
+  mainDummyGuilds,
+  mainDummyMyGames,
+  mainDummyPosts,
+} from '@/utils/dummyData';
+import CommunityPostShort from '@/components/community/post-short';
+import CommunityPostImageShort from '@/components/community/post-image-short';
 
 gsap.registerPlugin(ScrollToPlugin);
 
@@ -120,10 +131,10 @@ function TotalSection() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6 pt-8">
-              {/* <PickCard data={dummyGameSimple} />
-              <PickCard data={dummyGameSimple} />
-              <PickCard data={dummyGameSimple} />
-              <PickCard data={dummyGameSimple} /> */}
+              <PickCard data={mainDummyGames[0]} appid={mainDummyGamesAppId[0]} />
+              <PickCard data={mainDummyGames[1]} appid={mainDummyGamesAppId[1]} />
+              <PickCard data={mainDummyGames[2]} appid={mainDummyGamesAppId[2]} />
+              <PickCard data={mainDummyGames[3]} appid={mainDummyGamesAppId[3]} />
             </div>
           </AnimatedSection>
         </section>
@@ -133,6 +144,9 @@ function TotalSection() {
             <SearchGuildWithGame
               leftCarouselTitle={<p className="text-3xl font-bold text-neutral-900 mb-6">보유 게임으로 길드 탐색</p>}
               theme="light"
+              forMain
+              dummyGames={mainDummyMyGames}
+              dummyGuilds={mainDummyGuilds}
             />
           </AnimatedSection>
         </section>
@@ -140,10 +154,10 @@ function TotalSection() {
         <section className="h-screen" ref={registerSection}>
           <AnimatedSection title="게이머를 위한 커뮤니티">
             <div className="w-full grid grid-cols-2 gap-x-6 gap-y-6">
-              {/* <CommunityPostShort data={dummyPost} className="h-52" />
-              <CommunityPostImageShort data={dummyPost} className="h-52" />
-              <CommunityPostShort data={dummyPost} className="h-52" />
-              <CommunityPostImageShort data={dummyPost} className="h-52" /> */}
+              <CommunityPostImageShort data={mainDummyPosts[0]} noRoute className="h-52" />
+              <CommunityPostShort data={mainDummyPosts[1]} noRoute className="h-52" />
+              <CommunityPostShort data={mainDummyPosts[2]} noRoute className="h-52" />
+              <CommunityPostImageShort data={mainDummyPosts[3]} noRoute className="h-52" />
             </div>
           </AnimatedSection>
         </section>

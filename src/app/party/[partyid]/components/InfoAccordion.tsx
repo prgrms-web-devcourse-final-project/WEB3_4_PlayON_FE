@@ -20,6 +20,7 @@ import { useAlertStore } from '@/stores/alertStore';
 import { useInviteStore } from '@/stores/inviteStore';
 import { useNotification } from '@/api/notification';
 import { PARTY_ROUTE } from '@/constants/routes/party';
+import { userRes, userSimpleRes } from '@/types/party';
 
 export default function InfoAccordion() {
   const router = useRouter();
@@ -36,9 +37,16 @@ export default function InfoAccordion() {
           router.push(PATH.login);
         },
       };
-    else if (joinState == 'joined' || joinState == 'pending')
+    // else if (joinState == 'joined')
+    //   return {
+    //     text: '참가 취소하기',
+    //     action: () => {
+    //       cancleJoin();
+    //     },
+    //   };
+    else if (joinState == 'pending')
       return {
-        text: '참가 취소하기',
+        text: '참가 신청 취소하기',
         action: () => {
           cancleJoin();
         },
@@ -64,7 +72,7 @@ export default function InfoAccordion() {
           {open && (
             <div className="flex py-8 gap-8 align-tops">
               <div className="w-[460px]">
-                <PartyHostInfo partyHost={partyInfo.participation[0]} />
+                <PartyHostInfo partyHost={partyInfo.partyMembers[0]} />
                 <div className="flex flex-col gap-3 pt-8">
                   {viewLevel('owner') && pendingList.length > 0 && (
                     <>
@@ -83,7 +91,7 @@ export default function InfoAccordion() {
                       ))}
                     </>
                   )}
-                  {viewLevel('notOwner') && (
+                  {viewLevel('notJoined') && (
                     <RetroButton
                       type="purple"
                       callback={() => {
@@ -94,27 +102,25 @@ export default function InfoAccordion() {
                     </RetroButton>
                   )}
                   {viewLevel('pending') && (
-                    <p className="text-center text-purple-600 font-dgm flex justify-center">
-                      승인을 기다리고 있습니다 <Loader2 className="animate-spin h-5" />
-                    </p>
+                    <p className="text-center text-purple-600 font-dgm flex justify-center">승인을 기다리고 있습니다</p>
                   )}
                 </div>
               </div>
               <ul id="partInfo" className="flex flex-col gap-7 w-full relative">
                 {viewLevel('owner') && <PartyManageButtons />}
                 <li>
-                  <h3 className="text-4xl font-bold mb-3">{partyInfo.party_name}</h3>
+                  <h3 className="text-4xl font-bold mb-3">{partyInfo.name}</h3>
                   <div className="flex gap-2">
-                    {partyInfo.tags.map((tag, idx) => (
-                      <Tag key={tag + idx} style="retro" background="dark">
-                        {tag}
+                    {partyInfo.partyTags.map((tag, idx) => (
+                      <Tag key={'tags' + idx} style="retro" background="dark">
+                        {tag.tagValue}
                       </Tag>
                     ))}
                   </div>
                 </li>
                 <li>
                   <h5 className="text-xl font-extrabold">시작 시간</h5>
-                  <p>{formatDate(new Date(partyInfo.start_time))} 출발</p>
+                  <p>{formatDate(new Date(partyInfo.partyAt))} 출발</p>
                 </li>
                 <li>
                   <ParticipationInfo />
@@ -131,16 +137,16 @@ export default function InfoAccordion() {
   );
 }
 
-function PartyHostInfo({ partyHost }: { partyHost: userSimple }) {
+function PartyHostInfo({ partyHost }: { partyHost: userRes }) {
   return (
     <div className="flex gap-3 border-b border-white/20 pb-8">
-      <Link href={PATH.user_page(partyHost.memberId)}>
+      <Link href={PATH.user_page(`${partyHost.memberId}`)}>
         <Avatar id="createdUser" className="bg-purple-400 w-20 h-20 aspect-square rounded-full overflow-hidden">
-          <AvatarImage src={partyHost.img_src || '/img/dummy_profile.jpg'} />
+          <AvatarImage src={partyHost.profileImg || '/img/dummy_profile.jpg'} />
         </Avatar>
       </Link>
       <div>
-        <span className="text-sm text-neutral-600">{partyHost.user_title}</span>
+        <span className="text-sm text-neutral-600">{partyHost.title}</span>
         <p className="text-2xl font-extrabold">{partyHost.nickname}님의 파티</p>
       </div>
     </div>
@@ -163,7 +169,7 @@ function PartyManageButtons() {
         className="flex items-center"
         onClick={() => {
           showAction(async (memberid: number) => {
-            await party.PartyInvite(partyInfo.partyId, memberid.toString());
+            await party.PartyInvite(`${partyInfo.partyId}`, `${memberid}`);
             notification.SendNotification({
               content: '님의 파티에 초대되셨습니다.',
               receiverId: memberid.toString(),
@@ -187,7 +193,7 @@ function PartyManageButtons() {
         className="flex items-center"
         onClick={() => {
           showAlert('파티를 삭제하시겠습니까?', '삭제 후에는 복구할 수 없습니다.', () => {
-            party.DeleteParty(partyInfo.partyId);
+            party.DeleteParty(`${partyInfo.partyId}`);
             router.push(PATH.party_list);
           });
         }}
@@ -206,25 +212,22 @@ function ParticipationInfo() {
       <h5 className="text-xl font-extrabold">참가 인원</h5>
       <div className="flex py-2 justify-between">
         <div className="flex gap-3 items-center">
-          {partyInfo.participation.map((member, idx) =>
+          {partyInfo.partyMembers.map((member, idx) =>
             idx < 8 ? (
-              <Link key={idx} href={PATH.user_page(member.memberId)} target="_blank">
+              <Link key={idx} href={PATH.user_page(`${member.memberId}`)} target="_blank">
                 <Avatar className="bg-purple-400 w-12 h-12 aspect-square rounded-full overflow-hidden">
-                  <AvatarImage src={member.img_src || '/img/dummy_profile.jpg'} />
+                  <AvatarImage src={member.profileImg || '/img/dummy_profile.jpg'} />
                 </Avatar>
               </Link>
             ) : null
           )}
-          {partyInfo.participation.length - 8 >= 1 && (
+          {partyInfo.partyMembers.length - 8 >= 1 && (
             <div className="font-suit text-lg font-semibold ml-2 text-neutral-600">
-              +{partyInfo.participation.length - 4}
+              +{partyInfo.partyMembers.length - 4}
             </div>
           )}
         </div>
       </div>
     </>
   );
-}
-function useInviteModal() {
-  throw new Error('Function not implemented.');
 }

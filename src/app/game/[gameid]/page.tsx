@@ -3,9 +3,7 @@
 import RetroButton from '@/components/common/RetroButton';
 import Tag from '@/components/common/Tag';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-// import { Doughnut } from 'react-chartjs-2';
 import { dummyGameDetail } from '@/utils/dummyData';
-// import { ArcElement, Chart, ChartData } from 'chart.js';
 import { SwiperSlide, Swiper } from 'swiper/react';
 import PartyCard from '@/components/party/PartyCard';
 import 'swiper/css';
@@ -25,7 +23,6 @@ import styles from './gameDetail.module.css';
 
 export default function GameDetail({ params }: { params: { gameid: string } }) {
   const [selectedSlide, setSelectedSlide] = useState(0);
-  // Chart.register(ArcElement);
   const router = useRouter();
   const gamehook = useGame();
   const partyResFallback: getPartyRes[] = [

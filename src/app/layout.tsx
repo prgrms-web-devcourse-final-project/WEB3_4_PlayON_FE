@@ -1,7 +1,6 @@
 import Header from '@/components/common/Header';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
-import { Suspense } from 'react';
 import ReactQueryProviders from '@/hooks/useReactQuery';
 import { AlertModal } from '@/components/common/AlertModal';
 import { InviteModal } from '@/components/common/invite-modal';
@@ -16,7 +15,7 @@ export default function RootLayout({
       <body>
         <ReactQueryProviders>
           <Header />
-          <Suspense>{children}</Suspense>
+          {children}
         </ReactQueryProviders>
         <Toaster />
         <AlertModal />

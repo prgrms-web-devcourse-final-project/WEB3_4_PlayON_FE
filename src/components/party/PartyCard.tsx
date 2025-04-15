@@ -2,14 +2,14 @@ import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import Tag from '@/components/common/Tag';
 import { Skeleton } from '@/components/ui/skeleton';
 import formatDate from '@/utils/formatDate';
-import { getPartyRes } from '@/types/party';
+import { getMainPendingPartyRes } from '@/types/party';
 import { getSteamImage } from '@/api/steamImg';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { PATH } from '@/constants/routes';
 
 interface PartyCardProps {
-  data: getPartyRes;
+  data: getMainPendingPartyRes;
 }
 
 export function PartyCardSkeleton() {
@@ -91,7 +91,7 @@ export default function PartyCard({ data }: PartyCardProps) {
           {data.members?.map((member, idx) =>
             idx < 4 ? (
               <Avatar key={member.memberId + data.partyId} className="bg-cover bg-center w-5 h-5">
-                <AvatarImage src={member.img_src || '/img/dummy_profile.jpg'} />
+                <AvatarImage src={member.profileImg || '/img/dummy_profile.jpg'} />
               </Avatar>
             ) : null
           )}

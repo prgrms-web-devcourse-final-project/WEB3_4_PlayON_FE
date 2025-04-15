@@ -6,7 +6,7 @@ import { useParty } from '@/api/party';
 import { useRouter } from 'next/navigation';
 import { PATH } from '@/constants/routes';
 import { gameSimple } from '@/types/games';
-import { getPartyRes } from '@/types/party';
+import { getMainPendingPartyRes, getPartyRes } from '@/types/party';
 import HeroTypingBanner from '@/components/common/HeroTypingBanner';
 import PlayOnRollingBanner from '@/components/common/play-on-rolling-banner';
 import RetroButton from '@/components/common/RetroButton';
@@ -21,25 +21,25 @@ import EmptyLottie from '@/components/common/EmptyLottie';
 const popularGames: gameSimple[] = [
   {
     title: 'Counter Strike 2',
-    genre: ['몰라요'],
+    genre: [''],
     img_src: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/730/header.jpg',
     background_src: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/730/header.jpg',
   },
   {
     title: 'BATTLEGROUNDS',
-    genre: ['몰라요'],
+    genre: [''],
     img_src: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/578080/header.jpg',
     background_src: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/578080/header.jpg',
   },
   {
     title: 'Team Fortress 2',
-    genre: ['몰라요'],
+    genre: [''],
     img_src: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/440/header.jpg',
     background_src: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/440/header.jpg',
   },
   {
     title: 'APEX LEGENDS',
-    genre: ['몰라요'],
+    genre: [''],
     img_src: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1172470/header.jpg',
     background_src: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1172470/header.jpg',
   },
@@ -48,7 +48,7 @@ const popularGames: gameSimple[] = [
 export default function Party() {
   const party = useParty();
   const router = useRouter();
-  const [pendingParties, setPendingParties] = useState<getPartyRes[]>([]);
+  const [pendingParties, setPendingParties] = useState<getMainPendingPartyRes[]>([]);
   const [loggedParties, setLoggedParties] = useState<getPartyRes[]>([]);
   const handleSearch = (appId: number | string) => {
     router.push(`${PATH.party_list}?appId=${appId}`);

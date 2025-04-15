@@ -14,7 +14,7 @@ export const MEMBER_ENDPOINTS = Object.freeze({
 
   partyAccept: (partyId: number) => `/members/me/parties/${partyId}`,
   partyDecline: (partyId: number) => `/members/me/parties/${partyId}`,
-  partyInviteCancel: (partyId: number) => `/members/me/parties/pending/${partyId}`,
+  partyJoinCancel: (partyId: number | string) => `/members/me/parties/pending/${partyId}`,
 
   otherMember: (memberId: number) => `/members/member/${memberId}`,
 

@@ -17,6 +17,7 @@ import { useGuild } from '@/api/guild';
 import { useAuthStore } from '@/stores/authStore';
 import { useGuildJoin } from '@/api/guildJoin';
 import { AdditionalInfo } from '@/types/guildApi';
+import { useToast } from '@/hooks/use-toast';
 
 interface guildUserProps {
   memberId: string;
@@ -59,6 +60,7 @@ export default function GuildAdmin() {
   const guildJoin = useGuildJoin();
   const { user } = useAuthStore();
   const { PutManager, DeleteManager, GetMembers, InviteMembers, DeleteMembers, GetAdmin } = useGuildsMembers();
+  const Toast = useToast();
 
   const [guildInfo, setGuildInfo] = useState<{
     name: string;
@@ -155,11 +157,19 @@ export default function GuildAdmin() {
       if (role === 'MEMBER') {
         await PutManager(guildid, memberId);
         await fetchData();
-        alert('매니저 권한이 부여 되었습니다.');
+        // alert('매니저 권한이 부여 되었습니다.');
+        Toast.toast({
+          title: '매니저 권한이 부여 되었습니다.',
+          variant: 'primary',
+        });
       } else if (role === 'MANAGER') {
         await DeleteManager(guildid, memberId);
         await fetchData();
-        alert('매니저 권한이 회수되었습니다.');
+        // alert('매니저 권한이 회수되었습니다.');
+        Toast.toast({
+          title: '매니저 권한이 회수되었습니다.',
+          variant: 'primary',
+        });
       }
     } catch (error) {
       console.error('매니저 권한 변경 실패:', error);
@@ -172,11 +182,19 @@ export default function GuildAdmin() {
     try {
       console.log('퇴출할 멤버: ', memberId);
       await DeleteMembers(guildid, memberId);
-      alert('해당 멤버가 퇴출되었습니다.');
+      // alert('해당 멤버가 퇴출되었습니다.');
+      Toast.toast({
+        title: '해당 멤버가 퇴출되었습니다.',
+        variant: 'primary',
+      });
       await fetchData();
     } catch (error) {
       console.error('멤버 퇴출 실패:', error);
-      alert('퇴출 실패');
+      // alert('퇴출 실패');
+      Toast.toast({
+        title: '해당 멤버 퇴출이 불가합니다.',
+        variant: 'default',
+      });
     }
   };
 
@@ -185,7 +203,13 @@ export default function GuildAdmin() {
   const deleteGuild = useCallback(
     async () => {
       const response = await guild.DeleteGuild(guildid);
-      console.log(response);
+      // console.log(response);
+      if (response) {
+        Toast.toast({
+          title: '길드가 삭제되었습니다.',
+          variant: 'primary',
+        });
+      }
       router.push(PATH.guild_list);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -206,6 +230,12 @@ export default function GuildAdmin() {
   const approveRequest = useCallback(
     async (requestId: number) => {
       const response = await guildJoin.ApproveGuildJoin(Number(guildid), requestId);
+      if (response) {
+        Toast.toast({
+          title: '가입 요청을 승인 했습니다',
+          variant: 'primary',
+        });
+      }
       console.log(response);
       fetchPendingMemberList();
       fetchData();
@@ -218,6 +248,12 @@ export default function GuildAdmin() {
     async (requestId: number) => {
       const response = await guildJoin.RejectGuildJoin(Number(guildid), requestId);
       console.log(response);
+      if (response) {
+        Toast.toast({
+          title: '가입 요청을 거절 했습니다',
+          variant: 'primary',
+        });
+      }
       fetchPendingMemberList();
       fetchData();
     },

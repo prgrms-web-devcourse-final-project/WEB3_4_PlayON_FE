@@ -7,7 +7,7 @@ import SectionBanner from '@/components/common/SectionBanner';
 import SectionTitle from '@/components/common/SectionTitle';
 import PixelCharacter from '@/components/PixelCharacter/PixelCharacter';
 import { gameSimple } from '@/types/games';
-import { dummyGameSimple, dummyGuild, dummyGuild2 } from '@/utils/dummyData';
+import { dummyGameSimple, dummyGuild, dummyGuild2, guildDummyGames, mainDummyGames } from '@/utils/dummyData';
 import PopularGameList from './components/PopularGameList';
 import SearchGuildWithGame from '@/components/common/search-guild-with-game';
 import { useRouter } from 'next/navigation';
@@ -87,7 +87,7 @@ export default function Guild() {
 
       <section className="wrapper space-y-10">
         <SectionTitle title="인기 게임별 길드" subtitle="인기 게임을 즐기는 길드를 찾고 있다면, 여기에 다 있어요!" />
-        <PopularGameList data={dummyGameList} />
+        <PopularGameList data={guildDummyGames} />
       </section>
 
       <section className="wrapper">

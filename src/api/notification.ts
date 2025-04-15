@@ -53,7 +53,10 @@ export const useNotification = () => {
         unreadCount: res.data.data.unreadCount as number,
       };
     }
-    throw new Error('Failed to fetch notifications');
+    return {
+      notification: [],
+      unreadCount: 0,
+    };
   }
   async function SubscribeNotification() {
     const res = await axios.Get(NOTIFICATION_ENDPOINTS.subscribe, {}, true);

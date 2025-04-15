@@ -8,9 +8,10 @@ import { userSimple } from '@/types/user';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ChatMessageDTO } from '@/hooks/useStomp';
 import { Textarea } from '@/components/ui/textarea';
-import { ArrowDown, CornerDownLeft } from 'lucide-react';
+import { CornerDownLeft } from 'lucide-react';
 import styles from './InfoChatting.module.css';
 import { useAuthStore } from '@/stores/authStore';
+import { userRes } from '@/types/party';
 
 export default function InfoChatting() {
   const [chatting, setChatting] = useState(false);
@@ -108,14 +109,15 @@ export default function InfoChatting() {
         <RetroButton
           type="purple"
           callback={async () => {
-            setChatting(!chatting);
             const data = chatContext.toggleJoinChatting(ReceiveMessageCallback, MemberChangeCallback);
             data.then((res) => {
-              if (res.joinState) {
-                setParticipants(res.members);
+              if (res?.joinState) {
+                setParticipants(res.partyMembers);
+                setChatting(true);
               }
-              if (!res.joinState) {
+              if (!res?.joinState) {
                 setParticipants(undefined);
+                setChatting(false);
               }
             });
           }}

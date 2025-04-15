@@ -48,11 +48,7 @@ export default function UserInfoLogin({ userInfo }: Props) {
     refetch,
   } = useQuery({
     queryKey: ['Notifications'],
-    queryFn: async () => {
-      const temp = await notification.GetNotificationsSummary();
-      return temp;
-    },
-    staleTime: 1,
+    queryFn: notification.GetNotificationsSummary,
   });
 
   return (
@@ -61,9 +57,9 @@ export default function UserInfoLogin({ userInfo }: Props) {
         asChild
         className="cursor-pointer"
         onClick={async () => {
-          const response = await refetch();
-          if (response && response.status === 'success') {
-            response.data.notification.forEach((e) => {
+          const response = await notification.GetNotificationsSummary();
+          if (response && response.notification.length > 0) {
+            response.notification.forEach((e) => {
               if (!e.isRead) notification.ReadNotification(e.id);
             });
           }
