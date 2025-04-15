@@ -185,7 +185,7 @@ export const useMembers = () => {
             // end_time: data.endedAt,
             gameName: data.gameName,
             partyTags: data.partyTags.map((tag) => ({
-              tagValue: tag.tagValue
+              tagValue: tag.tagValue,
             })),
             members: data.members.map((e) => ({
               memberId: e.memberId,
@@ -249,27 +249,26 @@ export const useMembers = () => {
           maximum: data.maximum,
           num_minimum: data.minimum,
         };
-      })
+      });
     }
     return false;
   }
 
   // 파티 초대 승낙
   async function AcceptPartyInvite(partyId: number) {
-    const response = await axios.Post(MEMBER.partyAccept(partyId), {}, {}, true);
+    const response = await axios.Put(MEMBER.partyAccept(partyId), {}, {}, true);
     if (!response || response.status !== 200) {
-      return false;
+      return true;
     }
-    return true;
+    return false;
   }
-
   // 파티 초대 거절
   async function DeclinePartyInvite(partyId: number) {
     const response = await axios.Delete(MEMBER.partyDecline(partyId), {}, true);
     if (!response || response.status !== 200) {
-      return false;
+      return true;
     }
-    return true;
+    return false;
   }
 
   // 파티 신청 취소
@@ -443,32 +442,32 @@ export const useMembers = () => {
   }
 
   // 특정 유저 가입 길드 조회
- async function UserGuilds(userId: number, count?: number): Promise<{ guilddata: guild[]; appid: number }> {
-   const response = await axios.Get(
-     MEMBER.userguilds(userId),
-     { params: { count }, headers: { 'Content-Type': 'application/json' } },
-     true
-   );
-   if (response && response.status === 200) {
-     const data = response.data.data;
-     return data.map((e) => {
-       const tags = categorizeTags(e.tags);
-       return {
-         img_src: e.guildImg as string,
-         guild_name: e.name as string,
-         description: e.description as string[],
-         num_members: e.memberCount as number,
-         guild_id: e.guildId as number,
-         // tagsArr: e.tags as string[],
-         play_style: tags.play_style,
-         skill_level: tags.skill_level,
-         gender: tags.gender,
-         friendly: tags.friendly,
-       };
-     });
-   }
-   throw new Error('Failed to fetch myGuilds');
- }
+  async function UserGuilds(userId: number, count?: number): Promise<{ guilddata: guild[]; appid: number }> {
+    const response = await axios.Get(
+      MEMBER.userguilds(userId),
+      { params: { count }, headers: { 'Content-Type': 'application/json' } },
+      true
+    );
+    if (response && response.status === 200) {
+      const data = response.data.data;
+      return data.map((e) => {
+        const tags = categorizeTags(e.tags);
+        return {
+          img_src: e.guildImg as string,
+          guild_name: e.name as string,
+          description: e.description as string[],
+          num_members: e.memberCount as number,
+          guild_id: e.guildId as number,
+          // tagsArr: e.tags as string[],
+          play_style: tags.play_style,
+          skill_level: tags.skill_level,
+          gender: tags.gender,
+          friendly: tags.friendly,
+        };
+      });
+    }
+    throw new Error('Failed to fetch myGuilds');
+  }
   async function steamAuthSignup() {
     const response = await axios.Get(STEAM_AUTH_ENDPOINTS.signup, {}, true);
     const redirectUrl = response?.data.data.redirectUrl;

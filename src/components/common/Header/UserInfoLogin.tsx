@@ -61,13 +61,11 @@ export default function UserInfoLogin({ userInfo }: Props) {
         asChild
         className="cursor-pointer"
         onClick={async () => {
-          if (!opened) {
-            const response = await refetch();
-            if (response && response.status === 'success') {
-              response.data.notification.forEach((e) => {
-                if (!e.isRead) notification.ReadNotification(e.id);
-              });
-            }
+          const response = await refetch();
+          if (response && response.status === 'success') {
+            response.data.notification.forEach((e) => {
+              if (!e.isRead) notification.ReadNotification(e.id);
+            });
           }
           setOpened(!opened);
         }}
@@ -98,7 +96,7 @@ export default function UserInfoLogin({ userInfo }: Props) {
           </Link>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuGroup className="w-80">
+        <DropdownMenuGroup className="max-w-96">
           <DropdownMenuLabel>알림 목록</DropdownMenuLabel>
           <DropdownMenuItem>
             {/* <p className="text-sm">

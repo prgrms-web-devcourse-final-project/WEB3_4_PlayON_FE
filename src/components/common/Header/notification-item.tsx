@@ -1,29 +1,58 @@
+import { useMembers } from '@/api/members';
 import { Notification } from '@/api/notification';
-import GhostSVG from '@/components/svg/ghost_fill';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useParty } from '@/api/party';
 import { Button } from '@/components/ui/button';
-import Link from 'next/link';
+import { CheckIcon, XIcon } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 type NotificationItemProps = {
   data: Notification;
 };
 
 export default function NotificationItem(props: NotificationItemProps) {
+  const party = useParty();
+  const router = useRouter();
+  const member = useMembers();
+
+  const handleAccept = async () => {
+    const partyId = props.data.redirectUrl.split('/');
+    if (partyId[1] === 'party') {
+      const success = await member.AcceptPartyInvite(parseInt(partyId[2]));
+      console.log(success);
+      if (success) {
+        router.push(props.data.redirectUrl);
+      }
+    }
+  };
+
   return (
-    <div className="flex gap-2 w-full place-content-between items-center">
+    <div className="flex gap-3 w-full place-content-between items-center">
       <img src="/img/dummy_profile.jpg" alt="" className="rounded-full w-10 h-10" />
       {!props.data.isRead && <div className="absolute w-2 h-2 rounded-full bg-cherry-main top-2 left-2"></div>}
       {!props.data.isRead && (
         <div className="absolute w-2 h-2 rounded-full bg-cherry-main top-2 left-2 blur-sm animate-pulse"></div>
       )}
-      <div className="flex flex-col flex-auto">
+
+      <div className="flex flex-col flex-auto pr-5">
         <p>{props.data.senderNickname}</p>
         <p>{props.data.content}</p>
         <p className="text-neutral-400 text-xs">{new Date(props.data.createdAt).toLocaleString()}</p>
       </div>
-      <Link href={`${props.data.redirectUrl}`}>
-        <Button>참가</Button>
-      </Link>
+
+      <div className="flex gap-1">
+        <Button
+          variant={'positive'}
+          className="w-8 h-8"
+          onClick={() => {
+            handleAccept();
+          }}
+        >
+          <CheckIcon />
+        </Button>
+        <Button variant={'negative'} onClick={() => {}} className="w-8 h-8">
+          <XIcon />
+        </Button>
+      </div>
     </div>
   );
 }

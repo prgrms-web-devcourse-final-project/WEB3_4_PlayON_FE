@@ -163,7 +163,8 @@ function PartyManageButtons() {
         className="flex items-center"
         onClick={() => {
           showAction(async (memberid: number) => {
-            const response = notification.SendNotification({
+            await party.PartyInvite(partyInfo.partyId, memberid.toString());
+            notification.SendNotification({
               content: '님의 파티에 초대되셨습니다.',
               receiverId: memberid.toString(),
               redirectUrl: PARTY_ROUTE.party_detail(partyInfo.partyId),
