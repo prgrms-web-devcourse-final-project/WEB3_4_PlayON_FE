@@ -71,9 +71,9 @@ export default function Guild() {
             </RetroButton>
           </SectionTitle>
           <div className="flex">
-            <PixelCharacter char="mage" motion="attack" />
-            <PixelCharacter char="archer" motion="attack" />
-            <PixelCharacter char="warrior" motion="attack" />
+            <PixelCharacter char="mage" motion="attack" className="scale-125" />
+            <PixelCharacter char="archer" motion="attack" className="scale-125" />
+            <PixelCharacter char="warrior" motion="ulti" className="scale-125" />
           </div>
         </div>
         <div className="grid grid-cols-3 gap-6"></div>
