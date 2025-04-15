@@ -72,7 +72,7 @@ export default function LoginInitial() {
   console.log(memberId);
 
   return (
-    <div className="bg-purple-900 text-purple-400 w-full h-screen flex flex-col items-center mt-[68px]">
+    <div className="bg-purple-900 text-purple-400 w-full min-h-screen flex flex-col items-center mt-[68px]">
       <div className="overlay pointer-events-none"></div>
       <div className="scanline pointer-events-none"></div>
       <div className="scrollanimation">
@@ -147,7 +147,7 @@ export default function LoginInitial() {
               </Form>
             </div>
           </div>
-          <div className="font-dgm text-purple-400 mt-5 flex flex-col items-center dashed-border mb-10">
+          <div className="font-dgm text-purple-400 mt-5 flex flex-col items-center dashed-border">
             <p className="text-4xl text-purple-400 font-dgm bg-purple-900 title">STEAM으로 로그인</p>
             <div className="p-2 pb-8">
               <button
@@ -161,7 +161,7 @@ export default function LoginInitial() {
               </button>
             </div>
           </div>
-          <div className="flex flex-col items-center">
+          <div className="flex flex-col items-center pb-20">
             <p className="font-dgm text-2xl glow">아이디가 없나요?</p>
             <Link href={PATH.signup} scroll={true}>
               <p className="font-dgm text-2xl glow cursor-pointer hover:text-purple-200">{`[ 회원 가입하러 가기 ]`}</p>
