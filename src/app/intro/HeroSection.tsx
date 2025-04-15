@@ -5,12 +5,13 @@ import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/all';
 import { Object3D } from 'three';
+import { PATH } from '@/constants/routes';
 
 const serviceList = [
-  { name: 'Party', href: '', icon: '/img/icons/pixel_swords.svg' },
-  { name: 'Guild', href: '', icon: '/img/icons/pixel_box.svg' },
-  { name: 'Recommend', href: '', icon: '/img/icons/pixel_present.svg' },
-  { name: 'Community', href: '', icon: '/img/icons/pixel_chatting.svg' },
+  { name: 'Party', href: PATH.party, icon: '/img/icons/pixel_swords.svg' },
+  { name: 'Guild', href: PATH.guild, icon: '/img/icons/pixel_box.svg' },
+  { name: 'Recommend', href: PATH.game, icon: '/img/icons/pixel_present.svg' },
+  { name: 'Community', href: PATH.community, icon: '/img/icons/pixel_chatting.svg' },
 ];
 
 type Props = {
