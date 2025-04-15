@@ -12,12 +12,11 @@ import PopularGameList from './components/PopularGameList';
 import SearchGuildWithGame from '@/components/common/search-guild-with-game';
 import { useRouter } from 'next/navigation';
 import { PATH } from '@/constants/routes';
-import { useGuild } from '@/api/guild';
-import { useSuspenseQuery } from '@tanstack/react-query';
+// import { useGuild } from '@/api/guild';
+// import { useSuspenseQuery } from '@tanstack/react-query';
 import { Suspense } from 'react';
 import PopularGuildListSkeleton from './components/PopularGuildListSkeleton';
 import PopularGuildList from './components/PopularGuildList';
-import { guild } from '@/types/guild';
 
 const banner = [
   {
@@ -34,13 +33,6 @@ const dummyGuilds = [
 
 export default function Guild() {
   const router = useRouter();
-  const Guild = useGuild();
-
-  const { data: popularGuildList } = useSuspenseQuery({
-    queryKey: ['PopularGuilds'],
-    queryFn: () => Guild.GetGuildPopular(),
-    staleTime: 1000 * 60,
-  });
 
   const handleSearch = (value: string) => {
     router.push(`${PATH.guild_list}?name=${value}`);
@@ -78,7 +70,7 @@ export default function Guild() {
         </div>
         <div className="grid grid-cols-3 gap-6"></div>
         <Suspense fallback={<PopularGuildListSkeleton />}>
-          <PopularGuildList data={popularGuildList} />
+          <PopularGuildList />
         </Suspense>
       </section>
       <section>
