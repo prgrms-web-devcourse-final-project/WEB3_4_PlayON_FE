@@ -564,3 +564,47 @@ export const mainDummyPosts: postSimple[] = [
     tag: '파티모집',
   },
 ];
+
+export const guildDummyGames: gameSimple[] = [
+  {
+    title: 'Split Fiction',
+    genre: ['액션', '어드벤쳐'],
+    img_src: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2001120/header.jpg',
+    background_src:
+      'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/257116893/b4bbd6dc66f4d060be19939f12fa52593c01b5b8/movie_600x337.jpg?t=1742494046',
+    appid: 2001120,
+  },
+  // {
+  //   title: 'Space for Sale',
+  //   genre: ['캐주얼', '인디', '어드벤쳐'],
+  //   img_src: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1624060/header.jpg',
+  //   background_src:
+  //     'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1624060/ss_acb83fcac61cb4eb9ae42647bbe6044b6920f0f9.600x338.jpg?t=1744709274',
+  //   appid: 1624060,
+  // },
+  {
+    title: 'Unrailed 2: Back on Track',
+    genre: ['액션', '캐주얼', '인디', '전략'],
+    img_src: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2211170/header.jpg',
+    background_src:
+      'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2211170/ss_7f2c923dbd4e54aac2e26723db8a491c43b7160f.600x338.jpg?t=1743085107',
+    appid: 2211170,
+  },
+
+  {
+    title: 'Apex LEGENDS™',
+    genre: ['액션', '어드벤쳐'],
+    img_src: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1172470/header.jpg',
+    background_src:
+      'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1172470/ss_80e1dc7c52872f2cc1b12b2eae17106cd91b1555.600x338.jpg?t=1741980558',
+    appid: 1172470,
+  },
+  {
+    title: 'PUBG: BATTLEGROUNDS',
+    genre: ['액션', '어드벤쳐', '멀티'],
+    img_src: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/578080/header.jpg',
+    background_src:
+      'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/578080/c16e2f2d122cae77a1cbaca19263df0f2d2214fa/ss_c16e2f2d122cae77a1cbaca19263df0f2d2214fa.600x338.jpg?t=1744161491',
+    appid: 578080,
+  },
+];
