@@ -18,7 +18,6 @@ export default function NotificationItem(props: NotificationItemProps) {
     const partyId = props.data.redirectUrl.split('/');
     if (partyId[1] === 'party') {
       const success = await member.AcceptPartyInvite(parseInt(partyId[2]));
-      console.log(success);
       if (success) {
         router.push(props.data.redirectUrl);
       }
@@ -27,11 +26,7 @@ export default function NotificationItem(props: NotificationItemProps) {
   const handleDecline = async () => {
     const partyId = props.data.redirectUrl.split('/');
     if (partyId[1] === 'party') {
-      const success = await member.DeclinePartyInvite(parseInt(partyId[2]));
-      console.log(success);
-      if (success) {
-        router.push(props.data.redirectUrl);
-      }
+      await member.DeclinePartyInvite(parseInt(partyId[2]));
     }
   };
 
