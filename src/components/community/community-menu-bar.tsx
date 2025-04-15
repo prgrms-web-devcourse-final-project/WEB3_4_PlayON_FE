@@ -1,12 +1,12 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import RetroButton from '../common/RetroButton';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, RefreshCcw } from 'lucide-react';
 import { communityTags } from '@/types/Tags/communityTags';
 import { PATH } from '@/constants/routes';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import SearchBar from '../common/SearchBar';
 
 type CommunityMenuBarProps = {
@@ -15,6 +15,10 @@ type CommunityMenuBarProps = {
 
 export default function CommunityMenuBar(props: CommunityMenuBarProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const category = useMemo(() => {
+    return searchParams.get('category');
+  }, [searchParams]);
 
   const HandleSearchClick = useCallback(
     (value: string) => {
@@ -37,15 +41,28 @@ export default function CommunityMenuBar(props: CommunityMenuBarProps) {
     },
     [router]
   );
+
+  const handleClickReset = useCallback(() => {
+    router.replace(PATH.community);
+  }, [router]);
   return (
-    <div className={`flex flex-col rounded-xl shadow-md p-8 gap-9 ${props.className}`}>
+    <div className={`flex flex-col rounded-xl shadow-md p-8 gap-9 w-[360px] ${props.className}`}>
       <p className="font-dgm text-4xl ">커뮤니티</p>
       <TagSelectGridMenu onSelectChanged={HandleSelectChange} />
-      <svg xmlns="http://www.w3.org/2000/svg" width="347" height="2" viewBox="0 0 347 2" fill="none">
+      <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="2" viewBox="0 0 347 2" fill="none">
         <path d="M0 1H347" stroke="#E5E5E5" />
       </svg>
       <div className="flex flex-col gap-10">
-        <SearchBar onChange={() => {}} onSearch={(value) => HandleSearchClick(value)} />
+        <div className="flex flex-col gap-2">
+          <div
+            className="flex gap-1 items-center self-end text-sm text-neutral-400 hover:text-purple-600 cursor-pointer"
+            onClick={handleClickReset}
+          >
+            <RefreshCcw className=" size-3" />
+            초기화
+          </div>
+          <SearchBar onChange={() => {}} onSearch={(value) => HandleSearchClick(value)} />
+        </div>
         <Link href={PATH.community_create}>
           <RetroButton
             type="purple"
@@ -74,6 +91,12 @@ function TagSelectGridItem(props: { label: string; selected: boolean }) {
 
 function TagSelectGridMenu(props: { onSelectChanged: (select: boolean[]) => void }) {
   const [selected, setSelected] = useState<boolean[]>(new Array(communityTags.length).fill(false));
+
+  // const searchParams = useSearchParams();
+  // const category = useMemo(() => {
+  //   return searchParams.get('category');
+  // }, [searchParams]);
+
   function HandleSelected(index: number) {
     const newSelected = new Array(communityTags.length).fill(false);
     newSelected[index] = !selected[index];

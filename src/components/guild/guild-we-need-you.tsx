@@ -120,7 +120,7 @@ export default function WeNeedYou(props: WeNeedYouProps) {
         <div className="flex flex-col gap-5">
           <div className="flex flex-col gap-2">
             <div
-              className="flex gap-1 items-center self-end text-sm text-neutral-400 hover:text-purple-600"
+              className="flex gap-1 items-center self-end text-sm text-neutral-400 hover:text-purple-600 cursor-pointer"
               onClick={handleClickReset}
             >
               <RefreshCcw className=" size-3" />
