@@ -37,13 +37,6 @@ export default function InfoAccordion() {
           router.push(PATH.login);
         },
       };
-    // else if (joinState == 'joined')
-    //   return {
-    //     text: '참가 취소하기',
-    //     action: () => {
-    //       cancleJoin();
-    //     },
-    //   };
     else if (joinState == 'pending')
       return {
         text: '참가 신청 취소하기',
@@ -142,7 +135,7 @@ function PartyHostInfo({ partyHost }: { partyHost: userRes }) {
     <div className="flex gap-3 border-b border-white/20 pb-8">
       <Link href={PATH.user_page(`${partyHost.memberId}`)}>
         <Avatar id="createdUser" className="bg-purple-400 w-20 h-20 aspect-square rounded-full overflow-hidden">
-          <AvatarImage src={partyHost.profileImg || '/img/dummy_profile.jpg'} />
+          <AvatarImage src={partyHost.profileImg || '/img/dummy_profile.jpg'} className="object-cover" />
         </Avatar>
       </Link>
       <div>
@@ -216,7 +209,7 @@ function ParticipationInfo() {
             idx < 8 ? (
               <Link key={idx} href={PATH.user_page(`${member.memberId}`)} target="_blank">
                 <Avatar className="bg-purple-400 w-12 h-12 aspect-square rounded-full overflow-hidden">
-                  <AvatarImage src={member.profileImg || '/img/dummy_profile.jpg'} />
+                  <AvatarImage src={member.profileImg || '/img/dummy_profile.jpg'} className="object-cover" />
                 </Avatar>
               </Link>
             ) : null

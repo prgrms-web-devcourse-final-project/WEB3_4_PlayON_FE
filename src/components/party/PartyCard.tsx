@@ -90,8 +90,8 @@ export default function PartyCard({ data }: PartyCardProps) {
         <div className="flex gap-1 items-center">
           {data.members?.map((member, idx) =>
             idx < 4 ? (
-              <Avatar key={member.memberId + data.partyId} className="bg-cover bg-center w-5 h-5">
-                <AvatarImage src={member.profileImg || '/img/dummy_profile.jpg'} />
+              <Avatar key={member.memberId + data.partyId} className="bg-cover bg-center w-6 h-6 overflow-hidden">
+                <AvatarImage src={member.profileImg || '/img/dummy_profile.jpg'} className="bg-cover object-cover" />
               </Avatar>
             ) : null
           )}

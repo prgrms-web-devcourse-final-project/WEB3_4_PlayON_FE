@@ -74,7 +74,9 @@ export default function UserInfoLogin({ userInfo }: Props) {
             </p>
           </div>
           <Avatar className="w-8 aspect-square rounded-full overflow-hidden bg-purple-500">
-            <AvatarImage src={userInfo.img_src} alt="프로필 이미지" />
+            {userInfo && (
+              <AvatarImage src={userInfo.img_src} alt="프로필 이미지" className="w-full h-full object-cover" />
+            )}
             <AvatarFallback className="flex items-end justify-center">
               <div className="animate-bounce duration-1000 mt-2 ">
                 <GhostSVG fill="#FFFFFF" stroke="" width={20} />
