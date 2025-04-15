@@ -1,21 +1,41 @@
 'use client';
 import RetroButton from '@/components/common/RetroButton';
-import GuildHorizon from '@/components/guild/guild-horizon';
+import GuildHorizon, { GuildHorizonSkeleton } from '@/components/guild/guild-horizon';
 import PixelCharacter from '@/components/PixelCharacter/PixelCharacter';
 import styles from './GuildSection.module.css';
 
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/all';
-import { useRef, useState } from 'react';
-import { dummyGuild } from '@/utils/dummyData';
+import { useMemo, useRef, useState } from 'react';
 import { Object3D } from 'three';
+import { useGuild } from '@/api/guild';
+import { useQuery } from '@tanstack/react-query';
 
 type Props = {
   modelObject: Object3D | null;
 };
 
 function GuildSection({ modelObject }: Props) {
+  const Guild = useGuild();
+  const requestData = useMemo(() => {
+    return {
+      name: '',
+      appids: [],
+      tags: [
+        { type: '파티 스타일', value: '전체' },
+        { type: '게임 실력', value: '전체' },
+        { type: '성별', value: '전체' },
+        { type: '친목', value: '전체' },
+      ],
+    };
+  }, []);
+
+  const { data: GuildData } = useQuery({
+    queryKey: ['MainGuildList'],
+    queryFn: () => Guild.GetGuildList(requestData),
+  });
+
   gsap.registerPlugin(useGSAP);
   gsap.registerPlugin(ScrollTrigger);
   const container = useRef<HTMLDivElement>(null);
@@ -27,6 +47,7 @@ function GuildSection({ modelObject }: Props) {
 
   useGSAP(() => {
     if (!modelObject) return;
+    if (!GuildData) return;
 
     const Tl = gsap.timeline({
       scrollTrigger: {
@@ -44,7 +65,7 @@ function GuildSection({ modelObject }: Props) {
       .fromTo(guildBox2.current, { y: 60, opacity: 0 }, { y: 0, opacity: 1, ease: 'sine.in' }, 0.2)
       .fromTo(guildBox3.current, { y: 60, opacity: 0 }, { y: 0, opacity: 1, ease: 'sine.in' }, 0.4)
       .fromTo(charBox.current, { x: -800 }, { x: 0, ease: 'power1.in', duration: 2 }, 0);
-  }, [modelObject]);
+  }, [modelObject, GuildData]);
 
   return (
     <section className="bg-gradient-to-b from-purple-700 to-purple-50 py-16 min-h-screen">
@@ -59,17 +80,31 @@ function GuildSection({ modelObject }: Props) {
             <RetroButton type="purple">더 찾아보기</RetroButton>
           </div>
         </div>
-        <div className="flex gap-6 h-[500px]">
-          <div ref={guildBox1} className="self-start">
-            <GuildHorizon data={dummyGuild} className="max-w-[410px]" />
+        {GuildData && GuildData?.guildList.length >= 3 ? (
+          <div className="flex gap-6 h-[500px]">
+            <div ref={guildBox1} className="self-start">
+              <GuildHorizon data={GuildData.guildList[0]} className="max-w-[410px]" />
+            </div>
+            <div ref={guildBox2} className="self-center">
+              <GuildHorizon data={GuildData.guildList[1]} className="max-w-[410px]" />
+            </div>
+            <div ref={guildBox3} className="self-end">
+              <GuildHorizon data={GuildData.guildList[2]} className="max-w-[410px]" />
+            </div>
           </div>
-          <div ref={guildBox2} className="self-center">
-            <GuildHorizon data={dummyGuild} className="max-w-[410px]" />
+        ) : (
+          <div className="flex gap-6 h-[500px]">
+            <div ref={guildBox1} className="self-start">
+              <GuildHorizonSkeleton className="w-[410px]" />
+            </div>
+            <div ref={guildBox2} className="self-center">
+              <GuildHorizonSkeleton className="w-[410px]" />
+            </div>
+            <div ref={guildBox3} className="self-end">
+              <GuildHorizonSkeleton className="w-[410px]" />
+            </div>
           </div>
-          <div ref={guildBox3} className="self-end">
-            <GuildHorizon data={dummyGuild} className="max-w-[410px]" />
-          </div>
-        </div>
+        )}
         <div className="flex -mt-24 ml-2" ref={charBox}>
           <PixelCharacter className="-mx-4" char="archer" motion={charWalking ? 'run' : 'attack'} />
           <PixelCharacter className="-mx-6" char="mage" motion={charWalking ? 'run' : 'ulti'} />
