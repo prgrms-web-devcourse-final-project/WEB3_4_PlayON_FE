@@ -3,7 +3,7 @@
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
@@ -85,6 +85,7 @@ export default function PartyLogForm({ partyLog }): Props {
           return;
         }
       }
+      window.location.reload();
     } catch (error) {
       console.error('파티 로그 작성 중 오류 발생:', error);
     }
@@ -172,7 +173,7 @@ export default function PartyLogForm({ partyLog }): Props {
                     {partyLog?.party_info.participation.map((member, idx) => {
                       return (
                         <div key={idx} onClick={() => field.onChange(member.partyMemberId)}>
-                          <UserInfoVertical isRadioBtn name={field.name} data={member} onSelected={field.onChange} />
+                          <UserInfoVertical isRadioBtn name={field.name} data={member}  onSelected={field.onChange} />
                         </div>
                       );
                     })}
