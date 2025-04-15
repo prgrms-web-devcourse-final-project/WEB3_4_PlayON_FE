@@ -1,7 +1,334 @@
-export default function User() {
+'use client';
+
+import PopularCard from '@/components/game/PopularCard';
+import GuildHorizon from '@/components/guild/guild-horizon';
+import PartyCard from '@/components/party/PartyCard';
+import PartyLogCard from '@/components/party/PartyLogCard';
+import { Avatar, AvatarImage } from '@/components/ui/avatar';
+import { Carousel, CarouselApi, CarouselContent, CarouselItem } from '@/components/ui/carousel';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from '@/components/ui/pagination';
+import { gameSimple } from '@/types/games';
+import { guild } from '@/types/guild';
+import { getPartyRes, party, partyLog } from '@/types/party';
+import {
+  dummyGameSimple,
+  dummyGuild,
+  dummyParty,
+  dummyPartyLog,
+  dummyUserDetail,
+  dummyUserSimple,
+} from '@/utils/dummyData';
+import { ChevronLeft, ChevronRight, MailIcon, Pencil, SquarePen } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import SteamSVG from '@/components/svg/steam';
+import Tag from '@/components/common/Tag';
+import { useMembers } from '@/api/members';
+import { userDetail } from '@/types/user';
+import { useParams, useRouter } from 'next/navigation';
+import { useAuthStore } from '@/stores/authStore';
+import Link from 'next/link';
+
+interface userMe {
+  gerder: string;
+  img_src?: string;
+  last_login_at: Date; // Mon Apr 14 2025 09:45:15 GMT+0900 (한국 표준시) {}
+  nickname: string;
+  party_style: string[];
+  skill_level: string;
+  steam_id?: number;
+  user_title?: string[];
+  username: string;
+}
+
+interface resGameProps {
+  gameData: {
+    title: string;
+    genre: string[];
+    img_src: string;
+    background_src: '';
+  };
+  appid: number;
+}
+
+export default function UserInfoPage() {
+  const dummyGuildList: guild[] = Array(3).fill(dummyGuild);
+  const dummyPartyList: party[] = Array(3).fill(dummyParty);
+  const dummyPartyLogList: partyLog[] = Array(6).fill(dummyPartyLog);
+  const dummyGameArr = new Array<gameSimple>(8).fill(dummyGameSimple);
+
+  const [api, setApi] = useState<CarouselApi>();
+
+  const memberApi = useMembers();
+  const [userMe, SetUserMe] = useState<userDetail | null>(null);
+  const [myGames, setMyGames] = useState<resGameProps[] | null>([]);
+  const [myGuilds, setMyGuilds] = useState<guild[] | null>([]);
+  const [myParties, setMyParties] = useState<getPartyRes[] | null>([]);
+  const [myPartyLogs, setMyPartyLogs] = useState<getPartyRes[] | null>([]);
+
+  const params = useParams();
+  const userid = Number(params?.userid) as number;
+
+  console.log('targetUserid', userid);
+
+
+  useEffect(() => {
+    const GetMe = async () => {
+      try {
+        const res = await memberApi.GetUserDetail(userid);
+        console.log('응답 Me', res);
+        SetUserMe(res);
+        console.log('userMe', userMe);
+      } catch (error: any) {
+        console.log('에러 발생', error.response);
+      }
+    };
+    GetMe();
+
+
+    const MyGuilds = async () => {
+      try {
+        const res = await memberApi.UserGuilds(userid);
+
+        console.log('myguilds 응답', res);
+
+        setMyGuilds(res);
+        console.log('상태 응답', myGuilds);
+      } catch (error: any) {
+        console.log('에러 발생', error.response);
+      }
+    };
+    MyGuilds();
+
+    const GetMyParties = async () => {
+      try {
+        const res = await memberApi.GetUserParties(userid);
+        console.log('너의 파티응답', res);
+        setMyParties(res);
+      } catch (error: any) {
+        console.log('에러 발생 파티1', error);
+      }
+    };
+    GetMyParties();
+
+    const GetMyPartyLogs = async () => {
+      try {
+        const res = await memberApi.GetUserPartyLogs(userid);
+        console.log('페이지 단 파티로그응답', res);
+        setMyPartyLogs(res);
+      } catch (error: any) {
+        console.log('에러 발생 파티', error);
+      }
+    };
+    GetMyPartyLogs();
+  }, []);
+
+  // if (!userMe) return <div className="text-center pt-28">로딩 중...</div>;
+
+  // const defauiltAvatar = '/img/_defilmmopruy.jpg';
+  const defauiltAvatar = '/img/dummy_profile.jpg';
+
+  const router = useRouter();
+  const member = useMembers();
+  const { setUser } = useAuthStore();
+
+  async function steamAuth() {
+    const response = await member.steamAuthLink();
+    window.location.href = response;
+  }
+
   return (
-    <div>
-      <p className="text-center text-5xl p-5">User</p>
-    </div>
+    <main>
+      <section className="wrapper pt-36">
+        <div className="flex flex-col gap-16">
+          <div className="w-full px-8 py-9 border border-neutral-300 rounded-2xl">
+            {userMe ? (
+              <div className="flex gap-7 relative">
+                <Avatar className="bg-neutral-400 w-24 h-24">
+                  {/* <AvatarImage src={ (userMe.img_src ? (userMe.img_src) : (defauiltAvatar) )}  /> */}
+                  <AvatarImage src={userMe.img_src ?? defauiltAvatar} />
+                </Avatar>
+
+                <div>
+                  <div className="flex gap-3">
+                    <p className="font-suit text-2xl font-semibold text-neutral-400">{userMe.user_title}</p>
+                    <p className="font-suit text-2xl font-bold ">{userMe.nickname}</p>
+                  </div>
+
+                  <div className="flex gap-8">
+                    <div className="font-suit text-base font-semibold text-neutral-400 flex">
+                      스팀 아이디 :&nbsp;
+                      {userMe.steam_id ? (
+                        <div>{userMe.steam_id}</div>
+                      ) : (
+                        // <div>{userMe.steam_id.split('@')[0]}</div>
+                        <div className="flex flex-row gap-1">
+                          <SteamSVG fill={'#8258ff'} stroke="" width={24} height={24} />
+                          <p className="text-base font-black text-purple-400">STEAM</p>
+                        </div>
+                      )}
+                    </div>
+                    <p className="font-suit text-base font-semibold text-neutral-400"> 성별 : {userMe.gender}</p>
+                  </div>
+
+                  <div className="gap-5">
+                    <p className="font-suit text-2xl font-bold pt-8">{userMe.nickname} 님의 플레이 스타일</p>
+
+                    <div className="flex flex-col rounded-xl gap-2 py-6">
+                      <div className="flex items-center gap-2">
+                        <p className="w-[118px] font-dgm text-neutral-900">플레이 스타일</p>
+                        <div className="flex gap-2">
+                          <Tag style="retro" size="small" background="dark">
+                            {userMe.party_style}
+                          </Tag>
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <p className="w-[118px] font-dgm text-neutral-900">게임 실력</p>
+                        <Tag style="retro" size="small" background="dark">
+                          {userMe.skill_level}
+                        </Tag>
+                      </div>
+                      <div className="flex gap-2">
+                        <p className="w-[118px] font-dgm text-neutral-900">성별</p>
+                        <Tag style="retro" size="small" background="dark">
+                          {userMe.gender}
+                        </Tag>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="absolute -top-1 right-0">
+                  <div className="w-full"></div>
+                </div>
+              </div>
+            ) : (
+              <p>유저를 불러오는중</p>
+            )}
+          </div>
+
+          {/* 나의 길드 */}
+          <div className="flex flex-col gap-6">
+            <p className="font-suit text-3xl font-semibold">{userMe?.nickname}의 길드</p>
+
+            <div className="flex flex-col-3 gap-6 relative">
+              <div className="rounded-xl" onPointerDownCapture={(e) => e.stopPropagation}>
+                <Carousel
+                  opts={{
+                    align: 'start',
+                    loop: false,
+                  }}
+                  orientation="horizontal"
+                  className="w-full "
+                  setApi={setApi}
+                >
+                  <CarouselContent className="select-none">
+                    {dummyGameArr.map((_, ind) => {
+                      return (
+                        <CarouselItem key={ind} onClick={() => setSelectedGame(ind)} className={``}>
+                          <div className="grid grid-cols-3 gap-6">
+                            {myGuilds?.map((guild) => <GuildHorizon key={guild.guild_name} data={guild} />)}
+                          </div>
+                        </CarouselItem>
+                      );
+                    })}
+                  </CarouselContent>
+                </Carousel>
+              </div>
+
+              <div className="absolute top-40 -left-7">
+                <button
+                  className="h-12 w-12 bg-white flex items-center justify-center rounded-full border border-neutral-200
+                   hover:bg-neutral-200 transition-colors
+                   "
+                  onClick={() => {
+                    console.log(api?.canScrollPrev());
+                    if (api?.canScrollPrev()) api.scrollPrev();
+                  }}
+                >
+                  <ChevronLeft className="text-black" />
+                </button>
+              </div>
+
+              <div className="absolute top-40 -right-7">
+                <button
+                  className="h-12 w-12 bg-white flex items-center justify-center rounded-full border border-neutral-200
+                  hover:bg-neutral-200 transition-colors
+                  "
+                  onClick={() => {
+                    console.log(api?.canScrollNext());
+                    if (api?.canScrollNext()) api.scrollNext();
+                  }}
+                >
+                  <ChevronRight className="text-black" />
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* 내가 보유한 게임 목록 */}
+          {/* <div className="flex flex-col gap-6">
+            <p className="font-suit text-3xl font-semibold">내가 보유한 게임 목록</p>
+            <div className="flex gap-6">
+              {myGames?.map((data) => <PopularCard key={data.appid} data={data.gameData} />)}
+              <PopularCard data={dummyGameSimple} />
+              <PopularCard data={dummyGameSimple} />
+              <PopularCard data={dummyGameSimple} />
+            </div>
+          </div> */}
+
+          {/* 참여중인 파티 */}
+          <div className="flex flex-col gap-6">
+            <p className="font-suit text-3xl font-semibold">참여중인 파티</p>
+            <div className="flex">
+              <div className="grid grid-cols-3 gap-6">
+                {myParties?.map((party) => <PartyCard key={party.partyId} data={party} />)}
+                {/* {dummyPartyList?.map((party) => <PartyCard key={party.partyId} data={party} />)} */}
+              </div>
+            </div>
+          </div>
+
+          {/* 참여한 파티 로그 */}
+          <div className="flex flex-col gap-6">
+            <p className="font-suit text-3xl font-semibold">참여한 파티 로그</p>
+            <div className="grid grid-cols-3 gap-6">
+              {myPartyLogs?.map((partyLog) => <PartyLogCard key={partyLog.partyId} data={partyLog} />)}
+              {/* {dummyPartyLogList.map((partyLog) => (
+                <PartyLogCard key={partyLog.party_info.party_name} data={partyLog} />
+              ))} */}
+            </div>
+          </div>
+
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious href="#" className="text-base" />
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationLink href="#" isActive>
+                  1
+                </PaginationLink>
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationLink href="#">2</PaginationLink>
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationEllipsis />
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationNext href="#" className="text-base" />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </div>
+      </section>
+    </main>
   );
 }
