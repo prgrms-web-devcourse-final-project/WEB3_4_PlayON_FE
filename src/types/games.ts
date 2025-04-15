@@ -3,6 +3,7 @@ export interface gameSimple {
   genre: string[];
   img_src: string;
   background_src: string;
+  appid?: number
 }
 
 export interface gameDetail {
