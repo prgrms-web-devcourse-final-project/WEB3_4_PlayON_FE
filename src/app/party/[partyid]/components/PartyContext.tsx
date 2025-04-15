@@ -75,7 +75,6 @@ export const PartyContextProvider = ({ children }: { children: React.ReactNode }
 
   const joinParty = useCallback(async () => {
     if (joinState !== 'notJoined') return;
-    alert('참가 신청!');
     const res = await partyAPI.PartyJoin(nowPartyId);
     if (res) setJoinState('pending');
   }, [joinState, nowPartyId]);
