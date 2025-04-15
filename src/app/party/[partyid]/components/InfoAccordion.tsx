@@ -208,7 +208,7 @@ function ParticipationInfo() {
         <div className="flex gap-3 items-center">
           {partyInfo.participation.map((member, idx) =>
             idx < 8 ? (
-              <Link key={idx} href={`user/${member.memberId}`} target="_blank">
+              <Link key={idx} href={PATH.user_page(member.memberId)} target="_blank">
                 <Avatar className="bg-purple-400 w-12 h-12 aspect-square rounded-full overflow-hidden">
                   <AvatarImage src={member.img_src || '/img/dummy_profile.jpg'} />
                 </Avatar>
