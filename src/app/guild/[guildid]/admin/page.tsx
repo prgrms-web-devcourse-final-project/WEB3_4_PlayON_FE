@@ -297,7 +297,7 @@ export default function GuildAdmin() {
                   <span className="text-lg text-neutral-900">{` 일째`}</span>
                 </p>
                 <div className="flex gap-2">
-                  {guildInfo.tags.map((tag, i) => (
+                  {guildInfo.tags.slice(0, 8).map((tag, i) => (
                     <Tag key={i} style="retro" size="small" background="dark">
                       {tag}
                     </Tag>
