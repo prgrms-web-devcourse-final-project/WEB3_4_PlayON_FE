@@ -174,7 +174,29 @@ export const useGame = () => {
     },
     pageable?: paging
   ) {
-    const response = await axios.Get(GAME_ENDPOINTS.list, { params: { ...condition, ...pageable } }, true);
+    const response = await axios.Post(GAME_ENDPOINTS.list, { ...condition }, { params: { ...pageable } }, true);
+    if (response && response.status === 200) {
+      return {
+        currentPageNumber: response.data.data.currentPageNumber as number,
+        pageSize: response.data.data.pageSize as number,
+        totalPages: response.data.data.totalPages as number,
+        totalItems: response.data.data.totalItems as number,
+        items: response.data.data.items as { appid: number; name: string; headerImage: string; genres: string }[],
+      };
+    }
+  }
+  async function GameSearch2(
+    condition?: {
+      keyword?: string;
+      isMacSupported?: boolean;
+      releaseAfter?: Date;
+      releaseStatus?: string;
+      playerType?: string;
+      genres?: string[];
+    },
+    pageable?: paging
+  ) {
+    const response = await axios.Post(GAME_ENDPOINTS.list, { ...condition }, { params: { ...pageable } }, true);
     if (response && response.status === 200) {
       return {
         currentPageNumber: response.data.data.currentPageNumber as number,
@@ -196,5 +218,6 @@ export const useGame = () => {
     GameRanking,
     GamePopular,
     GameSearch,
+    GameSearch2,
   };
 };
