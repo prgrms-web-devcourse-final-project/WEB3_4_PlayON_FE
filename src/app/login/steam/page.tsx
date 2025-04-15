@@ -1,7 +1,7 @@
 'use client';
 
 import SteamSVG from '@/components/svg/steam';
-import './style.css';
+import '../style.css';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useMembers } from '@/api/members';
 import { useAuthStore } from '@/stores/authStore';
