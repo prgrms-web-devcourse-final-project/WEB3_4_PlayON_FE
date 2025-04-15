@@ -63,15 +63,44 @@ type onlyValueTag = {
   tagValue: string;
 };
 export type getPartyRes = {
-  appId: number;
   description: string;
   gameName: string;
   maximum: number;
   minimum: number;
-  members: userSimple[];
+  partyMembers: userRes[];
   name: string;
   partyAt: Date;
   partyId: number;
   partyTags: onlyValueTag[];
   total: number;
+  hit: number;
+  appId: number;
+};
+
+export type getMainPendingPartyRes = {
+  partyId: number;
+  name: string;
+  description: string;
+  appId: number;
+  gameName: string;
+  partyAt: string;
+  minimum: number;
+  maximum: number;
+  total: number;
+  members: userSimpleRes[];
+  partyTags: onlyValueTag[];
+};
+
+export type userSimpleRes = {
+  memberId: number;
+  profileImg: string;
+};
+
+export type userRes = {
+  memberId: number;
+  partyMemberId: number;
+  username: string;
+  title: string;
+  nickname: string;
+  profileImg: string;
 };

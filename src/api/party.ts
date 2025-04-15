@@ -4,50 +4,22 @@ import { useRouter } from 'next/navigation';
 import { PARTY_ENDPOINTS } from '@/constants/endpoints/party';
 import { PATH } from '@/constants/routes';
 import { useAxios } from '@/hooks/useAxios';
-import { createPartyReq, getPartiesReq, getPartyRes, party } from '@/types/party';
+import { createPartyReq, getMainPendingPartyRes, getPartiesReq, getPartyRes, party, userRes } from '@/types/party';
 import { getSteamImage } from './steamImg';
 import { userSimple } from '@/types/user';
 import { gameSimple } from '@/types/games';
+import { MEMBER_ENDPOINTS } from '@/constants/endpoints/member';
 
 export const useParty = () => {
   const axios = useAxios();
   const router = useRouter();
 
-  async function GetParty(partyId: string | number): Promise<{
-    partyId: string;
-    party_name: string;
-    description: string;
-    start_time: Date;
-    end_time?: Date;
-    tags: string[];
-    participation: userSimple[];
-    isMacSupported: boolean;
-    selected_game: gameSimple;
-    num_maximum: number;
-    num_minimum?: number;
-  } | null> {
+  async function GetParty(partyId: string | number): Promise<getPartyRes | null> {
     const res = await axios.Get(PARTY_ENDPOINTS.detail(String(partyId)), {}, false);
     if (res?.status == 200) {
       const party = res.data.data;
-      console.log('raw data : ', party);
-      return {
-        partyId: party.partyId,
-        party_name: party.name,
-        description: party.description,
-        start_time: party.partyAt,
-        end_time: party.endedAt,
-        tags: party.partyTags.map((tag) => tag.tagValue),
-        participation: party.partyMembers,
-        selected_game: {
-          title: party.gameName,
-          genre: [],
-          img_src: await getSteamImage(party.appId, 'header'),
-          background_src: await getSteamImage(party.appId, 'background'),
-        },
-        num_maximum: party.maximum,
-        num_minimum: party.minimum,
-        isMacSupported: party.isMacSupported,
-      };
+      console.log('get party raw data : ', party);
+      return party;
     }
     console.log('로딩 중 문제가 발생했습니다.');
     return null;
@@ -91,6 +63,7 @@ export const useParty = () => {
   }
   async function DeleteParty(partyId: string) {
     const res = await axios.Delete(PARTY_ENDPOINTS.cancel(partyId), {}, true);
+    console.log(res);
   }
   async function AcceptPartyJoin(partyId: string, memberId: string) {
     const res = await axios.Put(PARTY_ENDPOINTS.accept_member(partyId, memberId), {}, {}, true);
@@ -111,7 +84,6 @@ export const useParty = () => {
       return false;
     }
   }
-
   async function CreateParty(data: createPartyReq) {
     console.log(data);
     const res = await axios.Post(PARTY_ENDPOINTS.create, { ...data }, {}, true);
@@ -145,6 +117,14 @@ export const useParty = () => {
       return false;
     }
   }
+  async function CancleJoin(partyId: string): Promise<boolean> {
+    const res = await axios.Delete(MEMBER_ENDPOINTS.partyJoinCancel(partyId), {}, false);
+    if (res) {
+      console.log(res);
+      return true;
+    }
+    return false;
+  }
   async function PartyInvite(partyId: string, memberId: string) {
     const res = await axios.Post(PARTY_ENDPOINTS.invite(partyId, memberId), {}, {}, true);
     console.log(res);
@@ -155,7 +135,7 @@ export const useParty = () => {
     console.log(res?.data);
     return res;
   }
-  async function GetPendingList(partyId: string) {
+  async function GetPendingList(partyId: string): Promise<userRes[] | null> {
     const res = await axios.Get(PARTY_ENDPOINTS.pending(partyId), {}, false);
     if (res && res.status == 200) {
       console.log(res.data.data.partyMembers);
@@ -166,7 +146,7 @@ export const useParty = () => {
   }
 
   // 메인 페이지용 요청
-  async function MainPendingParty(limit: number): Promise<getPartyRes[]> {
+  async function MainPendingParty(limit: number): Promise<getMainPendingPartyRes[]> {
     const res = await axios.Get(
       PARTY_ENDPOINTS.main_pending,
       {
@@ -209,5 +189,6 @@ export const useParty = () => {
     GetPendingList,
     MainPendingParty,
     MainLoggedParty,
+    CancleJoin,
   };
 };
