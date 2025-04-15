@@ -113,12 +113,12 @@ export default function GameList() {
   const router = useRouter();
 
   const fetchData = useCallback(async (params: URLSearchParams) => {
-    const Genre = searchParams.get('genre')?.split(',');
-    const PlayerType = searchParams.get('playerType');
-    const ReleaseStatus = searchParams.get('releaseStatus');
-    const Mac = searchParams.get('mac');
-    const Keyword = searchParams.get('name');
-    const ReleaseDate = searchParams.get('releaseDate');
+    const Genre = params.get('genre')?.split(',');
+    const PlayerType = params.get('playerType');
+    const ReleaseStatus = params.get('releaseStatus');
+    const Mac = params.get('mac');
+    const Keyword = params.get('name');
+    const ReleaseDate = params.get('releaseDate');
 
     if (Genre) {
       setGenre([false, ...genres.map((e) => Genre.includes(e))]);
