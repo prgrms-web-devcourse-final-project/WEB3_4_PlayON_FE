@@ -18,6 +18,8 @@ import { useAuthStore } from '@/stores/authStore';
 import { useGuildJoin } from '@/api/guildJoin';
 import { AdditionalInfo } from '@/types/guildApi';
 import { useToast } from '@/hooks/use-toast';
+import { useNotification } from '@/api/notification';
+import { useMembers } from '@/api/members';
 
 interface guildUserProps {
   memberId: string;
@@ -125,26 +127,34 @@ export default function GuildAdmin() {
 
   // const leader = members.find((m) => m.data.guild_role === 'LEADER');
   const managers = members.filter((m) => m.data.guild_role === 'MANAGER');
+  const notification = useNotification();
+  const member = useMembers();
+  const { toast } = useToast();
 
   // 길드 멤버 초대 핸들러
-  const handleInviteMember = async (username: string) => {
-    if (!username) {
-      alert('USERNAME을 입력해주세요.');
+  const handleInviteMember = async (nickname: string) => {
+    if (!nickname) {
+      toast({ title: '닉네임을 입력해주세요', variant: 'destructive' });
       return;
     }
-
     setLoading(true);
     try {
-      const response = await InviteMembers(guildid, username);
-      if (response?.status === 200) {
-        alert('초대 완료!');
+      const response = await member.SearchByNickname(nickname);
+      // const invite_response = await InviteMembers(guildid, response.username);
+      console.log(response);
+      const notification_response = await notification.SendNotification({
+        content: '님이 길드에 초대했습니다',
+        receiverId: response[0].memberId,
+        redirectUrl: `/guild/${guildid}`,
+        type: 'PARTY_INVITE',
+      });
+      if (notification_response) {
+        toast({ title: '초대장을 보냈습니다!', variant: 'primary' });
         setUsername('');
-        await fetchData();
+        // await fetchData();
       } else {
-        alert(response?.data.message || '초대 실패');
+        toast({ title: '초대장 발급이 실패했습니다!', variant: 'destructive' });
       }
-    } catch (error: any) {
-      alert(error?.response?.data?.message || '서버 오류');
     } finally {
       setLoading(false);
     }
@@ -369,11 +379,11 @@ export default function GuildAdmin() {
               <div className="flex flex-col flex-auto border border-neutral-400 rounded-2xl px-6 py-8">
                 <p className="text-2xl font-bold mb-3">길드 초대하기</p>
                 <label htmlFor="" className="mb-1">
-                  유저네임
+                  닉네임
                 </label>
                 <div className="flex gap-4">
                   <Input
-                    placeholder="초대받을 멤버의 USERNAME을 적어주세요"
+                    placeholder="초대받을 멤버의 NICKNAME을 적어주세요"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                   />
