@@ -24,6 +24,16 @@ export default function NotificationItem(props: NotificationItemProps) {
       }
     }
   };
+  const handleDecline = async () => {
+    const partyId = props.data.redirectUrl.split('/');
+    if (partyId[1] === 'party') {
+      const success = await member.DeclinePartyInvite(parseInt(partyId[2]));
+      console.log(success);
+      if (success) {
+        router.push(props.data.redirectUrl);
+      }
+    }
+  };
 
   return (
     <div className="flex gap-3 w-full place-content-between items-center">
@@ -49,7 +59,13 @@ export default function NotificationItem(props: NotificationItemProps) {
         >
           <CheckIcon />
         </Button>
-        <Button variant={'negative'} onClick={() => {}} className="w-8 h-8">
+        <Button
+          variant={'negative'}
+          className="w-8 h-8"
+          onClick={() => {
+            handleDecline();
+          }}
+        >
           <XIcon />
         </Button>
       </div>
