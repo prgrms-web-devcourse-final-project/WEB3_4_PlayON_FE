@@ -148,7 +148,6 @@ export const useGame = () => {
   }
   async function GamePopular() {
     const response = await axios.Get(GAME_ENDPOINTS.popular, {}, false);
-    console.log(response);
     if (response && response.status === 200) {
       const list = response.data.data as { appid: number; name: string; headerImage: string; genres: string[] }[];
       const formatted = list.map((e) => {
@@ -160,7 +159,6 @@ export const useGame = () => {
           appid: e.appid,
         };
       });
-      console.log(list);
       return formatted;
     }
     return [];

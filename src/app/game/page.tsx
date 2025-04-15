@@ -8,7 +8,7 @@ import PopularCard from '@/components/game/PopularCard';
 import SteamCard from '@/components/game/SteamCard';
 import { dummyGameDetail, dummyGameSimple } from '@/utils/dummyData';
 import styles from './game.module.css';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { game, useGame } from '@/api/game';
 import { Suspense } from 'react';
 import { useRouter } from 'next/navigation';
@@ -17,6 +17,7 @@ import { useAuthStore } from '@/stores/authStore';
 import { gameDetail } from '@/types/games';
 import Link from 'next/link';
 import GameSearch from '@/components/common/GameSearch';
+import { ErrorBoundary } from 'react-error-boundary';
 
 export default function Game() {
   const imageList = [
@@ -27,7 +28,6 @@ export default function Game() {
   const game = useGame();
   const router = useRouter();
   const { user } = useAuthStore();
-
   function convertToClientGame(data: game): gameDetail {
     return {
       about: data.aboutTheGame,
@@ -49,12 +49,11 @@ export default function Game() {
       title: data.name,
     };
   }
-  const { data: popularGames } = useSuspenseQuery({
+  const { data: popularGames } = useQuery({
     queryKey: ['PopularGames'],
-    queryFn: game.GamePopular,
-    staleTime: Infinity,
+    queryFn: async () => game.GamePopular(),
   });
-  const { data: friendGames, isSuccess: friendGamesIsSuccess } = useSuspenseQuery({
+  const { data: friendGames, isSuccess: friendGamesIsSuccess } = useQuery({
     queryKey: ['FriendGames'],
     queryFn: async () => {
       try {
@@ -77,9 +76,8 @@ export default function Game() {
         ];
       }
     },
-    staleTime: Infinity,
   });
-  const { data: personalGames, isSuccess: personalGamesIsSuccess } = useSuspenseQuery({
+  const { data: personalGames, isSuccess: personalGamesIsSuccess } = useQuery({
     queryKey: ['PersonalGames'],
     queryFn: async () => {
       try {
@@ -102,10 +100,8 @@ export default function Game() {
         ];
       }
     },
-    staleTime: Infinity,
-    retryOnMount: false,
   });
-  const { data: playTimeGames } = useSuspenseQuery({
+  const { data: playTimeGames } = useQuery({
     queryKey: ['PlayTimeGames'],
     queryFn: async () => {
       const appIds = (await game.GameMostPlayTime()).map((e) => e.appid);
@@ -118,14 +114,12 @@ export default function Game() {
       );
       return gameData.slice(0, 3).filter((e) => e !== undefined);
     },
-    staleTime: Infinity,
-    retryOnMount: false,
   });
-  const { data: steamRanking } = useSuspenseQuery({
+  const { data: steamRanking } = useQuery({
     queryKey: ['SteamRanking'],
     queryFn: async () => {
       const data = await game.GameRanking();
-      if (!data) return [];
+      if (!data) return undefined;
       return data.map((e) => {
         return {
           background_src: '',
@@ -158,13 +152,16 @@ export default function Game() {
               </div>
 
               <div className="grid grid-cols-3 md:grid-cols-3 gap-6 pt-4">
-                <Suspense>
-                  {popularGames.map((e) => (
-                    <Link href={GAME_ROUTE.game_detail(e.appid)} key={e.appid}>
-                      <PopularCard data={e} />
-                    </Link>
-                  ))}
-                </Suspense>
+                <ErrorBoundary fallback={<div>Something went wrong</div>}>
+                  <Suspense>
+                    {popularGames &&
+                      popularGames.map((e) => (
+                        <Link href={GAME_ROUTE.game_detail(e.appid)} key={e.appid}>
+                          <PopularCard data={e} />
+                        </Link>
+                      ))}
+                  </Suspense>
+                </ErrorBoundary>
               </div>
             </div>
           </div>
@@ -244,6 +241,7 @@ export default function Game() {
           </div>
         </div>
       </section>
+
       <section className="wrapper space-y-20">
         <div className="space-y-8">
           <SectionTitle
@@ -273,7 +271,7 @@ export default function Game() {
           />
           <Suspense>
             <div className="grid grid-cols-3 md:grid-cols-3 gap-6">
-              {playTimeGames.length > 0 ? (
+              {playTimeGames && playTimeGames.length > 0 ? (
                 playTimeGames.map((e, ind) => (
                   <Link href={GAME_ROUTE.game_detail(e.appid)} key={`playTimeGames_${ind}`}>
                     <PopularCard data={e} />
