@@ -88,7 +88,7 @@ export default function InnerPage() {
       <section className="w-full h-[520px]">
         <HeroSwiperBanner data={imageList}>
           <div className="wrapper">
-            <p className="font-helvetica text-[160px] text-white font-normal absolute -bottom-[46px] tracking-wider">
+            <p className="font-helvetica text-[160px] text-white font-normal absolute -bottom-[62px] tracking-wider">
               GUILD LIST
             </p>
           </div>
