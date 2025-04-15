@@ -36,13 +36,14 @@ export default function CommentCard({ data, guildId, boardId }: CommentCardProps
       }
       queryClient.refetchQueries({ queryKey: ['FreePostComments', boardId], exact: true });
     }
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [boardId, data.commentId]);
   // console.log(data);
 
   return (
     <div className="flex gap-4 py-5 w-full">
       <div
-        style={{ backgroundImage: `url(${data.user.img_src})` }}
+        style={{ backgroundImage: `url(${data.user.img_src || '/img/dummy_profile.jpg'})` }}
         className="size-10 rounded-full bg-cover bg-center shrink-0"
       />
       <div className="w-full">
