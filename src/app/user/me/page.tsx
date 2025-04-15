@@ -25,17 +25,6 @@ import RetroButton from '@/components/common/RetroButton';
 import { PATH } from '@/constants/routes';
 import CustomPagination from '@/components/common/CustomPagination';
 
-// interface userMe {
-//   gerder: string;
-//   img_src?: string;
-//   last_login_at: Date; // Mon Apr 14 2025 09:45:15 GMT+0900 (한국 표준시) {}
-//   nickname: string;
-//   party_style: string[];
-//   skill_level: string;
-//   steam_id?: number;
-//   user_title?: string[];
-//   username: string;
-// }
 
 interface resGameProps {
   gameData: {

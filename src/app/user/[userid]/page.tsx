@@ -6,15 +6,6 @@ import PartyCard from '@/components/party/PartyCard';
 import PartyLogCard from '@/components/party/PartyLogCard';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import { Carousel, CarouselApi, CarouselContent, CarouselItem } from '@/components/ui/carousel';
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from '@/components/ui/pagination';
 import { gameSimple } from '@/types/games';
 import { guild } from '@/types/guild';
 import { getPartyRes } from '@/types/party';
@@ -32,17 +23,7 @@ import RetroButton from '@/components/common/RetroButton';
 import { PATH } from '@/constants/routes';
 import CustomPagination from '@/components/common/CustomPagination';
 
-interface userMe {
-  gerder: string;
-  img_src?: string;
-  last_login_at: Date; // Mon Apr 14 2025 09:45:15 GMT+0900 (한국 표준시) {}
-  nickname: string;
-  party_style: string[];
-  skill_level: string;
-  steam_id?: number;
-  user_title?: string[];
-  username: string;
-}
+
 
 export default function UserInfoPage() {
   const dummyGameArr = new Array<gameSimple>(8).fill(dummyGameSimple);
