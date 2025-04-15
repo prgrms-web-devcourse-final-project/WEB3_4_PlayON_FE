@@ -15,12 +15,20 @@ type CommunityMenuBarProps = {
 
 export default function CommunityMenuBar(props: CommunityMenuBarProps) {
   const router = useRouter();
+  const params = useParams();
+  const [category, setCategory] = useState('');
 
   const HandleSearchClick = useCallback(
     (value: string) => {
-      const newUrl = new URL(window.location.href);
-      newUrl.searchParams.set('keyword', value);
-      router.replace(newUrl.toString());
+      if (!params.postId) {
+        const newUrl = new URL(window.location.href);
+        newUrl.searchParams.set('keyword', value);
+        router.replace(newUrl.toString());
+      } else {
+        const newUrl = new URL(window.location.href);
+        newUrl.searchParams.set('keyword', value);
+        router.push(`${PATH.community}?keyword=${value}${category ? `?category=${category}` : ''}`);
+      }
     },
     [router]
   );
@@ -31,7 +39,13 @@ export default function CommunityMenuBar(props: CommunityMenuBarProps) {
   return (
     <div className={`flex flex-col rounded-xl shadow-md p-8 gap-9 w-[360px] ${props.className}`}>
       <p className="font-dgm text-4xl ">커뮤니티</p>
-      <TagSelectGridMenu />
+      <div className="grid grid-cols-2">
+        {communityTags.map((e, ind) => (
+          <div key={ind}>
+            <TagSelectGridItem label={e} onSelect={setCategory} />
+          </div>
+        ))}
+      </div>
       <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="2" viewBox="0 0 347 2" fill="none">
         <path d="M0 1H347" stroke="#E5E5E5" />
       </svg>
@@ -60,9 +74,9 @@ export default function CommunityMenuBar(props: CommunityMenuBarProps) {
   );
 }
 
-function TagSelectGridItem(props: { label: string }) {
+function TagSelectGridItem(props: { label: string; onSelect: (value: string) => void }) {
   const params = useParams();
-  console.log('isDetail', params.postId);
+  // console.log('isDetail', params.postId);
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isSelected, setIsSelected] = useState(searchParams.get('category') === props.label || false);
@@ -78,7 +92,11 @@ function TagSelectGridItem(props: { label: string }) {
       }
       router.replace(newUrl.toString());
     } else {
-      // 여기에 디테일 페이지일 때 처리
+      setIsSelected((prev) => !prev);
+      if (!isSelected === true) {
+        props.onSelect(props.label);
+        console.log('isSelected', props.label);
+      }
     }
   };
 
@@ -93,18 +111,6 @@ function TagSelectGridItem(props: { label: string }) {
     >
       <ChevronRight className={`transition-opacity ${isSelected ? 'opacity-100' : 'opacity-0'}`} />
       <p className="font-suit font-semibold">{props.label}</p>
-    </div>
-  );
-}
-
-function TagSelectGridMenu() {
-  return (
-    <div className="grid grid-cols-2">
-      {communityTags.map((e, ind) => (
-        <div key={ind}>
-          <TagSelectGridItem label={e} />
-        </div>
-      ))}
     </div>
   );
 }
