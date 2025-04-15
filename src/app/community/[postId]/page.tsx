@@ -127,7 +127,7 @@ export default function Community() {
 
                     <Button
                       size="sm"
-                      className=" bg-neutral-200 hover:bg-neutral-100 text-neutral-500 text-sm"
+                      className="bg-white border border-neutral-200 hover:bg-neutral-100 text-neutral-500 text-sm shadow-none"
                       onClick={deletePost}
                     >
                       <Trash2 strokeWidth={1.4} /> 삭제
@@ -137,7 +137,7 @@ export default function Community() {
                 <div>
                   <Button
                     size="sm"
-                    className=" bg-neutral-200 hover:bg-neutral-100 text-neutral-500 text-sm"
+                    className="bg-white border border-neutral-200 hover:bg-neutral-100 text-neutral-500 text-sm shadow-none"
                     onClick={() => router.push(PATH.community)}
                   >
                     목록
