@@ -4,7 +4,7 @@ export default function formatDate(targetDate: Date | string, fullDate?: boolean
     targetDate = new Date(targetDate);
   }
   if (fullDate) {
-    return targetDate.toLocaleString('ko-KR', {
+    return targetDate?.toLocaleString('ko-KR', {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
@@ -13,7 +13,7 @@ export default function formatDate(targetDate: Date | string, fullDate?: boolean
       hour12: false,
     });
   }
-  return targetDate.toLocaleString('ko-KR', {
+  return targetDate?.toLocaleString('ko-KR', {
     month: 'long',
     day: 'numeric',
     hour: '2-digit',

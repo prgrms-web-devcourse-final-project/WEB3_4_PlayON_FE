@@ -74,7 +74,7 @@ export default function PartyCard({ data }: PartyCardProps) {
         </div>
       </div>
       <div className="flex gap-2 py-2">
-        {data.partyTags.map((tag, idx) => {
+        {data.partyTags?.map((tag, idx) => {
           return (
             <Tag background="medium" key={data.partyId + '_tag_' + idx}>
               {tag.tagValue}
@@ -88,19 +88,19 @@ export default function PartyCard({ data }: PartyCardProps) {
       </div>
       <div className="flex py-2 justify-between">
         <div className="flex gap-1 items-center">
-          {data.members.map((member, idx) =>
+          {data.members?.map((member, idx) =>
             idx < 4 ? (
               <Avatar key={member.memberId + data.partyId} className="bg-cover bg-center w-5 h-5">
                 <AvatarImage src={member.img_src || '/img/dummy_profile.jpg'} />
               </Avatar>
             ) : null
           )}
-          {data.members.length - 4 >= 1 && (
+          {data.members?.length - 4 >= 1 && (
             <div className="font-suit text-xs text-neutral-500">+{data.members.length - 4}</div>
           )}
         </div>
         <div className="font-suit text-sm text-neutral-500">
-          {data.members.length}명 / {data.maximum}명
+          {data.members?.length}명 / {data.maximum}명
         </div>
       </div>
     </Link>

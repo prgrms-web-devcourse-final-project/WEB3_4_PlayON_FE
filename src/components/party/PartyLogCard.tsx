@@ -64,7 +64,7 @@ export default function PartyLogCard({ data }: PartyCardProps) {
           <div className="font-suit text-sm text-neutral-500">전체 {data.total}명</div>
         </div>
         <div className="flex gap-2 py-2">
-          {data.partyTags.map((tag, idx) => (
+          {data.partyTags?.map((tag, idx) => (
             <Tag background="medium" key={tag.tagValue + idx}>
               {tag.tagValue}
             </Tag>
