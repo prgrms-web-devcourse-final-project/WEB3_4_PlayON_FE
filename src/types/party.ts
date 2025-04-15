@@ -2,6 +2,7 @@ import { gameSimple } from './games';
 import { userSimple } from './user';
 
 export interface party {
+  appid?: number;
   partyId: string;
   party_name: string;
   description: string;

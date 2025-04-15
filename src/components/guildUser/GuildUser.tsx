@@ -1,7 +1,9 @@
 'use client';
 
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
+import { PATH } from '@/constants/routes';
 import { guildUser } from '@/types/guild';
+import Link from 'next/link';
 import { useMemo } from 'react';
 
 interface guildUserProps {
@@ -14,7 +16,7 @@ interface guildUserProps {
 }
 
 export default function GuildUser(props: guildUserProps) {
-  const { data, index, total, onToggleManager, onKickMember } = props;
+  const { data, memberId ,index, total, onToggleManager, onKickMember } = props;
   const joinedDate = data.joined_at
     ? new Date(data.joined_at).toLocaleDateString('ko-kr', { year: 'numeric', month: 'long', day: 'numeric' })
     : '정보 없음';
@@ -29,9 +31,11 @@ export default function GuildUser(props: guildUserProps) {
   return (
     <>
       <div className="flex gap-6 py-8">
-        <Avatar className="bg-neutral-400 w-16 h-16">
-          <AvatarImage src={data.user.img_src || '/img/dummy_profile.jpg'} className="object-cover" />
-        </Avatar>
+        <Link href={PATH.user_page(memberId)}>
+          <Avatar className="bg-neutral-400 w-16 h-16">
+            <AvatarImage src={data.user.img_src || '/img/dummy_profile.jpg'} className="object-cover" />
+          </Avatar>
+        </Link>
 
         <div className="w-full">
           <p className="font-suit text-2xl font-bold">{data.user.nickname}</p>

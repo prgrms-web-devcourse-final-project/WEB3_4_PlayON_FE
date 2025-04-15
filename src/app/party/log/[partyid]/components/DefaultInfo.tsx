@@ -71,9 +71,9 @@ export default function DefaultInfo({ partyLog }: Props) {
             },
           }}
         >
-          {partyLog.party_info.participation.map((user, idx) => (
-            <SwiperSlide key={idx}>
-              <UserInfoVertical key={idx} data={user}></UserInfoVertical>
+          {partyLog.party_info.participation.map((user) => (
+            <SwiperSlide key={user.memberId}>
+              <UserInfoVertical key={user.memberId} data={user}></UserInfoVertical>
             </SwiperSlide>
           ))}
         </Swiper>

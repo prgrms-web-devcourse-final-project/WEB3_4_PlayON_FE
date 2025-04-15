@@ -48,27 +48,15 @@ interface userMe {
   username: string;
 }
 
-interface resGameProps {
-  gameData: {
-    title: string;
-    genre: string[];
-    img_src: string;
-    background_src: '';
-  };
-  appid: number;
-}
 
 export default function UserInfoPage() {
-  const dummyGuildList: guild[] = Array(3).fill(dummyGuild);
-  const dummyPartyList: party[] = Array(3).fill(dummyParty);
-  const dummyPartyLogList: partyLog[] = Array(6).fill(dummyPartyLog);
   const dummyGameArr = new Array<gameSimple>(8).fill(dummyGameSimple);
 
   const [api, setApi] = useState<CarouselApi>();
 
   const memberApi = useMembers();
   const [userMe, SetUserMe] = useState<userDetail | null>(null);
-  const [myGames, setMyGames] = useState<resGameProps[] | null>([]);
+  // const [myGames, setMyGames] = useState<resGameProps[] | null>([]);
   const [myGuilds, setMyGuilds] = useState<guild[] | null>([]);
   const [myParties, setMyParties] = useState<getPartyRes[] | null>([]);
   const [myPartyLogs, setMyPartyLogs] = useState<getPartyRes[] | null>([]);
@@ -139,10 +127,6 @@ export default function UserInfoPage() {
   const member = useMembers();
   const { setUser } = useAuthStore();
 
-  async function steamAuth() {
-    const response = await member.steamAuthLink();
-    window.location.href = response;
-  }
 
   return (
     <main>
@@ -153,7 +137,7 @@ export default function UserInfoPage() {
               <div className="flex gap-7 relative">
                 <Avatar className="bg-neutral-400 w-24 h-24">
                   {/* <AvatarImage src={ (userMe.img_src ? (userMe.img_src) : (defauiltAvatar) )}  /> */}
-                  <AvatarImage src={userMe.img_src ?? defauiltAvatar} />
+                  <AvatarImage src={userMe.img_src || defauiltAvatar} />
                 </Avatar>
 
                 <div>
@@ -232,7 +216,7 @@ export default function UserInfoPage() {
                   <CarouselContent className="select-none">
                     {dummyGameArr.map((_, ind) => {
                       return (
-                        <CarouselItem key={ind} onClick={() => setSelectedGame(ind)} className={``}>
+                        <CarouselItem key={ind} className={``}>
                           <div className="grid grid-cols-3 gap-6">
                             {myGuilds?.map((guild) => <GuildHorizon key={guild.guild_name} data={guild} />)}
                           </div>

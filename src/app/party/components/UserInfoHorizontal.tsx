@@ -1,5 +1,7 @@
+import { PATH } from '@/constants/routes';
 import { cn } from '@/lib/utils';
 import { userSimple } from '@/types/user';
+import Link from 'next/link';
 
 interface UserInfoHorizontalProps {
   size?: 'small' | 'big';
@@ -17,6 +19,7 @@ export default function UserInfoHorizontal({ size = 'big', data }: UserInfoHoriz
         'items-start': size === 'big',
       })}
     >
+      <Link href={PATH.user_page(data.memberId)}>
       <div
         style={{
           backgroundImage: `url(${data.img_src || defaultImg} )`,
@@ -25,7 +28,8 @@ export default function UserInfoHorizontal({ size = 'big', data }: UserInfoHoriz
           'w-[100px] h-[100px]': size === 'big',
           'w-9 h-9': size === 'small',
         })}
-      />
+        />
+        </Link>
       <div
         className={cn('flex gap-1', {
           'gap-2': size === 'small',

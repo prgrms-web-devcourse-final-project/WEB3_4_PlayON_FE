@@ -15,6 +15,7 @@ import { useAuthStore } from '@/stores/authStore';
 import PartyLogSkeleton from './components/PartyLogSkeleton';
 import { parsePartyLogData, PartyLogProps } from './parsePartyLogData';
 import PartyLogForm from './components/PartyLogForm';
+import { getSteamImage } from '@/api/steamImg';
 
 export default function PartyLog() {
   const partyApi = useParty();
@@ -65,6 +66,20 @@ export default function PartyLog() {
     fetchPartyLog();
   }, [partyid]);
 
+  const [appid, setAppid] = useState<number>();
+
+  const [bg, setBg] = useState('');
+  useEffect(() => {
+    const fetchBg = async () => {
+      setAppid(partyLog?.party_info.appid);
+      const res = await getSteamImage(appid, 'background');
+      setBg(res);
+  
+      console.log(bg);
+    };
+    fetchBg();
+  }, []);
+
   if (!partyLog)
     return (
       <div className="text-center pt-28">
@@ -76,7 +91,7 @@ export default function PartyLog() {
     <div className="bg-purple-100 pt-28 pb-32">
       <div
         className={`${styles.background} w-full aspect-video absolute top-0`}
-        style={{ backgroundImage: `url(${gameBackgroundUrl})` }}
+        style={{ backgroundImage: `url(${bg})` }}
       >
         <div className="bg-gradient-to-b from-purple-50/0 to-purple-100 w-full h-1/2 absolute bottom-0" />
       </div>

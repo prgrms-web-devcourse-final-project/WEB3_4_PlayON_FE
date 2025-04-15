@@ -46,7 +46,7 @@ export default function PostInfo({ partyLog }: Props) {
                   className="screen object-contain max-h-[420px]"
                 ></Image>
                 <div>
-                  <UserInfoHorizontal data={screenshot.author} />
+                  <UserInfoHorizontal key={screenshot.author.memberId} data={screenshot.author} />
                   <p
                     className={`w-full bg-white p-4 max-w-screen-sm rounded-md border border-neutral-300 mt-4 ${styles.chatBubble}`}
                   >
@@ -62,7 +62,7 @@ export default function PostInfo({ partyLog }: Props) {
         <h4 className="text-xl font-bold mb-1">파티 후기</h4>
         {partyLog.review.map((review, idx) => (
           <div key={idx} className="py-4 border-b border-neutral-300 last:border-none">
-            <UserInfoHorizontal data={review.author} size="small"></UserInfoHorizontal>
+            <UserInfoHorizontal key={review.author.memberId} data={review.author} size="small"></UserInfoHorizontal>
             <p>{review.text}</p>
           </div>
         ))}

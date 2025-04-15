@@ -6,7 +6,7 @@ export interface PartyLogProps {
   player_recommend: playerRecommend[];
   screenshot: userScreenShot[];
   review: partyReview[];
-
+  // memberId: string;
   partyMemberId: string;
   mvp?: userSimple;
   mvpPoint: number;
@@ -31,6 +31,7 @@ export function parsePartyLogData(raw: any): PartyLogProps {
 
   // party 타입 객체 생성
   const partyInfo: party = {
+    appid: detail.appid,
     partyId: String(detail.partyId),
     party_name: detail.name,
     description: detail.description ?? '',
@@ -87,7 +88,7 @@ export function parsePartyLogData(raw: any): PartyLogProps {
         img_src: log.screenShotUrl!,
         comment: log.comment ?? '',
         author: {
-          memberId: log.nickname,
+          memberId: log.memberId,
           username: log.nickname,
           nickname: log.nickname,
           img_src: log.profileImageUrl,
@@ -103,7 +104,7 @@ export function parsePartyLogData(raw: any): PartyLogProps {
       (log): partyReview => ({
         text: log.content,
         author: {
-          memberId: log.nickname,
+          memberId: log.memberId,
           username: log.nickname,
           nickname: log.nickname,
           img_src: log.profileImageUrl,
@@ -116,11 +117,12 @@ export function parsePartyLogData(raw: any): PartyLogProps {
   const partyMemberId = String(detail.partyMembers[0]?.partyMemberId ?? '');
 
   const mvp = {
+    memberId: detail.mvpMemberId,
     username: detail.partyMembers.username,
     nickname: detail.mvpName,
     user_title: detail.partyMembers.title,
     img_src: detail.mvpProfileImg,
-    memberId: detail.partyMembers.memberId,
+    // memberId: detail.partyMembers.memberId,
   };
   const mvpPoint = detail.mvpPoint ?? 0;
 
