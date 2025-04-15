@@ -3,7 +3,7 @@
 import { guild } from '@/types/guild';
 import RetroButton from '../common/RetroButton';
 import CapsuleCategoryMenu from '@/components/common/capsule-category-menu';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import UserInfoHorizontal from '@/app/party/components/UserInfoHorizontal';
 import Tag from '../common/Tag';
 import { guildCommunityTags } from '@/types/Tags/communityTags';
@@ -12,7 +12,8 @@ import Link from 'next/link';
 import { GUILD_ROUTE } from '@/constants/routes/guild';
 import { useParams, useRouter } from 'next/navigation';
 import { PATH } from '@/constants/routes';
-import { Home } from 'lucide-react';
+import { Home, RefreshCcw } from 'lucide-react';
+import { div } from 'three/src/nodes/TSL.js';
 
 type WeNeedYouProps = {
   guildData: guild;
@@ -22,7 +23,9 @@ type WeNeedYouProps = {
 export default function WeNeedYou(props: WeNeedYouProps) {
   const params = useParams();
   const guildId = (params.guildid as string) ?? null;
+  const postId = params.postid as string;
   const router = useRouter();
+  const [selectedTag, setSelectedTag] = useState<string>('');
 
   const HandleSearchClick = useCallback(
     (value: string) => {
@@ -31,6 +34,14 @@ export default function WeNeedYou(props: WeNeedYouProps) {
       router.replace(newUrl.toString());
     },
     [router]
+  );
+  const HandleSearchClickDetail = useCallback(
+    (value: string) => {
+      router.push(
+        `${PATH.guild_community(guildId)}${value ? `?search=${value}` : ''}${selectedTag ? `?tag=${selectedTag}` : ''}`
+      );
+    },
+    [guildId, router, selectedTag]
   );
   const HandleSelectChange = useCallback(
     (newSelected: boolean[]) => {
@@ -50,8 +61,28 @@ export default function WeNeedYou(props: WeNeedYouProps) {
     [router]
   );
 
+  const HandleSelectChangeDetail = useCallback((newSelected: boolean[]) => {
+    if (newSelected[0]) {
+      setSelectedTag('');
+      return;
+    } else {
+      const tags = newSelected
+        .slice(1, newSelected.length)
+        .map((e, ind) => (e ? guildCommunityTags[ind] : null))
+        .filter((e) => e);
+      // console.log(tags);
+      setSelectedTag(tags[0]!);
+    }
+  }, []);
+
+  const handleClickReset = useCallback(() => {
+    router.replace(PATH.guild_community(guildId));
+  }, [guildId, router]);
+
   return (
-    <div className={`flex flex-col p-8 gap-9 rounded-xl border border-neutral-200 bg-white ${props.className} `}>
+    <div
+      className={`flex flex-col p-8 gap-9 rounded-xl border border-neutral-200 bg-white w-full overflow-hidden ${props.className} `}
+    >
       <div className="flex flex-col gap-5 ">
         <div className="flex justify-between items-center">
           <Tag size="small" style="default" background="medium" className="w-12 font-suit font-bold">
@@ -82,11 +113,33 @@ export default function WeNeedYou(props: WeNeedYouProps) {
           글쓰기
         </RetroButton>
       </Link>
-      <svg xmlns="http://www.w3.org/2000/svg" width="347" height="2" viewBox="0 0 347 2" fill="none">
+      <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="2" viewBox="0 0 347 2" fill="none">
         <path d="M0 1H347" stroke="#E5E5E5" />
       </svg>
-      <SearchBar onChange={() => {}} onSearch={(value) => HandleSearchClick(value)} />
-      <CapsuleCategoryMenu items={[...guildCommunityTags]} multiple={true} onSelectChange={HandleSelectChange} />
+      {!postId ? (
+        <div className="flex flex-col gap-5">
+          <div className="flex flex-col gap-2">
+            <div
+              className="flex gap-1 items-center self-end text-sm text-neutral-400 hover:text-purple-600"
+              onClick={handleClickReset}
+            >
+              <RefreshCcw className=" size-3" />
+              초기화
+            </div>
+            <SearchBar onChange={() => {}} onSearch={(value) => HandleSearchClick(value)} />
+          </div>
+          <CapsuleCategoryMenu items={[...guildCommunityTags]} multiple={true} onSelectChange={HandleSelectChange} />
+        </div>
+      ) : (
+        <div className="flex flex-col gap-5">
+          <SearchBar onChange={() => {}} onSearch={(value) => HandleSearchClickDetail(value)} />
+          <CapsuleCategoryMenu
+            items={[...guildCommunityTags]}
+            multiple={true}
+            onSelectChange={HandleSelectChangeDetail}
+          />
+        </div>
+      )}
     </div>
   );
 }

@@ -14,10 +14,17 @@ export default function CapsuleCategoryMenu(props: CapsuleCategoryMenuProps) {
   const labels = ['전체', ...props.items];
   const [selected, setSelected] = useState<boolean[]>(initialSelected);
   const { onSelectChange } = props;
+  const [isInitial, setIsInitial] = useState(true);
 
   useEffect(() => {
+    if (isInitial) {
+      setIsInitial(false);
+      return;
+    }
     onSelectChange(selected);
-  }, [selected, onSelectChange]);
+    console.log('change!!!');
+  }, [selected, onSelectChange, isInitial]);
+
   function ItemClickHandler(index: number) {
     const newSelected = [...selected];
     newSelected[index] = !newSelected[index];
@@ -42,7 +49,7 @@ export default function CapsuleCategoryMenu(props: CapsuleCategoryMenuProps) {
     );
   }
   return (
-    <div className="flex gap-2">
+    <div className="flex gap-2 overflow-x-auto">
       {props.multiple
         ? labels.map((e, ind) => (
             <div key={e} onClick={() => ItemClickHandler(ind)}>
