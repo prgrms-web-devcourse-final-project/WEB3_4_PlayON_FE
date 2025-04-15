@@ -21,7 +21,7 @@ import styles from './freeCommunityDetail.module.css';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import SafeHtml from '@/components/common/SafeHtml';
 import { useAuthStore } from '@/stores/authStore';
-import { div } from 'three/src/nodes/TSL.js';
+// import { div } from 'three/src/nodes/TSL.js';
 import Link from 'next/link';
 
 const commentSchema = z.object({
@@ -46,7 +46,7 @@ export default function Community() {
   const router = useRouter();
   const queryClient = useQueryClient();
 
-  const boardId = param.postid as string;
+  const boardId = param.postId as string;
 
   const [isLiked, setIsLiked] = useState(false);
 
