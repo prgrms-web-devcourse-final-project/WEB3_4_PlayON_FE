@@ -72,20 +72,23 @@ export default function InnerPage() {
     queryFn: async () => {
       const playerTypeInd = playerType.findIndex((e) => e === true);
       const releaseStatusInd = releaseStatus.findIndex((e) => e === true);
-      const data = await game.GameSearch(
-        {
-          keyword: keyword.length > 0 ? keyword : undefined,
-          genres: genre[0]
-            ? undefined
-            : genre
-                .map((e, ind) => (e ? typeConverter('GameGenreTags', 'KoToEn', genres[ind - 1]) : undefined))
-                .filter((e) => e !== undefined)
-                .join(','),
-          releaseAfter: releaseDate,
-          isMacSupported: mac,
-          playerType: typeConverter('GamePlayerTypeTags', 'KoToEn', playerTypes[playerTypeInd]),
-          releaseStatus: typeConverter('GameReleaseStatusTags', 'KoToEn', releaseStatuses[releaseStatusInd]),
-        },
+
+      const temp = {
+        keyword: keyword.length > 0 ? keyword : undefined,
+        genres: genre[0]
+          ? []
+          : genre
+              .map((e, ind) => (e ? typeConverter('GameGenreTags', 'KoToEn', genres[ind - 1]) : undefined))
+              .filter((e) => e !== undefined),
+        releaseAfter: releaseDate,
+        isMacSupported: mac,
+        playerType: playerTypes[playerTypeInd],
+        releaseStatus: releaseStatuses[releaseStatusInd],
+      };
+      console.log(temp);
+
+      const data = await game.GameSearch2(
+        { ...temp },
         {
           page: Number(searchParams.get('page')) || 1,
           size: 12,
