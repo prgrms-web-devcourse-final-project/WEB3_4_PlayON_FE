@@ -114,7 +114,7 @@ export default function PartyLog() {
 
           {/* MVP 유저 배지 */}
           <div className="absolute top-[260px] right-20 bg-white px-6 py-3 border-2 border-amber-400 rounded-xl">
-            <UserInfoVertical data={partyLog?.mvp} />
+            <UserInfoVertical data={partyLog?.mvp} reCommend={true} />
             <div className="flex text-amber-400 mt-2 justify-center flex-wrap">
               <Image
                 src="/img/laurel/laurel_mpv.png"
