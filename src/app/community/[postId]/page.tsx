@@ -59,14 +59,29 @@ export default function Community() {
     queryKey: ['FreePostComments', boardId],
     queryFn: () => freeBoard.CommentGet(parseInt(boardId), {}),
   });
-  console.log('commentsData', commentsData);
+  // console.log('commentsData', commentsData);
 
   const handleClickLike = useCallback(async () => {
     const response = await freeBoard.PostLike(parseInt(boardId));
-    console.log(response);
+    // console.log(response);
     queryClient.refetchQueries({ queryKey: ['FreePostDetail', boardId], exact: true });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [boardId]);
+
+  const handleClickUnLike = useCallback(async () => {
+    const response = await freeBoard.PostUnlike(parseInt(boardId));
+    // console.log(response);
+    queryClient.refetchQueries({ queryKey: ['FreePostDetail', boardId], exact: true });
+  }, [boardId]);
+
+  const handleClick = useCallback(() => {
+    setIsLiked((prev) => !prev);
+    if (!isLiked === true) {
+      handleClickLike();
+    } else {
+      handleClickUnLike();
+    }
+  }, [isLiked]);
 
   const deletePost = useCallback(async () => {
     const response = await freeBoard.PostDelete(parseInt(boardId));
@@ -89,6 +104,7 @@ export default function Community() {
   useEffect(() => {
     if (postData) {
       setIsLiked(postData.isLiked);
+      // console.log('좋아요', postData.isLiked);
     }
   }, [postData]);
 
@@ -160,7 +176,7 @@ export default function Community() {
                   disabled={!user}
                   pressed={isLiked}
                   className="rounded-full text-neutral-400 border-neutral-300 text-xl min-w-[60px] hover:text-purple-500 hover:bg-purple-50 focus-visible:text-purple-500 data-[state=on]:bg-purple-50 data-[state=on]:text-purple-500 disabled:opacity-100"
-                  onClick={handleClickLike}
+                  onClick={handleClick}
                 >
                   <ThumbsUp /> {postData.num_likes}
                 </Toggle>
