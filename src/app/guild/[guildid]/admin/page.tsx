@@ -80,9 +80,10 @@ export default function GuildAdmin() {
         const res = await GetAdmin(guildid);
         if (res.resultCode === 'OK') {
           setGuildInfo(res.data);
+          console.log(res);
         }
-      } catch (error) {
-        console.error('길드 정보 불러오기 실패', error);
+      } catch (error: any) {
+        console.error('길드 정보 불러오기 실패', error.response);
       }
     };
     fetchGuildInfo();
@@ -125,11 +126,22 @@ export default function GuildAdmin() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [guildid]);
 
-  // const leader = members.find((m) => m.data.guild_role === 'LEADER');
+
   const managers = members.filter((m) => m.data.guild_role === 'MANAGER');
+
+  const auth = useAuthStore();
+  // console.log('사용자 memberId', auth.memberId);
+  const managersMamberid = managers.map((m) => m.memberId === String(auth?.memberId));
+
+  // console.log('맞니??', managersMamberid);
+  
+  const isManager = managersMamberid.some(data => data === true);
+  // console.log('매니져 있니없니', isManager);
+  
   const notification = useNotification();
   const member = useMembers();
   const { toast } = useToast();
+
 
   // 길드 멤버 초대 핸들러
   const handleInviteMember = async (nickname: string) => {
@@ -434,6 +446,7 @@ export default function GuildAdmin() {
                   total={members.length}
                   onToggleManager={() => handleToggleManager(member.memberId, member.data.guild_role)}
                   onKickMember={() => handleKickMember(member.memberId)}
+                  isManager = {isManager}
                 />
               );
             })}
