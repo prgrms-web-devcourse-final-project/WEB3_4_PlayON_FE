@@ -12,6 +12,15 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+
+  async rewrites() {
+    return [
+      {
+        source: '/steam-video/:path*',
+        destination: 'http://video.akamai.steamstatic.com/store_trailers/:path*',
+      },
+    ];
+  },
 };
 
 export default nextConfig;
