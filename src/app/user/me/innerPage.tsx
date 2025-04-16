@@ -29,7 +29,6 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import { Pagination } from 'swiper/modules';
-import { div } from 'three/src/nodes/TSL.js';
 
 interface resGameProps {
   gameData: {
@@ -51,7 +50,7 @@ export default function InnerPage() {
   const [myGames, setMyGames] = useState<resGameProps[] | null>([]);
   const [myGuilds, setMyGuilds] = useState<guild[] | null>([]);
   const [myParties, setMyParties] = useState<getPartyRes[] | null>([]);
-  const [myPartyLogs, setMyPartyLogs] = useState<getPartyRes[] | null>([]);
+  const [myPartyLogs, setMyPartyLogs] = useState<partyLog[] | null>([]);
   // const [totalItems, setTotalItems] = useState(0);
 
   const searchParams = useSearchParams();
@@ -83,12 +82,11 @@ export default function InnerPage() {
         console.log('mygame 응답', res);
 
         setMyGames(res);
-        console.log('상태 응답', myGames);
+        // console.log('상태 응답', myGames);
       } catch (error: any) {
         console.log('에러 발생', error.response);
       }
     };
-    MyGames();
 
     const MyGuilds = async () => {
       try {
@@ -97,23 +95,21 @@ export default function InnerPage() {
         console.log('myguilds 응답', res);
 
         setMyGuilds(res);
-        console.log('상태 응답', myGames);
+        // console.log('상태 응답', myGames);
       } catch (error: any) {
         console.log('에러 발생', error.response);
       }
     };
-    MyGuilds();
 
     const GetMyParties = async () => {
       try {
         const res = await memberApi.GetMyParties();
-        console.log('파티응답', res);
+        // console.log('파티응답', res);
         setMyParties(res);
       } catch (error: any) {
         console.log('에러 발생 파티1', error);
       }
     };
-    GetMyParties();
 
     const GetMyPartyLogs = async () => {
       const data = {
@@ -123,13 +119,19 @@ export default function InnerPage() {
 
       try {
         const res = await memberApi.GetMyPartyLogs({ ...data });
-        console.log('페이지 단 파티로그응답', res);
+        // console.log('페이지 단 파티로그응답', res);
         setMyPartyLogs(res);
       } catch (error: any) {
         console.log('에러 발생 파티', error);
       }
     };
+    // if (userMe) {
+    // GetMe();
+    MyGames();
+    MyGuilds();
+    GetMyParties();
     GetMyPartyLogs();
+    // }
   }, []);
 
   useEffect(() => {
@@ -159,14 +161,12 @@ export default function InnerPage() {
     window.location.href = response;
   }
 
-const chunkArray = (arr: any[], size: number) => {
-  return Array.from({ length: Math.ceil(arr.length / size) }, (_, i) =>
-    arr.slice(i * size, i * size + size)
-  );
-};
+  const chunkArray = (arr: any[], size: number) => {
+    return Array.from({ length: Math.ceil(arr.length / size) }, (_, i) => arr.slice(i * size, i * size + size));
+  };
 
-  console.log('아 제발', chunkArray(myGames, 3));
   const myGameList = chunkArray(myGames, 3);
+  //   console.log('아 제발', chunkArray(myGames, 3));
 
   return (
     <main>
@@ -335,15 +335,10 @@ const chunkArray = (arr: any[], size: number) => {
           <div>
             <p className="font-suit text-3xl font-semibold">내가 보유한 게임 목록</p>
 
-            <div className="flex gap-6">
+            {/* <div className="flex gap-6">
               {myGames?.map((data) => <PopularCard key={data.gameData.appid} data={data.gameData} />)}
-              {/* <PopularCard data={dummyGameSimple} />
-              <PopularCard data={dummyGameSimple} />
-              <PopularCard data={dummyGameSimple} />
-              <PopularCard data={dummyGameSimple} />
-              <PopularCard data={dummyGameSimple} /> */}
-            </div>
-              {/* <Swiper
+            </div> */}
+            {/* <Swiper
                 scrollbar={{ hide: true }}
                 modules={[Pagination]}
                 pagination={{
@@ -354,33 +349,56 @@ const chunkArray = (arr: any[], size: number) => {
                 slidesPerView={1}
                 className='w-full'
               >
-                {myGameList.map((group, idx) => (
-                  <SwiperSlide key={idx}>
-                    <div className="flex gap-6 min-w-full justify-center">
-                      {group.map((item) => (
-                        <div key={item.gameData.appid} className="w-[410px] shrink-0">
-                          <PopularCard
-                            // key={item.gameData?.appid}
-                            data={item.gameData}
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  </SwiperSlide>
-                ))}
-              </Swiper> */}
-
-              {/* <Swiper modules={[Pagination]} pagination={{ type: 'progressbar' }} loop spaceBetween={20}>
-                    {myGamesList.map((data, index) => (
-                      <SwiperSlide key={index}>
-                        <div className="flex flex-col-3 gap-6">
-                          {data.map((data) => (
-                            <PopularCard key={data.gameData.appid} data={data.gameData} />
-                          ))}
-                        </div>
-                      </SwiperSlide>
+              {myGames?.map((group, idx) => (
+                <SwiperSlide key={idx}>
+                  <div className="flex gap-6 min-w-full justify-center">
+                    {group.map((item) => (
+                      <div key={item.gameData.appid} className="w-[410px] shrink-0">
+                        <PopularCard
+                          // key={item.gameData?.appid}
+                          data={item.gameData}
+                        />
+                      </div>
                     ))}
-                  </Swiper> */}
+                  </div>
+                </SwiperSlide>
+              ))}
+            </Swiper> */}
+
+            <Swiper
+              spaceBetween={10}
+              slidesPerView={3}
+              direction="horizontal"
+              modules={[Pagination]}
+              style={{ width: '100%', height: 'auto' }}
+            >
+              {myGames?.map((data, index) => (
+                <SwiperSlide key={index}>
+                  <PopularCard key={data.gameData.appid} data={data.gameData} />
+                </SwiperSlide>
+              ))}
+            </Swiper>
+
+            {/* <Swiper
+              spaceBetween={10}
+              slidesPerView={3}
+              direction="horizontal"
+              modules={[Pagination]}
+              // pagination={{
+              //   // clickable: true,
+              //   type: undefined,
+              // }}
+            >
+              {myGames?.map((data, index) => (
+                <SwiperSlide key={index}>
+                  <div className="flex flex-col-3 gap-6">
+                    {data.map((data) => (
+                    <PopularCard key={data.gameData.appid} data={data.gameData} />
+                    ))}
+                  </div>
+                </SwiperSlide>
+              ))}
+            </Swiper> */}
 
             {myGames?.length === 0 && (
               <div className="text-center">
