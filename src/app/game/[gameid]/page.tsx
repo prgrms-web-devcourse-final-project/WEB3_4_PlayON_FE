@@ -134,7 +134,11 @@ export default function GameDetail({ params }: { params: { gameid: string } }) {
       <div className="border border-neutral-400">
         {selectedSlideData.contentType === 'screenshot' && <img src={selectedSlideData.contentUrl} alt="" />}
         {selectedSlideData.contentType === 'movie' && (
-          <iframe src={selectedSlideData.contentUrl} className="w-full aspect-video"></iframe>
+          <iframe
+            src={`/api/steam-video-proxy?url=${encodeURIComponent(selectedSlideData.contentUrl)}`}
+            className="w-full aspect-video"
+            title="video"
+          ></iframe>
         )}
       </div>
     );
