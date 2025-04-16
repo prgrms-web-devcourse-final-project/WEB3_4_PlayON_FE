@@ -96,6 +96,19 @@ export default function GameDetail({ params }: { params: { gameid: string } }) {
     };
   }
 
+  function substrVideoURL(url: string): string {
+    console.log(url);
+    const protocol = url.slice(0, 5);
+    console.log(protocol);
+    const rest = url.slice(5, url.length);
+    console.log(rest);
+    if (protocol === 'http:') {
+      return 'https:' + rest;
+    } else {
+      return url;
+    }
+  }
+
   const {
     data: gameDetails,
     isFetched,
@@ -109,15 +122,16 @@ export default function GameDetail({ params }: { params: { gameid: string } }) {
       }
       try {
         const data = await gamehook.GameDetailWithPartyLog(gameId);
+        // console.log(data);
         const convGame = convertToClientGame(data.game);
         const convParties = data.partyList.map((_) => convertToClientParty(_, data.game.appid));
         const convPartyLogs = data.partyLogList.map((_) => convertToClientPartyLog(_, data.game.appid));
-
         if (data) {
           slides.current = [
             ...data.game.screenshots.map<slide>((e) => ({ contentType: 'screenshot', contentUrl: e })),
-            ...data.game.movies.map<slide>((e) => ({ contentType: 'movie', contentUrl: e })),
+            ...data.game.movies.map<slide>((e) => ({ contentType: 'movie', contentUrl: substrVideoURL(e) })),
           ];
+          console.log(data);
           return {
             game: convGame,
             partyLogs: convPartyLogs,
@@ -149,8 +163,13 @@ export default function GameDetail({ params }: { params: { gameid: string } }) {
         {selectedSlideData.contentType === 'screenshot' && <img src={selectedSlideData.contentUrl} alt="" />}
         {selectedSlideData.contentType === 'movie' && (
           <video className="w-full aspect-video" controls>
-            <source src={selectedSlideData.contentUrl} />
+            <source src={substrVideoURL(selectedSlideData.contentUrl)} />
           </video>
+          // <iframe
+          //   src={`/api/steam-video-proxy?url=${encodeURIComponent(selectedSlideData.contentUrl)}`}
+          //   className="w-full aspect-video"
+          //   title="video"
+          // ></iframe>
         )}
       </div>
     );
