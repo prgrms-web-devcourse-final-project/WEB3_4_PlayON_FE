@@ -125,7 +125,7 @@ export default function GuildCommunityDetail() {
 
                   <Button
                     size="sm"
-                    className=" bg-neutral-200 hover:bg-neutral-100 text-neutral-500 text-sm"
+                    className="bg-white border border-neutral-200 hover:bg-neutral-100 text-neutral-500 text-sm shadow-none"
                     onClick={deletePost}
                   >
                     <Trash2 strokeWidth={1.4} /> 삭제
@@ -135,7 +135,7 @@ export default function GuildCommunityDetail() {
               <div>
                 <Button
                   size="sm"
-                  className=" bg-neutral-200 hover:bg-neutral-100 text-neutral-500 text-sm"
+                  className="bg-white border border-neutral-200 hover:bg-neutral-100 text-neutral-500 text-sm shadow-none"
                   onClick={() => router.push(PATH.guild_community(guildId))}
                 >
                   목록

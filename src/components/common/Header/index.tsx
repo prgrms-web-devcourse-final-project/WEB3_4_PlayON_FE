@@ -36,7 +36,6 @@ const linkStyle = `
     `;
 
 export default function Header() {
-  // const user = useAuthStore((state) => state.user);
   const { user, setUser } = useAuthStore();
   const [isLogin, setisLogin] = useState(false);
   const [showHeader, setShowHeader] = useState(true);
@@ -58,13 +57,6 @@ export default function Header() {
   }, [lastScrollY]);
 
   useEffect(() => {
-    if (user) {
-      setUser(user);
-      return;
-    }
-    // if (!document.cookie.includes('accessToken=')) {
-    //   return;
-    // }
     const fetchUserInfo = async () => {
       try {
         const userInfo = await member.GetMe();
@@ -78,7 +70,7 @@ export default function Header() {
       }
     };
     fetchUserInfo();
-  }, [user]);
+  }, []);
 
   return (
     <header

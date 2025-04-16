@@ -6,14 +6,12 @@ import CapsuleCategoryMenu from '@/components/common/capsule-category-menu';
 import { useCallback, useState } from 'react';
 import UserInfoHorizontal from '@/app/party/components/UserInfoHorizontal';
 import Tag from '../common/Tag';
-import { guildCommunityTags } from '@/types/Tags/communityTags';
 import SearchBar from '../common/SearchBar';
 import Link from 'next/link';
 import { GUILD_ROUTE } from '@/constants/routes/guild';
 import { useParams, useRouter } from 'next/navigation';
 import { PATH } from '@/constants/routes';
 import { Home, RefreshCcw } from 'lucide-react';
-import { div } from 'three/src/nodes/TSL.js';
 
 type WeNeedYouProps = {
   guildData: guild;
@@ -37,43 +35,10 @@ export default function WeNeedYou(props: WeNeedYouProps) {
   );
   const HandleSearchClickDetail = useCallback(
     (value: string) => {
-      router.push(
-        `${PATH.guild_community(guildId)}${value ? `?search=${value}` : ''}${selectedTag ? `?tag=${selectedTag}` : ''}`
-      );
+      router.replace(`${PATH.guild_community(guildId)}${value ? `?search=${value}` : ''}`);
     },
     [guildId, router, selectedTag]
   );
-  const HandleSelectChange = useCallback(
-    (newSelected: boolean[]) => {
-      const newUrl = new URL(window.location.href);
-      //guildCommunityTags
-      if (newSelected[0]) {
-        newUrl.searchParams.set('tag', '전체');
-      } else {
-        const tags = newSelected
-          .slice(1, newSelected.length)
-          .map((e, ind) => (e ? guildCommunityTags[ind] : null))
-          .filter((e) => e);
-        newUrl.searchParams.set('tag', tags.join(','));
-      }
-      router.replace(newUrl.toString());
-    },
-    [router]
-  );
-
-  const HandleSelectChangeDetail = useCallback((newSelected: boolean[]) => {
-    if (newSelected[0]) {
-      setSelectedTag('');
-      return;
-    } else {
-      const tags = newSelected
-        .slice(1, newSelected.length)
-        .map((e, ind) => (e ? guildCommunityTags[ind] : null))
-        .filter((e) => e);
-      // console.log(tags);
-      setSelectedTag(tags[0]!);
-    }
-  }, []);
 
   const handleClickReset = useCallback(() => {
     router.replace(PATH.guild_community(guildId));
@@ -120,7 +85,7 @@ export default function WeNeedYou(props: WeNeedYouProps) {
         <div className="flex flex-col gap-5">
           <div className="flex flex-col gap-2">
             <div
-              className="flex gap-1 items-center self-end text-sm text-neutral-400 hover:text-purple-600"
+              className="flex gap-1 items-center self-end text-sm text-neutral-400 hover:text-purple-600 cursor-pointer"
               onClick={handleClickReset}
             >
               <RefreshCcw className=" size-3" />
@@ -128,16 +93,12 @@ export default function WeNeedYou(props: WeNeedYouProps) {
             </div>
             <SearchBar onChange={() => {}} onSearch={(value) => HandleSearchClick(value)} />
           </div>
-          <CapsuleCategoryMenu items={[...guildCommunityTags]} multiple={true} onSelectChange={HandleSelectChange} />
+          <CapsuleCategoryMenu />
         </div>
       ) : (
         <div className="flex flex-col gap-5">
           <SearchBar onChange={() => {}} onSearch={(value) => HandleSearchClickDetail(value)} />
-          <CapsuleCategoryMenu
-            items={[...guildCommunityTags]}
-            multiple={true}
-            onSelectChange={HandleSelectChangeDetail}
-          />
+          <CapsuleCategoryMenu onClick={(value) => router.replace(`${PATH.guild_community(guildId)}?tag=${value}`)} />
         </div>
       )}
     </div>

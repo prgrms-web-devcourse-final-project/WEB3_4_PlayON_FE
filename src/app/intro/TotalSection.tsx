@@ -87,7 +87,7 @@ function TotalSection() {
               alt="balloon"
               width={188}
               height={300}
-              className={`absolute z-50 -left-[60px] top-[40px] -rotate-[20deg] blur-xl opacity-75 select-none ${styles.balloonMT}`}
+              className={`absolute z-50 -left-[60px] top-[132px] -rotate-[26deg] blur-xl opacity-75 select-none ${styles.balloonMT}`}
             />
             <Image
               src="/img/3d_object/balloon.svg"

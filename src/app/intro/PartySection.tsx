@@ -7,7 +7,7 @@ import { ScrollTrigger } from 'gsap/all';
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { PATH } from '@/constants/routes';
-import { getPartyRes } from '@/types/party';
+import { getMainPendingPartyRes, getPartyRes } from '@/types/party';
 import { useParty } from '@/api/party';
 import Link from 'next/link';
 import { Object3D } from 'three';
@@ -21,7 +21,7 @@ function PartySection({ modelObject }: Props) {
   gsap.registerPlugin(useGSAP);
   gsap.registerPlugin(ScrollTrigger);
 
-  const [pendingParties, setPendingParties] = useState<getPartyRes[]>([]);
+  const [pendingParties, setPendingParties] = useState<getMainPendingPartyRes[]>([]);
   useEffect(() => {
     const fetchParty = async () => {
       const pendingRes = await party.MainPendingParty(2);
@@ -45,7 +45,7 @@ function PartySection({ modelObject }: Props) {
       scrollTrigger: {
         trigger: container.current,
         start: 'top top',
-        end: '+=640',
+        end: '+=840',
         // markers: true,
         scrub: 1,
         pin: true,
@@ -54,9 +54,9 @@ function PartySection({ modelObject }: Props) {
     });
     Tl.fromTo(title.current, { opacity: 0, x: 240 }, { opacity: 1, x: 0, duration: 3, ease: 'power1.inOut' }, 0)
       .fromTo(searchBar.current, { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 2, ease: 'sine.in' }, 0.1)
-      .fromTo(modelObject.position, { y: 19, x: -8 }, { y: 3.2, x: -5.5, duration: 2.5, ease: 'sine.in' }, 0)
-      .fromTo(modelObject.position, { y: 3.2, x: -5.5 }, { y: 20, x: -5.5, duration: 1, ease: 'sine.in' }, 7)
-      .fromTo(modelObject.rotation, { y: 1 }, { y: 6, duration: 8, ease: 'power2.inOut' }, 0);
+      .fromTo(modelObject.position, { y: 20, x: -8 }, { y: 3.2, x: -5.5, duration: 2.5, ease: 'sine.in' }, 0)
+      .fromTo(modelObject.position, { y: 3.2, x: -5.5 }, { y: 20, x: -5.5, duration: 2.5, ease: 'sine.in' }, 8)
+      .fromTo(modelObject.rotation, { y: 1.5 }, { y: 5.5, duration: 10, ease: 'power1.inOut' }, 0);
 
     partyCompoRefs.current.forEach((el, idx) => {
       if (el) {

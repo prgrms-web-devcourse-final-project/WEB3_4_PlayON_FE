@@ -19,10 +19,11 @@ import { useMembers } from '@/api/members';
 import GhostSVG from '@/components/svg/ghost_fill';
 import { PATH } from '@/constants/routes';
 import NotificationItem from './notification-item';
-import { useNotification } from '@/api/notification';
+import { useNotification, Notification } from '@/api/notification';
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { useRouter } from 'next/navigation';
 
 type Props = {
   userInfo: userDetail;
@@ -51,6 +52,26 @@ export default function UserInfoLogin({ userInfo }: Props) {
     queryFn: notification.GetNotificationsSummary,
   });
 
+  const router = useRouter();
+  const handleAccept = async (data: Notification) => {
+    const partyId = data.redirectUrl.split('/');
+    if (partyId[1] === 'party') {
+      const success = await member.AcceptPartyInvite(parseInt(partyId[2]));
+      if (success) {
+        router.push(data.redirectUrl);
+      }
+    }
+    if (partyId[1] === 'guild') {
+      router.push(data.redirectUrl);
+    }
+  };
+  const handleDecline = async (data: Notification) => {
+    const partyId = data.redirectUrl.split('/');
+    if (partyId[1] === 'party') {
+      await member.DeclinePartyInvite(parseInt(partyId[2]));
+    }
+  };
+
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger
@@ -74,7 +95,9 @@ export default function UserInfoLogin({ userInfo }: Props) {
             </p>
           </div>
           <Avatar className="w-8 aspect-square rounded-full overflow-hidden bg-purple-500">
-            <AvatarImage src={userInfo.img_src} alt="프로필 이미지" />
+            {userInfo && (
+              <AvatarImage src={userInfo.img_src} alt="프로필 이미지" className="w-full h-full object-cover" />
+            )}
             <AvatarFallback className="flex items-end justify-center">
               <div className="animate-bounce duration-1000 mt-2 ">
                 <GhostSVG fill="#FFFFFF" stroke="" width={20} />
@@ -103,7 +126,12 @@ export default function UserInfoLogin({ userInfo }: Props) {
                 notifications &&
                 notifications.notification.length > 0 &&
                 notifications.notification.map((e) => (
-                  <NotificationItem data={e} key={`noti_${e.id}_${e.createdAt}`} />
+                  <NotificationItem
+                    data={e}
+                    key={`noti_${e.id}_${e.createdAt}`}
+                    handleAccept={async () => await handleAccept(e)}
+                    handleDecline={async () => await handleDecline(e)}
+                  />
                 ))}
             </ScrollArea>
           </DropdownMenuItem>

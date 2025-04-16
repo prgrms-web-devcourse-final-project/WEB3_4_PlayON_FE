@@ -7,6 +7,7 @@ import { useMembers } from '@/api/members';
 import { useAuthStore } from '@/stores/authStore';
 import { useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import { USER_ROUTE } from '@/constants/routes/user';
 
 export default function InnerPage() {
   const playOnASCII = `##########  ######      ####### ######  ######       #######    ####### #####
@@ -36,6 +37,9 @@ export default function InnerPage() {
           toast({ title: `어서오세요 ${me.nickname}님!`, variant: 'primary' });
           setTimeout(() => router.push('/'), 500);
         }
+      } else {
+        toast({ title: `스팀 로그인에 실패하였습니다`, variant: 'destructive' });
+        setTimeout(() => router.push(USER_ROUTE.login), 500);
       }
     }
     handleSteamAuth();
@@ -57,9 +61,9 @@ export default function InnerPage() {
             </div>
           </div>
           <div className="font-dgm text-purple-400 mt-5 flex flex-col items-center dashed-border mb-10">
-            <p className="text-4xl text-purple-400 font-dgm bg-purple-900 title">로그인 성공!</p>
+            <p className="text-4xl text-purple-400 font-dgm bg-purple-900 title">스팀 로그인</p>
             <div className="flex flex-col items-center h-[500px] justify-center gap-10">
-              <p className="text-4xl text-purple-400 font-dgm bg-purple-900">스팀 인증에 성공하셨습니다</p>
+              {/* <p className="text-4xl text-purple-400 font-dgm bg-purple-900">스팀 인증에 성공하셨습니다</p> */}
               <SteamSVG fill="#8c6af0" stroke="" width={200} height={200} />
             </div>
           </div>

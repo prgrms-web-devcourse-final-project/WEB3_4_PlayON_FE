@@ -43,11 +43,17 @@ export const getSteamImage = async (
       ];
       break;
     case 'background':
-      urls = [
-        options.filtered
-          ? `https://store.akamai.steamstatic.com/images/storepagebackground/app/${gameId}`
-          : `https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/${gameId}/page_bg_raw.jpg`,
-      ];
+      if (options.filtered) {
+        urls = [
+          `https://store.akamai.steamstatic.com/images/storepagebackground/app/${gameId}`,
+          `https://store.akamai.steamstatic.com/images/storepagebackground/app/${gameId}`,
+        ];
+      } else {
+        urls = [
+          `https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/${gameId}/page_bg_raw.jpg`,
+          `https://store.akamai.steamstatic.com/images/storepagebackground/app/${gameId}`,
+        ];
+      }
       fallback = '';
       break;
   }

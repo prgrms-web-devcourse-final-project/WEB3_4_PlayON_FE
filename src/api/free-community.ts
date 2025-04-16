@@ -57,7 +57,7 @@ export const useFreeCommunity = () => {
         tag: data.boardCategory,
         title: data.boardTitle as string,
         user: {
-          img_src: data.profileImage as string,
+          img_src: data.profileImg as string,
           memberId: '0',
           nickname: data.authorNickname as string,
           user_title: data.title as string,

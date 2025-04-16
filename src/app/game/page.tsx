@@ -6,23 +6,21 @@ import SectionTitle from '@/components/common/SectionTitle';
 import PickCard from '@/components/game/PickCard';
 import PopularCard from '@/components/game/PopularCard';
 import SteamCard from '@/components/game/SteamCard';
-import { dummyGameDetail, dummyGameSimple, dummyParty } from '@/utils/dummyData';
+import { dummyGameSimple } from '@/utils/dummyData';
 import styles from './game.module.css';
 import { useQuery } from '@tanstack/react-query';
 import { game, useGame } from '@/api/game';
-import { Suspense } from 'react';
 import { useRouter } from 'next/navigation';
 import { GAME_ROUTE } from '@/constants/routes/game';
 import { useAuthStore } from '@/stores/authStore';
-import { gameDetail, gameSimple } from '@/types/games';
+import { gameDetail } from '@/types/games';
 import Link from 'next/link';
 import GameSearch from '@/components/common/GameSearch';
-import { ErrorBoundary } from 'react-error-boundary';
 import BounceButton from '@/components/common/BounceButton';
 import EmptyLottie from '@/components/common/EmptyLottie';
 import RetroButton from '@/components/common/RetroButton';
 import { PARTY_ROUTE } from '@/constants/routes/party';
-import PartyCard from '@/components/party/PartyCard';
+import { mainDummyMyGames, mainDummyGamesAppId, mainDummyGames } from '@/utils/dummyData';
 
 export default function Game() {
   const imageList = [
@@ -56,7 +54,10 @@ export default function Game() {
   }
   const { data: popularGames } = useQuery({
     queryKey: ['PopularGames'],
-    queryFn: async () => game.GamePopular(),
+    queryFn: async () => {
+      const res = await game.GamePopular();
+      return res;
+    },
   });
   const { data: friendGames, isSuccess: friendGamesIsSuccess } = useQuery({
     queryKey: ['FriendGames'],
@@ -72,7 +73,6 @@ export default function Game() {
         );
         return gameData.filter((e) => e !== undefined);
       } catch (e) {
-        console.log(e);
         return [];
       }
     },
@@ -91,13 +91,7 @@ export default function Game() {
         );
         return gameData.slice(0, 4).filter((e) => e !== undefined);
       } catch (e) {
-        console.log(e);
-        return [
-          { ...dummyGameDetail, appid: 1 },
-          { ...dummyGameDetail, appid: 1 },
-          { ...dummyGameDetail, appid: 1 },
-          { ...dummyGameDetail, appid: 1 },
-        ];
+        return [];
       }
     },
   });
@@ -216,11 +210,14 @@ export default function Game() {
 
               <div className="grid grid-cols-3 md:grid-cols-3 gap-6 pt-4">
                 {popularGames &&
+                  popularGames.length > 0 &&
                   popularGames.map((e) => (
                     <Link href={GAME_ROUTE.game_detail(e.appid)} key={e.appid}>
                       <PopularCard data={e} />
                     </Link>
                   ))}
+                {(!popularGames || popularGames.length <= 0) &&
+                  mainDummyMyGames.map((e) => <PopularCard data={e} key={`popular_${e.appid}`} />)}
               </div>
             </div>
           </div>
@@ -238,7 +235,7 @@ export default function Game() {
                 subtitle="이런...! 아직 파티를 이룬적이 없군요"
                 icon_src="/img/icons/pixel_chat_heart.svg"
               />
-              <EmptyLottie className="w-[500px]" text="">
+              <EmptyLottie className="w-[500px] -translate-y-6" text="" imgWidth={400}>
                 <RetroButton
                   type="purple"
                   className="mt-4 font-bold"
@@ -306,24 +303,35 @@ export default function Game() {
       <section className="wrapper space-y-20">
         <div className="space-y-8">
           {personalGamesIsSuccess && personalGames.length > 0 && PersonalRecommendationSection(personalGames)}
-          {!personalGamesIsSuccess ||
-            (personalGames.length <= 0 && (
+          {(!personalGamesIsSuccess || personalGames.length <= 0) && (
+            <>
+              <SectionTitle
+                title={`${user ? user.nickname + '님 맞춤 추천' : '이런 게임은 어떠세요?'}`}
+                subtitle="인기 있는 장르 위주로"
+                icon_src="/img/icons/pixel_present.svg"
+              />
               <div className="grid grid-cols-1 md:grid-cols-4 gap-6 pt-8">
-                <PickCard data={dummyGameDetail} appid={730} />
-                <PickCard data={dummyGameDetail} appid={730} />
-                <PickCard data={dummyGameDetail} appid={730} />
-                <PickCard data={dummyGameDetail} appid={730} />
+                {mainDummyGames.map((e, ind) => (
+                  <PickCard data={e} appid={mainDummyGamesAppId[ind]} key={mainDummyGamesAppId[ind]} />
+                ))}
               </div>
-            ))}
+            </>
+          )}
         </div>
         <div className="space-y-8">
           {playTimeGames && playTimeGames.length > 0 && LongPlayTimeSection(playTimeGames)}
           {(!playTimeGames || playTimeGames.length <= 0) && (
-            <div className="grid grid-cols-3 md:grid-cols-3 gap-6">
-              <PopularCard data={{ ...dummyGameSimple, appid: 730 }} />
-              <PopularCard data={{ ...dummyGameSimple, appid: 730 }} />
-              <PopularCard data={{ ...dummyGameSimple, appid: 730 }} />
-            </div>
+            <>
+              <SectionTitle
+                title="플레이타임 긴 게임들"
+                subtitle="오래해도 떨어지지 않는 재미"
+                icon_src="/img/icons/pixel_box.svg"
+              />
+              <div className="grid grid-cols-3 md:grid-cols-3 gap-6">
+                {(!popularGames || popularGames.length <= 0) &&
+                  mainDummyMyGames.map((e) => <PopularCard data={e} key={`playtime_${e.appid}`} />)}
+              </div>
+            </>
           )}
         </div>
         <BounceButton path={GAME_ROUTE.game_list} type="game" tootip="게임 찾기" />{' '}

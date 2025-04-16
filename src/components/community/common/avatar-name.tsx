@@ -14,7 +14,7 @@ export default function AvatarName(props: { userName: string; avatar: string }) 
   return (
     <div className="flex items-center h-4 gap-1">
       <Avatar className="h-[16px] w-[16px] object-cover rounded-full overflow-hidden">
-        <AvatarImage src={props.avatar || '/img/dummy_profile.jpg'} alt="@shadcn" />
+        <AvatarImage src={props.avatar || '/img/dummy_profile.jpg'} alt="@shadcn" className="size-full" />
         <AvatarFallback>CN</AvatarFallback>
       </Avatar>
       <p className="text-xs font-medium gap-1">{props.userName}</p>

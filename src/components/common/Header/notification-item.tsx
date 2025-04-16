@@ -7,6 +7,8 @@ import { useRouter } from 'next/navigation';
 
 type NotificationItemProps = {
   data: Notification;
+  handleAccept: () => Promise<void>;
+  handleDecline: () => Promise<void>;
 };
 
 export default function NotificationItem(props: NotificationItemProps) {
@@ -15,19 +17,10 @@ export default function NotificationItem(props: NotificationItemProps) {
   const member = useMembers();
 
   const handleAccept = async () => {
-    const partyId = props.data.redirectUrl.split('/');
-    if (partyId[1] === 'party') {
-      const success = await member.AcceptPartyInvite(parseInt(partyId[2]));
-      if (success) {
-        router.push(props.data.redirectUrl);
-      }
-    }
+    return props.handleAccept();
   };
   const handleDecline = async () => {
-    const partyId = props.data.redirectUrl.split('/');
-    if (partyId[1] === 'party') {
-      await member.DeclinePartyInvite(parseInt(partyId[2]));
-    }
+    return props.handleDecline();
   };
 
   return (

@@ -293,7 +293,7 @@ export const useMembers = () => {
       MEMBER.signup,
       { username, password },
       { headers: { 'Content-Type': 'application/json' } },
-      true
+      false
     );
     if (!response || response.status !== 200) {
       return false;
@@ -310,6 +310,11 @@ export const useMembers = () => {
       true
     );
     if (!response || response.status !== 200) {
+      toast({
+        title: '이런! 로그인 중에 문제가 발생했습니다',
+        description: '아이디와 비밀번호를 확인해주세요',
+        variant: 'destructive',
+      });
       return false;
     }
     return true;

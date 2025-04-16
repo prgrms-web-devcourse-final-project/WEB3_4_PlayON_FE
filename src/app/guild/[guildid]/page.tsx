@@ -40,7 +40,7 @@ export default function GuildDetails() {
   useEffect(() => {
     if (guildData) {
       setIsNotGuest(!['GUEST', 'APPLICANT'].includes(guildData.myRole));
-      console.log(guildData);
+      // console.log(guildData);
     }
   }, [guildData]);
 

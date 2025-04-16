@@ -49,7 +49,10 @@ export default function GuildInfoSection({ guildId }: { guildId: string }) {
 
   const leaveGuild = useCallback(async () => {
     if (guildData && guildData.myRole === 'LEADER') {
-      console.log('리더는 탈퇴 못해요');
+      Toast.toast({
+        title: '방장은 탈퇴할 수 없습니다.',
+        variant: 'destructive',
+      });
       return;
     }
     const response = await guildMembers.LeaveMembers(guildId);
