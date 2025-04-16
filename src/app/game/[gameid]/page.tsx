@@ -115,8 +115,8 @@ export default function GameDetail({ params }: { params: { gameid: string } }) {
 
         if (data) {
           slides.current = [
-            ...data.game.movies.map<slide>((e) => ({ contentType: 'movie', contentUrl: e })),
             ...data.game.screenshots.map<slide>((e) => ({ contentType: 'screenshot', contentUrl: e })),
+            ...data.game.movies.map<slide>((e) => ({ contentType: 'movie', contentUrl: e })),
           ];
           return {
             game: convGame,
