@@ -78,12 +78,7 @@ export default function UserInfoLogin({ userInfo }: Props) {
         asChild
         className="cursor-pointer"
         onClick={async () => {
-          const response = await notification.GetNotificationsSummary();
-          if (response && response.notification.length > 0) {
-            response.notification.forEach((e) => {
-              if (!e.isRead) notification.ReadNotification(e.id);
-            });
-          }
+          refetch();
           setOpened(!opened);
         }}
       >
@@ -96,7 +91,11 @@ export default function UserInfoLogin({ userInfo }: Props) {
           </div>
           <Avatar className="w-8 aspect-square rounded-full overflow-hidden bg-purple-500">
             {userInfo && (
-              <AvatarImage src={userInfo.img_src} alt="프로필 이미지" className="w-full h-full object-cover" />
+              <AvatarImage
+                src={userInfo.img_src ?? undefined}
+                alt="프로필 이미지"
+                className="w-full h-full object-cover"
+              />
             )}
             <AvatarFallback className="flex items-end justify-center">
               <div className="animate-bounce duration-1000 mt-2 ">

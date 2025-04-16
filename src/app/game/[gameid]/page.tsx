@@ -142,7 +142,6 @@ export default function GameDetail({ params }: { params: { gameid: string } }) {
         )}
       </div>
     );
-    return <div></div>;
   };
   function slideSelectHandler(ind: number) {
     if (ind < 0 || ind >= slides.current.length) return;
