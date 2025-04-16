@@ -74,7 +74,7 @@ export default function InnerPage() {
       const appId = parseInt(params.get('appId') as string);
       const orderBy = params.get('sort');
       const page = Number(params.get('page'));
-      const isMacSupported = params.get('isMacSupported') === 'true' ? true : false;
+      const isMacSupported = params.get('mac') === 'true' ? true : null;
       const partyAt = (partyDate && new Date(partyDate)) || new Date();
       const res = await party.GetParties(
         {

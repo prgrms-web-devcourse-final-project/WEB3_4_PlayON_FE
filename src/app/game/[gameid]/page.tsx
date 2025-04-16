@@ -134,15 +134,12 @@ export default function GameDetail({ params }: { params: { gameid: string } }) {
       <div className="border border-neutral-400">
         {selectedSlideData.contentType === 'screenshot' && <img src={selectedSlideData.contentUrl} alt="" />}
         {selectedSlideData.contentType === 'movie' && (
-          <iframe
-            src={`/api/steam-video-proxy?url=${encodeURIComponent(selectedSlideData.contentUrl)}`}
-            className="w-full aspect-video"
-            title="video"
-          ></iframe>
+          <video className="w-full aspect-video" controls>
+            <source src={selectedSlideData.contentUrl} />
+          </video>
         )}
       </div>
     );
-    return <div></div>;
   };
   function slideSelectHandler(ind: number) {
     if (ind < 0 || ind >= slides.current.length) return;

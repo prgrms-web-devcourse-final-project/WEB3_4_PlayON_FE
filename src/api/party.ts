@@ -30,7 +30,7 @@ export const useParty = () => {
     partyAt?: Date,
     page?: number,
     orderBy?: string,
-    isMacSupported?: boolean
+    isMacSupported?: boolean | null
   ): Promise<{
     parties: party[];
     totalPages: number;
