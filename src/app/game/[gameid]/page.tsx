@@ -8,8 +8,8 @@ import PartyCard from '@/components/party/PartyCard';
 import 'swiper/css';
 import PartyLogCard from '@/components/party/PartyLogCard';
 import { PlayIcon } from 'lucide-react';
-import { Suspense, useRef, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { Suspense, useEffect, useRef, useState } from 'react';
+import { QueryClient, useQuery, useQueryClient } from '@tanstack/react-query';
 import { game, useGame, party as ServerParty, partyLog as ServerPartyLog } from '@/api/game';
 import { GAME_ROUTE } from '@/constants/routes/game';
 import { useRouter } from 'next/navigation';
@@ -19,12 +19,14 @@ import Link from 'next/link';
 import { PARTY_ROUTE } from '@/constants/routes/party';
 import SafeHtml from '@/components/common/SafeHtml';
 import styles from './gameDetail.module.css';
+import { useToast } from '@/hooks/use-toast';
 
 export default function GameDetail({ params }: { params: { gameid: string } }) {
   const [selectedSlide, setSelectedSlide] = useState(0);
   const slides = useRef<slide[]>([]);
   const router = useRouter();
   const gamehook = useGame();
+  const { toast } = useToast();
 
   function convertToClientGame(data: game): gameDetail {
     return {
@@ -93,34 +95,47 @@ export default function GameDetail({ params }: { params: { gameid: string } }) {
     };
   }
 
-  const { data: gameDetails, isFetched } = useQuery({
+  const {
+    data: gameDetails,
+    isFetched,
+    error,
+  } = useQuery({
     queryKey: ['gameDetail', params.gameid],
     queryFn: async () => {
       const gameId = parseInt(params.gameid);
       if (isNaN(gameId)) {
         router.push(GAME_ROUTE.game_list);
       }
-      const data = await gamehook.GameDetailWithPartyLog(gameId);
-      const convGame = convertToClientGame(data.game);
-      const convParties = data.partyList.map((_) => convertToClientParty(_, data.game.appid));
-      const convPartyLogs = data.partyLogList.map((_) => convertToClientPartyLog(_, data.game.appid));
+      try {
+        const data = await gamehook.GameDetailWithPartyLog(gameId);
+        const convGame = convertToClientGame(data.game);
+        const convParties = data.partyList.map((_) => convertToClientParty(_, data.game.appid));
+        const convPartyLogs = data.partyLogList.map((_) => convertToClientPartyLog(_, data.game.appid));
 
-      if (data) {
-        slides.current = [
-          ...data.game.movies.map<slide>((e) => ({ contentType: 'movie', contentUrl: e })),
-          ...data.game.screenshots.map<slide>((e) => ({ contentType: 'screenshot', contentUrl: e })),
-        ];
+        if (data) {
+          slides.current = [
+            ...data.game.movies.map<slide>((e) => ({ contentType: 'movie', contentUrl: e })),
+            ...data.game.screenshots.map<slide>((e) => ({ contentType: 'screenshot', contentUrl: e })),
+          ];
+          return {
+            game: convGame,
+            partyLogs: convPartyLogs,
+            parties: convParties,
+          };
+        }
         return {
-          game: convGame,
-          partyLogs: convPartyLogs,
-          parties: convParties,
+          game: null,
+          partyLogs: [],
+          parties: [],
         };
+      } catch {
+        toast({
+          title: '게임을 찾을 수 없었습니다',
+          description: '게임 추천 페이지로 돌아갑니다',
+          variant: 'destructive',
+        });
+        throw new Error('Game not found');
       }
-      return {
-        game: null,
-        partyLogs: [],
-        parties: [],
-      };
     },
   });
 
@@ -145,6 +160,10 @@ export default function GameDetail({ params }: { params: { gameid: string } }) {
     if (ind < 0 || ind >= slides.current.length) return;
     setSelectedSlide(ind);
   }
+
+  useEffect(() => {
+    router.back();
+  }, [error, router]);
 
   return (
     <div className="flex flex-col mt-[150px]">

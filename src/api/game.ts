@@ -101,7 +101,7 @@ export const useGame = () => {
     return false;
   }
   async function GameDetailWithPartyLog(appid: number) {
-    const response = await axios.Get(GAME_ENDPOINTS.details(appid), {}, true);
+    const response = await axios.Get(GAME_ENDPOINTS.details(appid), {}, false);
     if (response && response.status === 200) {
       return {
         game: response.data.data.game as game,
