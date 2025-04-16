@@ -174,7 +174,15 @@ export const useGame = () => {
     },
     pageable?: paging
   ) {
-    const response = await axios.Post(GAME_ENDPOINTS.list, { ...condition }, { params: { ...pageable } }, true);
+    const step = {
+      keyword: condition?.keyword ?? undefined,
+      isMacSupported: condition?.isMacSupported ?? undefined,
+      releaseAfter: condition?.releaseAfter ?? undefined,
+      releaseStatus: condition?.releaseStatus ?? undefined,
+      playerType: condition?.playerType ?? undefined,
+      genres: condition?.genres ?? undefined,
+    };
+    const response = await axios.Post(GAME_ENDPOINTS.list, { ...step }, { params: { ...pageable } }, true);
     if (response && response.status === 200) {
       return {
         currentPageNumber: response.data.data.currentPageNumber as number,
@@ -196,7 +204,18 @@ export const useGame = () => {
     },
     pageable?: paging
   ) {
-    const response = await axios.Post(GAME_ENDPOINTS.list, { ...condition }, { params: { ...pageable } }, true);
+    const step = {
+      keyword: condition?.keyword ?? undefined,
+      isMacSupported:
+        condition?.isMacSupported === undefined || condition?.isMacSupported === false
+          ? undefined
+          : condition?.isMacSupported,
+      releaseAfter: condition?.releaseAfter ?? undefined,
+      releaseStatus: condition?.releaseStatus ?? undefined,
+      playerType: condition?.playerType ?? undefined,
+      genres: condition?.genres ?? undefined,
+    };
+    const response = await axios.Post(GAME_ENDPOINTS.list, { ...step }, { params: { ...pageable } }, true);
     if (response && response.status === 200) {
       return {
         currentPageNumber: response.data.data.currentPageNumber as number,
