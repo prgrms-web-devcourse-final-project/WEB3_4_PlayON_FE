@@ -250,6 +250,7 @@ export const ChattingContextProvider = ({ children }: { children: React.ReactNod
           { headers: { 'Content-Type': 'application/json' } },
           false
         );
+        const WEBSOCKET_URL = process.env.NEXT_PUBLIC_WEBSOCKET_BASE_URL;
         if (response && response.status === 200) {
           if (client.current === null) {
             client.current = new Client({
