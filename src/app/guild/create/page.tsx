@@ -56,7 +56,7 @@ const createGuildFormSchema = z.object({
 });
 
 export default function GuildCreate() {
-  const { user } = useAuthStore();
+  const { user, hasHydrated } = useAuthStore();
   const { showAlert } = useAlertStore();
   const Guild = useGuild();
   const Toast = useToast();
@@ -233,6 +233,9 @@ export default function GuildCreate() {
   }, [partyStyle, skillLevel, gender, friendly]);
 
   useEffect(() => {
+    if (!hasHydrated) {
+      return;
+    }
     if (user) return;
     showAlert(
       '로그인 후 길드를 생성할 수 있습니다.',

@@ -6,16 +6,7 @@ import SearchBar from '@/components/common/SearchBar';
 import SectionBanner from '@/components/common/SectionBanner';
 import SectionTitle from '@/components/common/SectionTitle';
 import PixelCharacter from '@/components/PixelCharacter/PixelCharacter';
-import { gameSimple } from '@/types/games';
-import {
-  dummyGameSimple,
-  dummyGuild,
-  dummyGuild2,
-  guildDummyGames,
-  mainDummyGames,
-  mainDummyGuilds,
-  mainDummyMyGames,
-} from '@/utils/dummyData';
+import { guildDummyGames, mainDummyGuilds, mainDummyMyGames } from '@/utils/dummyData';
 import PopularGameList from './components/PopularGameList';
 import SearchGuildWithGame from '@/components/common/search-guild-with-game';
 import { useRouter } from 'next/navigation';
@@ -33,23 +24,15 @@ const banner = [
     img_src: '/img/hero/bg_guild_main.webp',
   },
 ];
-const dummyGames = [dummyGameSimple, dummyGameSimple, dummyGameSimple];
-const dummyGuilds = [
-  [dummyGuild, dummyGuild, dummyGuild],
-  [dummyGuild2, dummyGuild2, dummyGuild2],
-  [dummyGuild, dummyGuild, dummyGuild],
-];
 
 export default function Guild() {
   const router = useRouter();
   const { user } = useAuthStore();
+  console.log(user);
 
   const handleSearch = (value: string) => {
     router.push(`${PATH.guild_list}?name=${value}`);
   };
-
-  const dummyGameList: gameSimple[] = Array(4).fill(dummyGameSimple);
-
   return (
     <div
       className="space-y-20 pb-20 pt-[68px]"
@@ -88,7 +71,7 @@ export default function Guild() {
         <SearchGuildWithGame
           leftCarouselTitle={<p className="text-5xl font-bold text-purple-50 mb-9">보유 게임으로 길드 탐색</p>}
           theme="dark"
-          forMain={user !== undefined}
+          forMain={!user}
           dummyGames={mainDummyMyGames}
           dummyGuilds={mainDummyGuilds}
         />

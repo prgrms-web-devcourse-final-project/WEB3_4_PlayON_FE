@@ -30,7 +30,7 @@ export default function SearchGuildWithGame(props: SearchGuildWithGameProps) {
   const [api, setApi] = useState<CarouselApi>();
   const [selectedGame, setSelectedGame] = useState<number>(0);
 
-  const { user } = useAuthStore();
+  const { user, hasHydrated } = useAuthStore();
   const member = useMembers();
   const guild = useGuild();
   const { data: MyGames, isFetched } = useQuery({
@@ -66,6 +66,12 @@ export default function SearchGuildWithGame(props: SearchGuildWithGameProps) {
             </Link>
           </CarouselItem>
         ));
+      case MyGames && MyGames.length > 0 && GuildSearch && GuildSearch.length > 0:
+        <>
+          <GuildFullImageSkeleton className="" />
+          <GuildFullImageSkeleton className="" />
+          <GuildFullImageSkeleton className="" />
+        </>;
       default:
         return (
           <>
@@ -106,28 +112,30 @@ export default function SearchGuildWithGame(props: SearchGuildWithGameProps) {
       className={`w-full min-w-[1280px] flex justify-center gap-[134px] ${props.theme === 'dark' ? 'bg-purple-800' : ''} ${props.className}`}
     >
       <div className="w-[627px] flex flex-col justify-center">
-        {props.leftCarouselTitle}
+        <div className="flex">{props.leftCarouselTitle}</div>
         <div className="h-[250px] rounded-xl mb-6" onPointerDownCapture={(e) => e.stopPropagation}>
-          <Carousel
-            opts={{
-              align: 'start',
-              loop: false,
-            }}
-            orientation="horizontal"
-            className="w-full "
-            setApi={setApi}
-          >
-            <CarouselContent className="select-none">
-              {!props.forMain && GameCardBuilder()}
-              {props.forMain &&
-                props.dummyGames &&
-                props.dummyGames.map((_, ind) => (
-                  <CarouselItem key={ind} onClick={() => setSelectedGame(ind)} className={`basis-1/3`}>
-                    <SteamCard data={_} theme={props.theme} selected={selectedGame === ind} />
-                  </CarouselItem>
-                ))}
-            </CarouselContent>
-          </Carousel>
+          {hasHydrated && (
+            <Carousel
+              opts={{
+                align: 'start',
+                loop: false,
+              }}
+              orientation="horizontal"
+              className="w-full "
+              setApi={setApi}
+            >
+              <CarouselContent className="select-none">
+                {!props.forMain && GameCardBuilder()}
+                {props.forMain &&
+                  props.dummyGames &&
+                  props.dummyGames.map((_, ind) => (
+                    <CarouselItem key={ind} onClick={() => setSelectedGame(ind)} className={`basis-1/3`}>
+                      <SteamCard data={_} theme={props.theme} selected={selectedGame === ind} />
+                    </CarouselItem>
+                  ))}
+              </CarouselContent>
+            </Carousel>
+          )}
         </div>
         <div className="flex gap-9 justify-end mt-5">
           <button
@@ -151,27 +159,29 @@ export default function SearchGuildWithGame(props: SearchGuildWithGameProps) {
         </div>
       </div>
       <div className="w-[520px] flex items-center overflow-hidden relative">
-        <Carousel
-          opts={{
-            align: 'center',
-            loop: true,
-          }}
-          orientation="vertical"
-          className="w-full"
-        >
-          <CarouselContent className={`h-[572px]`}>
-            {!props.forMain && GuildCardBuilder()}
-            {props.forMain &&
-              props.dummyGuilds &&
-              props.dummyGuilds[selectedGame].map((e) => (
-                <CarouselItem key={`${e.guild_id}`} className="basis-1/2">
-                  <Link href={GUILD_ROUTE.guild_detail(e.guild_id as unknown as string)}>
-                    <GuildFullImage data={e} className="" />
-                  </Link>
-                </CarouselItem>
-              ))}
-          </CarouselContent>
-        </Carousel>
+        {hasHydrated && (
+          <Carousel
+            opts={{
+              align: 'center',
+              loop: true,
+            }}
+            orientation="vertical"
+            className="w-full"
+          >
+            <CarouselContent className={`h-[572px]`}>
+              {!props.forMain && GuildCardBuilder()}
+              {props.forMain &&
+                props.dummyGuilds &&
+                props.dummyGuilds[selectedGame].map((e) => (
+                  <CarouselItem key={`${e.guild_id}`} className="basis-1/2">
+                    <Link href={GUILD_ROUTE.guild_detail(e.guild_id as unknown as string)}>
+                      <GuildFullImage data={e} className="" />
+                    </Link>
+                  </CarouselItem>
+                ))}
+            </CarouselContent>
+          </Carousel>
+        )}
         <div
           className={`${props.theme === 'dark' ? 'fade-overlay' : 'fade-overlay-white'} absolute w-full h-full pointer-events-none`}
         ></div>

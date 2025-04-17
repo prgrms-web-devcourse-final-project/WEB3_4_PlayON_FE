@@ -36,7 +36,7 @@ export default function Game() {
   ];
   const game = useGame();
   const router = useRouter();
-  const { user } = useAuthStore();
+  const { user, hasHydrated } = useAuthStore();
   function convertToClientGame(data: game): gameDetail {
     return {
       about: data.aboutTheGame,
@@ -305,6 +305,7 @@ export default function Game() {
       {/* 개인화 추천 & 플레이 타임 긴 게임 */}
       <section className="wrapper space-y-20">
         <div className="space-y-8">
+          {}
           {personalGamesIsSuccess && personalGames.length > 0 && PersonalRecommendationSection(personalGames)}
           {(!personalGamesIsSuccess || personalGames.length <= 0) && (
             <>
@@ -322,20 +323,21 @@ export default function Game() {
           )}
         </div>
         <div className="space-y-8">
-          {playTimeGames && playTimeGames.length > 0 && LongPlayTimeSection(playTimeGames)}
-          {(!playTimeGames || playTimeGames.length <= 0) && (
-            <>
-              <SectionTitle
-                title="플레이타임 긴 게임들"
-                subtitle="오래해도 떨어지지 않는 재미"
-                icon_src="/img/icons/pixel_box.svg"
-              />
-              <div className="grid grid-cols-3 md:grid-cols-3 gap-6">
-                {(!popularGames || popularGames.length <= 0) &&
-                  gamesPopularDummyData.map((e) => <PopularCard data={e} key={`playtime_${e.appid}`} />)}
-              </div>
-            </>
-          )}
+          {hasHydrated && playTimeGames && playTimeGames.length > 0 && LongPlayTimeSection(playTimeGames)}
+          {!hasHydrated ||
+            ((!playTimeGames || playTimeGames.length <= 0) && (
+              <>
+                <SectionTitle
+                  title="플레이타임 긴 게임들"
+                  subtitle="오래해도 떨어지지 않는 재미"
+                  icon_src="/img/icons/pixel_box.svg"
+                />
+                <div className="grid grid-cols-3 md:grid-cols-3 gap-6">
+                  {(!popularGames || popularGames.length <= 0) &&
+                    gamesPopularDummyData.map((e) => <PopularCard data={e} key={`playtime_${e.appid}`} />)}
+                </div>
+              </>
+            ))}
         </div>
         <BounceButton path={GAME_ROUTE.game_list} type="game" tootip="게임 찾기" />{' '}
       </section>

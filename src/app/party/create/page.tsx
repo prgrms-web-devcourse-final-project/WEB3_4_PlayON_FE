@@ -66,21 +66,19 @@ const createPartyFormSchema = z
   });
 
 export default function PartyCreate() {
-  const { user } = useAuthStore();
+  const { user, hasHydrated } = useAuthStore();
   const Toast = useToast();
   const party = useParty();
   const router = useRouter();
   const [selectedGame, setSelectedGame] = useState<gameSimple>();
   const dateInputRef = useRef<HTMLInputElement>(null);
   const { showAlert } = useAlertStore();
-
   //필터 State
   const partyStyle = useState([true, ...new Array(guildTags.partyStyle.items.length).fill(false)]);
   const skillLevel = useState([true, ...new Array(guildTags.skillLevel.items.length).fill(false)]);
   const gender = useState([true, ...new Array(guildTags.gender.items.length).fill(false)]);
   const friendly = useState([true, ...new Array(guildTags.friendly.items.length).fill(false)]);
   const selectedArr = [partyStyle, skillLevel, gender, friendly];
-
   const handleSelectedGame = async (data: { appid: string; name: string }) => {
     const imgsrc = await getSteamImage(data.appid, 'header');
     const bgsrc = await getSteamImage(data.appid, 'background');
@@ -92,7 +90,6 @@ export default function PartyCreate() {
       background_src: bgsrc,
     });
   };
-
   const handleCancle = () => {
     showAlert('파티 생성을 취소하시겠습니까?', '', () => {
       router.back();
@@ -112,7 +109,6 @@ export default function PartyCreate() {
     resolver: zodResolver(createPartyFormSchema),
     shouldFocusError: true,
   });
-
   async function onSubmit(data: z.infer<typeof createPartyFormSchema>) {
     type GuildTagValue = (typeof guildTags)[keyof typeof guildTags]['items'][number];
 
@@ -144,9 +140,8 @@ export default function PartyCreate() {
     // console.log(reqData.partyAt.toISOString());
     await party.CreateParty(reqData);
   }
-
   function errorHandler(err: object) {
-    console.log('error handler catched', err);
+    // console.log('error handler catched', err);
     const firstError: ToastError = Object.values(err)[0];
     if (firstError.ref?.name == 'date') dateInputRef.current?.focus();
     if (firstError.message == 'Required') return;
@@ -156,8 +151,10 @@ export default function PartyCreate() {
       description: firstError.message,
     });
   }
-
   useEffect(() => {
+    if (!hasHydrated) {
+      return;
+    }
     if (user) return;
     showAlert(
       '로그인 후 파티를 생성할 수 있습니다.',
@@ -169,8 +166,7 @@ export default function PartyCreate() {
         router.back();
       }
     );
-  }, []);
-
+  }, [user, hasHydrated]);
   return (
     <div className="pt-28 mb-32">
       <Form {...form}>
