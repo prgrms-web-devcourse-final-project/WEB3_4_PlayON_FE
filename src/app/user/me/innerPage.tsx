@@ -5,30 +5,28 @@ import GuildHorizon from '@/components/guild/guild-horizon';
 import PartyCard from '@/components/party/PartyCard';
 import PartyLogCard from '@/components/party/PartyLogCard';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
-import { Carousel, CarouselApi, CarouselContent, CarouselItem } from '@/components/ui/carousel';
-
-import { gameSimple } from '@/types/games';
 import { guild } from '@/types/guild';
 import { getPartyRes, partyLog } from '@/types/party';
-import { dummyGameSimple, dummyPartyLog } from '@/utils/dummyData';
 import { ChevronLeft, ChevronRight, SquarePen } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import SteamSVG from '@/components/svg/steam';
 import Tag from '@/components/common/Tag';
 import { useMembers } from '@/api/members';
 import { userDetail } from '@/types/user';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 // import { useAuthStore } from '@/stores/authStore';
 import Link from 'next/link';
 import EmptyLottie from '@/components/common/EmptyLottie';
 import RetroButton from '@/components/common/RetroButton';
 import { PATH } from '@/constants/routes';
-import CustomPagination from '@/components/common/CustomPagination';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/pagination';
-import { Pagination } from 'swiper/modules';
+import 'swiper/css/navigation';
+import { Pagination, Navigation } from 'swiper/modules';
+import { Button } from '@/components/ui/button';
+import styles from './myPage.module.css';
 
 interface resGameProps {
   gameData: {
@@ -41,10 +39,6 @@ interface resGameProps {
 }
 
 export default function InnerPage() {
-  const dummyGameArr = new Array<gameSimple>(8).fill(dummyGameSimple);
-
-  const [api, setApi] = useState<CarouselApi>();
-
   const memberApi = useMembers();
   const [userMe, SetUserMe] = useState<userDetail | null>(null);
   const [myGames, setMyGames] = useState<resGameProps[] | null>([]);
@@ -57,7 +51,7 @@ export default function InnerPage() {
 
   const [currentPage, setCurrentPage] = useState(1);
   const PAGE_SIZE = 6;
-  const totalItems = myPartyLogs?.length;
+  const totalItems = Number(myPartyLogs?.length);
   // const dummyPartyLogList: partyLog[] = Array(11).fill(dummyPartyLog);
   // const totalItems = dummyPartyLogList?.length;
 
@@ -144,14 +138,10 @@ export default function InnerPage() {
 
   const paginatedLogs = useMemo(() => {
     const startIdx = (currentPage - 1) * PAGE_SIZE;
-    //   return dummyPartyLogList?.slice(startIdx, startIdx + PAGE_SIZE);
-    // }, [dummyPartyLogList, currentPage]);
     return myPartyLogs?.slice(startIdx, startIdx + PAGE_SIZE);
   }, [myPartyLogs, currentPage]);
 
-  // if (!userMe) return <div className="text-center pt-28">로딩 중...</div>;
-
-  const defauiltAvatar = '/img/dummy_profile.jpg';
+  const defaultAvatar = '/img/dummy_profile.jpg';
 
   const router = useRouter();
   const member = useMembers();
@@ -161,13 +151,6 @@ export default function InnerPage() {
     window.location.href = response;
   }
 
-  const chunkArray = (arr: any[], size: number) => {
-    return Array.from({ length: Math.ceil(arr.length / size) }, (_, i) => arr.slice(i * size, i * size + size));
-  };
-
-  const myGameList = chunkArray(myGames, 3);
-  //   console.log('아 제발', chunkArray(myGames, 3));
-
   return (
     <main>
       <section className="wrapper pt-36 pb-16">
@@ -176,14 +159,12 @@ export default function InnerPage() {
           <div className="w-full px-8 py-9 border border-neutral-300 rounded-2xl">
             {userMe ? (
               <div className="flex gap-7 relative">
-                <Avatar className="bg-neutral-400 w-24 h-24">
-                  {/* <AvatarImage src={ (userMe.img_src ? (userMe.img_src) : (defauiltAvatar) )}  /> */}
-                  <AvatarImage className="object-cover" src={userMe.img_src ?? defauiltAvatar} />
+                <Avatar className="w-24 h-24">
+                  <AvatarImage className="object-cover" src={userMe.img_src || defaultAvatar} />
                 </Avatar>
 
                 <div>
                   <div className="flex gap-3">
-                    {/* <p className="font-suit text-2xl font-semibold text-neutral-400">{userMe.user_title ?? defualt} </p> */}
                     <p className="font-suit text-2xl font-bold ">{userMe.nickname}</p>
                   </div>
 
@@ -260,60 +241,42 @@ export default function InnerPage() {
           {/* 나의 길드 */}
           <div className="flex flex-col gap-6">
             <p className="font-suit text-3xl font-semibold">나의 길드</p>
-
-            <div className="flex flex-col-3 gap-6 relative">
-              <div className="rounded-xl" onPointerDownCapture={(e) => e.stopPropagation}>
-                <Carousel
-                  opts={{
-                    align: 'start',
-                    loop: false,
-                  }}
-                  orientation="horizontal"
-                  className="w-full "
-                  setApi={setApi}
-                >
-                  <CarouselContent className="select-none">
-                    {dummyGameArr.map((_, ind) => {
-                      return (
-                        <CarouselItem key={ind} className={``}>
-                          <div className="grid grid-cols-3 gap-6">
-                            {myGuilds?.map((guild) => <GuildHorizon key={guild.guild_name} data={guild} />)}
-                          </div>
-                        </CarouselItem>
-                      );
-                    })}
-                  </CarouselContent>
-                </Carousel>
-              </div>
-
-              <div className="absolute top-40 -left-7">
-                <button
-                  className="h-12 w-12 bg-white flex items-center justify-center rounded-full border border-neutral-200
-                   hover:bg-neutral-200 transition-colors
-                   "
-                  onClick={() => {
-                    console.log(api?.canScrollPrev());
-                    if (api?.canScrollPrev()) api.scrollPrev();
+            {myGuilds && (
+              <div className="flex flex-col-3 gap-6 relative">
+                <Swiper
+                  spaceBetween={10}
+                  slidesPerView={3}
+                  direction="horizontal"
+                  mousewheel={true}
+                  modules={[Pagination, Navigation]}
+                  style={{ width: '100%', height: 'auto' }}
+                  navigation={{
+                    nextEl: `.${styles.guildButtonNext}`,
+                    prevEl: `.${styles.guildButtonPrev}`,
                   }}
                 >
-                  <ChevronLeft className="text-black" />
-                </button>
-              </div>
-
-              <div className="absolute top-40 -right-7">
-                <button
-                  className="h-12 w-12 bg-white flex items-center justify-center rounded-full border border-neutral-200
-                  hover:bg-neutral-200 transition-colors
-                  "
-                  onClick={() => {
-                    console.log(api?.canScrollNext());
-                    if (api?.canScrollNext()) api.scrollNext();
-                  }}
+                  {myGuilds.slice(0, 10).map((data, index) => (
+                    <SwiperSlide key={index}>
+                      <GuildHorizon data={data} />
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+                {/* <Button
+                  variant="outline"
+                  size="icon"
+                  className={`${styles.guildButtonPrev} absolute rounded-full -left-5 top-1/2 z-10`}
                 >
-                  <ChevronRight className="text-black" />
-                </button>
+                  <ChevronLeft />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className={`${styles.guildButtonNext} absolute rounded-full -right-5 top-1/2 z-10`}
+                >
+                  <ChevronRight />
+                </Button> */}
               </div>
-            </div>
+            )}
             {myGuilds?.length === 0 && (
               <div className="text-center">
                 <EmptyLottie className="w-[280px] mt-6" noText={true}>
@@ -332,73 +295,44 @@ export default function InnerPage() {
           </div>
 
           {/* 내가 보유한 게임 목록 */}
-          <div>
+          <div className="flex flex-col gap-6">
             <p className="font-suit text-3xl font-semibold">내가 보유한 게임 목록</p>
-
-            {/* <div className="flex gap-6">
-              {myGames?.map((data) => <PopularCard key={data.gameData.appid} data={data.gameData} />)}
-            </div> */}
-            {/* <Swiper
-                scrollbar={{ hide: true }}
-                modules={[Pagination]}
-                pagination={{
-                  clickable:true
-                  // type: undefined,
-                }}
-                loop={true}
-                slidesPerView={1}
-                className='w-full'
-              >
-              {myGames?.map((group, idx) => (
-                <SwiperSlide key={idx}>
-                  <div className="flex gap-6 min-w-full justify-center">
-                    {group.map((item) => (
-                      <div key={item.gameData.appid} className="w-[410px] shrink-0">
-                        <PopularCard
-                          // key={item.gameData?.appid}
-                          data={item.gameData}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                </SwiperSlide>
-              ))}
-            </Swiper> */}
-
-            <Swiper
-              spaceBetween={10}
-              slidesPerView={3}
-              direction="horizontal"
-              modules={[Pagination]}
-              style={{ width: '100%', height: 'auto' }}
-            >
-              {myGames?.map((data, index) => (
-                <SwiperSlide key={index}>
-                  <PopularCard key={data.gameData.appid} data={data.gameData} />
-                </SwiperSlide>
-              ))}
-            </Swiper>
-
-            {/* <Swiper
-              spaceBetween={10}
-              slidesPerView={3}
-              direction="horizontal"
-              modules={[Pagination]}
-              // pagination={{
-              //   // clickable: true,
-              //   type: undefined,
-              // }}
-            >
-              {myGames?.map((data, index) => (
-                <SwiperSlide key={index}>
-                  <div className="flex flex-col-3 gap-6">
-                    {data.map((data) => (
-                    <PopularCard key={data.gameData.appid} data={data.gameData} />
-                    ))}
-                  </div>
-                </SwiperSlide>
-              ))}
-            </Swiper> */}
+            {myGames && (
+              <div className="flex flex-col-3 gap-6 relative">
+                <Swiper
+                  spaceBetween={10}
+                  slidesPerView={3}
+                  direction="horizontal"
+                  mousewheel={true}
+                  modules={[Pagination, Navigation]}
+                  style={{ width: '100%', height: 'auto' }}
+                  navigation={{
+                    nextEl: `.${styles.gameButtonNext}`,
+                    prevEl: `.${styles.gameButtonPrev}`,
+                  }}
+                >
+                  {myGames.slice(0, 10).map((data, index) => (
+                    <SwiperSlide key={index}>
+                      <PopularCard data={data.gameData} />
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+                {/* <Button
+                  variant="outline"
+                  size="icon"
+                  className={`${styles.gameButtonPrev} absolute rounded-full -left-5 top-1/3 z-10`}
+                >
+                  <ChevronLeft />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className={`${styles.gameButtonNext} absolute rounded-full -right-5 top-1/3 z-10`}
+                >
+                  <ChevronRight />
+                </Button> */}
+              </div>
+            )}
 
             {myGames?.length === 0 && (
               <div className="text-center">
@@ -420,11 +354,43 @@ export default function InnerPage() {
           {/* 참여중인 파티 */}
           <div className="flex flex-col gap-6">
             <p className="font-suit text-3xl font-semibold">참여중인 파티</p>
-            <div className="flex">
-              <div className="grid grid-cols-3 gap-6">
-                {myParties?.map((party) => <PartyCard key={party.partyId} data={party} />)}
+            {myParties && (
+              <div className="flex flex-col-3 gap-6 relative">
+                <Swiper
+                  spaceBetween={10}
+                  slidesPerView={3}
+                  direction="horizontal"
+                  mousewheel={true}
+                  modules={[Pagination, Navigation]}
+                  style={{ width: '100%', height: 'auto' }}
+                  navigation={{
+                    nextEl: `.${styles.partyButtonNext}`,
+                    prevEl: `.${styles.partyButtonPrev}`,
+                  }}
+                >
+                  {myParties.slice(0, 10).map((data, index) => (
+                    <SwiperSlide key={index}>
+                      <PartyCard data={data} />
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+                {/* <Button
+                  variant="outline"
+                  size="icon"
+                  className={`${styles.partyButtonPrev} absolute rounded-full -left-5 top-1/2 z-10`}
+                >
+                  <ChevronLeft />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className={`${styles.partyButtonNext} absolute rounded-full -right-5 top-1/2 z-10`}
+                >
+                  <ChevronRight />
+                </Button> */}
               </div>
-            </div>
+            )}
+
             {myParties?.length === 0 && (
               <div className="text-center">
                 <EmptyLottie className="w-[280px] mt-6" noText={true}>
@@ -443,17 +409,46 @@ export default function InnerPage() {
           </div>
 
           {/* 참여한 파티 로그 */}
-
           <div className="flex flex-col gap-6">
             <p className="font-suit text-3xl font-semibold">참여한 파티 로그</p>
 
-            <div className="grid grid-cols-3 gap-6">
-              {paginatedLogs?.map((partyLog) => <PartyLogCard key={partyLog.partyId} data={partyLog} />)}
+            {paginatedLogs && (
+              <div className="flex flex-col-3 gap-6 relative">
+                <Swiper
+                  spaceBetween={10}
+                  slidesPerView={3}
+                  direction="horizontal"
+                  mousewheel={true}
+                  modules={[Pagination, Navigation]}
+                  style={{ width: '100%', height: 'auto' }}
+                  navigation={{
+                    nextEl: `.${styles.partyLogButtonPrev}`,
+                    prevEl: `.${styles.partyLogButtonNext}`,
+                  }}
+                >
+                  {paginatedLogs.slice(0, 10).map((data, index) => (
+                    <SwiperSlide key={index}>
+                      <PartyLogCard data={data} />
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+                {/* <Button
+                  variant="outline"
+                  size="icon"
+                  className={`${styles.partyLogButtonPrev} absolute rounded-full -right-5 top-1/2 z-20`}
+                >
+                  <ChevronRight />
+                </Button>
 
-              {/* {paginatedLogs?.map((partyLog) => (
-                <PartyLogCard key={partyLog.party_info.party_name} data={partyLog} />
-              ))} */}
-            </div>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className={`${styles.partyLogButtonNext} absolute rounded-full -right-5 top-1/2 z-20`}
+                >
+                  <ChevronRight />
+                </Button> */}
+              </div>
+            )}
 
             {myPartyLogs?.length === 0 && (
               <div className="text-center">
@@ -468,13 +463,6 @@ export default function InnerPage() {
                     파티 하러 가기!
                   </RetroButton>
                 </EmptyLottie>
-              </div>
-            )}
-
-            {myPartyLogs?.length !== 0 && (
-              // {/* {totalItems > PAGE_SIZE && ( */}
-              <div className="mt-10">
-                <CustomPagination totalItems={totalItems} pageSize={PAGE_SIZE} />
               </div>
             )}
           </div>

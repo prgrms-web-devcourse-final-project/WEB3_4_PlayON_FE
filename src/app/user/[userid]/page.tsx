@@ -1,33 +1,29 @@
 'use client';
 
-import PopularCard from '@/components/game/PopularCard';
 import GuildHorizon from '@/components/guild/guild-horizon';
 import PartyCard from '@/components/party/PartyCard';
 import PartyLogCard from '@/components/party/PartyLogCard';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
-import { Carousel, CarouselApi, CarouselContent, CarouselItem } from '@/components/ui/carousel';
-import { gameSimple } from '@/types/games';
 import { guild } from '@/types/guild';
 import { getPartyRes } from '@/types/party';
-import { dumuserGameSimple } from '@/utils/dummyData';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import SteamSVG from '@/components/svg/steam';
 import Tag from '@/components/common/Tag';
 import { useMembers } from '@/api/members';
 import { userDetail } from '@/types/user';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import EmptyLottie from '@/components/common/EmptyLottie';
-import RetroButton from '@/components/common/RetroButton';
-import { PATH } from '@/constants/routes';
-import CustomPagination from '@/components/common/CustomPagination';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
+import 'swiper/css/pagination';
+import 'swiper/css/navigation';
+import { Pagination, Navigation } from 'swiper/modules';
+import { Button } from '@/components/ui/button';
+import styles from '../me/myPage.module.css';
 
 export default function UserInfoPage() {
-  const dumuserGameArr = new Array<gameSimple>(8).fill(dumuserGameSimple);
-
-  const [api, setApi] = useState<CarouselApi>();
-
   const memberApi = useMembers();
   const [userInfo, SetUserInfo] = useState<userDetail | null>(null);
   const [userGuilds, setuserGuilds] = useState<guild[] | null>([]);
@@ -38,12 +34,8 @@ export default function UserInfoPage() {
   const userid = Number(params?.userid) as number;
 
   console.log('targetUserid', userid);
-  const [currentPage, setCurrentPage] = useState(1);
 
   const searchParams = useSearchParams();
-
-  const PAGE_SIZE = 6;
-  const totalItems = userPartyLogs?.length;
 
   useEffect(() => {
     const GetMe = async () => {
@@ -107,20 +99,9 @@ export default function UserInfoPage() {
     }
   }, [searchParams]);
 
-  const paginatedLogs = useMemo(() => {
-    const startIdx = (currentPage - 1) * PAGE_SIZE;
-    //   return dumuserPartyLogList?.slice(startIdx, startIdx + PAGE_SIZE);
-    // }, [dumuserPartyLogList, currentPage]);
-    return userPartyLogs?.slice(startIdx, startIdx + PAGE_SIZE);
-  }, [userPartyLogs, currentPage]);
-  // if (!userInfo) return <div className="text-center pt-28">로딩 중...</div>;
-
-  // const defauiltAvatar = '/img/_defilmmopruy.jpg';
-  const defauiltAvatar = '/img/dumuser_profile.jpg';
+  const defaultAvatar = '/img/dummy_profile.jpg';
 
   const router = useRouter();
-  // const member = useMembers();
-  // const { setUser } = useAuthStore();
 
   return (
     <main>
@@ -131,8 +112,7 @@ export default function UserInfoPage() {
             {userInfo ? (
               <div className="flex gap-7 relative">
                 <Avatar className="bg-neutral-400 w-24 h-24">
-                  {/* <AvatarImage src={ (userInfo.img_src ? (userInfo.img_src) : (defauiltAvatar) )}  /> */}
-                  <AvatarImage className="object-cover" src={userInfo.img_src || defauiltAvatar} />
+                  <AvatarImage className="object-cover" src={userInfo.img_src || defaultAvatar} />
                 </Avatar>
 
                 <div>
@@ -204,148 +184,143 @@ export default function UserInfoPage() {
             )}
           </div>
 
-          {/* 너의 길드 */}
+          {/* 나의 길드 */}
           <div className="flex flex-col gap-6">
-            <p className="font-suit text-3xl font-semibold">{userInfo?.nickname}의 길드</p>
-
-            <div className="flex flex-col-3 gap-6 relative">
-              <div className="rounded-xl" onPointerDownCapture={(e) => e.stopPropagation}>
-                <Carousel
-                  opts={{
-                    align: 'start',
-                    loop: false,
-                  }}
-                  orientation="horizontal"
-                  className="w-full "
-                  setApi={setApi}
-                >
-                  <CarouselContent className="select-none">
-                    {dumuserGameArr.map((_, ind) => {
-                      return (
-                        <CarouselItem key={ind} className={``}>
-                          <div className="grid grid-cols-3 gap-6">
-                            {userGuilds?.map((guild) => <GuildHorizon key={guild.guild_name} data={guild} />)}
-                          </div>
-                        </CarouselItem>
-                      );
-                    })}
-                  </CarouselContent>
-                </Carousel>
-              </div>
-
-              <div className="absolute top-40 -left-7">
-                <button
-                  className="h-12 w-12 bg-white flex items-center justify-center rounded-full border border-neutral-200
-                   hover:bg-neutral-200 transition-colors
-                   "
-                  onClick={() => {
-                    console.log(api?.canScrollPrev());
-                    if (api?.canScrollPrev()) api.scrollPrev();
+            <p className="font-suit text-3xl font-semibold">{userInfo?.nickname}님의 길드</p>
+            {userGuilds && (
+              <div className="flex flex-col-3 gap-6 relative">
+                <Swiper
+                  spaceBetween={10}
+                  slidesPerView={3}
+                  direction="horizontal"
+                  mousewheel={true}
+                  modules={[Pagination, Navigation]}
+                  style={{ width: '100%', height: 'auto' }}
+                  navigation={{
+                    nextEl: `.${styles.guildButtonNext}`,
+                    prevEl: `.${styles.guildButtonPrev}`,
                   }}
                 >
-                  <ChevronLeft className="text-black" />
-                </button>
-              </div>
-
-              <div className="absolute top-40 -right-7">
-                <button
-                  className="h-12 w-12 bg-white flex items-center justify-center rounded-full border border-neutral-200
-                  hover:bg-neutral-200 transition-colors
-                  "
-                  onClick={() => {
-                    console.log(api?.canScrollNext());
-                    if (api?.canScrollNext()) api.scrollNext();
-                  }}
+                  {userGuilds.slice(0, 10).map((data, index) => (
+                    <SwiperSlide key={index}>
+                      <GuildHorizon data={data} />
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+                {/* <Button
+                  variant="outline"
+                  size="icon"
+                  className={`${styles.guildButtonPrev} absolute rounded-full -left-5 top-1/2 z-10`}
                 >
-                  <ChevronRight className="text-black" />
-                </button>
+                  <ChevronLeft />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className={`${styles.guildButtonNext} absolute rounded-full -right-5 top-1/2 z-10`}
+                >
+                  <ChevronRight />
+                </Button> */}
               </div>
-            </div>
+            )}
             {userGuilds?.length === 0 && (
               <div className="text-center">
-                <EmptyLottie className="w-[280px] mt-6" noText={true}>
-                  <RetroButton
-                    type="purple"
-                    className="mt-4"
-                    callback={() => {
-                      router.push(PATH.guild_list);
-                    }}
-                  >
-                    길드 가입 하러 가기!
-                  </RetroButton>
-                </EmptyLottie>
+                <EmptyLottie className="w-[280px] mt-6" text="가입중인 길드가 없습니다." />
               </div>
             )}
           </div>
 
-          {/* 내가 보유한 게임 목록 */}
-          {/* <div className="flex flex-col gap-6">
-            <p className="font-suit text-3xl font-semibold">내가 보유한 게임 목록</p>
-            <div className="flex gap-6">
-              {userGames?.map((data) => <PopularCard key={data.appid} data={data.gameData} />)}
-              <PopularCard data={dumuserGameSimple} />
-              <PopularCard data={dumuserGameSimple} />
-              <PopularCard data={dumuserGameSimple} />
-            </div>
-          </div> */}
-
-          {/* 너가 참여중인 파티 */}
+          {/* 참여중인 파티 */}
           <div className="flex flex-col gap-6">
-            <p className="font-suit text-3xl font-semibold">참여중인 파티</p>
-            <div className="flex">
-              <div className="grid grid-cols-3 gap-6">
-                {userParties?.map((party) => <PartyCard key={party.partyId} data={party} />)}
+            <p className="font-suit text-3xl font-semibold">{userInfo?.nickname}님이 참여중인 파티</p>
+            {userParties && (
+              <div className="flex flex-col-3 gap-6 relative">
+                <Swiper
+                  spaceBetween={10}
+                  slidesPerView={3}
+                  direction="horizontal"
+                  mousewheel={true}
+                  modules={[Pagination, Navigation]}
+                  style={{ width: '100%', height: 'auto' }}
+                  navigation={{
+                    nextEl: `.${styles.partyButtonNext}`,
+                    prevEl: `.${styles.partyButtonPrev}`,
+                  }}
+                >
+                  {userParties.slice(0, 10).map((data, index) => (
+                    <SwiperSlide key={index}>
+                      <PartyCard data={data} />
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+                {/* <Button
+                  variant="outline"
+                  size="icon"
+                  className={`${styles.partyButtonPrev} absolute rounded-full -left-5 top-1/2 z-10`}
+                >
+                  <ChevronLeft />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className={`${styles.partyButtonNext} absolute rounded-full -right-5 top-1/2 z-10`}
+                >
+                  <ChevronRight />
+                </Button> */}
               </div>
-            </div>
+            )}
+
             {userParties?.length === 0 && (
               <div className="text-center">
-                <EmptyLottie className="w-[280px] mt-6" noText={true}>
-                  <RetroButton
-                    type="purple"
-                    className="mt-4"
-                    callback={() => {
-                      router.push(PATH.party_list);
-                    }}
-                  >
-                    파티 하러 가기!
-                  </RetroButton>
-                </EmptyLottie>
+                <EmptyLottie className="w-[280px] mt-6" text="참여중인 파티가 없습니다." />
               </div>
             )}
           </div>
 
-          {/* 너가 참여한 파티 로그 */}
+          {/* 참여한 파티 로그 */}
           <div className="flex flex-col gap-6">
-            <p className="font-suit text-3xl font-semibold">참여한 파티 로그</p>
+            <p className="font-suit text-3xl font-semibold">{userInfo?.nickname}님이 참여한 파티 로그</p>
 
-            <div className="grid grid-cols-3 gap-6">
-              {paginatedLogs?.map((partyLog) => <PartyLogCard key={partyLog.partyId} data={partyLog} />)}
-
-              {/* {paginatedLogs?.map((partyLog) => (
-                            <PartyLogCard key={partyLog.party_info.party_name} data={partyLog} />
-                          ))} */}
-            </div>
+            {userPartyLogs && (
+              <div className="flex flex-col-3 gap-6 relative">
+                <Swiper
+                  spaceBetween={10}
+                  slidesPerView={3}
+                  direction="horizontal"
+                  mousewheel={true}
+                  modules={[Pagination, Navigation]}
+                  style={{ width: '100%', height: 'auto' }}
+                  navigation={{
+                    nextEl: `.${styles.partyLogButtonPrev}`,
+                    prevEl: `.${styles.partyLogButtonNext}`,
+                  }}
+                >
+                  {userPartyLogs.slice(0, 10).map((data, index) => (
+                    <SwiperSlide key={index}>
+                      <PartyLogCard data={data} />
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+                {/* <Button
+                  variant="outline"
+                  size="icon"
+                  className={`${styles.partyLogButtonPrev} absolute rounded-full -left-5 top-1/2 z-20`}
+                >
+                  <ChevronLeft />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className={`${styles.partyLogButtonNext} absolute rounded-full -right-5 top-1/2 z-20`}
+                >
+                  <ChevronRight />
+                </Button> */}
+              </div>
+            )}
 
             {userPartyLogs?.length === 0 && (
               <div className="text-center">
-                <EmptyLottie className="w-[280px] mt-6" noText={true}>
-                  <RetroButton
-                    type="purple"
-                    className="mt-4"
-                    callback={() => {
-                      router.push(PATH.party_list);
-                    }}
-                  >
-                    파티 하러 가기!
-                  </RetroButton>
-                </EmptyLottie>
-              </div>
-            )}
-
-            {userPartyLogs?.length !== 0 && (
-              // {/* {totalItems > PAGE_SIZE && ( */}
-              <div className="mt-10">
-                <CustomPagination totalItems={totalItems} pageSize={PAGE_SIZE} />
+                <EmptyLottie className="w-[280px] mt-6" text="참여한 파티 로그가 없습니다." />
               </div>
             )}
           </div>

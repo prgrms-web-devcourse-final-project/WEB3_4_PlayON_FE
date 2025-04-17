@@ -1,0 +1,19 @@
+.guildButtonNext:after,
+.guildButtonPrev::after {
+  display: none;
+}
+
+.gameButtonPrev::after,
+.gameButtonPrev::after {
+  display: none;
+}
+
+.partyButtonPrev::after,
+.partyButtonPrev::after {
+  display: none;
+}
+
+.partyLogButtonPrev::after,
+.partyLogButtonPrev::after {
+  display: none;
+}
