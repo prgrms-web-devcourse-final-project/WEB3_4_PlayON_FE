@@ -103,6 +103,15 @@ export default function Community() {
     queryClient.refetchQueries({ queryKey: ['FreePostComments', boardId], exact: true });
   }
 
+  const alertLogin = () => {
+    if (!user) {
+      Toast.toast({
+        title: '로그인 후 이용해주세요',
+        variant: 'primary',
+      });
+    }
+  };
+
   useEffect(() => {
     if (postData) {
       setIsLiked(postData.isLiked);
@@ -171,7 +180,7 @@ export default function Community() {
                 </div>
               )}
               <SafeHtml html={postData.content} className={`${styles.ql}`} />
-              <div className="flex justify-end gap-2">
+              <div className="flex justify-end gap-2" onClick={alertLogin}>
                 <Toggle
                   variant="outline"
                   size="lg"
@@ -226,7 +235,10 @@ export default function Community() {
                     </form>
                   </Form>
                 ) : (
-                  <div className="w-full border border-neutral-300 h-24 rounded-lg px-4 py-3 text-base text-neutral-500">
+                  <div
+                    className="w-full border border-neutral-300 h-24 rounded-lg px-4 py-3 text-base text-neutral-500"
+                    onClick={alertLogin}
+                  >
                     <Link href={PATH.login} className="hover:text-purple-500 hover:font-bold">
                       로그인
                     </Link>{' '}
