@@ -128,8 +128,8 @@ export default function GameDetail({ params }: { params: { gameid: string } }) {
         const convPartyLogs = data.partyLogList.map((_) => convertToClientPartyLog(_, data.game.appid));
         if (data) {
           slides.current = [
-            ...data.game.screenshots.map<slide>((e) => ({ contentType: 'screenshot', contentUrl: e })),
             ...data.game.movies.map<slide>((e) => ({ contentType: 'movie', contentUrl: substrVideoURL(e) })),
+            ...data.game.screenshots.map<slide>((e) => ({ contentType: 'screenshot', contentUrl: e })),
           ];
           console.log(data);
           return {
