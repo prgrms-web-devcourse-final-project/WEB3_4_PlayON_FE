@@ -20,6 +20,7 @@ import GameSearch from '@/components/common/GameSearch';
 import EmptyLottie from '@/components/common/EmptyLottie';
 import RetroButton from '@/components/common/RetroButton';
 import { useToast } from '@/hooks/use-toast';
+import RotateFillSVG from '@/components/svg/rotate_fill';
 
 export default function InnerPage() {
   const imageList = [
@@ -30,20 +31,18 @@ export default function InnerPage() {
     { title: 'Dark Souls 3', img_src: '/img/hero/bg_gameList_5.webp' },
   ];
   const dummyGames = new Array(12).fill(dummyGameDetail2);
-
   const genres = ['액션', '인디', '어드벤처', '시뮬레이션', 'RPG', '전략', '캐주얼'] as const;
   const playerTypes = ['멀티플레이', '싱글플레이'] as const;
   const releaseStatuses = ['발매', '출시예정'] as const;
   const [genre, setGenre] = useState<boolean[]>([true, ...genres.map(() => false)]);
   const [playerType, setPlayerType] = useState<boolean[]>([...playerTypes.map(() => false)]);
   const [releaseStatus, setReleaseStatus] = useState<boolean[]>([...releaseStatuses.map(() => false)]);
-
   const [keyword, setKeyword] = useState<string>('');
   const [mac, setMac] = useState(false);
   const [releaseDate, setReleaseDate] = useState<Date | undefined>(undefined);
-
   const searchParams = useSearchParams();
   const totalItems = useRef(48);
+  const [resetHovered, setResetHovered] = useState(false);
 
   function convertToClientGame(data: game): gameDetail {
     return {
@@ -110,7 +109,6 @@ export default function InnerPage() {
       return dummyGames;
     },
   });
-
   const { toast } = useToast();
   const router = useRouter();
 
@@ -120,6 +118,7 @@ export default function InnerPage() {
     const ReleaseStatus = params.get('releaseStatus');
     const Mac = params.get('mac');
     const Keyword = params.get('name');
+    console.log(Keyword);
     const ReleaseDate = params.get('releaseDate');
 
     if (Genre) {
@@ -127,11 +126,9 @@ export default function InnerPage() {
     }
     if (PlayerType) setPlayerType(PlayerType === '멀티플레이' ? [true, false] : [false, true]);
     if (ReleaseStatus) setReleaseStatus(ReleaseStatus === '발매' ? [true, false] : [false, true]);
-    console.log(releaseStatus);
     if (Mac) setMac(Mac === 'true' ? true : false);
     if (Keyword) setKeyword(Keyword);
     if (ReleaseDate) setReleaseDate(new Date(ReleaseDate));
-    refetch();
   }, []);
   useEffect(() => {
     const newUrl = new URL(window.location.href);
@@ -174,7 +171,8 @@ export default function InnerPage() {
     } else {
       newUrl.searchParams.delete('releaseDate');
     }
-    window.history.pushState({}, '', newUrl);
+    window.history.replaceState({}, '', newUrl);
+    refetch();
   }, [genre, playerType, releaseStatus, mac, releaseDate, keyword, playerTypes, releaseStatuses, genres]);
   useEffect(() => {
     fetchData(searchParams);
@@ -216,11 +214,23 @@ export default function InnerPage() {
         <div className="flex flex-col pt-8 px-12 pb-10">
           <div className="flex flex-col flex-auto gap-2 ">
             <p className="font-bold">게임 이름</p>
-            <div className="flex gap-10">
+            <div className="flex items-center">
               <div className="flex flex-auto items-center rounded-lg bg-white gap-2">
-                <GameSearch onSelect={(e) => setKeyword(e.name)} />
+                <GameSearch onSelect={(e) => setKeyword(e.name)} placeholder={`${keyword}`} />
               </div>
-              <div className="flex items-center gap-2">
+              <div
+                className="w-5 h-5 ml-5"
+                onMouseEnter={() => setResetHovered(true)}
+                onMouseLeave={() => setResetHovered(false)}
+                onClick={() => setKeyword('')}
+                style={resetHovered ? { animation: 'spin 1s infinite', animationDirection: 'reverse' } : {}}
+              >
+                <RotateFillSVG
+                  fill={resetHovered ? '#f21f54' : `#404040`}
+                  className={`transition-colors duration-300 ease-in-out`}
+                />
+              </div>
+              <div className="flex items-center gap-2 ml-5">
                 <Switch checked={mac} onCheckedChange={(e) => setMac(e)} />
                 <p>맥OS 지원</p>
               </div>

@@ -6,9 +6,11 @@ export const useAuthStore = create(
   persist<{
     user: userDetail | undefined;
     memberId: number | undefined;
+    hasHydrated: boolean;
     setUser: (input: userDetail | undefined) => void;
     setMemberId: (input: number | undefined) => void;
     logout: () => void;
+    setHasHydrated: (input: boolean) => void;
   }>(
     (set, get) => ({
       user: undefined,
@@ -22,10 +24,15 @@ export const useAuthStore = create(
       logout: () => {
         set({ user: undefined });
       },
+      setHasHydrated: (input) => set({ hasHydrated: input }),
+      hasHydrated: false,
     }),
     {
       name: 'auth-storage',
       storage: createJSONStorage(() => sessionStorage),
+      onRehydrateStorage: () => (state) => {
+        state?.setHasHydrated(true);
+      },
     }
   )
 );

@@ -23,8 +23,6 @@ type PartyContextType = {
 };
 
 const PartyContext = createContext<PartyContextType | null>(null);
-const WEBSOCKET_URL = process.env.NEXT_PUBLIC_WEBSOCKET_BASE_URL ?? '';
-
 export const PartyContextProvider = ({ children }: { children: React.ReactNode }) => {
   const { user: currentUser, memberId: currentUserId } = useAuthStore();
   const pathname = usePathname();
@@ -166,13 +164,15 @@ export const PartyContextProvider = ({ children }: { children: React.ReactNode }
   );
   return <PartyContext.Provider value={value}>{children}</PartyContext.Provider>;
 };
-
 export const usePartyContext = () => {
   const context = useContext(PartyContext);
   if (!context) throw new Error('usePartyContext must be used within a PartyContextProvider');
   return context;
 };
 
+// ******************************* CHAT CONTEXT PROVIDER ************************************
+
+const WEBSOCKET_URL = process.env.NEXT_PUBLIC_WEBSOCKET_BASE_URL ?? '';
 type ChattingContextType = {
   chatParticipantList: userSimple[];
   isJoined: boolean;
@@ -183,9 +183,7 @@ type ChattingContextType = {
   sendMessage: (message: string) => void;
   cleanUp: () => void;
 };
-
 const ChattingContext = createContext<ChattingContextType | null>(null);
-
 type ChatMessageDTO = {
   senderMemberId: number;
   title: string;
@@ -250,7 +248,6 @@ export const ChattingContextProvider = ({ children }: { children: React.ReactNod
           { headers: { 'Content-Type': 'application/json' } },
           false
         );
-        const WEBSOCKET_URL = process.env.NEXT_PUBLIC_WEBSOCKET_BASE_URL;
         if (response && response.status === 200) {
           if (client.current === null) {
             client.current = new Client({
@@ -396,7 +393,6 @@ export const ChattingContextProvider = ({ children }: { children: React.ReactNod
   );
   return <ChattingContext.Provider value={value}>{children}</ChattingContext.Provider>;
 };
-
 export const useChattingContext = () => {
   const context = useContext(ChattingContext);
   if (!context) throw new Error('useChattingContext must be used within a ChattingContextProvider');

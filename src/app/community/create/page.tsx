@@ -41,7 +41,7 @@ export default function CommunityCreate() {
   const board = useFreeCommunity();
   const router = useRouter();
   const Toast = useToast();
-  const { user } = useAuthStore();
+  const { user, hasHydrated } = useAuthStore();
   const { showAlert } = useAlertStore();
 
   const form = useForm<createCommunityFormType>({
@@ -95,6 +95,9 @@ export default function CommunityCreate() {
   }
 
   useEffect(() => {
+    if (!hasHydrated) {
+      return;
+    }
     if (user) return;
     showAlert(
       '로그인 후 게시글을 작성할 수 있습니다.',

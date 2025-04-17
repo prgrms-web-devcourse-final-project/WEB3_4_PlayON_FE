@@ -8,9 +8,10 @@ type searchedGame = { appid: string; name: string };
 type Props = {
   onSelect: (game: searchedGame) => void;
   className?: string;
+  placeholder?: string;
 };
 
-const GameSearch = ({ onSelect, className }: Props) => {
+const GameSearch = ({ onSelect, className, placeholder }: Props) => {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const game = useGame();
   const [query, setQuery] = useState<string>('');
@@ -56,7 +57,7 @@ const GameSearch = ({ onSelect, className }: Props) => {
     >
       <CommandInput
         className=""
-        placeholder="게임 이름을 검색하세요"
+        placeholder={placeholder ?? '게임 이름을 검색하세요'}
         value={query ?? ''}
         onValueChange={setQuery}
         onFocus={() => {
