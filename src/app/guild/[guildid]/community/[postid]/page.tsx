@@ -13,7 +13,7 @@ import { Toggle } from '@/components/ui/toggle';
 import { PATH } from '@/constants/routes';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Eye, ThumbsUp, Trash2 } from 'lucide-react';
+import { ThumbsUp, Trash2 } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -111,9 +111,9 @@ export default function GuildCommunityDetail() {
                   <p className="text-base text-neutral-500">{postData.created_at.toLocaleDateString()}</p>
                   <Tag background="medium">#{postData.tag}</Tag>
                 </div>
-                <div className="flex text-neutral-400 space-x-1 items-center">
+                {/* <div className="flex text-neutral-400 space-x-1 items-center">
                   <Eye className="size-5" /> <span>{postData.hits}</span>
-                </div>
+                </div> */}
               </div>
             </div>
             <div className={`flex  ${postData.isAuthor ? 'justify-between' : 'justify-end'}`}>
