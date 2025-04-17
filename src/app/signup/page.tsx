@@ -58,12 +58,12 @@ export default function SignupInitial() {
   const [submitHover, setSubmitHover] = useState(false);
 
   return (
-    <div className="bg-purple-900 text-purple-400 w-full h-screen flex flex-col items-center mt-[68px] pb-20">
+    <div className="bg-purple-900 text-purple-400 w-full min-h-screen flex flex-col items-center mt-[68px] pb-20">
       <div className="overlay pointer-events-none"></div>
       <div className="scanline pointer-events-none"></div>
       <div className="scrollanimation">
-        <div className="mt-16 flex flex-col pb-10">
-          <div className="flex gap-5 mb-20">
+        <div className="flex flex-col gap-10 mt-20">
+          <div className="flex gap-10">
             <div className="">
               <pre className="text-xs glow">{playOnASCII}</pre>
             </div>
@@ -72,7 +72,7 @@ export default function SignupInitial() {
               <p className="text-2xl font-dgm glow">the game never ends</p>
             </div>
           </div>
-          <div className="font-dgm text-purple-400 mt-5 flex flex-col items-center dashed-border mb-10">
+          <div className="font-dgm text-purple-400 flex flex-col items-center dashed-border">
             <p className="text-4xl text-purple-400 font-dgm bg-purple-900 title">회원가입</p>
             <div className="flex flex-col gap-3 pb-8">
               <Form {...form}>
@@ -133,7 +133,7 @@ export default function SignupInitial() {
               </Form>
             </div>
           </div>
-          <div className="font-dgm text-purple-400 mt-5 flex flex-col items-center dashed-border mb-10">
+          <div className="font-dgm text-purple-400 flex flex-col items-center dashed-border">
             <p className="text-4xl text-purple-400 font-dgm bg-purple-900 title">STEAM으로 회원가입</p>
             <div className="p-2 pb-8">
               <button
@@ -151,7 +151,7 @@ export default function SignupInitial() {
             <Link href="/login">
               <p className="font-dgm text-2xl glow hover:text-purple-200 cursor-pointer">{`[ 로그인하러 가기 ]`}</p>
             </Link>
-            <Link href="/signup">
+            <Link href="/">
               <p className="font-dgm text-2xl glow hover:text-purple-200 cursor-pointer">{`[ 메인으로 돌아가기 ]`}</p>
             </Link>
           </div>
