@@ -6,7 +6,13 @@ import SectionTitle from '@/components/common/SectionTitle';
 import PickCard from '@/components/game/PickCard';
 import PopularCard from '@/components/game/PopularCard';
 import SteamCard from '@/components/game/SteamCard';
-import { dummyGameSimple } from '@/utils/dummyData';
+import {
+  dummyGameSimple,
+  gamesPopularDummyData,
+  steamBaldursGate,
+  steamCounterStrike,
+  steamRankingDummyData,
+} from '@/utils/dummyData';
 import styles from './game.module.css';
 import { useQuery } from '@tanstack/react-query';
 import { game, useGame } from '@/api/game';
@@ -165,7 +171,7 @@ export default function Game() {
   };
   const PartyMemberPicks = (games: gameDetailWithAppId[]) => {
     return (
-      <div className="text-center">
+      <div className="">
         <SectionTitle
           title="파티원 PICK"
           subtitle="최근 함께 파티에 참여한 유저들이 플레이했어요"
@@ -217,7 +223,7 @@ export default function Game() {
                     </Link>
                   ))}
                 {(!popularGames || popularGames.length <= 0) &&
-                  mainDummyMyGames.map((e) => <PopularCard data={e} key={`popular_${e.appid}`} />)}
+                  gamesPopularDummyData.map((e) => <PopularCard data={e} key={`popular_${e.appid}`} />)}
               </div>
             </div>
           </div>
@@ -256,11 +262,11 @@ export default function Game() {
             <div className="wrapper py-12 space-y-8">
               <p className="text-5xl font-suit font-bold text-white">STEAM RANKING</p>
               <div className="flex gap-6">
-                <Link href={GAME_ROUTE.game_detail(steamRanking ? steamRanking[0].appid : 1)}>
+                <Link href={GAME_ROUTE.game_detail(steamRanking ? steamRanking[0].appid : steamCounterStrike.appid)}>
                   <div className="min-w-[845px] space-y-8">
                     <div className="relative pt-3">
                       <img
-                        src={steamRanking ? steamRanking[0].img_src : ''}
+                        src={steamRanking ? steamRanking[0].img_src : steamCounterStrike.img_src}
                         alt=""
                         className="w-full rounded-xl bg-neutral-400 object-cover"
                       />
@@ -270,7 +276,7 @@ export default function Game() {
                     </div>
                     <div className="space-y-4">
                       <p className="font-suit text-5xl font-bold text-white">
-                        {steamRanking ? steamRanking[0].title : ''}
+                        {steamRanking ? steamRanking[0].title : steamCounterStrike.title}
                       </p>
                       <p className="text-lg text-white font-medium">
                         {steamRanking ? steamRanking[0].genre.join(', ') : []}
@@ -279,20 +285,17 @@ export default function Game() {
                   </div>
                 </Link>
                 <div className="hidden xl:grid grid-cols-2 gap-6 w-[411px]">
-                  {steamRanking && steamRanking.length > 0 ? (
-                    steamRanking.slice(1, 5).map((e, ind) => (
-                      <Link href={GAME_ROUTE.game_detail(e.appid)} key={`steamRanking_${ind + 1}`}>
-                        <SteamCard theme="dark" data={e} className="min-w-24" />
-                      </Link>
-                    ))
-                  ) : (
-                    <>
-                      <SteamCard data={dummyGameSimple} className="text-white min-w-24" theme="dark" />
-                      <SteamCard data={dummyGameSimple} className="text-white min-w-24" theme="dark" />
-                      <SteamCard data={dummyGameSimple} className="text-white min-w-24" theme="dark" />
-                      <SteamCard data={dummyGameSimple} className="text-white min-w-24" theme="dark" />
-                    </>
-                  )}
+                  {steamRanking && steamRanking.length > 0
+                    ? steamRanking.slice(1, 5).map((e, ind) => (
+                        <Link href={GAME_ROUTE.game_detail(e.appid)} key={`steamRanking_${ind + 1}`}>
+                          <SteamCard theme="dark" data={e} className="min-w-24" />
+                        </Link>
+                      ))
+                    : steamRankingDummyData.slice(1, 5).map((e, ind) => (
+                        <Link href={GAME_ROUTE.game_detail(e.appid ?? 730)} key={`steamRanking_${ind + 1}`}>
+                          <SteamCard theme="dark" data={e} className="min-w-24" />
+                        </Link>
+                      ))}
                 </div>
               </div>
             </div>
@@ -329,7 +332,7 @@ export default function Game() {
               />
               <div className="grid grid-cols-3 md:grid-cols-3 gap-6">
                 {(!popularGames || popularGames.length <= 0) &&
-                  mainDummyMyGames.map((e) => <PopularCard data={e} key={`playtime_${e.appid}`} />)}
+                  gamesPopularDummyData.map((e) => <PopularCard data={e} key={`playtime_${e.appid}`} />)}
               </div>
             </>
           )}

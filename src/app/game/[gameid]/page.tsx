@@ -159,7 +159,7 @@ export default function GameDetail({ params }: { params: { gameid: string } }) {
   const SelectedSlideBuilder = (props: { ind: number }) => {
     const selectedSlideData = slides.current[props.ind];
     return (
-      <div className="border border-neutral-400">
+      <div className="">
         {selectedSlideData.contentType === 'screenshot' && <img src={selectedSlideData.contentUrl} alt="" />}
         {selectedSlideData.contentType === 'movie' && (
           <video className="w-full aspect-video" controls>
@@ -239,11 +239,7 @@ export default function GameDetail({ params }: { params: { gameid: string } }) {
                 <div className="flex content-between">
                   <Swiper slidesPerView={5} spaceBetween={10}>
                     {slides.current.map((_, ind) => (
-                      <SwiperSlide
-                        key={ind}
-                        onClick={() => slideSelectHandler(ind)}
-                        className="border border-neutral-400"
-                      >
+                      <SwiperSlide key={ind} onClick={() => slideSelectHandler(ind)}>
                         {_.contentType === 'screenshot' && <img src={_.contentUrl} alt="" className="" />}
                         {_.contentType === 'movie' && (
                           <div className="h-full overflow-hidden">

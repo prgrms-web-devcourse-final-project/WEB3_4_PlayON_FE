@@ -112,7 +112,6 @@ export const dummyGameDetail2: gameDetail = {
     'Counter-Strike는 20년이 넘는 시간 동안 전 세계 수백만 명의 플레이어가 모여 수준 높은 경쟁을 펼칠 수 있는 플랫폼을 제공해 왔습니다. 그리고 이제 곧 Counter-Strike 2와 함께 새로운 CS 시대의 막이 열립니다.',
 };
 export const dummyGameDetails = [dummyGameDetail, dummyGameDetail2];
-
 export const dummyGuild: guild = {
   created_at: new Date(),
   description: loremIpsum,
@@ -141,14 +140,12 @@ export const dummyGuild2: guild = {
   main_game: dummyGameSimple,
   myRole: '',
 };
-
 export const dummyGuildUser: guildUser = {
   user: dummyUserDetail,
   guild_role: 'manager', // 'leader', 'manager', 'user'
   joined_at: new Date(),
   num_guild_posts: 17,
 };
-
 export const dummyParty: party = {
   party_name: '파티이름입니다.',
   description: '설명입니다.설명입니다.설명입니다. 설명입니다. 설명입니다. 설명입니다. 설명입니다.',
@@ -159,7 +156,6 @@ export const dummyParty: party = {
   selected_game: dummyGameSimple,
   num_maximum: 10,
 };
-
 export const dummyPartyLog: partyLog = {
   party_info: dummyParty,
   player_recommend: [
@@ -271,7 +267,6 @@ export const mainDummyGames: gameDetail[] = [
     about: '',
   },
 ];
-
 export const mainDummyMyGames: gameSimple[] = [
   {
     title: 'Space for Sale',
@@ -298,7 +293,6 @@ export const mainDummyMyGames: gameSimple[] = [
     appid: 1621690,
   },
 ];
-
 export const mainDummyGuilds: guild[][] = [
   [
     {
@@ -511,7 +505,6 @@ export const mainDummyGuilds: guild[][] = [
     },
   ],
 ];
-
 export const mainDummyPosts: postSimple[] = [
   {
     postId: 5,
@@ -564,7 +557,6 @@ export const mainDummyPosts: postSimple[] = [
     tag: '파티모집',
   },
 ];
-
 export const guildDummyGames: gameSimple[] = [
   {
     title: 'Apex LEGENDS™',
@@ -601,3 +593,74 @@ export const guildDummyGames: gameSimple[] = [
     appid: 578080,
   },
 ];
+
+export const steamCounterStrike = {
+  background_src: '',
+  genre: ['Action', 'Free To Play'],
+  img_src: 'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/730/header.jpg?t=1729703045',
+  title: 'Counter-Strike 2',
+  appid: 730,
+};
+export const steamREPO = {
+  background_src: '',
+  genre: ['Action', 'Early Access'],
+  img_src:
+    'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3241660/1ea445e044a2d5b09cfa8291350b63ebed6e5741/header.jpg?t=1743517226',
+  title: 'R.E.P.O',
+  appid: 3241660,
+};
+export const steamBattleground = {
+  background_src: '',
+  genre: ['Action', 'Free To Play', 'Adventure', 'Massively Multiplayer'],
+  img_src:
+    'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/578080/841ea38bc58cabb70aef65365cf50bc2d79329d9/header.jpg?t=1744161491',
+  title: 'PUBG: BATTLEGROUNDS',
+  appid: 578080,
+};
+export const steamMonsterHunter = {
+  background_src: '',
+  genre: ['Action', 'Adventure', 'RPG'],
+  img_src: 'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2246340/header.jpg?t=1743743917',
+  title: 'Monster Hunter Wilds',
+  appid: 2246340,
+};
+export const steamBaldursGate = {
+  background_src: '',
+  genre: ['Adventure', 'RPG', 'Strategy'],
+  img_src:
+    'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1086940/6b6b46089067683cecf6acfc92b39fc4c72e3fac/header.jpg?t=1744744220',
+  title: "Baldur's Gate 3",
+  appid: 1086940,
+};
+
+export const steamOvercooked = {
+  background_src: '',
+  genre: ['Action', 'Indie', 'Casual'],
+  img_src: 'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/728880/header.jpg?t=1744040119',
+  title: 'Overcooked! 2',
+  appid: 728880,
+};
+export const steamStardewValley = {
+  background_src: '',
+  genre: ['RPG', 'Indie', 'Simulation'],
+  img_src: 'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/413150/header.jpg?t=1711128146',
+  title: 'Stardew Valley',
+  appid: 413150,
+};
+export const steamDontStarve = {
+  background_src: '',
+  genre: ['Action', 'Adventure', 'RPG', 'Strategy', 'Indie', 'Simulation'],
+  img_src:
+    'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/322330/79d5b7a41e42242a3ef2070d1094ed3e5b6769f4/header_alt_assets_33.jpg?t=1744308346',
+  title: "Don't Starve Together",
+  appid: 322330,
+};
+
+export const steamRankingDummyData: gameSimple[] = [
+  steamCounterStrike,
+  steamREPO,
+  steamBattleground,
+  steamMonsterHunter,
+  steamBaldursGate,
+];
+export const gamesPopularDummyData: gameSimple[] = [steamOvercooked, steamStardewValley, steamDontStarve];
