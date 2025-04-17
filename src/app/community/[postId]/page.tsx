@@ -12,7 +12,7 @@ import { PATH } from '@/constants/routes';
 import { useToast } from '@/hooks/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Eye, ThumbsUp, Trash2 } from 'lucide-react';
+import { ThumbsUp, Trash2 } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -62,7 +62,7 @@ export default function Community() {
   // console.log('commentsData', commentsData);
 
   const handleClickLike = useCallback(async () => {
-    const response = await freeBoard.PostLike(parseInt(boardId));
+    await freeBoard.PostLike(parseInt(boardId));
     // console.log(response);
     queryClient.refetchQueries({ queryKey: ['FreePostDetail', boardId], exact: true });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -70,8 +70,9 @@ export default function Community() {
 
   const handleClickUnLike = useCallback(async () => {
     const response = await freeBoard.PostUnlike(parseInt(boardId));
-    // console.log(response);
+    console.log(response);
     queryClient.refetchQueries({ queryKey: ['FreePostDetail', boardId], exact: true });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [boardId]);
 
   const handleClick = useCallback(() => {
@@ -81,6 +82,7 @@ export default function Community() {
     } else {
       handleClickUnLike();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLiked]);
 
   const deletePost = useCallback(async () => {
@@ -100,6 +102,15 @@ export default function Community() {
     if (response) form.setValue('comment', '');
     queryClient.refetchQueries({ queryKey: ['FreePostComments', boardId], exact: true });
   }
+
+  const alertLogin = () => {
+    if (!user) {
+      Toast.toast({
+        title: '로그인 후 이용해주세요',
+        variant: 'primary',
+      });
+    }
+  };
 
   useEffect(() => {
     if (postData) {
@@ -129,9 +140,9 @@ export default function Community() {
                     <p className="text-base text-neutral-500">{postData.created_at.toLocaleDateString()}</p>
                     <Tag background="medium">#{postData.tag}</Tag>
                   </div>
-                  <div className="flex text-neutral-400 space-x-1 items-center">
+                  {/* <div className="flex text-neutral-400 space-x-1 items-center">
                     <Eye className="size-5" /> <span>{postData.hits}</span>
-                  </div>
+                  </div> */}
                 </div>
               </div>
               <div className={`flex  ${postData.isAuthor ? 'justify-between' : 'justify-end'}`}>
@@ -169,7 +180,7 @@ export default function Community() {
                 </div>
               )}
               <SafeHtml html={postData.content} className={`${styles.ql}`} />
-              <div className="flex justify-end gap-2">
+              <div className="flex justify-end gap-2" onClick={alertLogin}>
                 <Toggle
                   variant="outline"
                   size="lg"
@@ -224,7 +235,10 @@ export default function Community() {
                     </form>
                   </Form>
                 ) : (
-                  <div className="w-full border border-neutral-300 h-24 rounded-lg px-4 py-3 text-base text-neutral-500">
+                  <div
+                    className="w-full border border-neutral-300 h-24 rounded-lg px-4 py-3 text-base text-neutral-500"
+                    onClick={alertLogin}
+                  >
                     <Link href={PATH.login} className="hover:text-purple-500 hover:font-bold">
                       로그인
                     </Link>{' '}

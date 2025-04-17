@@ -18,7 +18,9 @@ jobs:
           node-version: '18'
 
       - name: Create .env file
-        run: echo "NEXT_PUBLIC_API_BASE_URL=${{ secrets.NEXT_PUBLIC_API_BASE_URL }}" > .env
+        run: |
+          echo "NEXT_PUBLIC_API_BASE_URL=${{ secrets.NEXT_PUBLIC_API_BASE_URL }}" > .env
+          echo "NEXT_PUBLIC_WEBSOCKET_BASE_URL=${{ secrets.NEXT_PUBLIC_WEBSOCKET_BASE_URL }}" >> .env
 
       - name: Log in to DockerHub
         run: echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
@@ -39,4 +41,8 @@ jobs:
             docker stop playon-frontend || true
             docker rm playon-frontend || true
             docker pull ${{ secrets.DOCKER_IMAGE_NAME_FE }}
-            docker run -d --name playon-frontend -p 3000:3000 ${{ secrets.DOCKER_IMAGE_NAME_FE }}
+            docker run -d --name playon-frontend \
+              -v /etc/localtime:/etc/localtime:ro \
+              -p 3000:3000 ${{ secrets.DOCKER_IMAGE_NAME_FE }}
+
+            docker image prune -f

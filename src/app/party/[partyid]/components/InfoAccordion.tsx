@@ -214,7 +214,7 @@ function ParticipationInfo() {
             idx < 8 ? (
               <Link key={idx} href={PATH.user_page(`${member.memberId}`)} target="_blank">
                 <Avatar className="bg-purple-400 w-12 h-12 aspect-square rounded-full overflow-hidden">
-                  <AvatarImage src={member.profileImg || '/img/dummy_profile.jpg'} className="object-cover" />
+                  <AvatarImage src={member.profileImg || '/img/dummy_profile.jpg'} className="size-full object-cover" />
                 </Avatar>
               </Link>
             ) : null

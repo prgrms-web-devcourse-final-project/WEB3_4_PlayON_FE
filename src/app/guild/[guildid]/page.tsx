@@ -20,7 +20,7 @@ import { useAlertStore } from '@/stores/alertStore';
 
 export default function GuildDetails() {
   const router = useRouter();
-  const { user } = useAuthStore();
+  const { user, hasHydrated } = useAuthStore();
   const { showAlert } = useAlertStore();
 
   const params = useParams();
@@ -45,9 +45,12 @@ export default function GuildDetails() {
   }, [guildData]);
 
   useEffect(() => {
+    if (!hasHydrated) {
+      return;
+    }
     if (user) return;
     showAlert(
-      '로그인 후 길드를 구경할 수 있습니다.',
+      '로그인 후 파티를 생성할 수 있습니다.',
       '로그인 페이지로 갈까요?',
       () => {
         router.push(PATH.login);
@@ -56,7 +59,7 @@ export default function GuildDetails() {
         router.back();
       }
     );
-  }, []);
+  }, [user, hasHydrated]);
   return (
     <div className="flex flex-col mt-36 mb-36 gap-14">
       <Suspense fallback={<GuildInfoSectionSkeleton />}>{guildData && <GuildInfoSection guildId={guildId} />}</Suspense>
