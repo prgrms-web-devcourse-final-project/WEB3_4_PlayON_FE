@@ -129,7 +129,7 @@ export default function InnerPage() {
     GetMyParties();
     GetMyPartyLogs();
     // }
-  }, []);
+  }, [user, hasHydrated]);
 
   useEffect(() => {
     const pageParam = searchParams.get('page');
@@ -155,7 +155,7 @@ export default function InnerPage() {
     }
     if (user) return;
     showAlert(
-      '로그인 후 파티를 생성할 수 있습니다.',
+      '로그인 후 이용할 수 있습니다.',
       '로그인 페이지로 갈까요?',
       () => {
         router.push(PATH.login);
@@ -351,17 +351,7 @@ export default function InnerPage() {
 
               {myGames?.length === 0 && (
                 <div className="text-center">
-                  <EmptyLottie className="w-[280px] mt-6" noText={true}>
-                    <RetroButton
-                      type="purple"
-                      className="mt-4"
-                      callback={() => {
-                        router.push(PATH.game_list);
-                      }}
-                    >
-                      게임 하러 가기!
-                    </RetroButton>
-                  </EmptyLottie>
+                  <EmptyLottie className="w-[280px] mt-6" text="보유한 게임이 없어요"></EmptyLottie>
                 </div>
               )}
             </div>

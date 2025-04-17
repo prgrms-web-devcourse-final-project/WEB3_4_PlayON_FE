@@ -20,6 +20,7 @@ import { AdditionalInfo } from '@/types/guildApi';
 import { useToast } from '@/hooks/use-toast';
 import { useNotification } from '@/api/notification';
 import { useMembers } from '@/api/members';
+import { useAlertStore } from '@/stores/alertStore';
 
 interface guildUserProps {
   memberId: string;
@@ -126,7 +127,6 @@ export default function GuildAdmin() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [guildid]);
 
-
   const managers = members.filter((m) => m.data.guild_role === 'MANAGER');
 
   const auth = useAuthStore();
@@ -134,14 +134,14 @@ export default function GuildAdmin() {
   const managersMamberid = managers.map((m) => m.memberId === String(auth?.memberId));
 
   // console.log('맞니??', managersMamberid);
-  
-  const isManager = managersMamberid.some(data => data === true);
+
+  const isManager = managersMamberid.some((data) => data === true);
   // console.log('매니져 있니없니', isManager);
-  
+
   const notification = useNotification();
   const member = useMembers();
   const { toast } = useToast();
-
+  const { showAlert } = useAlertStore();
 
   // 길드 멤버 초대 핸들러
   const handleInviteMember = async (nickname: string) => {
@@ -237,6 +237,10 @@ export default function GuildAdmin() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [guildid]
   );
+
+  const handleClickDelete = () => {
+    showAlert('정말로 길드를 삭제하시겠습니까?', '', deleteGuild, () => {});
+  };
 
   const fetchPendingMemberList = useCallback(async () => {
     const response = await guildJoin.GetGuildJoinRequests(Number(guildid));
@@ -370,23 +374,20 @@ export default function GuildAdmin() {
             <p className="text-3xl text-neutral-900 font-bold">길드 관리</p>
           </AccordionTrigger>
           <AccordionContent>
-            <div className="flex gap-6">
-              <div className="flex flex-col gap-6">
-                <div className="flex border border-neutral-400 rounded-lg gap-4 py-4 px-5">
-                  <Button className="">길드 정보 변경하기</Button>
-                  {isLeader && (
-                    <Button
-                      variant={'outline'}
-                      className="border-0 shadow-none hover:bg-cherry-main hover:text-white"
-                      onClick={deleteGuild}
-                    >
-                      길드 삭제
-                    </Button>
-                  )}
-                </div>
-                <Button className="h-16" onClick={() => router.push(PATH.party_create)}>
+            <div className="flex gap-6 items-center">
+              <div className="flex flex-col gap-6 items-center">
+                <Button className="h-16 w-44" onClick={() => router.push(PATH.party_create)}>
                   파티 생성
                 </Button>
+                {isLeader && (
+                  <Button
+                    variant="outline"
+                    className="shadow-none hover:bg-cherry-main hover:text-white h-12 w-44"
+                    onClick={handleClickDelete}
+                  >
+                    길드 삭제
+                  </Button>
+                )}
               </div>
               <div className="flex flex-col flex-auto border border-neutral-400 rounded-2xl px-6 py-8">
                 <p className="text-2xl font-bold mb-3">길드 초대하기</p>
@@ -446,7 +447,7 @@ export default function GuildAdmin() {
                   total={members.length}
                   onToggleManager={() => handleToggleManager(member.memberId, member.data.guild_role)}
                   onKickMember={() => handleKickMember(member.memberId)}
-                  isManager = {isManager}
+                  isManager={isManager}
                 />
               );
             })}
