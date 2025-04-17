@@ -90,9 +90,9 @@ export default function Header() {
           <Link className={linkStyle} href={PATH.guild}>
             게임 길드
           </Link>
-          {/* <Link className={linkStyle} href={PATH.game}>
+          <Link className={linkStyle} href={PATH.game}>
             게임 추천
-          </Link> */}
+          </Link>
           <Link className={linkStyle} href={PATH.community}>
             커뮤니티
           </Link>
