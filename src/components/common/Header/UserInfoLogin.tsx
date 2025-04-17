@@ -58,6 +58,7 @@ export default function UserInfoLogin({ userInfo }: Props) {
     if (partyId[1] === 'party') {
       const success = await member.AcceptPartyInvite(parseInt(partyId[2]));
       if (success) {
+        await notification.ReadNotification(data.id);
         router.push(data.redirectUrl);
       }
     }
@@ -68,6 +69,7 @@ export default function UserInfoLogin({ userInfo }: Props) {
   const handleDecline = async (data: Notification) => {
     const partyId = data.redirectUrl.split('/');
     if (partyId[1] === 'party') {
+      await notification.ReadNotification(data.id);
       await member.DeclinePartyInvite(parseInt(partyId[2]));
     }
   };
@@ -124,14 +126,19 @@ export default function UserInfoLogin({ userInfo }: Props) {
               {isFetched &&
                 notifications &&
                 notifications.notification.length > 0 &&
-                notifications.notification.map((e) => (
-                  <NotificationItem
-                    data={e}
-                    key={`noti_${e.id}_${e.createdAt}`}
-                    handleAccept={async () => await handleAccept(e)}
-                    handleDecline={async () => await handleDecline(e)}
-                  />
-                ))}
+                notifications.notification.map((e) => {
+                  if (e.isRead) return;
+                  else {
+                    return (
+                      <NotificationItem
+                        data={e}
+                        key={`noti_${e.id}_${e.createdAt}`}
+                        handleAccept={async () => await handleAccept(e)}
+                        handleDecline={async () => await handleDecline(e)}
+                      />
+                    );
+                  }
+                })}
             </ScrollArea>
           </DropdownMenuItem>
         </DropdownMenuGroup>
