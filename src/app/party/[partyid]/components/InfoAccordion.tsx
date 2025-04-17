@@ -65,7 +65,13 @@ export default function InfoAccordion() {
           {open && (
             <div className="flex py-8 gap-8 align-tops">
               <div className="w-[460px]">
-                <PartyHostInfo partyHost={partyInfo.partyMembers[0]} />
+                <PartyHostInfo
+                  partyHost={
+                    partyInfo.partyMembers[
+                      partyInfo.partyMembers.findIndex((member) => member.memberId === partyInfo.ownerId)
+                    ]
+                  }
+                />
                 <div className="flex flex-col gap-3 pt-8">
                   {viewLevel('owner') && pendingList.length > 0 && (
                     <>
@@ -153,7 +159,6 @@ function PartyManageButtons() {
   const router = useRouter();
   const { showAction } = useInviteStore();
   const notification = useNotification();
-  const inviteCallback = useCallback(async () => {}, []);
 
   if (!partyInfo) return <></>;
   return (
