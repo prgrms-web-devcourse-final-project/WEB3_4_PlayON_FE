@@ -663,4 +663,5 @@ export const steamRankingDummyData: gameSimple[] = [
   steamMonsterHunter,
   steamBaldursGate,
 ];
+export const gamesPopularDummyDataAppId: number[] = [728880, 413150, 322330];
 export const gamesPopularDummyData: gameSimple[] = [steamOvercooked, steamStardewValley, steamDontStarve];

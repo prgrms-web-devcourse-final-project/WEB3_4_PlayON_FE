@@ -16,6 +16,7 @@ import { useGuild } from '@/api/guild';
 import { GUILD_ROUTE } from '@/constants/routes/guild';
 import { Skeleton } from '@/components/ui/skeleton';
 import { guild } from '@/types/guild';
+import { gamesPopularDummyData, gamesPopularDummyDataAppId } from '@/utils/dummyData';
 
 type SearchGuildWithGameProps = {
   leftCarouselTitle: ReactNode;
@@ -33,16 +34,26 @@ export default function SearchGuildWithGame(props: SearchGuildWithGameProps) {
   const { user, hasHydrated } = useAuthStore();
   const member = useMembers();
   const guild = useGuild();
-  const { data: MyGames, isFetched } = useQuery({
+  const { data: MyGames, refetch } = useQuery({
     queryKey: ['MyGames'],
-    queryFn: async () => await member.GetMeGames(),
-    enabled: user !== undefined,
+    queryFn: async () => {
+      const data = await member.GetMeGames();
+      if (data && data.length > 0) {
+        return data;
+      }
+      return gamesPopularDummyData.map((e, ind) => ({
+        gameData: e,
+        appid: gamesPopularDummyDataAppId[ind],
+      }));
+    },
+    enabled: hasHydrated && user !== undefined,
   });
   const { data: GuildSearch, refetch: guildRefetch } = useQuery({
     queryKey: ['GuildsByGame'],
     queryFn: async () => {
-      if (MyGames) {
+      if (MyGames && MyGames[selectedGame].appid) {
         const ret = await guild.GetGuildRecommend(MyGames[selectedGame].appid);
+        if (ret && ret.length <= 0) return [];
         while (ret && ret.length < 3) {
           ret.push(ret[0]);
         }
@@ -54,24 +65,23 @@ export default function SearchGuildWithGame(props: SearchGuildWithGameProps) {
   });
   useEffect(() => {
     guildRefetch();
-  }, [selectedGame, guildRefetch]);
+  }, [selectedGame, guildRefetch, MyGames]);
+  useEffect(() => {
+    if (hasHydrated) {
+      refetch();
+    }
+  }, [hasHydrated, refetch]);
 
   function GuildCardBuilder() {
     switch (true) {
       case MyGames && MyGames.length > 0 && GuildSearch && GuildSearch.length > 0:
-        return GuildSearch.map((e) => (
-          <CarouselItem key={`${e.guild_id}`} className="basis-1/2">
+        return GuildSearch.map((e, ind) => (
+          <CarouselItem key={`${e.guild_id}_${ind}`} className="basis-1/2">
             <Link href={GUILD_ROUTE.guild_detail(e.guild_id as unknown as string)}>
               <GuildFullImage data={e} className="" />
             </Link>
           </CarouselItem>
         ));
-      case MyGames && MyGames.length > 0 && GuildSearch && GuildSearch.length > 0:
-        <>
-          <GuildFullImageSkeleton className="" />
-          <GuildFullImageSkeleton className="" />
-          <GuildFullImageSkeleton className="" />
-        </>;
       default:
         return (
           <>
@@ -90,7 +100,7 @@ export default function SearchGuildWithGame(props: SearchGuildWithGameProps) {
   }
   function GameCardBuilder() {
     switch (true) {
-      case MyGames && MyGames.length > 0:
+      case hasHydrated && MyGames && MyGames.length > 0:
         return MyGames.map((_, ind) => (
           <CarouselItem key={ind} onClick={() => setSelectedGame(ind)} className={`basis-1/3`}>
             <SteamCard data={_.gameData} theme={props.theme} selected={selectedGame === ind} />
@@ -112,7 +122,18 @@ export default function SearchGuildWithGame(props: SearchGuildWithGameProps) {
       className={`w-full min-w-[1280px] flex justify-center gap-[134px] ${props.theme === 'dark' ? 'bg-purple-800' : ''} ${props.className}`}
     >
       <div className="w-[627px] flex flex-col justify-center">
-        <div className="flex">{props.leftCarouselTitle}</div>
+        {!props.forMain && hasHydrated && !user && (
+          <div className="text-2xl font-bold text-purple-50 mb-9">
+            <p>스팀인증을 하시고 보유게임으로 길드 검색을 해보세요!</p>
+          </div>
+        )}
+        {!props.forMain && hasHydrated && user && MyGames && MyGames.length <= 0 && (
+          <div className="text-2xl font-bold text-purple-50 mb-9">
+            <p>보유중인 게임이 없으시군요... 이런 게임은 어떠세요?</p>
+          </div>
+        )}
+        {!props.forMain && hasHydrated && user && <div className="flex">{props.leftCarouselTitle}</div>}
+        {props.forMain && <div className="flex">{props.leftCarouselTitle}</div>}
         <div className="h-[250px] rounded-xl mb-6" onPointerDownCapture={(e) => e.stopPropagation}>
           {hasHydrated && (
             <Carousel
