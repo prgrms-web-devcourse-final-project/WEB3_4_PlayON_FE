@@ -75,6 +75,7 @@ export type getPartyRes = {
   total: number;
   hit: number;
   appId: number;
+  ownerId: number;
 };
 
 export type getMainPendingPartyRes = {
