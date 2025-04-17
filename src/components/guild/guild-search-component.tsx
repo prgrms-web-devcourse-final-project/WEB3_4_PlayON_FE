@@ -9,6 +9,7 @@ import { CoolerCategoryMenu } from '@/app/signup/userdata/component/cooler-categ
 import TiltToggle from '../common/tilt-toggle';
 import GameSearch from '../common/GameSearch';
 import { useAuthStore } from '@/stores/authStore';
+import RotateFillSVG from '../svg/rotate_fill';
 
 type GuildSearchComponentProps = {
   className: string;
@@ -27,6 +28,7 @@ export default function GuildSearchComponent(props: GuildSearchComponentProps) {
   const selectedArr = [partyStyle, skillLevel, gender, friendly];
   const [charText, setCharText] = useState('');
   const { user } = useAuthStore();
+  const [resetHovered, setResetHovered] = useState(false);
 
   const handleSearchByName = useCallback((value: string) => {
     setSearchByName(value);
@@ -148,7 +150,7 @@ export default function GuildSearchComponent(props: GuildSearchComponentProps) {
     <div className={`flex rounded-xl py-8 px-9 bg-neutral-50 gap-14 ${props.className}`}>
       <div className="flex flex-col w-[774px] gap-12">
         <div className="flex gap-4">
-          <div className="flex flex-col w-full gap-2">
+          <div className="flex flex-col flex-auto gap-2">
             <p>길드 이름</p>
             <SearchBar
               onChange={() => {}}
@@ -158,13 +160,30 @@ export default function GuildSearchComponent(props: GuildSearchComponentProps) {
               iconStyle="size-4"
             />
           </div>
-          <div className="flex flex-col w-full gap-2">
+          <div className="flex flex-col flex-auto gap-2">
             <p>길드 메인 게임</p>
-            <GameSearch
-              onSelect={(e) => {
-                handleSearchName(e.appid);
-              }}
-            />
+            <div className="flex items-center">
+              <div className="bg-white rounded-xl flex-auto">
+                <GameSearch
+                  onSelect={(e) => {
+                    console.log(e);
+                    handleSearchName(e.appid);
+                  }}
+                />
+              </div>
+              <div
+                className="w-5 h-5 ml-5"
+                onMouseEnter={() => setResetHovered(true)}
+                onMouseLeave={() => setResetHovered(false)}
+                onClick={() => setSelectedGames('')}
+                style={resetHovered ? { animation: 'spin 1s infinite', animationDirection: 'reverse' } : {}}
+              >
+                <RotateFillSVG
+                  fill={resetHovered ? '#f21f54' : `#404040`}
+                  className={`transition-colors duration-300 ease-in-out`}
+                />
+              </div>
+            </div>
           </div>
         </div>
         <div className="flex flex-col gap-2">

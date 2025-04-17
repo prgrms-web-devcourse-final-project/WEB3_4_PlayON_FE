@@ -12,6 +12,7 @@ import { useSearchParams } from 'next/navigation';
 import { formatISO } from 'date-fns';
 import { useAuthStore } from '@/stores/authStore';
 import GameSearch from '../common/GameSearch';
+import RotateFillSVG from '../svg/rotate_fill';
 
 type PartySearchComponentProps = {
   className: string;
@@ -29,6 +30,7 @@ export default function PartySearchComponent(props: PartySearchComponentProps) {
   const searchParam = useSearchParams();
   const { user } = useAuthStore();
   const [charText, setCharText] = useState('');
+  const [resetHovered, setResetHovered] = useState(false);
 
   const handleSearchByName = useCallback((value: string) => {
     setSearchName(value);
@@ -183,11 +185,27 @@ export default function PartySearchComponent(props: PartySearchComponentProps) {
           </div>
           <div className="flex flex-col w-[60%] gap-2">
             <p>게임 이름</p>
-            <GameSearch
-              onSelect={(e) => {
-                handleSearchByName(e.appid);
-              }}
-            />
+            <div className="flex items-center">
+              <div className="bg-white rounded-xl flex-auto">
+                <GameSearch
+                  onSelect={(e) => {
+                    handleSearchByName(e.appid);
+                  }}
+                />
+              </div>
+              <div
+                className="w-5 h-5 ml-5"
+                onMouseEnter={() => setResetHovered(true)}
+                onMouseLeave={() => setResetHovered(false)}
+                onClick={() => setSearchName('')}
+                style={resetHovered ? { animation: 'spin 1s infinite', animationDirection: 'reverse' } : {}}
+              >
+                <RotateFillSVG
+                  fill={resetHovered ? '#f21f54' : `#404040`}
+                  className={`transition-colors duration-300 ease-in-out`}
+                />
+              </div>
+            </div>
           </div>
         </div>
         <div>
