@@ -12,6 +12,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
+      <head>
+        {/* <meta httpEquiv="Content-Security-Policy" content="upgrade-insecure-requests" /> */}
+        <link rel="icon" href="/img/icons/ghost.svg" />
+        <title>PLAY ON</title>
+      </head>
       <body className="overflow-x-hidden">
         <ReactQueryProviders>
           <Header />

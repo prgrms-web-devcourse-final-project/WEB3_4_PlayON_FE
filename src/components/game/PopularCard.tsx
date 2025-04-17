@@ -29,11 +29,11 @@ export default function PopularCard(props: PopularCardProps) {
 
   return (
     <>
-      <Link href={PATH.game_detail(data.appid)}>
+      <Link href={PATH.game_detail(data?.appid)}>
         <div>
-          <img src={data.img_src} className="w-full aspect-[16/7] rounded-xl bg-neutral-400 object-cover" />
-          <p className="mt-4 font-suit text-xl font-semibold"> {data.title}</p>
-          <p className="mt-2 text-sm text-neutral-400 font-medium"> {data.genre.join(', ')}</p>
+          <img src={data?.img_src} className="w-full aspect-[16/7] rounded-xl bg-neutral-400 object-cover" />
+          <p className="mt-4 font-suit text-xl font-semibold"> {data?.title}</p>
+          <p className="mt-2 text-sm text-neutral-400 font-medium"> {data?.genre.join(', ')}</p>
         </div>
       </Link>
     </>

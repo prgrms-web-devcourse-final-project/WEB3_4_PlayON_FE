@@ -46,12 +46,12 @@ export default function InnerPage() {
   }, []);
 
   return (
-    <div className="bg-purple-900 text-purple-400 w-full h-screen flex flex-col items-center mt-[68px]">
+    <div className="bg-purple-900 text-purple-400 w-full h-screen flex flex-col items-center mt-[68px] pb-20">
       <div className="overlay pointer-events-none"></div>
       <div className="scanline pointer-events-none"></div>
       <div className="">
-        <div className="mt-16 flex flex-col pb-10">
-          <div className="flex gap-5 mb-20">
+        <div className="mt-10 flex flex-col pb-10">
+          <div className="flex gap-5 mb-5">
             <div className="">
               <pre className="text-xs glow">{playOnASCII}</pre>
             </div>

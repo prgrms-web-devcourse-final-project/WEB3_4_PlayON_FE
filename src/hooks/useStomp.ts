@@ -21,6 +21,9 @@ export type ChatMemberDTO = {
   message: string;
   sendAt: Date;
 };
+
+const WEBSOCKET_BASE_URL = process.env.NEXT_PUBLIC_WS_BASE_URL;
+
 export const useStomp = () => {
   const axios = useAxios();
   const id = useRef<number | null>(null);
@@ -50,41 +53,43 @@ export const useStomp = () => {
         }[],
       };
       id.current = data.partyId;
-      const client = new Client({
-        webSocketFactory: () => {
-          return new SockJS('http://localhost:8080/ws');
-        },
-        connectHeaders: {
-          'Content-Type': 'application/json',
-          'X-Authorization': `Bearer ${document.cookie.includes('accessToken') ? document.cookie.split('accessToken=')[1].split(';')[0] : ''}`,
-        },
-        reconnectDelay: 5000,
-        heartbeatIncoming: 4000,
-        heartbeatOutgoing: 4000,
-      });
-      client.onConnect = (frame) => {
-        if (id.current === null) {
-          console.error('❌ ID가 없습니다. 연결을 종료합니다.');
-          return;
-        }
-        console.log('🟢 STOMP 연결됨', frame);
-        client.subscribe(CHAT_ENDPOINTS.subscribe_message(id.current), (message) => {
-          const chatMessage: ChatMessageDTO = JSON.parse(message.body);
-          console.log('📥 메시지 수신됨:', chatMessage);
+      if (WEBSOCKET_BASE_URL) {
+        const client = new Client({
+          webSocketFactory: () => {
+            return new SockJS(WEBSOCKET_BASE_URL);
+          },
+          connectHeaders: {
+            'Content-Type': 'application/json',
+            'X-Authorization': `Bearer ${document.cookie.includes('accessToken') ? document.cookie.split('accessToken=')[1].split(';')[0] : ''}`,
+          },
+          reconnectDelay: 5000,
+          heartbeatIncoming: 4000,
+          heartbeatOutgoing: 4000,
         });
-        client.subscribe(CHAT_ENDPOINTS.member_update(id.current), (message) => {
-          const memberUpdate: ChatMemberDTO = JSON.parse(message.body);
-          console.log('👥 멤버 업데이트:', memberUpdate);
-        });
-      };
-      client.onDisconnect = (frame) => {
-        console.log('🔴 STOMP 연결 해제됨', frame);
-      };
-      client.onStompError = (frame) => {
-        console.error('❌ STOMP 에러 발생', frame);
-      };
-      setClient(client);
-      return data;
+        client.onConnect = (frame) => {
+          if (id.current === null) {
+            console.error('❌ ID가 없습니다. 연결을 종료합니다.');
+            return;
+          }
+          console.log('🟢 STOMP 연결됨', frame);
+          client.subscribe(CHAT_ENDPOINTS.subscribe_message(id.current), (message) => {
+            const chatMessage: ChatMessageDTO = JSON.parse(message.body);
+            console.log('📥 메시지 수신됨:', chatMessage);
+          });
+          client.subscribe(CHAT_ENDPOINTS.member_update(id.current), (message) => {
+            const memberUpdate: ChatMemberDTO = JSON.parse(message.body);
+            console.log('👥 멤버 업데이트:', memberUpdate);
+          });
+        };
+        client.onDisconnect = (frame) => {
+          console.log('🔴 STOMP 연결 해제됨', frame);
+        };
+        client.onStompError = (frame) => {
+          console.error('❌ STOMP 에러 발생', frame);
+        };
+        setClient(client);
+        return data;
+      }
     }
     return false;
   }

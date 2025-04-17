@@ -61,10 +61,12 @@ export default function LoginInitial() {
         router.push('/', { scroll: true });
       }, 500);
     } else {
-      toast({ title: '로그인에 실패하였습니다', description: '아이디와 비밀번호를 확인해주세요', variant: 'primary' });
-      setTimeout(() => {
-        router.push('/', { scroll: true });
-      }, 500);
+      toast({
+        title: '로그인에 실패하였습니다',
+        description: '아이디와 비밀번호를 확인해주세요',
+        variant: 'destructive',
+      });
+      setTimeout(() => {}, 500);
     }
   }
   async function steamLogin() {
@@ -77,12 +79,12 @@ export default function LoginInitial() {
   console.log(memberId);
 
   return (
-    <div className="bg-purple-900 text-purple-400 w-full min-h-screen flex flex-col items-center mt-[68px]">
+    <div className="bg-purple-900 text-purple-400 w-full min-h-screen flex flex-col items-center mt-[68px] pb-20">
       <div className="overlay pointer-events-none"></div>
       <div className="scanline pointer-events-none"></div>
       <div className="scrollanimation">
-        <div className="mt-16 flex flex-col pb-10">
-          <div className="flex gap-5 mb-20">
+        <div className="flex flex-col gap-10 mt-20">
+          <div className="flex gap-10">
             <div className="">
               <pre className="text-xs glow">{playOnASCII}</pre>
             </div>
@@ -91,7 +93,7 @@ export default function LoginInitial() {
               <p className="text-2xl font-dgm glow">the game never ends</p>
             </div>
           </div>
-          <div className="font-dgm text-purple-400 mt-5 flex flex-col items-center dashed-border mb-10">
+          <div className="font-dgm text-purple-400 flex flex-col items-center dashed-border">
             <p className="text-4xl text-purple-400 font-dgm bg-purple-900 title">로그인</p>
             <div className="flex flex-col gap-3 pb-8">
               <Form {...form}>
@@ -152,7 +154,7 @@ export default function LoginInitial() {
               </Form>
             </div>
           </div>
-          <div className="font-dgm text-purple-400 mt-5 flex flex-col items-center dashed-border">
+          <div className="font-dgm text-purple-400 flex flex-col items-center dashed-border">
             <p className="text-4xl text-purple-400 font-dgm bg-purple-900 title">STEAM으로 로그인</p>
             <div className="p-2 pb-8">
               <button
@@ -166,7 +168,7 @@ export default function LoginInitial() {
               </button>
             </div>
           </div>
-          <div className="flex flex-col items-center pb-20">
+          <div className="flex flex-col items-center">
             <p className="font-dgm text-2xl glow">아이디가 없나요?</p>
             <Link href={PATH.signup} scroll={true}>
               <p className="font-dgm text-2xl glow cursor-pointer hover:text-purple-200">{`[ 회원 가입하러 가기 ]`}</p>

@@ -216,8 +216,15 @@ export const useMembers = () => {
   }
 
   // 나의 파티 로그 조회
-  async function GetMyPartyLogs() {
-    const response = await axios.Get(MEMBER.myPartyLogs, {}, true);
+  async function GetMyPartyLogs(data: { page?: number; pageNumber?: number }) {
+    const response = await axios.Get(
+      MEMBER.myPartyLogs,
+      {
+        params: { ...data },
+      },
+      true
+    );
+
     if (response && response.status === 200) {
       const data = response.data.data;
       return data.items.map((data) => {
@@ -408,8 +415,22 @@ export const useMembers = () => {
   }
 
   // 다른 회원의 파티 로그 조회
-  async function GetUserPartyLogs(userId: number) {
-    const response = await axios.Get(MEMBER.userPartyLogs(userId), {}, true);
+  async function GetUserPartyLogs(
+    userId: number,
+    data: {
+      page?: number,
+      pageNumber?: number
+    }
+  ) {
+
+    const response = await axios.Get(
+      MEMBER.userPartyLogs(userId),
+      {
+        params: { ...data },
+      },
+      true
+    );
+    
     if (response && response.status === 200) {
       const data = response.data.data;
       return data.items.map((data) => {

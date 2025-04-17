@@ -8,7 +8,6 @@ import { Client } from '@stomp/stompjs';
 import { usePathname } from 'next/navigation';
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import SockJS from 'sockjs-client';
-import axios from 'axios';
 import { useToast } from '@/hooks/use-toast';
 
 type JoinStateType = 'owner' | 'joined' | 'pending' | 'notJoined';
@@ -40,6 +39,7 @@ export const PartyContextProvider = ({ children }: { children: React.ReactNode }
     const fetchData = async () => {
       if (partyInfo) return;
       const party = await partyAPI.GetParty(Number(nowPartyId));
+      console.log(party);
       if (party) {
         setPartyInfo(party);
       }
@@ -62,7 +62,6 @@ export const PartyContextProvider = ({ children }: { children: React.ReactNode }
     };
     fetchPendingList();
   }, [nowPartyId, currentUser]);
-
   useEffect(() => {
     const fetchPendingList = async () => {
       const pendings = await partyAPI.GetPendingList(nowPartyId);
@@ -86,13 +85,11 @@ export const PartyContextProvider = ({ children }: { children: React.ReactNode }
       setJoinState('notJoined');
     }
   }, [partyInfo, currentUser, nowPartyId]);
-
   const joinParty = useCallback(async () => {
     if (joinState !== 'notJoined') return;
     const res = await partyAPI.PartyJoin(nowPartyId);
     if (res) setJoinState('pending');
   }, [joinState, nowPartyId]);
-
   const cancleJoin = useCallback(async () => {
     const res = await partyAPI.CancleJoin(nowPartyId);
     if (res) {
@@ -101,7 +98,6 @@ export const PartyContextProvider = ({ children }: { children: React.ReactNode }
       console.log('실패');
     }
   }, []);
-
   const acceptJoin = useCallback(async (pendingUser: userRes) => {
     const res = await partyAPI.AcceptPartyJoin(nowPartyId, `${pendingUser.memberId}`);
     if (res == true) {
@@ -115,7 +111,6 @@ export const PartyContextProvider = ({ children }: { children: React.ReactNode }
       setPendingList((prev) => prev.filter((user) => user.memberId !== pendingUser.memberId));
     }
   }, []);
-
   const viewLevel = useCallback(
     (viewLevel: string) => {
       switch (viewLevel) {
@@ -168,7 +163,6 @@ export const PartyContextProvider = ({ children }: { children: React.ReactNode }
     }),
     [partyInfo, pendingList, joinState, viewLevel, joinParty, cancleJoin, acceptJoin, rejectJoin]
   );
-
   return <PartyContext.Provider value={value}>{children}</PartyContext.Provider>;
 };
 
