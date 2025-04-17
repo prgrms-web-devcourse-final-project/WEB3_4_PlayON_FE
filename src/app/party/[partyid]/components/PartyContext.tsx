@@ -25,7 +25,7 @@ type PartyContextType = {
 const PartyContext = createContext<PartyContextType | null>(null);
 
 export const PartyContextProvider = ({ children }: { children: React.ReactNode }) => {
-  const { user: currentUser } = useAuthStore();
+  const { user: currentUser, memberId: currentUserId } = useAuthStore();
   const pathname = usePathname();
   const nowPartyId = useMemo(() => pathname.split('/').filter(Boolean).pop() ?? '1', [pathname]);
 
@@ -69,8 +69,7 @@ export const PartyContextProvider = ({ children }: { children: React.ReactNode }
     };
     if (!currentUser) return;
     if (!partyInfo || !partyInfo.partyMembers) return;
-
-    if (partyInfo.ownerId.toString() === currentUser.memberId) {
+    if (partyInfo.ownerId === currentUserId) {
       //호스트 권한 확인
       if (joinState == 'owner') return;
       setJoinState('owner');
