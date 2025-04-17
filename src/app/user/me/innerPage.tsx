@@ -27,6 +27,8 @@ import 'swiper/css/navigation';
 import { Pagination, Navigation } from 'swiper/modules';
 import { Button } from '@/components/ui/button';
 import styles from './myPage.module.css';
+import { useAuthStore } from '@/stores/authStore';
+import { useAlertStore } from '@/stores/alertStore';
 
 interface resGameProps {
   gameData: {
@@ -47,15 +49,13 @@ export default function InnerPage() {
   const [myPartyLogs, setMyPartyLogs] = useState<partyLog[] | null>([]);
   // const [totalItems, setTotalItems] = useState(0);
 
+  const { user, hasHydrated } = useAuthStore();
+  const { showAlert } = useAlertStore();
+
   const searchParams = useSearchParams();
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const PAGE_SIZE = 6;
-  const totalItems = Number(myPartyLogs?.length);
-  // const dummyPartyLogList: partyLog[] = Array(11).fill(dummyPartyLog);
-  // const totalItems = dummyPartyLogList?.length;
-
   useEffect(() => {
+    if (!user) return;
     const GetMe = async () => {
       try {
         const res = await memberApi.GetMe();
@@ -83,6 +83,7 @@ export default function InnerPage() {
     };
 
     const MyGuilds = async () => {
+      if (!user) return;
       try {
         const res = await memberApi.MyGuilds();
 
@@ -96,6 +97,7 @@ export default function InnerPage() {
     };
 
     const GetMyParties = async () => {
+      if (!user) return;
       try {
         const res = await memberApi.GetMyParties();
         // console.log('파티응답', res);
@@ -106,6 +108,7 @@ export default function InnerPage() {
     };
 
     const GetMyPartyLogs = async () => {
+      if (!user) return;
       const data = {
         page: 1,
         pageSize: 18,
@@ -136,11 +139,6 @@ export default function InnerPage() {
     }
   }, [searchParams]);
 
-  const paginatedLogs = useMemo(() => {
-    const startIdx = (currentPage - 1) * PAGE_SIZE;
-    return myPartyLogs?.slice(startIdx, startIdx + PAGE_SIZE);
-  }, [myPartyLogs, currentPage]);
-
   const defaultAvatar = '/img/dummy_profile.jpg';
 
   const router = useRouter();
@@ -151,117 +149,134 @@ export default function InnerPage() {
     window.location.href = response;
   }
 
+  useEffect(() => {
+    if (!hasHydrated) {
+      return;
+    }
+    if (user) return;
+    showAlert(
+      '로그인 후 파티를 생성할 수 있습니다.',
+      '로그인 페이지로 갈까요?',
+      () => {
+        router.push(PATH.login);
+      },
+      () => {
+        router.back();
+      }
+    );
+  }, [user, hasHydrated]);
   return (
     <main>
-      <section className="wrapper pt-36 pb-16">
-        <div className="flex flex-col gap-16">
-          {/* 나의 정보 */}
-          <div className="w-full px-8 py-9 border border-neutral-300 rounded-2xl">
-            {userMe ? (
-              <div className="flex gap-7 relative">
-                <Avatar className="w-24 h-24">
-                  <AvatarImage className="object-cover" src={userMe.img_src || defaultAvatar} />
-                </Avatar>
+      {user && (
+        <section className="wrapper pt-36 pb-16">
+          <div className="flex flex-col gap-16">
+            {/* 나의 정보 */}
+            <div className="w-full px-8 py-9 border border-neutral-300 rounded-2xl">
+              {userMe ? (
+                <div className="flex gap-7 relative">
+                  <Avatar className="w-24 h-24">
+                    <AvatarImage className="object-cover" src={userMe.img_src || defaultAvatar} />
+                  </Avatar>
 
-                <div>
-                  <div className="flex gap-3">
-                    <p className="font-suit text-2xl font-bold ">{userMe.nickname}</p>
-                  </div>
-
-                  <div className="flex gap-8">
-                    <div className="font-suit text-base font-semibold text-neutral-400 flex">
-                      스팀 아이디 :&nbsp;&nbsp;&nbsp;
-                      {userMe.steam_id ? (
-                        <div>{userMe.steam_id}</div>
-                      ) : (
-                        // <div>{userMe.steam_id.split('@')[0]}</div>
-                        <TooltipProvider>
-                          <Tooltip delayDuration={0}>
-                            <TooltipTrigger>
-                              <button className="flex flex-row gap-1 items-center" onClick={() => steamAuth()}>
-                                <SteamSVG fill={'#8258ff'} stroke="" width={16} height={16} />
-                                <p className="font-suit text-base font-black text-purple-400">STEAM</p>
-                              </button>
-                            </TooltipTrigger>
-                            <TooltipContent side="bottom">
-                              <p className="font-dgm text-sm py-[6px] px-2 leading-4 font-normal">
-                                Steam 연동 페이지로 이동합니다.
-                              </p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                      )}
-                      <div></div>
+                  <div>
+                    <div className="flex gap-3">
+                      <p className="font-suit text-2xl font-bold ">{userMe.nickname}</p>
                     </div>
-                    <p className="font-suit text-base font-semibold text-neutral-400"> 성별 : {userMe.gender}</p>
-                  </div>
 
-                  <div className="gap-5">
-                    <p className="font-suit text-2xl font-bold pt-8">{userMe.nickname} 님의 플레이 스타일</p>
+                    <div className="flex gap-8">
+                      <div className="font-suit text-base font-semibold text-neutral-400 flex">
+                        스팀 아이디 :&nbsp;&nbsp;&nbsp;
+                        {userMe.steam_id ? (
+                          <div>{userMe.steam_id}</div>
+                        ) : (
+                          // <div>{userMe.steam_id.split('@')[0]}</div>
+                          <TooltipProvider>
+                            <Tooltip delayDuration={0}>
+                              <TooltipTrigger>
+                                <button className="flex flex-row gap-1 items-center" onClick={() => steamAuth()}>
+                                  <SteamSVG fill={'#8258ff'} stroke="" width={16} height={16} />
+                                  <p className="font-suit text-base font-black text-purple-400">STEAM</p>
+                                </button>
+                              </TooltipTrigger>
+                              <TooltipContent side="bottom">
+                                <p className="font-dgm text-sm py-[6px] px-2 leading-4 font-normal">
+                                  Steam 연동 페이지로 이동합니다.
+                                </p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        )}
+                        <div></div>
+                      </div>
+                      <p className="font-suit text-base font-semibold text-neutral-400"> 성별 : {userMe.gender}</p>
+                    </div>
 
-                    <div className="flex flex-col rounded-xl gap-2 py-6">
-                      <div className="flex items-center gap-2">
-                        <p className="w-[118px] font-dgm text-neutral-900">플레이 스타일</p>
+                    <div className="gap-5">
+                      <p className="font-suit text-2xl font-bold pt-8">{userMe.nickname} 님의 플레이 스타일</p>
+
+                      <div className="flex flex-col rounded-xl gap-2 py-6">
+                        <div className="flex items-center gap-2">
+                          <p className="w-[118px] font-dgm text-neutral-900">플레이 스타일</p>
+                          <div className="flex gap-2">
+                            <Tag style="retro" size="small" background="dark">
+                              {userMe.party_style}
+                            </Tag>
+                          </div>
+                        </div>
                         <div className="flex gap-2">
+                          <p className="w-[118px] font-dgm text-neutral-900">게임 실력</p>
                           <Tag style="retro" size="small" background="dark">
-                            {userMe.party_style}
+                            {userMe.skill_level}
+                          </Tag>
+                        </div>
+                        <div className="flex gap-2">
+                          <p className="w-[118px] font-dgm text-neutral-900">성별</p>
+                          <Tag style="retro" size="small" background="dark">
+                            {userMe.gender}
                           </Tag>
                         </div>
                       </div>
-                      <div className="flex gap-2">
-                        <p className="w-[118px] font-dgm text-neutral-900">게임 실력</p>
-                        <Tag style="retro" size="small" background="dark">
-                          {userMe.skill_level}
-                        </Tag>
-                      </div>
-                      <div className="flex gap-2">
-                        <p className="w-[118px] font-dgm text-neutral-900">성별</p>
-                        <Tag style="retro" size="small" background="dark">
-                          {userMe.gender}
-                        </Tag>
-                      </div>
+                    </div>
+                  </div>
+                  <div className="absolute -top-1 right-0">
+                    <div className="w-full">
+                      {/* <EditInfo /> */}
+
+                      <Link href="/user/me/modify">
+                        <SquarePen color="#A3A3A3" />
+                      </Link>
                     </div>
                   </div>
                 </div>
-                <div className="absolute -top-1 right-0">
-                  <div className="w-full">
-                    {/* <EditInfo /> */}
+              ) : (
+                <p>유저를 불러오는중</p>
+              )}
+            </div>
 
-                    <Link href="/user/me/modify">
-                      <SquarePen color="#A3A3A3" />
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <p>유저를 불러오는중</p>
-            )}
-          </div>
-
-          {/* 나의 길드 */}
-          <div className="flex flex-col gap-6">
-            <p className="font-suit text-3xl font-semibold">나의 길드</p>
-            {myGuilds && (
-              <div className="flex flex-col-3 gap-6 relative">
-                <Swiper
-                  spaceBetween={10}
-                  slidesPerView={3}
-                  direction="horizontal"
-                  mousewheel={true}
-                  modules={[Pagination, Navigation]}
-                  style={{ width: '100%', height: 'auto' }}
-                  navigation={{
-                    nextEl: `.${styles.guildButtonNext}`,
-                    prevEl: `.${styles.guildButtonPrev}`,
-                  }}
-                >
-                  {myGuilds.slice(0, 10).map((data, index) => (
-                    <SwiperSlide key={index}>
-                      <GuildHorizon data={data} />
-                    </SwiperSlide>
-                  ))}
-                </Swiper>
-                {/* <Button
+            {/* 나의 길드 */}
+            <div className="flex flex-col gap-6">
+              <p className="font-suit text-3xl font-semibold">나의 길드</p>
+              {myGuilds && (
+                <div className="flex flex-col-3 gap-6 relative">
+                  <Swiper
+                    spaceBetween={10}
+                    slidesPerView={3}
+                    direction="horizontal"
+                    mousewheel={true}
+                    modules={[Pagination, Navigation]}
+                    style={{ width: '100%', height: 'auto' }}
+                    navigation={{
+                      nextEl: `.${styles.guildButtonNext}`,
+                      prevEl: `.${styles.guildButtonPrev}`,
+                    }}
+                  >
+                    {myGuilds.slice(0, 10).map((data, index) => (
+                      <SwiperSlide key={index}>
+                        <GuildHorizon data={data} />
+                      </SwiperSlide>
+                    ))}
+                  </Swiper>
+                  {/* <Button
                   variant="outline"
                   size="icon"
                   className={`${styles.guildButtonPrev} absolute rounded-full -left-5 top-1/2 z-10`}
@@ -275,49 +290,49 @@ export default function InnerPage() {
                 >
                   <ChevronRight />
                 </Button> */}
-              </div>
-            )}
-            {myGuilds?.length === 0 && (
-              <div className="text-center">
-                <EmptyLottie className="w-[280px] mt-6" noText={true}>
-                  <RetroButton
-                    type="purple"
-                    className="mt-4"
-                    callback={() => {
-                      router.push(PATH.guild_list);
+                </div>
+              )}
+              {myGuilds?.length === 0 && (
+                <div className="text-center">
+                  <EmptyLottie className="w-[280px] mt-6" noText={true}>
+                    <RetroButton
+                      type="purple"
+                      className="mt-4"
+                      callback={() => {
+                        router.push(PATH.guild_list);
+                      }}
+                    >
+                      길드 가입 하러 가기!
+                    </RetroButton>
+                  </EmptyLottie>
+                </div>
+              )}
+            </div>
+
+            {/* 내가 보유한 게임 목록 */}
+            <div className="flex flex-col gap-6">
+              <p className="font-suit text-3xl font-semibold">내가 보유한 게임 목록</p>
+              {myGames && (
+                <div className="flex flex-col-3 gap-6 relative">
+                  <Swiper
+                    spaceBetween={10}
+                    slidesPerView={3}
+                    direction="horizontal"
+                    mousewheel={true}
+                    modules={[Pagination, Navigation]}
+                    style={{ width: '100%', height: 'auto' }}
+                    navigation={{
+                      nextEl: `.${styles.gameButtonNext}`,
+                      prevEl: `.${styles.gameButtonPrev}`,
                     }}
                   >
-                    길드 가입 하러 가기!
-                  </RetroButton>
-                </EmptyLottie>
-              </div>
-            )}
-          </div>
-
-          {/* 내가 보유한 게임 목록 */}
-          <div className="flex flex-col gap-6">
-            <p className="font-suit text-3xl font-semibold">내가 보유한 게임 목록</p>
-            {myGames && (
-              <div className="flex flex-col-3 gap-6 relative">
-                <Swiper
-                  spaceBetween={10}
-                  slidesPerView={3}
-                  direction="horizontal"
-                  mousewheel={true}
-                  modules={[Pagination, Navigation]}
-                  style={{ width: '100%', height: 'auto' }}
-                  navigation={{
-                    nextEl: `.${styles.gameButtonNext}`,
-                    prevEl: `.${styles.gameButtonPrev}`,
-                  }}
-                >
-                  {myGames.slice(0, 10).map((data, index) => (
-                    <SwiperSlide key={index}>
-                      <PopularCard data={data.gameData} />
-                    </SwiperSlide>
-                  ))}
-                </Swiper>
-                {/* <Button
+                    {myGames.slice(0, 10).map((data, index) => (
+                      <SwiperSlide key={index}>
+                        <PopularCard data={data.gameData} />
+                      </SwiperSlide>
+                    ))}
+                  </Swiper>
+                  {/* <Button
                   variant="outline"
                   size="icon"
                   className={`${styles.gameButtonPrev} absolute rounded-full -left-5 top-1/3 z-10`}
@@ -331,50 +346,50 @@ export default function InnerPage() {
                 >
                   <ChevronRight />
                 </Button> */}
-              </div>
-            )}
+                </div>
+              )}
 
-            {myGames?.length === 0 && (
-              <div className="text-center">
-                <EmptyLottie className="w-[280px] mt-6" noText={true}>
-                  <RetroButton
-                    type="purple"
-                    className="mt-4"
-                    callback={() => {
-                      router.push(PATH.game_list);
+              {myGames?.length === 0 && (
+                <div className="text-center">
+                  <EmptyLottie className="w-[280px] mt-6" noText={true}>
+                    <RetroButton
+                      type="purple"
+                      className="mt-4"
+                      callback={() => {
+                        router.push(PATH.game_list);
+                      }}
+                    >
+                      게임 하러 가기!
+                    </RetroButton>
+                  </EmptyLottie>
+                </div>
+              )}
+            </div>
+
+            {/* 참여중인 파티 */}
+            <div className="flex flex-col gap-6">
+              <p className="font-suit text-3xl font-semibold">참여중인 파티</p>
+              {myParties && (
+                <div className="flex flex-col-3 gap-6 relative">
+                  <Swiper
+                    spaceBetween={10}
+                    slidesPerView={3}
+                    direction="horizontal"
+                    mousewheel={true}
+                    modules={[Pagination, Navigation]}
+                    style={{ width: '100%', height: 'auto' }}
+                    navigation={{
+                      nextEl: `.${styles.partyButtonNext}`,
+                      prevEl: `.${styles.partyButtonPrev}`,
                     }}
                   >
-                    게임 하러 가기!
-                  </RetroButton>
-                </EmptyLottie>
-              </div>
-            )}
-          </div>
-
-          {/* 참여중인 파티 */}
-          <div className="flex flex-col gap-6">
-            <p className="font-suit text-3xl font-semibold">참여중인 파티</p>
-            {myParties && (
-              <div className="flex flex-col-3 gap-6 relative">
-                <Swiper
-                  spaceBetween={10}
-                  slidesPerView={3}
-                  direction="horizontal"
-                  mousewheel={true}
-                  modules={[Pagination, Navigation]}
-                  style={{ width: '100%', height: 'auto' }}
-                  navigation={{
-                    nextEl: `.${styles.partyButtonNext}`,
-                    prevEl: `.${styles.partyButtonPrev}`,
-                  }}
-                >
-                  {myParties.slice(0, 10).map((data, index) => (
-                    <SwiperSlide key={index}>
-                      <PartyCard data={data} />
-                    </SwiperSlide>
-                  ))}
-                </Swiper>
-                {/* <Button
+                    {myParties.slice(0, 10).map((data, index) => (
+                      <SwiperSlide key={index}>
+                        <PartyCard data={data} />
+                      </SwiperSlide>
+                    ))}
+                  </Swiper>
+                  {/* <Button
                   variant="outline"
                   size="icon"
                   className={`${styles.partyButtonPrev} absolute rounded-full -left-5 top-1/2 z-10`}
@@ -388,51 +403,51 @@ export default function InnerPage() {
                 >
                   <ChevronRight />
                 </Button> */}
-              </div>
-            )}
+                </div>
+              )}
 
-            {myParties?.length === 0 && (
-              <div className="text-center">
-                <EmptyLottie className="w-[280px] mt-6" noText={true}>
-                  <RetroButton
-                    type="purple"
-                    className="mt-4"
-                    callback={() => {
-                      router.push(PATH.party_list);
+              {myParties?.length === 0 && (
+                <div className="text-center">
+                  <EmptyLottie className="w-[280px] mt-6" noText={true}>
+                    <RetroButton
+                      type="purple"
+                      className="mt-4"
+                      callback={() => {
+                        router.push(PATH.party_list);
+                      }}
+                    >
+                      파티 하러 가기!
+                    </RetroButton>
+                  </EmptyLottie>
+                </div>
+              )}
+            </div>
+
+            {/* 참여한 파티 로그 */}
+            <div className="flex flex-col gap-6">
+              <p className="font-suit text-3xl font-semibold">참여한 파티 로그</p>
+
+              {myPartyLogs && (
+                <div className="flex flex-col-3 gap-6 relative">
+                  <Swiper
+                    spaceBetween={10}
+                    slidesPerView={3}
+                    direction="horizontal"
+                    mousewheel={true}
+                    modules={[Pagination, Navigation]}
+                    style={{ width: '100%', height: 'auto' }}
+                    navigation={{
+                      nextEl: `.${styles.partyLogButtonPrev}`,
+                      prevEl: `.${styles.partyLogButtonNext}`,
                     }}
                   >
-                    파티 하러 가기!
-                  </RetroButton>
-                </EmptyLottie>
-              </div>
-            )}
-          </div>
-
-          {/* 참여한 파티 로그 */}
-          <div className="flex flex-col gap-6">
-            <p className="font-suit text-3xl font-semibold">참여한 파티 로그</p>
-
-            {paginatedLogs && (
-              <div className="flex flex-col-3 gap-6 relative">
-                <Swiper
-                  spaceBetween={10}
-                  slidesPerView={3}
-                  direction="horizontal"
-                  mousewheel={true}
-                  modules={[Pagination, Navigation]}
-                  style={{ width: '100%', height: 'auto' }}
-                  navigation={{
-                    nextEl: `.${styles.partyLogButtonPrev}`,
-                    prevEl: `.${styles.partyLogButtonNext}`,
-                  }}
-                >
-                  {paginatedLogs.slice(0, 10).map((data, index) => (
-                    <SwiperSlide key={index}>
-                      <PartyLogCard data={data} />
-                    </SwiperSlide>
-                  ))}
-                </Swiper>
-                {/* <Button
+                    {myPartyLogs.slice(0, 10).map((data, index) => (
+                      <SwiperSlide key={index}>
+                        <PartyLogCard data={data} />
+                      </SwiperSlide>
+                    ))}
+                  </Swiper>
+                  {/* <Button
                   variant="outline"
                   size="icon"
                   className={`${styles.partyLogButtonPrev} absolute rounded-full -right-5 top-1/2 z-20`}
@@ -447,27 +462,28 @@ export default function InnerPage() {
                 >
                   <ChevronRight />
                 </Button> */}
-              </div>
-            )}
+                </div>
+              )}
 
-            {myPartyLogs?.length === 0 && (
-              <div className="text-center">
-                <EmptyLottie className="w-[280px] mt-6" noText={true}>
-                  <RetroButton
-                    type="purple"
-                    className="mt-4"
-                    callback={() => {
-                      router.push(PATH.party_list);
-                    }}
-                  >
-                    파티 하러 가기!
-                  </RetroButton>
-                </EmptyLottie>
-              </div>
-            )}
+              {myPartyLogs?.length === 0 && (
+                <div className="text-center">
+                  <EmptyLottie className="w-[280px] mt-6" noText={true}>
+                    <RetroButton
+                      type="purple"
+                      className="mt-4"
+                      callback={() => {
+                        router.push(PATH.party_list);
+                      }}
+                    >
+                      파티 하러 가기!
+                    </RetroButton>
+                  </EmptyLottie>
+                </div>
+              )}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
     </main>
   );
 }
