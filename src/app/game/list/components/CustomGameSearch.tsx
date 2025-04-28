@@ -23,7 +23,7 @@ const CustomGameSearch = ({ className, placeholder }: Props) => {
   const [loading, setLoading] = useState(false);
   const [searchedList, setSearchedList] = useState<searchedGame[]>([]);
   const router = useRouter();
-  const gameSearch = gameSearchStore();
+  const { setName, getQuery } = gameSearchStore();
 
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
@@ -34,7 +34,6 @@ const CustomGameSearch = ({ className, placeholder }: Props) => {
     document.addEventListener('click', handleClick);
     return () => document.removeEventListener('click', handleClick);
   }, []);
-
   useEffect(() => {
     const debounce = setTimeout(async () => {
       if (query) {
@@ -51,6 +50,14 @@ const CustomGameSearch = ({ className, placeholder }: Props) => {
     }, 300);
     return () => clearTimeout(debounce);
   }, [query]);
+  useEffect(() => {
+    if (!placeholder) {
+      setQuery('');
+      setName(undefined);
+    } else {
+      setQuery(placeholder);
+    }
+  }, [placeholder]);
 
   return (
     <Command
@@ -80,10 +87,10 @@ const CustomGameSearch = ({ className, placeholder }: Props) => {
                 <CommandItem
                   key={game.appid + idx}
                   onSelect={() => {
-                    gameSearch.setName(game.name);
+                    setName(game.name);
                     setIsFocused(false);
                     setQuery(game.name);
-                    router.push(GAME_ROUTE.game_list + gameSearch.getQuery());
+                    router.push(GAME_ROUTE.game_list + getQuery(), { scroll: false });
                   }}
                 >
                   <span>{game.name}</span>

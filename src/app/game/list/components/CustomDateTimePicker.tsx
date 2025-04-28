@@ -11,11 +11,12 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { gameSearchStore } from '../stores/gameSearchStore';
 import { useRouter } from 'next/navigation';
+import { GAME_ROUTE } from '@/constants/routes/game';
 
 export function CustomDateTimePicker(props: { init: Date | undefined }) {
   const [date, setDate] = React.useState<Date>();
   const [isOpen, setIsOpen] = React.useState(false);
-  const gameSearch = gameSearchStore();
+  const { setReleaseDate, getQuery } = gameSearchStore();
   const router = useRouter();
 
   const hours = Array.from({ length: 12 }, (_, i) => i + 1);
@@ -44,8 +45,8 @@ export function CustomDateTimePicker(props: { init: Date | undefined }) {
   }, [props.init]);
   React.useEffect(() => {
     // props.onSelect(date);
-    gameSearch.setReleaseDate(date);
-    router.push(gameSearch.getQuery());
+    setReleaseDate(date);
+    router.push(GAME_ROUTE.game_list + getQuery(), { scroll: false });
   }, [date]);
 
   return (

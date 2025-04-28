@@ -11,8 +11,10 @@ import { game, party, partyLog } from '@/api/game';
 import { gameDetail } from '@/types/games';
 import CustomPagination from '@/components/common/CustomPagination';
 import EmptyLottie from '@/components/common/EmptyLottie';
-import RetroButton from '@/components/common/RetroButton';
 import PickCard from '@/components/game/PickCard';
+import ImFeelingLuckyBtn from './components/ImFeelingLuckyBtn';
+import typeConverter from '@/utils/typeConverter';
+import CustomResetComponent from './components/CustomResetComponent';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const imageList = [
@@ -34,12 +36,22 @@ export default async function GameList({
   const selectedGameName = ((await searchParams).name as string) ?? undefined;
   const macSupported = ((await searchParams).mac as string) ?? undefined;
   const releaseDateStr = ((await searchParams).releaseDate as string) ?? undefined;
+  const playerType = ((await searchParams).playerType as string) ?? undefined;
+  const releaseStatus = ((await searchParams).releaseStatus as string) ?? undefined;
+  const genre = ((await searchParams).genre as string) ?? undefined;
+  const _playerType = playerType ? playerType.split(',') : [];
+  const _releaseStatus = releaseStatus ? releaseStatus.split(',') : [];
+  const _genre = genre ? genre.split(',') : [];
+
   const page = ((await searchParams).page as string) ?? undefined;
 
   const step = {
     keyword: selectedGameName,
     isMacSupported: macSupported,
     releaseDate: releaseDateStr,
+    playerType: playerType,
+    releaseStatus: releaseStatus,
+    genres: _genre.map((_) => typeConverter('GameGenreTags', 'KoToEn', _)),
   };
   const pagination = {
     page: Number(page) || 1,
@@ -106,6 +118,7 @@ export default async function GameList({
               <div className="flex flex-auto items-center rounded-lg bg-white gap-2">
                 <CustomGameSearch placeholder={selectedGameName} />
               </div>
+              <CustomResetComponent />
               <div className="flex items-center gap-2 ml-5">
                 <CustomMacSwitch value={macSupported ? true : false} />
                 <p>맥OS 지원</p>
@@ -118,20 +131,30 @@ export default async function GameList({
               <CustomDateTimePicker init={undefined} />
             </div>
             <div className="flex flex-col gap-2">
-              <p className="font-bold">{`출시일 (선택일 이후)`}</p>
-              <CustomReleaseStatus releaseStatus={[false, false]} />
+              <p className="font-bold">{`출시 상태`}</p>
+              <CustomReleaseStatus
+                releaseStatus={
+                  releaseStatus
+                    ? releaseStatuses.map((_) => _releaseStatus.includes(_))
+                    : releaseStatuses.map(() => false)
+                }
+              />
             </div>
           </div>
           <div className="flex gap-8 mt-4 items-center">
             <div className="flex flex-col gap-2">
               <p className="font-bold">{`플레이어`}</p>
-              <CustomPlayerType playerType={[false, false]} />
+              <CustomPlayerType
+                playerType={playerType ? playerTypes.map((_) => _playerType.includes(_)) : playerTypes.map(() => false)}
+              />
             </div>
           </div>
           <div className="flex gap-8 mt-4 items-center">
             <div className="flex flex-col gap-2">
               <p className="font-bold">{`인기 장르`}</p>
-              <CustomGenres genre={[true, ...genres.map(() => false)]} />
+              <CustomGenres
+                genre={genre ? [false, ...genres.map((_) => _genre.includes(_))] : [true, ...genres.map(() => false)]}
+              />
             </div>
           </div>
         </div>
@@ -146,9 +169,7 @@ export default async function GameList({
       {validData && validData.length <= 0 && (
         <div className="w-full text-center mt-[100px] mb-[100px]">
           <EmptyLottie className="w-[400px]" text="원하는 게임이 없으신가요?">
-            {/* <RetroButton type="purple" className="mt-10 font-bold" callback={() => ImFeelingLucky()}>
-              {`I'm Feeling Lucky`}
-            </RetroButton> */}
+            <ImFeelingLuckyBtn />
           </EmptyLottie>
         </div>
       )}
