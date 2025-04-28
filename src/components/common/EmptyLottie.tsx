@@ -1,3 +1,5 @@
+'use client';
+
 import catAni from '@/assets/cat_search.json';
 import { cn } from '@/lib/utils';
 import dynamic from 'next/dynamic';
