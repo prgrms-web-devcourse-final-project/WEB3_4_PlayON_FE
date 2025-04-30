@@ -47,6 +47,7 @@ async function fetchGameScreenshots(
   step: Step,
   pagination: Pagination
 ): Promise<[totalItems: number, appIds: number[], validData: gameDetail[]]> {
+
   const response = await axios.post(API_BASE_URL + GAME_ENDPOINTS.list, { ...step }, { params: { ...pagination } });
   const totalItems = response.data.data.totalItems;
   const appIds: number[] = response.data.data.items.map(
