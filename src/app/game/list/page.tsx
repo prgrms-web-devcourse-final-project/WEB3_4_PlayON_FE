@@ -15,6 +15,8 @@ import PickCard from '@/components/game/PickCard';
 import ImFeelingLuckyBtn from './components/ImFeelingLuckyBtn';
 import typeConverter from '@/utils/typeConverter';
 import CustomResetComponent from './components/CustomResetComponent';
+import { Suspense } from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const imageList = [
@@ -28,36 +30,23 @@ const genres = ['액션', '인디', '어드벤처', '시뮬레이션', 'RPG', '�
 const playerTypes = ['멀티플레이', '싱글플레이'] as const;
 const releaseStatuses = ['발매', '출시예정'] as const;
 
-export default async function GameList({
-  searchParams,
-}: {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-}) {
-  const selectedGameName = ((await searchParams).name as string) ?? undefined;
-  const macSupported = ((await searchParams).mac as string) ?? undefined;
-  const releaseDateStr = ((await searchParams).releaseDate as string) ?? undefined;
-  const playerType = ((await searchParams).playerType as string) ?? undefined;
-  const releaseStatus = ((await searchParams).releaseStatus as string) ?? undefined;
-  const genre = ((await searchParams).genre as string) ?? undefined;
-  const _playerType = playerType ? playerType.split(',') : [];
-  const _releaseStatus = releaseStatus ? releaseStatus.split(',') : [];
-  const _genre = genre ? genre.split(',') : [];
-
-  const page = ((await searchParams).page as string) ?? undefined;
-
-  const step = {
-    keyword: selectedGameName,
-    isMacSupported: macSupported,
-    releaseDate: releaseDateStr,
-    playerType: playerType,
-    releaseStatus: releaseStatus,
-    genres: _genre.map((_) => typeConverter('GameGenreTags', 'KoToEn', _)),
-  };
-  const pagination = {
-    page: Number(page) || 1,
-    size: 12,
-    sort: [],
-  };
+type Step = {
+  keyword: string;
+  isMacSupported: string;
+  releaseDate: string;
+  playerType: string;
+  releaseStatus: string;
+  genres: (string | undefined)[];
+};
+type Pagination = {
+  page: number;
+  size: number;
+  sort: string[];
+};
+async function fetchGameScreenshots(
+  step: Step,
+  pagination: Pagination
+): Promise<[totalItems: number, appIds: number[], validData: gameDetail[]]> {
   const response = await axios.post(API_BASE_URL + GAME_ENDPOINTS.list, { ...step }, { params: { ...pagination } });
   const totalItems = response.data.data.totalItems;
   const appIds: number[] = response.data.data.items.map(
@@ -98,6 +87,50 @@ export default async function GameList({
     };
   }
   const validData = gameData.filter((_) => _ !== undefined).map((__) => convertToClientGame(__.game));
+  return [totalItems, appIds, validData];
+}
+
+export default async function GameList({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  const selectedGameName = ((await searchParams).name as string) ?? undefined;
+  const macSupported = ((await searchParams).mac as string) ?? undefined;
+  const releaseDateStr = ((await searchParams).releaseDate as string) ?? undefined;
+  const playerType = ((await searchParams).playerType as string) ?? undefined;
+  const releaseStatus = ((await searchParams).releaseStatus as string) ?? undefined;
+  const genre = ((await searchParams).genre as string) ?? undefined;
+  const _playerType = playerType ? playerType.split(',') : [];
+  const _releaseStatus = releaseStatus ? releaseStatus.split(',') : [];
+  const _genre = genre ? genre.split(',') : [];
+
+  const page = ((await searchParams).page as string) ?? undefined;
+
+  const step = {
+    keyword: selectedGameName,
+    isMacSupported: macSupported,
+    releaseDate: releaseDateStr,
+    playerType: playerType,
+    releaseStatus: releaseStatus,
+    genres: _genre.map((_) => typeConverter('GameGenreTags', 'KoToEn', _)),
+  };
+  const pagination = {
+    page: Number(page) || 1,
+    size: 12,
+    sort: [],
+  };
+  const [totalItems, appIds, validData] = await fetchGameScreenshots(step, pagination);
+
+  const PickCardSkeletons = () => {
+    return (
+      <div className="lg:w-[1280px] grid grid-cols-4 grid-rows-3 gap-x-6 gap-y-12 mt-[100px] mb-[100px]">
+        {Array.from({ length: 12 }).map((_, ind) => (
+          <Skeleton className="w-full aspect-square rounded-full" key={`Skeleton_Games_${ind}`} />
+        ))}
+      </div>
+    );
+  };
 
   return (
     <div className="flex flex-col items-center">
@@ -159,25 +192,27 @@ export default async function GameList({
           </div>
         </div>
       </div>
-      {validData && validData.length > 0 && (
-        <div className="lg:w-[1280px] grid grid-cols-4 grid-rows-3 gap-x-6 gap-y-12 mt-[100px]">
-          {validData.map((e, ind) => (
-            <PickCard data={e} key={ind} appid={appIds[ind]} />
-          ))}
-        </div>
-      )}
-      {validData && validData.length <= 0 && (
-        <div className="w-full text-center mt-[100px] mb-[100px]">
-          <EmptyLottie className="w-[400px]" text="원하는 게임이 없으신가요?">
-            <ImFeelingLuckyBtn />
-          </EmptyLottie>
-        </div>
-      )}
-      {validData && validData.length > 0 && (
-        <div className="mt-[100px] mb-[100px]">
-          <CustomPagination pageSize={12} totalItems={totalItems} />
-        </div>
-      )}
+      <Suspense fallback={<PickCardSkeletons />}>
+        {validData && validData.length > 0 && (
+          <div className="lg:w-[1280px] grid grid-cols-4 grid-rows-3 gap-x-6 gap-y-12 mt-[100px]">
+            {validData.map((e, ind) => (
+              <PickCard data={e} key={ind} appid={appIds[ind]} />
+            ))}
+          </div>
+        )}
+        {validData && validData.length <= 0 && (
+          <div className="w-full text-center mt-[100px] mb-[100px]">
+            <EmptyLottie className="w-[400px]" text="원하는 게임이 없으신가요?">
+              <ImFeelingLuckyBtn />
+            </EmptyLottie>
+          </div>
+        )}
+        {validData && validData.length > 0 && (
+          <div className="mt-[100px] mb-[100px]">
+            <CustomPagination pageSize={12} totalItems={totalItems} />
+          </div>
+        )}
+      </Suspense>
     </div>
   );
 }
