@@ -22,7 +22,6 @@ export function CustomDateTimePicker(props: { init: string | undefined }) {
   const hours = Array.from({ length: 12 }, (_, i) => i + 1);
   const handleDateSelect = (selectedDate: Date | undefined) => {
     if (selectedDate) {
-      console.log(selectedDate);
       setReleaseDate(selectedDate);
       router.push(GAME_ROUTE.game_list + getQuery(), { scroll: false });
     }
@@ -38,7 +37,6 @@ export function CustomDateTimePicker(props: { init: string | undefined }) {
         const currentHours = newDate.getHours();
         newDate.setHours(value === 'PM' ? currentHours + 12 : currentHours - 12);
       }
-      console.log(newDate);
       setReleaseDate(newDate);
       router.push(GAME_ROUTE.game_list + getQuery(), { scroll: false });
     }
