@@ -40,7 +40,6 @@ export default function SuspendedGameDisplay(props: { step: Step; pagination: Pa
       setValidData(data.games);
     }
   }, [data]);
-
   const PickCardSkeletons = () => {
     return (
       <div className="lg:w-[1280px] grid grid-cols-4 grid-rows-3 gap-x-6 gap-y-12 mt-[100px] mb-[100px]">
@@ -50,7 +49,6 @@ export default function SuspendedGameDisplay(props: { step: Step; pagination: Pa
       </div>
     );
   };
-
   return (
     <>
       {isFetching && <PickCardSkeletons />}

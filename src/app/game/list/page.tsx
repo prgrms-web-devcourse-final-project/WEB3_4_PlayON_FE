@@ -11,6 +11,8 @@ import SuspendedGameDisplay from './components/SuspendedGameDisplay';
 import { getQueryClient } from '@/hooks/getQueryClient';
 import { getGames } from './getGames';
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
+import { Suspense } from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const imageList = [
   { title: 'Bioshock: Infinite', img_src: '/img/hero/bg_gameList_1.webp' },
@@ -62,6 +64,15 @@ export default async function GameList({
     const temp = dateStr.slice(0, dateStr.length - 14) + '+' + dateStr.slice(dateStr.length - 13);
     return temp;
   }
+  const PickCardSkeletons = () => {
+    return (
+      <div className="lg:w-[1280px] grid grid-cols-4 grid-rows-3 gap-x-6 gap-y-12 mt-[100px] mb-[100px]">
+        {Array.from({ length: 12 }).map((_, ind) => (
+          <Skeleton className="w-full aspect-square rounded-full" key={`Skeleton_Games_${ind}`} />
+        ))}
+      </div>
+    );
+  };
 
   return (
     <div className="flex flex-col items-center">
@@ -124,7 +135,9 @@ export default async function GameList({
         </div>
       </div>
       <HydrationBoundary state={dehydrate(queryClient)}>
-        <SuspendedGameDisplay pagination={pagination} step={step} />
+        <Suspense fallback={<PickCardSkeletons />}>
+          <SuspendedGameDisplay pagination={pagination} step={step} />
+        </Suspense>
       </HydrationBoundary>
     </div>
   );
