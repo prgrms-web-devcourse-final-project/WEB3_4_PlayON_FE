@@ -59,7 +59,6 @@ export default async function GameList({
     queryKey: ['games', step, pagination],
     queryFn: async () => getGames(step, pagination),
   });
-
   function formatDateStr(dateStr: string) {
     const temp = dateStr.slice(0, dateStr.length - 14) + '+' + dateStr.slice(dateStr.length - 13);
     return temp;
@@ -73,7 +72,6 @@ export default async function GameList({
       </div>
     );
   };
-
   return (
     <div className="flex flex-col items-center">
       <section className="w-full h-[520px]">
